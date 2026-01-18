@@ -111,24 +111,59 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
     }
   };
 
-  const renderedSvg = useMemo(() => {
+  const renderResult = useMemo(() => {
     if (metadata.mode === 'auto') {
-      const result = renderDiagram(metadata);
-      if (result.warnings && result.warnings.length > 0) {
-        setWarnings(result.warnings);
-      }
-      return result.svg;
-    } else if (metadata.mode === 'template' && template) {
-      return applyOverridesToSvg(
-        template.baseSvgData,
-        metadata.overrides,
-        template.schema
-      );
-    } else if (metadata.mode === 'asset' && asset) {
-      return asset.svgData || '';
+      return renderDiagram(metadata);
     }
-    return '';
-  }, [metadata.mode, metadata, template, asset, metadata.overrides, metadata.params]);
+
+    if (metadata.mode === 'template' && template) {
+      return {
+        svg: applyOverridesToSvg(template.baseSvgData, metadata.overrides, template.schema),
+        width: template.width || 0,
+        height: template.height || 0,
+        warnings: [] as string[],
+      };
+    }
+
+    if (metadata.mode === 'asset' && asset) {
+      return {
+        svg: asset.svgData || '',
+        width: asset.width || 0,
+        height: asset.height || 0,
+        warnings: [] as string[],
+      };
+    }
+
+    return { svg: '', width: 0, height: 0, warnings: [] as string[] };
+  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.overrides), template, asset]);
+
+  const renderedSvg = renderResult.svg || '';
+
+  useEffect(() => {
+    setWarnings(renderResult.warnings || []);
+  }, [JSON.stringify(renderResult.warnings || [])]);
+
+  const fittedSvg = useMemo(() => {
+    if (!fitToContainer) return renderedSvg;
+    if (!renderedSvg) return renderedSvg;
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(renderedSvg, 'image/svg+xml');
+      const svgEl = doc.querySelector('svg');
+      if (!svgEl) return renderedSvg;
+
+      svgEl.setAttribute('width', '100%');
+      svgEl.setAttribute('height', '100%');
+      if (!svgEl.getAttribute('preserveAspectRatio')) {
+        svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      }
+
+      return svgEl.outerHTML;
+    } catch {
+      return renderedSvg;
+    }
+  }, [fitToContainer, renderedSvg]);
 
   if (loading) {
     return (
