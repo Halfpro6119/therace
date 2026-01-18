@@ -11,6 +11,7 @@ import { MathsToolkit } from '../components/toolkit/MathsToolkit';
 import { DiagramRenderer } from '../components/DiagramRenderer';
 import { storage, calculateMasteryLevel } from '../utils/storage';
 import { soundSystem } from '../utils/sounds';
+import { isAnswerCorrect } from '../utils/answerValidation';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { Attempt, Quiz, Prompt, DiagramMetadata } from '../types';
 
@@ -54,6 +55,9 @@ export function QuizPlayerPage() {
   const [combo, setCombo] = useState(0);
   const [showXPPopup, setShowXPPopup] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
+  
+  // Prevent race conditions: lock submission during processing
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentPrompt = quizPrompts[currentPromptIndex];
   const isMathsSubject = quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
@@ -215,10 +219,8 @@ export function QuizPlayerPage() {
       return;
     }
 
-    const normalizedInput = value.trim().toLowerCase();
-    const isCorrect = currentPrompt.answers.some(
-      answer => answer.toLowerCase() === normalizedInput
-    );
+    // Use robust answer validation
+    const isCorrect = isAnswerCorrect(value, currentPrompt.answers);
 
     if (isCorrect) {
       soundSystem.playCorrect();
@@ -247,19 +249,25 @@ export function QuizPlayerPage() {
     }
   };
 
-  const checkAnswer = () => {
+  const checkAnswer = async () => {
     if (!currentInput.trim()) return;
+    
+    // Prevent race conditions: lock submission
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    const normalizedInput = currentInput.trim().toLowerCase();
-    const isCorrect = currentPrompt.answers.some(
-      answer => answer.toLowerCase() === normalizedInput
-    );
+    try {
+      // Use robust answer validation
+      const isCorrect = isAnswerCorrect(currentInput, currentPrompt.answers);
 
-    if (!isCorrect) {
-      soundSystem.playWrong();
-      setFeedbackAnimation('wrong');
-      setTimeout(() => setFeedbackAnimation(null), 300);
-      setCombo(0);
+      if (!isCorrect) {
+        soundSystem.playWrong();
+        setFeedbackAnimation('wrong');
+        setTimeout(() => setFeedbackAnimation(null), 300);
+        setCombo(0);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -717,6 +725,7 @@ export function QuizPlayerPage() {
                       autoCapitalize="off"
                       autoCorrect="off"
                       spellCheck="false"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -726,7 +735,7 @@ export function QuizPlayerPage() {
                       whileTap={{ scale: 0.98 }}
                       onClick={checkAnswer}
                       className="btn-primary flex-1 py-4"
-                      disabled={!currentInput.trim()}
+                      disabled={!currentInput.trim() || isSubmitting}
                     >
                       Submit
                     </motion.button>
