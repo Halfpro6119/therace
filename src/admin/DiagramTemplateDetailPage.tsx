@@ -5,6 +5,8 @@ import { supabase } from '../db/client';
 import { useToast } from '../contexts/ToastContext';
 import { DiagramRenderer } from '../components/DiagramRenderer';
 import { getAllTemplates } from '../diagrams/engine';
+
+const ENGINE_TEMPLATE_IDS = new Set(getAllTemplates().map(t => t.templateId));
 import type { DiagramTemplate, DiagramMetadata, DiagramEngineTemplate } from '../types';
 
 interface DisplayTemplate extends DiagramTemplate {
@@ -284,7 +286,7 @@ export function DiagramTemplateDetailPage() {
               )}
             </div>
             <div className="flex items-center gap-2">
-              {template.engineMode === 'auto' && (
+              {(template.engineMode === 'auto' || ENGINE_TEMPLATE_IDS.has(template.templateId)) && (
                 <button
                   onClick={handleDownloadSVG}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -307,7 +309,7 @@ export function DiagramTemplateDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-8 flex items-center justify-center min-h-96">
-                {template.engineMode === 'auto' ? (
+                {(template.engineMode === 'auto' || ENGINE_TEMPLATE_IDS.has(template.templateId)) ? (
                   <DiagramRenderer
                     metadata={{
                       mode: 'auto',
