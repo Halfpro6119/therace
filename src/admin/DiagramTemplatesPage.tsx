@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Tag, Trash2, Copy, Edit, RefreshCw, Zap, Image as ImageIcon } from 'lucide-react';
+import { Plus, Search, Tag, Trash2, Copy, Edit, RefreshCw, Zap, Image as ImageIcon, Eye } from 'lucide-react';
 import { supabase } from '../db/client';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
@@ -434,13 +434,19 @@ export function DiagramTemplatesPage() {
                   )}
 
                   <div className="flex items-center gap-2 mt-4">
+                    <button
+                      onClick={() => navigate(`/admin/diagram-templates/view/${template.id}`)}
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </button>
                     {!template.isEngineTemplate && (
                       <button
                         onClick={() => navigate(`/admin/diagram-templates/${template.id}`)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                        className="flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
                       >
                         <Edit className="w-4 h-4" />
-                        Edit
                       </button>
                     )}
                     <button
