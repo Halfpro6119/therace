@@ -317,6 +317,8 @@ export function DiagramTemplateDetailPage() {
                       params: template.defaults || {}
                     } as DiagramMetadata}
                     showWarnings={true}
+                    fitToContainer={true}
+                    className="w-full"
                   />
                 ) : template.baseSvgData ? (
                   <div dangerouslySetInnerHTML={{ __html: template.baseSvgData }} />
