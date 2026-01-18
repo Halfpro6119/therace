@@ -1,0 +1,518 @@
+import { Subject, Unit, Topic } from '../types';
+import { db } from '../db/client';
+
+export interface ImportPromptRow {
+  subject: string;
+  examBoard: string;
+  unit: string;
+  topic: string;
+  type: 'short' | 'mcq' | 'fill' | 'match' | 'label';
+  question: string;
+  answers: string[];
+  hint?: string;
+  explanation?: string;
+  calculatorAllowed?: boolean;
+  drawingRecommended?: boolean;
+  diagramMode?: 'auto' | 'template' | 'asset';
+  diagramTemplateId?: string;
+  diagramPlacement?: 'above' | 'below' | 'inline' | 'side';
+  diagramCaption?: string;
+  diagramAlt?: string;
+  diagramParamsJson?: string;
+}
+
+export interface ValidationError {
+  row: number;
+  field: string;
+  message: string;
+}
+
+export interface ImportSummary {
+  totalRows: number;
+  validRows: number;
+  errors: ValidationError[];
+  duplicates: number;
+  newSubjects: string[];
+  newUnits: string[];
+  newTopics: string[];
+}
+
+function parseBoolean(value: string | undefined): boolean {
+  if (!value) return false;
+  const normalized = value.toLowerCase().trim();
+  return ['true', '1', 'yes', 'y', 'on'].includes(normalized);
+}
+
+export function parseCSV(csvText: string): ImportPromptRow[] {
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const rows: ImportPromptRow[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseCSVLine(lines[i]);
+    const row: any = {};
+
+    headers.forEach((header, index) => {
+      row[header] = values[index] || '';
+    });
+
+    if (row.answers && typeof row.answers === 'string') {
+      row.answers = row.answers.split('|').map((a: string) => a.trim()).filter(Boolean);
+    }
+
+    rows.push({
+      subject: row.subject || '',
+      examBoard: row.examboard || row.exam_board || '',
+      unit: row.unit || '',
+      topic: row.topic || '',
+      type: row.type || 'short',
+      question: row.question || '',
+      answers: row.answers || [],
+      hint: row.hint || undefined,
+      explanation: row.explanation || undefined,
+      calculatorAllowed: parseBoolean(row.calculatorallowed || row.calculator_allowed),
+      drawingRecommended: parseBoolean(row.drawingrecommended || row.drawing_recommended),
+    });
+  }
+
+  return rows;
+}
+
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+export function validateImportRows(rows: ImportPromptRow[]): ValidationError[] {
+  const errors: ValidationError[] = [];
+  const validTypes = ['short', 'mcq', 'fill', 'match', 'label'];
+
+  rows.forEach((row, index) => {
+    const rowNum = index + 1;
+
+    if (!row.subject) {
+      errors.push({ row: rowNum, field: 'subject', message: 'Subject is required' });
+    }
+    if (!row.examBoard) {
+      errors.push({ row: rowNum, field: 'examBoard', message: 'Exam board is required' });
+    }
+    if (!row.unit) {
+      errors.push({ row: rowNum, field: 'unit', message: 'Unit is required' });
+    }
+    if (!row.topic) {
+      errors.push({ row: rowNum, field: 'topic', message: 'Topic is required' });
+    }
+    if (!row.question) {
+      errors.push({ row: rowNum, field: 'question', message: 'Question is required' });
+    }
+    if (!row.answers || row.answers.length === 0) {
+      errors.push({ row: rowNum, field: 'answers', message: 'At least one answer is required' });
+    }
+    if (!validTypes.includes(row.type)) {
+      errors.push({ row: rowNum, field: 'type', message: `Type must be one of: ${validTypes.join(', ')}` });
+    }
+  });
+
+  return errors;
+}
+
+export function generatePromptHash(row: ImportPromptRow): string {
+  const normalized = [
+    row.subject.toLowerCase().trim(),
+    row.unit.toLowerCase().trim(),
+    row.topic.toLowerCase().trim(),
+    row.type,
+    row.question.toLowerCase().trim(),
+    row.answers.map(a => a.toLowerCase().trim()).sort().join('|'),
+  ].join('::');
+
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    const char = normalized.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+
+  return hash.toString(36);
+}
+
+export function detectDuplicates(rows: ImportPromptRow[]): Map<string, number[]> {
+  const hashMap = new Map<string, number[]>();
+
+  rows.forEach((row, index) => {
+    const hash = generatePromptHash(row);
+    if (!hashMap.has(hash)) {
+      hashMap.set(hash, []);
+    }
+    hashMap.get(hash)!.push(index);
+  });
+
+  const duplicates = new Map<string, number[]>();
+  hashMap.forEach((indices, hash) => {
+    if (indices.length > 1) {
+      duplicates.set(hash, indices);
+    }
+  });
+
+  return duplicates;
+}
+
+export async function findOrCreateSubject(
+  subjectName: string,
+  examBoard: string,
+  existingSubjects: Subject[]
+): Promise<Subject> {
+  const existing = existingSubjects.find(
+    s => s.name.toLowerCase() === subjectName.toLowerCase() &&
+         s.examBoard.toLowerCase() === examBoard.toLowerCase()
+  );
+
+  if (existing) return existing;
+
+  const newSubject = await db.createSubject({
+    name: subjectName,
+    examBoard: examBoard,
+    description: `${subjectName} (${examBoard})`,
+    icon: '📚',
+    themeColor: 'from-gray-500 to-gray-600',
+  });
+
+  existingSubjects.push(newSubject);
+  return newSubject;
+}
+
+export async function findOrCreateUnit(
+  unitName: string,
+  subjectId: string,
+  existingUnits: Unit[]
+): Promise<Unit> {
+  const existing = existingUnits.find(
+    u => u.subjectId === subjectId && u.name.toLowerCase() === unitName.toLowerCase()
+  );
+
+  if (existing) return existing;
+
+  const subjectUnits = existingUnits.filter(u => u.subjectId === subjectId);
+  const maxOrder = subjectUnits.length > 0 ? Math.max(...subjectUnits.map(u => u.orderIndex)) : 0;
+
+  const newUnit = await db.createUnit({
+    subjectId,
+    name: unitName,
+    orderIndex: maxOrder + 1,
+    description: unitName,
+  });
+
+  existingUnits.push(newUnit);
+  return newUnit;
+}
+
+export async function findOrCreateTopic(
+  topicName: string,
+  unitId: string,
+  subjectId: string,
+  existingTopics: Topic[]
+): Promise<Topic> {
+  const existing = existingTopics.find(
+    t => t.unitId === unitId && t.name.toLowerCase() === topicName.toLowerCase()
+  );
+
+  if (existing) return existing;
+
+  const unitTopics = existingTopics.filter(t => t.unitId === unitId);
+  const maxOrder = unitTopics.length > 0 ? Math.max(...unitTopics.map(t => t.orderIndex)) : 0;
+
+  const newTopic = await db.createTopic({
+    subjectId,
+    unitId,
+    name: topicName,
+    orderIndex: maxOrder + 1,
+    description: topicName,
+  });
+
+  existingTopics.push(newTopic);
+  return newTopic;
+}
+
+export interface ImportProgress {
+  phase: 'prompts' | 'quizzes';
+  currentItem: string;
+  processed: number;
+  total: number;
+  createdSubjects: string[];
+  createdUnits: string[];
+  createdTopics: string[];
+  importedPrompts: number;
+  skippedPrompts: number;
+}
+
+export async function importPrompts(
+  rows: ImportPromptRow[],
+  skipDuplicates: boolean = true,
+  enableCalculators: boolean = false,
+  metaOverwriteMode: boolean = false,
+  onProgress?: (progress: ImportProgress) => void
+): Promise<{
+  imported: number;
+  skipped: number;
+  updated: number;
+  errors: string[];
+  createdSubjects: string[];
+  createdUnits: string[];
+  createdTopics: string[];
+  affectedSubjectIds: string[];
+}> {
+  const result = {
+    imported: 0,
+    skipped: 0,
+    updated: 0,
+    errors: [] as string[],
+    createdSubjects: [] as string[],
+    createdUnits: [] as string[],
+    createdTopics: [] as string[],
+    affectedSubjectIds: [] as string[],
+  };
+
+  const affectedSubjectIdsSet = new Set<string>();
+  const MATHS_SUBJECT_ID = '0d9b0cc0-1779-4097-a684-f41d5b994f50';
+
+  const subjects = await db.getSubjects();
+  const allUnits: Unit[] = [];
+  const allTopics: Topic[] = [];
+
+  for (const subject of subjects) {
+    const units = await db.getUnits(subject.id);
+    const topics = await db.getTopics(subject.id);
+    allUnits.push(...units);
+    allTopics.push(...topics);
+  }
+
+  const existingPrompts = await Promise.all(
+    subjects.map(s => db.getPromptsBySubject(s.id))
+  ).then(arrays => arrays.flat());
+
+  const existingHashMap = new Map(
+    existingPrompts.map(p => {
+      const subject = subjects.find(s => s.id === p.subjectId);
+      const unit = allUnits.find(u => u.id === p.unitId);
+      const topic = allTopics.find(t => t.id === p.topicId);
+      if (!subject || !unit || !topic) return ['', null];
+      const hash = generatePromptHash({
+        subject: subject.name,
+        examBoard: subject.examBoard,
+        unit: unit.name,
+        topic: topic.name,
+        type: p.type,
+        question: p.question,
+        answers: p.answers,
+      });
+      return [hash, p];
+    }).filter(([hash]) => hash !== '')
+  );
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    try {
+      const hash = generatePromptHash(row);
+      const existingPrompt = existingHashMap.get(hash);
+
+      const subject = await findOrCreateSubject(row.subject, row.examBoard, subjects);
+      if (!subjects.some(s => s.id === subject.id)) {
+        result.createdSubjects.push(subject.name);
+      }
+
+      const unit = await findOrCreateUnit(row.unit, subject.id, allUnits);
+      if (!allUnits.some(u => u.id === unit.id && result.createdUnits.includes(unit.name))) {
+        result.createdUnits.push(unit.name);
+      }
+
+      const topic = await findOrCreateTopic(row.topic, unit.id, subject.id, allTopics);
+      if (!allTopics.some(t => t.id === topic.id && result.createdTopics.includes(topic.name))) {
+        result.createdTopics.push(topic.name);
+      }
+
+      const shouldEnableCalculator = enableCalculators && subject.id === MATHS_SUBJECT_ID;
+
+      let meta: any = {};
+      if (shouldEnableCalculator) {
+        meta.calculatorAllowed = true;
+      }
+      if (row.calculatorAllowed !== undefined) {
+        meta.calculatorAllowed = row.calculatorAllowed;
+      }
+      if (row.drawingRecommended !== undefined) {
+        meta.drawingRecommended = row.drawingRecommended;
+      }
+
+      if (row.diagramMode && row.diagramTemplateId) {
+        meta.diagram = {
+          mode: row.diagramMode,
+          templateId: row.diagramTemplateId,
+          placement: row.diagramPlacement || 'above',
+          caption: row.diagramCaption,
+          alt: row.diagramAlt
+        };
+
+        if (row.diagramParamsJson) {
+          try {
+            meta.diagram.params = JSON.parse(row.diagramParamsJson);
+          } catch (e) {
+            console.warn('Failed to parse diagramParamsJson:', e);
+          }
+        }
+      }
+
+      if (existingPrompt) {
+        if (skipDuplicates) {
+          result.skipped++;
+
+          if (onProgress) {
+            onProgress({
+              phase: 'prompts',
+              currentItem: `Skipping duplicate: ${row.question.substring(0, 50)}...`,
+              processed: i + 1,
+              total: rows.length,
+              createdSubjects: result.createdSubjects,
+              createdUnits: result.createdUnits,
+              createdTopics: result.createdTopics,
+              importedPrompts: result.imported,
+              skippedPrompts: result.skipped,
+            });
+          }
+          continue;
+        } else {
+          const existingMeta = existingPrompt.meta || {};
+          const mergedMeta: any = { ...existingMeta };
+
+          if (metaOverwriteMode || row.calculatorAllowed !== undefined) {
+            if (row.calculatorAllowed !== undefined) {
+              mergedMeta.calculatorAllowed = row.calculatorAllowed;
+            }
+          }
+
+          if (metaOverwriteMode || row.drawingRecommended !== undefined) {
+            if (row.drawingRecommended !== undefined) {
+              mergedMeta.drawingRecommended = row.drawingRecommended;
+            }
+          }
+
+          if (metaOverwriteMode || (row.diagramMode && row.diagramTemplateId)) {
+            if (row.diagramMode && row.diagramTemplateId) {
+              mergedMeta.diagram = {
+                mode: row.diagramMode,
+                templateId: row.diagramTemplateId,
+                placement: row.diagramPlacement || 'above',
+                caption: row.diagramCaption,
+                alt: row.diagramAlt
+              };
+
+              if (row.diagramParamsJson) {
+                try {
+                  mergedMeta.diagram.params = JSON.parse(row.diagramParamsJson);
+                } catch (e) {
+                  console.warn('Failed to parse diagramParamsJson:', e);
+                }
+              }
+            } else if (metaOverwriteMode) {
+              delete mergedMeta.diagram;
+            }
+          }
+
+          if (shouldEnableCalculator && mergedMeta.calculatorAllowed === undefined) {
+            mergedMeta.calculatorAllowed = true;
+          }
+
+          await db.updatePrompt(existingPrompt.id, {
+            question: row.question,
+            answers: row.answers,
+            hint: row.hint,
+            explanation: row.explanation,
+            meta: Object.keys(mergedMeta).length > 0 ? mergedMeta : undefined,
+          });
+
+          result.updated++;
+          affectedSubjectIdsSet.add(subject.id);
+
+          if (onProgress) {
+            onProgress({
+              phase: 'prompts',
+              currentItem: `Updating: ${row.question.substring(0, 50)}...`,
+              processed: i + 1,
+              total: rows.length,
+              createdSubjects: result.createdSubjects,
+              createdUnits: result.createdUnits,
+              createdTopics: result.createdTopics,
+              importedPrompts: result.imported,
+              skippedPrompts: result.skipped,
+            });
+          }
+          continue;
+        }
+      }
+
+      await db.createPrompt({
+        subjectId: subject.id,
+        unitId: unit.id,
+        topicId: topic.id,
+        type: row.type,
+        question: row.question,
+        answers: row.answers,
+        hint: row.hint,
+        explanation: row.explanation,
+        meta: Object.keys(meta).length > 0 ? meta : undefined,
+      });
+
+      existingHashMap.set(hash, {
+        id: '',
+        subjectId: subject.id,
+        unitId: unit.id,
+        topicId: topic.id,
+        type: row.type,
+        question: row.question,
+        answers: row.answers,
+        hint: row.hint,
+        explanation: row.explanation,
+        meta,
+      });
+      result.imported++;
+      affectedSubjectIdsSet.add(subject.id);
+
+      if (onProgress) {
+        onProgress({
+          phase: 'prompts',
+          currentItem: `Importing: ${row.question.substring(0, 50)}...`,
+          processed: i + 1,
+          total: rows.length,
+          createdSubjects: result.createdSubjects,
+          createdUnits: result.createdUnits,
+          createdTopics: result.createdTopics,
+          importedPrompts: result.imported,
+          skippedPrompts: result.skipped,
+        });
+      }
+    } catch (error) {
+      result.errors.push(`Row ${i + 1}: ${error}`);
+    }
+  }
+
+  result.affectedSubjectIds = Array.from(affectedSubjectIdsSet);
+  return result;
+}
