@@ -233,7 +233,7 @@ export const functionMachine: DiagramEngineTemplate = {
     <line id="ln:arrow1" x1="110" y1="120" x2="180" y2="120" class="diagram-arrow" marker-end="url(#arrowhead-machine)"/>
     <line id="ln:arrow2" x1="320" y1="120" x2="390" y2="120" class="diagram-arrow" marker-end="url(#arrowhead-machine)"/>
 
-    <text id="txt:inputLabel" x="70" y="45}" class="diagram-text-small">Input</text>
+    <text id="txt:inputLabel" x="70" y="45" class="diagram-text-small">Input</text>
     <text id="txt:input" x="70" y="130" class="diagram-text">${labelInput}</text>
     ${showValues ? `<text id="txt:inputValue" x="70" y="155" class="diagram-text-value">${inputValue}</text>` : ''}
 
