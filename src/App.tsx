@@ -23,6 +23,7 @@ import { DiagramsPage } from './admin/DiagramsPage';
 import { DiagramEditor } from './admin/DiagramEditor';
 import { DiagramTemplatesPage } from './admin/DiagramTemplatesPage';
 import { DiagramTemplateEditor } from './admin/DiagramTemplateEditor';
+import { DiagramTemplateDetailPage } from './admin/DiagramTemplateDetailPage';
 import { QuizzesPage } from './admin/QuizzesPage';
 import { PlaylistsPage } from './admin/PlaylistsPage';
 import { ToolsPage } from './admin/ToolsPage';
@@ -63,6 +64,7 @@ function App() {
 
         <Route path="/admin/diagrams/:diagramId" element={<DiagramEditor />} />
         <Route path="/admin/diagram-templates/:templateId" element={<DiagramTemplateEditor />} />
+        <Route path="/admin/diagram-templates/view/:id" element={<DiagramTemplateDetailPage />} />
 
         <Route
           path="*"
