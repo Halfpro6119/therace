@@ -31,6 +31,7 @@ import { AuditPage } from './admin/AuditPage';
 import { ContentOpsHome } from './admin/ContentOpsHome';
 import { SubjectOpsDetail } from './admin/ops/SubjectOpsDetail';
 import { ImportLogPage } from './admin/ops/ImportLogPage';
+import { CoveragePage } from './admin/CoveragePage';
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
 import { CommandPalette } from './components/CommandPalette';
@@ -54,6 +55,7 @@ function App() {
           <Route path="diagram-templates" element={<DiagramTemplatesPage />} />
           <Route path="quizzes" element={<QuizzesPage />} />
           <Route path="playlists" element={<PlaylistsPage />} />
+          <Route path="coverage" element={<CoveragePage />} />
           <Route path="ops" element={<ContentOpsHome />} />
           <Route path="ops/subjects/:subjectId" element={<SubjectOpsDetail />} />
           <Route path="ops/import-log" element={<ImportLogPage />} />

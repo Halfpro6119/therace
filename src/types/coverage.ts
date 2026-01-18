@@ -1,6 +1,6 @@
 /**
- * Content Coverage Types
- * Tracks GCSE paper structure and content completeness
+ * Coverage Types - Data structures for tracking content coverage
+ * across papers, units, topics, and question types
  */
 
 export interface Paper {
@@ -15,84 +15,115 @@ export interface Paper {
 export interface QuestionType {
   id: string;
   subjectId: string;
-  paperNumber?: 1 | 2 | 3;
-  unitId: string;
-  topicId: string;
+  paperId?: string;
+  unitId?: string;
+  topicId?: string;
   typeId: string; // e.g., "p1_geo_circle_semi_circle"
   title: string;
-  difficultyMin?: number;
-  difficultyMax?: number;
-  marksMin?: number;
-  marksMax?: number;
-  defaultCalculatorAllowed: boolean;
+  difficultyMin: number;
+  difficultyMax: number;
+  marksMin: number;
+  marksMax: number;
+  calculatorAllowed?: boolean;
   diagramTemplateId?: string;
-  tags?: string[];
+  tags: string[];
   createdAt: string;
 }
 
-export interface CoverageThresholds {
+export interface CoverageSettings {
+  id: string;
+  subjectId: string;
   minPromptsPerQuestionType: number;
   minPromptsPerTopic: number;
   minPromptsPerUnit: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
+/**
+ * Topic Coverage - Metrics for a single topic
+ */
 export interface TopicCoverage {
   topicId: string;
   topicName: string;
   unitId: string;
   unitName: string;
-  totalPrompts: number;
-  requiredQuestionTypes: number;
-  populatedQuestionTypes: number;
-  coveragePercent: number;
+  requiredQuestionTypesCount: number;
+  populatedQuestionTypesCount: number;
+  promptsCount: number;
+  coveragePercentage: number;
   status: 'ok' | 'warning' | 'missing';
   missingTypes: MissingQuestionType[];
 }
 
+/**
+ * Unit Coverage - Aggregated metrics for a unit
+ */
 export interface UnitCoverage {
   unitId: string;
   unitName: string;
-  paperId?: string;
-  paperNumber?: 1 | 2 | 3;
-  totalPrompts: number;
-  topicCount: number;
-  coveredTopics: number;
-  coveragePercent: number;
+  topicsCount: number;
+  topicsCoveredCount: number;
+  averageCoveragePercentage: number;
+  promptsCount: number;
   status: 'ok' | 'warning' | 'missing';
   topics: TopicCoverage[];
 }
 
+/**
+ * Paper Coverage - Aggregated metrics for a paper
+ */
 export interface PaperCoverage {
   paperId: string;
   paperNumber: 1 | 2 | 3;
   paperName: string;
-  subjectId: string;
-  totalPrompts: number;
-  unitCount: number;
-  coveredUnits: number;
-  coveragePercent: number;
+  unitsCount: number;
+  unitsCoveredCount: number;
+  averageCoveragePercentage: number;
+  promptsCount: number;
   status: 'ok' | 'warning' | 'missing';
   units: UnitCoverage[];
-  missingQuestionTypesCount: number;
-  missingTopicsCount: number;
 }
 
+/**
+ * Missing Question Type - Details about a missing or under-populated question type
+ */
 export interface MissingQuestionType {
   questionTypeId: string;
   typeId: string;
   title: string;
+  unitId: string;
   unitName: string;
+  topicId: string;
   topicName: string;
-  currentPrompts: number;
-  requiredPrompts: number;
+  paperId?: string;
+  paperNumber?: 1 | 2 | 3;
+  currentPromptsCount: number;
+  requiredPromptsCount: number;
   deficit: number;
 }
 
-export interface CoverageStats {
-  paper1Coverage: number;
-  paper2Coverage: number;
-  paper3Coverage: number;
-  totalMissingTopics: number;
-  totalMissingQuestionTypes: number;
-  lastUpdated: string;
+/**
+ * Subject Coverage Summary - Overall coverage for a subject
+ */
+export interface SubjectCoverageSummary {
+  subjectId: string;
+  subjectName: string;
+  papersCount: number;
+  unitsCount: number;
+  topicsCount: number;
+  questionTypesCount: number;
+  totalPromptsCount: number;
+  missingQuestionTypesCount: number;
+  papers: PaperCoverage[];
+  settings: CoverageSettings;
+}
+
+/**
+ * Coverage Computation Result - Detailed breakdown with warnings
+ */
+export interface CoverageComputationResult {
+  summary: SubjectCoverageSummary;
+  warnings: string[];
+  taxonomyMissing: boolean;
 }
