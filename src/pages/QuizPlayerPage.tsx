@@ -236,13 +236,16 @@ export function QuizPlayerPage() {
       setShowXPPopup(true);
       setTimeout(() => setShowXPPopup(false), 1500);
 
-      setSolvedPrompts(prev => new Set([...prev, currentPrompt.id]));
+      // Create new solved set with this question added
+      const newSolvedPrompts = new Set([...solvedPrompts, currentPrompt.id]);
+      setSolvedPrompts(newSolvedPrompts);
 
       setCurrentInput('');
       setShowHint(false);
 
-      if (solvedPrompts.size + 1 === quizPrompts.length) {
-        setTimeout(() => endQuiz(), 500);
+      // Check if quiz is complete using the NEW solved count
+      if (newSolvedPrompts.size === quizPrompts.length) {
+        setTimeout(() => endQuizWithSolvedPrompts(newSolvedPrompts), 500);
       } else {
         setTimeout(() => moveToNextPrompt(), 200);
       }
@@ -316,23 +319,23 @@ export function QuizPlayerPage() {
     }
   };
 
-  const endQuiz = () => {
+  const endQuizWithSolvedPrompts = (finalSolvedPrompts: Set<string>) => {
     setHasEnded(true);
 
     const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
-    const correctCount = solvedPrompts.size;
+    const correctCount = finalSolvedPrompts.size;
     
-    // Calculate missed prompts: any question not in solvedPrompts
+    // Calculate missed prompts: any question not in finalSolvedPrompts
     const allPromptIds = new Set(quizPrompts.map(p => p.id));
     const calculatedMissedPrompts = new Set(
-      Array.from(allPromptIds).filter(id => !solvedPrompts.has(id))
+      Array.from(allPromptIds).filter(id => !finalSolvedPrompts.has(id))
     );
     
     // Use explicitly marked missed prompts if any, otherwise use calculated
     const finalMissedPrompts = missedPrompts.size > 0 ? missedPrompts : calculatedMissedPrompts;
     
     // Calculate accuracy based on total questions in this attempt
-    const totalQuestionsInThisAttempt = solvedPrompts.size + finalMissedPrompts.size;
+    const totalQuestionsInThisAttempt = finalSolvedPrompts.size + finalMissedPrompts.size;
     const accuracy = totalQuestionsInThisAttempt > 0 
       ? correctCount / totalQuestionsInThisAttempt 
       : 0;
@@ -342,7 +345,7 @@ export function QuizPlayerPage() {
       quizId: quiz.id,
       startedAt: new Date(quizStartTime).toISOString(),
       finishedAt: new Date().toISOString(),
-      correctPromptIds: Array.from(solvedPrompts),
+      correctPromptIds: Array.from(finalSolvedPrompts),
       missedPromptIds: Array.from(finalMissedPrompts),
       timeTakenSec: timeTaken,
       accuracyPct: accuracy * 100,
@@ -398,6 +401,10 @@ export function QuizPlayerPage() {
     }
 
     navigate(`/results/${attempt.id}`);
+  };
+
+  const endQuiz = () => {
+    endQuizWithSolvedPrompts(solvedPrompts);
   };
 
   const formatTime = (seconds: number) => {
