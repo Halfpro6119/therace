@@ -6,14 +6,19 @@ import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { seedAllDiagramTemplates } from './seedAllDiagramTemplates';
 import { DiagramRenderer } from '../components/DiagramRenderer';
-import type { DiagramTemplate, Subject, DiagramMetadata } from '../types';
+import { getAllTemplates } from '../diagrams/engine';
+import type { DiagramTemplate, Subject, DiagramMetadata, DiagramEngineTemplate } from '../types';
+
+interface DisplayTemplate extends DiagramTemplate {
+  isEngineTemplate?: boolean;
+}
 
 export function DiagramTemplatesPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { confirm } = useConfirm();
-  const [templates, setTemplates] = useState<DiagramTemplate[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [templates, setTemplates] = useState<DisplayTemplate[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([])
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,6 +32,7 @@ export function DiagramTemplatesPage() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Load database templates
       const [templatesRes, subjectsRes] = await Promise.all([
         supabase.from('diagram_templates').select('*').order('created_at', { ascending: false }),
         supabase.from('subjects').select('*').order('name')
@@ -35,7 +41,7 @@ export function DiagramTemplatesPage() {
       if (templatesRes.error) throw templatesRes.error;
       if (subjectsRes.error) throw subjectsRes.error;
 
-      const templateData: DiagramTemplate[] = (templatesRes.data || []).map(t => ({
+      const dbTemplates: DisplayTemplate[] = (templatesRes.data || []).map(t => ({
         id: t.id,
         templateId: t.template_id,
         title: t.title,
@@ -51,24 +57,139 @@ export function DiagramTemplatesPage() {
         schema: t.schema || {},
         defaults: t.defaults || {},
         createdAt: t.created_at,
-        updatedAt: t.updated_at
+        updatedAt: t.updated_at,
+        isEngineTemplate: false
       }));
 
-      setTemplates(templateData);
+      // Load engine templates
+      const engineTemplates = getAllTemplates();
+      const engineTemplateMap = new Map(dbTemplates.map(t => [t.templateId, t]));
+
+      // Merge engine templates with database templates
+      const mergedTemplates: DisplayTemplate[] = [
+        ...dbTemplates,
+        ...engineTemplates
+          .filter(et => !engineTemplateMap.has(et.templateId))
+          .map(et => convertEngineTemplate(et))
+      ];
+
+      // Sort by title
+      mergedTemplates.sort((a, b) => a.title.localeCompare(b.title));
+
+      setTemplates(mergedTemplates);
       setSubjects(subjectsRes.data || []);
     } catch (error) {
       console.error('Error loading templates:', error);
-      showToast('Failed to load templates', 'error');
+      showToast('error', 'Failed to load templates');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (template: DiagramTemplate) => {
-    const confirmed = await confirm(
-      `Delete template "${template.title}"?`,
-      'This action cannot be undone. Prompts using this template will lose their diagrams.'
-    );
+  const convertEngineTemplate = (engineTemplate: DiagramEngineTemplate): DisplayTemplate => {
+    const topicTags = generateTopicTags(engineTemplate.templateId);
+    const subjectKey = getSubjectKey(engineTemplate.category);
+
+    return {
+      id: `engine-${engineTemplate.templateId}`,
+      templateId: engineTemplate.templateId,
+      title: engineTemplate.title,
+      subjectId: undefined,
+      subjectKey: subjectKey,
+      topicTags: topicTags,
+      engineMode: 'auto',
+      baseCanvasData: undefined,
+      baseSvgData: undefined,
+      width: 500,
+      height: 400,
+      anchors: {},
+      schema: engineTemplate.schema,
+      defaults: extractDefaults(engineTemplate),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isEngineTemplate: true
+    };
+  };
+
+  const extractDefaults = (template: DiagramEngineTemplate): Record<string, any> => {
+    const defaults: Record<string, any> = {
+      labels: {},
+      values: {},
+      visibility: {},
+      positions: {}
+    };
+
+    if (template.schema.labels) {
+      for (const [key, config] of Object.entries(template.schema.labels)) {
+        if (config.default !== undefined) {
+          defaults.labels[key] = config.default;
+        }
+      }
+    }
+
+    if (template.schema.values) {
+      for (const [key, config] of Object.entries(template.schema.values)) {
+        if (config.default !== undefined) {
+          defaults.values[key] = config.default;
+        }
+      }
+    }
+
+    if (template.schema.visibility) {
+      for (const [key, config] of Object.entries(template.schema.visibility)) {
+        if (config.default !== undefined) {
+          defaults.visibility[key] = config.default;
+        }
+      }
+    }
+
+    if (template.schema.positions) {
+      for (const [key, config] of Object.entries(template.schema.positions)) {
+        if (config.default) {
+          defaults.positions[key] = config.default;
+        }
+      }
+    }
+
+    return defaults;
+  };
+
+  const generateTopicTags = (templateId: string): string[] => {
+    const tags: string[] = [];
+    const parts = templateId.split('.');
+    if (parts.length >= 2) {
+      tags.push(parts[1]);
+    }
+    if (parts.length >= 3) {
+      tags.push(parts[2]);
+    }
+    return tags;
+  };
+
+  const getSubjectKey = (category: string): string => {
+    const categoryMap: Record<string, string> = {
+      'geometry': 'math',
+      'graphs': 'math',
+      'statistics': 'math',
+      'algebra': 'math',
+      'physics': 'physics',
+      'chemistry': 'chemistry',
+      'biology': 'biology'
+    };
+    return categoryMap[category] || 'math';
+  };
+
+  const handleDelete = async (template: DisplayTemplate) => {
+    if (template.isEngineTemplate) {
+      showToast('error', 'Cannot delete engine templates. They are read-only.');
+      return;
+    }
+
+    const confirmed = await confirm({
+      title: `Delete template "${template.title}"?`,
+      message: 'This action cannot be undone. Prompts using this template will lose their diagrams.',
+      destructive: true
+    });
 
     if (!confirmed) return;
 
@@ -80,15 +201,15 @@ export function DiagramTemplatesPage() {
 
       if (error) throw error;
 
-      showToast('Template deleted', 'success');
+      showToast('success', 'Template deleted');
       loadData();
     } catch (error) {
       console.error('Error deleting template:', error);
-      showToast('Failed to delete template', 'error');
+      showToast('error', 'Failed to delete template');
     }
   };
 
-  const handleDuplicate = async (template: DiagramTemplate) => {
+  const handleDuplicate = async (template: DisplayTemplate) => {
     try {
       const newTemplateId = `${template.templateId}.copy`;
       const { error } = await supabase
@@ -96,31 +217,34 @@ export function DiagramTemplatesPage() {
         .insert({
           template_id: newTemplateId,
           title: `${template.title} (Copy)`,
-          subject_id: template.subjectId,
+          subject_id: template.subjectId || null,
+          subject_key: template.subjectKey,
           topic_tags: template.topicTags,
+          engine_mode: template.engineMode,
           base_canvas_data: template.baseCanvasData,
           base_svg_data: template.baseSvgData,
           width: template.width,
           height: template.height,
           anchors: template.anchors,
-          schema: template.schema
+          schema: template.schema,
+          defaults: template.defaults
         });
 
       if (error) throw error;
 
-      showToast('Template duplicated', 'success');
+      showToast('success', 'Template duplicated');
       loadData();
     } catch (error) {
       console.error('Error duplicating template:', error);
-      showToast('Failed to duplicate template', 'error');
+      showToast('error', 'Failed to duplicate template');
     }
   };
 
   const handleSyncTemplates = async () => {
-    const confirmed = await confirm(
-      'Sync Engine Templates?',
-      'This will add/update all diagram templates from the engine registry to the database.'
-    );
+    const confirmed = await confirm({
+      title: 'Sync Engine Templates?',
+      message: 'This will add/update all diagram templates from the engine registry to the database.'
+    });
 
     if (!confirmed) return;
 
@@ -130,13 +254,13 @@ export function DiagramTemplatesPage() {
 
       if (result.success) {
         showToast(
-          `Synced successfully: ${result.inserted} added, ${result.updated} updated`,
-          'success'
+          'success',
+          `Synced successfully: ${result.inserted} added, ${result.updated} updated`
         );
       } else {
         showToast(
-          `Sync completed with errors: ${result.errors.length} errors`,
-          'error'
+          'error',
+          `Sync completed with errors: ${result.errors.length} errors`
         );
         console.error('Sync errors:', result.errors);
       }
@@ -144,7 +268,7 @@ export function DiagramTemplatesPage() {
       loadData();
     } catch (error) {
       console.error('Error syncing templates:', error);
-      showToast('Failed to sync templates', 'error');
+      showToast('error', 'Failed to sync templates');
     } finally {
       setSyncing(false);
     }
@@ -180,7 +304,7 @@ export function DiagramTemplatesPage() {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`w-5 h-5 ${syncing ? 'animate-spin' : ''}`} />
-            {syncing ? 'Syncing...' : 'Sync Engine Templates'}
+            {syncing ? 'Syncing...' : 'Sync to Database'}
           </button>
           <button
             onClick={() => navigate('/admin/diagram-templates/new')}
@@ -263,12 +387,28 @@ export function DiagramTemplatesPage() {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex-1">{template.title}</h3>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 whitespace-nowrap ${
-                      template.engineMode === 'auto'
+                      template.isEngineTemplate
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                        : template.engineMode === 'auto'
                         ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
                         : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                     }`}>
-                      {template.engineMode === 'auto' ? <Zap className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
-                      {template.engineMode === 'auto' ? 'Auto' : 'Template'}
+                      {template.isEngineTemplate ? (
+                        <>
+                          <Zap className="w-3 h-3" />
+                          Engine
+                        </>
+                      ) : template.engineMode === 'auto' ? (
+                        <>
+                          <Zap className="w-3 h-3" />
+                          Auto
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="w-3 h-3" />
+                          Template
+                        </>
+                      )}
                     </span>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-mono mb-3 truncate">{template.templateId}</p>
@@ -294,25 +434,29 @@ export function DiagramTemplatesPage() {
                   )}
 
                   <div className="flex items-center gap-2 mt-4">
-                    <button
-                      onClick={() => navigate(`/admin/diagram-templates/${template.id}`)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Edit
-                    </button>
+                    {!template.isEngineTemplate && (
+                      <button
+                        onClick={() => navigate(`/admin/diagram-templates/${template.id}`)}
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </button>
+                    )}
                     <button
                       onClick={() => handleDuplicate(template)}
                       className="flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => handleDelete(template)}
-                      className="flex items-center justify-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {!template.isEngineTemplate && (
+                      <button
+                        onClick={() => handleDelete(template)}
+                        className="flex items-center justify-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
