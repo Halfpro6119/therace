@@ -672,7 +672,217 @@ export const db = {
       name: row.name,
       calculatorAllowedDefault: row.calculator_allowed_default,
       createdAt: row.created_at,
+    })),
+
+  getPaper: async (paperId: string): Promise<any | undefined> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .select('*')
+      .eq('id', paperId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperNumber: data.paper_number,
+      name: data.name,
+      calculatorAllowedDefault: data.calculator_allowed_default,
+      createdAt: data.created_at,
+    } : undefined;
+  },
+
+  createPaper: async (paper: any): Promise<any> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .insert({
+        subject_id: paper.subjectId,
+        paper_number: paper.paperNumber,
+        name: paper.name,
+        calculator_allowed_default: paper.calculatorAllowedDefault,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperNumber: data.paper_number,
+      name: data.name,
+      calculatorAllowedDefault: data.calculator_allowed_default,
+      createdAt: data.created_at,
+    };
+  },
+
+  getQuestionTypes: async (subjectId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('question_types')
+      .select('*')
+      .eq('subject_id', subjectId);
+
+    if (error) throw error;
+    return (data || []).map((row: any) => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperId: row.paper_id,
+      unitId: row.unit_id,
+      topicId: row.topic_id,
+      typeId: row.type_id,
+      title: row.title,
+      difficultyMin: row.difficulty_min,
+      difficultyMax: row.difficulty_max,
+      marksMin: row.marks_min,
+      marksMax: row.marks_max,
+      calculatorAllowed: row.calculator_allowed,
+      diagramTemplateId: row.diagram_template_id,
+      tags: row.tags || [],
+      createdAt: row.created_at,
     }));
+  },
+
+  getQuestionTypesByTopic: async (topicId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('question_types')
+      .select('*')
+      .eq('topic_id', topicId);
+
+    if (error) throw error;
+    return (data || []).map((row: any) => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperId: row.paper_id,
+      unitId: row.unit_id,
+      topicId: row.topic_id,
+      typeId: row.type_id,
+      title: row.title,
+      difficultyMin: row.difficulty_min,
+      difficultyMax: row.difficulty_max,
+      marksMin: row.marks_min,
+      marksMax: row.marks_max,
+      calculatorAllowed: row.calculator_allowed,
+      diagramTemplateId: row.diagram_template_id,
+      tags: row.tags || [],
+      createdAt: row.created_at,
+    }));
+  },
+
+  createQuestionType: async (qt: any): Promise<any> => {
+    const { data, error } = await supabase
+      .from('question_types')
+      .insert({
+        subject_id: qt.subjectId,
+        paper_id: qt.paperId,
+        unit_id: qt.unitId,
+        topic_id: qt.topicId,
+        type_id: qt.typeId,
+        title: qt.title,
+        difficulty_min: qt.difficultyMin,
+        difficulty_max: qt.difficultyMax,
+        marks_min: qt.marksMin,
+        marks_max: qt.marksMax,
+        calculator_allowed: qt.calculatorAllowed,
+        diagram_template_id: qt.diagramTemplateId,
+        tags: qt.tags || [],
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperId: data.paper_id,
+      unitId: data.unit_id,
+      topicId: data.topic_id,
+      typeId: data.type_id,
+      title: data.title,
+      difficultyMin: data.difficulty_min,
+      difficultyMax: data.difficulty_max,
+      marksMin: data.marks_min,
+      marksMax: data.marks_max,
+      calculatorAllowed: data.calculator_allowed,
+      diagramTemplateId: data.diagram_template_id,
+      tags: data.tags || [],
+      createdAt: data.created_at,
+    };
+  },
+
+  getCoverageSettings: async (subjectId: string): Promise<any | undefined> => {
+    const { data, error } = await supabase
+      .from('coverage_settings')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? {
+      id: data.id,
+      subjectId: data.subject_id,
+      minPromptsPerQuestionType: data.min_prompts_per_question_type,
+      minPromptsPerTopic: data.min_prompts_per_topic,
+      minPromptsPerUnit: data.min_prompts_per_unit,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    } : undefined;
+  },
+
+  createCoverageSettings: async (settings: any): Promise<any> => {
+    const { data, error } = await supabase
+      .from('coverage_settings')
+      .insert({
+        subject_id: settings.subjectId,
+        min_prompts_per_question_type: settings.minPromptsPerQuestionType || 10,
+        min_prompts_per_topic: settings.minPromptsPerTopic || 50,
+        min_prompts_per_unit: settings.minPromptsPerUnit || 200,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      id: data.id,
+      subjectId: data.subject_id,
+      minPromptsPerQuestionType: data.min_prompts_per_question_type,
+      minPromptsPerTopic: data.min_prompts_per_topic,
+      minPromptsPerUnit: data.min_prompts_per_unit,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+  },
+
+  updateCoverageSettings: async (id: string, settings: any): Promise<void> => {
+    const dbUpdates: any = {};
+    if (settings.minPromptsPerQuestionType !== undefined) dbUpdates.min_prompts_per_question_type = settings.minPromptsPerQuestionType;
+    if (settings.minPromptsPerTopic !== undefined) dbUpdates.min_prompts_per_topic = settings.minPromptsPerTopic;
+    if (settings.minPromptsPerUnit !== undefined) dbUpdates.min_prompts_per_unit = settings.minPromptsPerUnit;
+
+    const { error } = await supabase
+      .from('coverage_settings')
+      .update(dbUpdates)
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  // ===== COVERAGE FUNCTIONS =====
+
+  getPapers: async (subjectId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .order('paper_number');
+
+    if (error) throw error;
+    return (data || []).map((row: any) => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperNumber: row.paper_number,
+      name: row.name,
+      calculatorAllowedDefault: row.calculator_allowed_default,
+      createdAt: row.created_at,
+    })),
   },
 
   getPaper: async (paperId: string): Promise<any | undefined> => {
