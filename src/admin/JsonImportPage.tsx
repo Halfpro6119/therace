@@ -10,7 +10,6 @@ import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader } from 'lucide-
 import {
   parseQuestionsJson,
   validateQuestion,
-  normalizedToDbFormat,
   type NormalizedQuestion,
   type ValidationResult,
 } from './jsonNormalizer';
@@ -52,11 +51,11 @@ export function JsonImportPage() {
 
       setPreviews(previews);
       setStep('preview');
-      showToast(`Detected ${previews.length} questions`, 'success');
+      showToast('success', `Detected ${previews.length} questions`);
     } catch (error) {
       showToast(
-        `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
+        `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   };
@@ -67,7 +66,7 @@ export function JsonImportPage() {
       : previews;
 
     if (toImport.length === 0) {
-      showToast('No questions to import', 'warning');
+      showToast('info', 'No questions to import');
       return;
     }
 
@@ -92,11 +91,11 @@ export function JsonImportPage() {
       });
 
       setStep('complete');
-      showToast(`Imported ${toImport.length} questions`, 'success');
+      showToast('success', `Imported ${toImport.length} questions`);
     } catch (error) {
       showToast(
-        `Import error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
+        `Import error: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
       setStep('preview');
     } finally {
