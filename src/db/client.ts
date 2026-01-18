@@ -867,7 +867,6 @@ export const db = {
 
   // ===== COVERAGE FUNCTIONS =====
 
-  getPapers: async (subjectId: string): Promise<any[]> => {
     const { data, error } = await supabase
       .from('papers')
       .select('*')
