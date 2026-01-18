@@ -17,6 +17,8 @@ export function DiagramTemplatesPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { confirm } = useConfirm();
+  const engineTemplates = useState(() => getAllTemplates())[0];
+  const engineTemplateIds = useState(() => new Set(engineTemplates.map(t => t.templateId)))[0];
   const [templates, setTemplates] = useState<DisplayTemplate[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,6 @@ export function DiagramTemplatesPage() {
       }));
 
       // Load engine templates
-      const engineTemplates = getAllTemplates();
       const engineTemplateMap = new Map(dbTemplates.map(t => [t.templateId, t]));
 
       // Merge engine templates with database templates
@@ -366,7 +367,9 @@ export function DiagramTemplatesPage() {
               <div key={template.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                   <div className="w-full h-40 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center overflow-hidden">
-                    {template.engineMode === 'auto' ? (
+                    {(() => {
+                      const canAutoRender = template.engineMode === 'auto' || engineTemplateIds.has(template.templateId);
+                      return canAutoRender ? (
                       <DiagramRenderer
                         metadata={{
                           mode: 'auto',
@@ -379,7 +382,8 @@ export function DiagramTemplatesPage() {
                       <div dangerouslySetInnerHTML={{ __html: template.baseSvgData }} />
                     ) : (
                       <div className="text-gray-400 text-sm">No preview</div>
-                    )}
+                    );
+                    })()}
                   </div>
                 </div>
 
