@@ -744,7 +744,7 @@
   }
 
   .diagram-svg-wrapper {
-    @apply flex items-center justify-center;
+    @apply flex items-center justify-center min-h-[300px];
   }
 
   .diagram-svg-wrapper svg {
