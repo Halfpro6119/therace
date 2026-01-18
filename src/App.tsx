@@ -34,6 +34,7 @@ import { ImportLogPage } from './admin/ops/ImportLogPage';
 import { CoveragePage } from './admin/CoveragePage';
 import { DiagramMetadataManager } from './admin/DiagramMetadataManager';
 import { DiagramMetadataImporter } from './admin/DiagramMetadataImporter';
+import { JsonImportPage } from './admin/JsonImportPage';
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
 import { CommandPalette } from './components/CommandPalette';
@@ -60,6 +61,7 @@ function App() {
           <Route path="coverage" element={<CoveragePage />} />
           <Route path="diagram-metadata" element={<DiagramMetadataManager />} />
           <Route path="diagram-import" element={<DiagramMetadataImporter />} />
+          <Route path="json-import" element={<JsonImportPage />} />
           <Route path="ops" element={<ContentOpsHome />} />
           <Route path="ops/subjects/:subjectId" element={<SubjectOpsDetail />} />
           <Route path="ops/import-log" element={<ImportLogPage />} />
