@@ -15,6 +15,7 @@ import {
   listMissingQuestionTypes,
 } from '../utils/coverageComputation';
 import { MATHS_TAXONOMY } from '../config/taxonomy/maths';
+import { AlertCircle, CheckCircle, AlertTriangle, TrendingUp, BookOpen, Zap } from 'lucide-react';
 
 interface CoveragePageProps {
   subjectId?: string;
@@ -39,6 +40,8 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
   const [settings, setSettings] = useState<CoverageSettings | null>(null);
   const [coverage, setCoverage] = useState<SubjectCoverageSummary | null>(null);
   const [showMissingOnly, setShowMissingOnly] = useState(false);
+  const [expandedPapers, setExpandedPapers] = useState<Set<string>>(new Set());
+  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
@@ -213,6 +216,59 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
     }
   }
 
+  const togglePaperExpanded = (paperId: string) => {
+    const newSet = new Set(expandedPapers);
+    if (newSet.has(paperId)) {
+      newSet.delete(paperId);
+    } else {
+      newSet.add(paperId);
+    }
+    setExpandedPapers(newSet);
+  };
+
+  const toggleUnitExpanded = (unitId: string) => {
+    const newSet = new Set(expandedUnits);
+    if (newSet.has(unitId)) {
+      newSet.delete(unitId);
+    } else {
+      newSet.add(unitId);
+    }
+    setExpandedUnits(newSet);
+  };
+
+  const getStatusIcon = (status: 'ok' | 'warning' | 'missing') => {
+    switch (status) {
+      case 'ok':
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'warning':
+        return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
+      case 'missing':
+        return <AlertCircle className="w-4 h-4 text-red-600" />;
+    }
+  };
+
+  const getStatusColor = (status: 'ok' | 'warning' | 'missing') => {
+    switch (status) {
+      case 'ok':
+        return 'bg-green-50 border-green-200';
+      case 'warning':
+        return 'bg-yellow-50 border-yellow-200';
+      case 'missing':
+        return 'bg-red-50 border-red-200';
+    }
+  };
+
+  const getStatusBadgeColor = (status: 'ok' | 'warning' | 'missing') => {
+    switch (status) {
+      case 'ok':
+        return 'bg-green-100 text-green-800';
+      case 'warning':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'missing':
+        return 'bg-red-100 text-red-800';
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -264,8 +320,9 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
           <button
             onClick={seedMathsTaxonomy}
             disabled={seeding}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
           >
+            <Zap className="w-4 h-4" />
             {seeding ? 'Seeding...' : 'Seed Maths Taxonomy'}
           </button>
         )}
@@ -273,29 +330,31 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
 
       {/* Taxonomy Warning */}
       {taxonomyMissing && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800 font-semibold">⚠️ Taxonomy Missing</p>
-          <p className="text-yellow-700 text-sm mt-1">
-            No question types defined yet. Click "Seed Maths Taxonomy" to load the default structure.
-          </p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex gap-3">
+          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-yellow-800 font-semibold">⚠️ Taxonomy Missing</p>
+            <p className="text-yellow-700 text-sm mt-1">
+              No question types defined yet. Click "Seed Maths Taxonomy" to load the default structure.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Progress Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {coverage.papers.map(paper => (
-          <div key={paper.paperId} className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-gray-900">{paper.paperName}</h3>
-              <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                paper.status === 'ok' ? 'bg-green-100 text-green-800' :
-                paper.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
-              }`}>
+          <div key={paper.paperId} className={`rounded-lg border p-4 ${getStatusColor(paper.status)}`}>
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-gray-600" />
+                <h3 className="font-semibold text-gray-900">{paper.paperName}</h3>
+              </div>
+              <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusBadgeColor(paper.status)}`}>
                 {paper.status.toUpperCase()}
               </span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-gray-600">Coverage</span>
@@ -312,9 +371,9 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
                   ></div>
                 </div>
               </div>
-              <div className="text-sm text-gray-600">
-                <p>Units: {paper.unitsCoveredCount}/{paper.unitsCount}</p>
-                <p>Prompts: {paper.promptsCount}</p>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>Units: <span className="font-semibold">{paper.unitsCoveredCount}/{paper.unitsCount}</span></p>
+                <p>Prompts: <span className="font-semibold">{paper.promptsCount}</span></p>
               </div>
             </div>
           </div>
@@ -342,24 +401,29 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
       </div>
 
       {/* Missing Content Toggle */}
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="showMissingOnly"
-          checked={showMissingOnly}
-          onChange={(e) => setShowMissingOnly(e.target.checked)}
-          className="rounded"
-        />
-        <label htmlFor="showMissingOnly" className="text-gray-700 font-medium">
-          Show Missing Only
-        </label>
-      </div>
+      {missingTypes.length > 0 && (
+        <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-4">
+          <input
+            type="checkbox"
+            id="showMissingOnly"
+            checked={showMissingOnly}
+            onChange={(e) => setShowMissingOnly(e.target.checked)}
+            className="rounded"
+          />
+          <label htmlFor="showMissingOnly" className="text-gray-700 font-medium">
+            Show Missing Only ({missingTypes.length} types)
+          </label>
+        </div>
+      )}
 
       {/* Missing Question Types Table */}
       {missingTypes.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Missing Question Types</h2>
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              Missing Question Types
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               {missingTypes.length} question type{missingTypes.length !== 1 ? 's' : ''} need{missingTypes.length === 1 ? 's' : ''} more prompts
             </p>
@@ -404,59 +468,92 @@ export function CoveragePage({ subjectId }: CoveragePageProps) {
       {/* Coverage Details by Paper */}
       {coverage.papers.map(paper => (
         <div key={paper.paperId} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h3 className="text-lg font-semibold text-gray-900">{paper.paperName}</h3>
-            <p className="text-sm text-gray-600 mt-1">
-              {paper.averageCoveragePercentage.toFixed(1)}% coverage • {paper.promptsCount} prompts
-            </p>
-          </div>
-          <div className="divide-y divide-gray-200">
-            {paper.units.map(unit => (
-              <div key={unit.unitId} className="px-6 py-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{unit.unitName}</h4>
-                    <p className="text-sm text-gray-600">
-                      {unit.topicsCoveredCount}/{unit.topicsCount} topics covered
-                    </p>
-                  </div>
-                  <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                    unit.status === 'ok' ? 'bg-green-100 text-green-800' :
-                    unit.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {unit.averageCoveragePercentage.toFixed(0)}%
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {unit.topics.map(topic => (
-                    <div key={topic.topicId} className="ml-4 p-3 bg-gray-50 rounded">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium text-gray-900">{topic.topicName}</p>
-                          <p className="text-xs text-gray-600">
-                            {topic.populatedQuestionTypesCount}/{topic.requiredQuestionTypesCount} types • {topic.promptsCount} prompts
-                          </p>
-                        </div>
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                          topic.status === 'ok' ? 'bg-green-100 text-green-800' :
-                          topic.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {topic.coveragePercentage.toFixed(0)}%
-                        </span>
-                      </div>
-                      {topic.missingTypes.length > 0 && (
-                        <div className="text-xs text-red-600 mt-2">
-                          Missing: {topic.missingTypes.map(m => m.typeId).join(', ')}
-                        </div>
-                      )}
+          <button
+            onClick={() => togglePaperExpanded(paper.paperId)}
+            className="w-full px-6 py-4 border-b border-gray-200 bg-gray-50 hover:bg-gray-100 flex justify-between items-center"
+          >
+            <div className="text-left">
+              <h3 className="text-lg font-semibold text-gray-900">{paper.paperName}</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                {paper.averageCoveragePercentage.toFixed(1)}% coverage • {paper.promptsCount} prompts
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusBadgeColor(paper.status)}`}>
+                {paper.status.toUpperCase()}
+              </span>
+              <span className="text-gray-400">
+                {expandedPapers.has(paper.paperId) ? '▼' : '▶'}
+              </span>
+            </div>
+          </button>
+
+          {expandedPapers.has(paper.paperId) && (
+            <div className="divide-y divide-gray-200">
+              {paper.units.map(unit => (
+                <div key={unit.unitId} className="px-6 py-4">
+                  <button
+                    onClick={() => toggleUnitExpanded(unit.unitId)}
+                    className="w-full flex justify-between items-start mb-3 hover:opacity-75"
+                  >
+                    <div className="text-left">
+                      <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                        {getStatusIcon(unit.status)}
+                        {unit.unitName}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {unit.topicsCoveredCount}/{unit.topicsCount} topics covered
+                      </p>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusBadgeColor(unit.status)}`}>
+                        {unit.averageCoveragePercentage.toFixed(0)}%
+                      </span>
+                      <span className="text-gray-400">
+                        {expandedUnits.has(unit.unitId) ? '▼' : '▶'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {expandedUnits.has(unit.unitId) && (
+                    <div className="space-y-2 mt-3">
+                      {unit.topics.map(topic => (
+                        <div key={topic.topicId} className="ml-4 p-3 bg-gray-50 rounded border border-gray-200">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <p className="font-medium text-gray-900 flex items-center gap-2">
+                                {getStatusIcon(topic.status)}
+                                {topic.topicName}
+                              </p>
+                              <p className="text-xs text-gray-600 mt-1">
+                                {topic.populatedQuestionTypesCount}/{topic.requiredQuestionTypesCount} types • {topic.promptsCount} prompts
+                              </p>
+                            </div>
+                            <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusBadgeColor(topic.status)}`}>
+                              {topic.coveragePercentage.toFixed(0)}%
+                            </span>
+                          </div>
+                          {topic.missingTypes.length > 0 && (
+                            <div className="text-xs text-red-600 mt-2 bg-red-50 p-2 rounded">
+                              <p className="font-semibold mb-1">Missing types:</p>
+                              <div className="space-y-1">
+                                {topic.missingTypes.map(m => (
+                                  <div key={m.questionTypeId} className="flex justify-between">
+                                    <span>{m.typeId}</span>
+                                    <span className="text-red-700 font-semibold">{m.currentPromptsCount}/{m.requiredPromptsCount}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
     </div>
