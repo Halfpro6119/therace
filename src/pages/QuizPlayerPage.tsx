@@ -322,10 +322,17 @@ export function QuizPlayerPage() {
     const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
     const correctCount = solvedPrompts.size;
     
-    // IMPORTANT: Calculate accuracy based on TOTAL questions attempted
-    // In Fix-It mode, quizPrompts only contains missed questions
-    // So we need to count: correct + missed in THIS attempt
-    const totalQuestionsInThisAttempt = solvedPrompts.size + missedPrompts.size;
+    // Calculate missed prompts: any question not in solvedPrompts
+    const allPromptIds = new Set(quizPrompts.map(p => p.id));
+    const calculatedMissedPrompts = new Set(
+      Array.from(allPromptIds).filter(id => !solvedPrompts.has(id))
+    );
+    
+    // Use explicitly marked missed prompts if any, otherwise use calculated
+    const finalMissedPrompts = missedPrompts.size > 0 ? missedPrompts : calculatedMissedPrompts;
+    
+    // Calculate accuracy based on total questions in this attempt
+    const totalQuestionsInThisAttempt = solvedPrompts.size + finalMissedPrompts.size;
     const accuracy = totalQuestionsInThisAttempt > 0 
       ? correctCount / totalQuestionsInThisAttempt 
       : 0;
@@ -336,7 +343,7 @@ export function QuizPlayerPage() {
       startedAt: new Date(quizStartTime).toISOString(),
       finishedAt: new Date().toISOString(),
       correctPromptIds: Array.from(solvedPrompts),
-      missedPromptIds: Array.from(missedPrompts),
+      missedPromptIds: Array.from(finalMissedPrompts),
       timeTakenSec: timeTaken,
       accuracyPct: accuracy * 100,
     };
