@@ -674,7 +674,7 @@ export const db = {
       createdAt: row.created_at,
     })),
 
-  getPaper: async (paperId: string): Promise<any | undefined> => {
+  async getPaper(paperId: string): Promise<any | undefined> {
     const { data, error } = await supabase
       .from('papers')
       .select('*')
@@ -884,7 +884,7 @@ export const db = {
     })),
   },
 
-  getPaper: async (paperId: string): Promise<any | undefined> => {
+  async getPaper(paperId: string): Promise<any | undefined> {
     const { data, error } = await supabase
       .from('papers')
       .select('*')
