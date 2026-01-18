@@ -9,15 +9,46 @@ const STORAGE_KEYS = {
   SAVED_QUIZZES: 'grade9sprint_saved_quizzes',
 };
 
+/**
+ * Finalize an attempt - lock it to prevent mutations
+ * This ensures data integrity after quiz completion
+ */
+function finalizeAttempt(attempt: Attempt): Attempt {
+  return Object.freeze({
+    ...attempt,
+    correctPromptIds: Object.freeze([...attempt.correctPromptIds]),
+    missedPromptIds: Object.freeze([...attempt.missedPromptIds]),
+  }) as Attempt;
+}
+
 export const storage = {
   getAttempts: (): Attempt[] => {
     const data = localStorage.getItem(STORAGE_KEYS.ATTEMPTS);
     return data ? JSON.parse(data) : [];
   },
 
+  /**
+   * Get all attempts for a specific quiz
+   * Returns attempts in chronological order (oldest first)
+   */
+  getAttemptsByQuizId: (quizId: string): Attempt[] => {
+    const attempts = storage.getAttempts();
+    return attempts.filter(a => a.quizId === quizId);
+  },
+
   saveAttempt: (attempt: Attempt): void => {
     const attempts = storage.getAttempts();
-    attempts.push(attempt);
+    
+    // Prevent duplicate saves - check if attempt with same ID already exists
+    const existingIndex = attempts.findIndex(a => a.id === attempt.id);
+    if (existingIndex >= 0) {
+      console.warn(`Attempt ${attempt.id} already exists, skipping duplicate save`);
+      return;
+    }
+    
+    // Finalize the attempt before saving
+    const finalizedAttempt = finalizeAttempt(attempt);
+    attempts.push(finalizedAttempt);
     localStorage.setItem(STORAGE_KEYS.ATTEMPTS, JSON.stringify(attempts));
   },
 
