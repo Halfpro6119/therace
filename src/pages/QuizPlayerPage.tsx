@@ -321,7 +321,14 @@ export function QuizPlayerPage() {
 
     const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
     const correctCount = solvedPrompts.size;
-    const accuracy = correctCount / quizPrompts.length;
+    
+    // IMPORTANT: Calculate accuracy based on TOTAL questions attempted
+    // In Fix-It mode, quizPrompts only contains missed questions
+    // So we need to count: correct + missed in THIS attempt
+    const totalQuestionsInThisAttempt = solvedPrompts.size + missedPrompts.size;
+    const accuracy = totalQuestionsInThisAttempt > 0 
+      ? correctCount / totalQuestionsInThisAttempt 
+      : 0;
 
     const attempt: Attempt = {
       id: `attempt-${Date.now()}`,
