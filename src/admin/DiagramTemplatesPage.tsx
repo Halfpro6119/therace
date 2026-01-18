@@ -377,6 +377,7 @@ export function DiagramTemplatesPage() {
                           params: template.defaults || {}
                         } as DiagramMetadata}
                         showWarnings={false}
+                        fitToContainer={true}
                       />
                     ) : template.baseSvgData ? (
                       <div dangerouslySetInnerHTML={{ __html: template.baseSvgData }} />

@@ -7,12 +7,17 @@ interface DiagramRendererProps {
   metadata: DiagramMetadata;
   className?: string;
   showWarnings?: boolean;
+  /**
+   * If true, force the rendered <svg> to fit its parent container (used for thumbnail previews).
+   * This does not change any outer styling, only injects width/height/preserveAspectRatio on the root <svg>.
+   */
+  fitToContainer?: boolean;
 }
 
 const templateCache = new Map<string, DiagramTemplate>();
 const assetCache = new Map<string, Diagram>();
 
-export function DiagramRenderer({ metadata, className = '', showWarnings = false }: DiagramRendererProps) {
+export function DiagramRenderer({ metadata, className = '', showWarnings = false, fitToContainer = false }: DiagramRendererProps) {
   const [template, setTemplate] = useState<DiagramTemplate | null>(null);
   const [asset, setAsset] = useState<Diagram | null>(null);
   const [loading, setLoading] = useState(true);
@@ -144,7 +149,7 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
     return null;
   }
 
-  if (!renderedSvg) {
+  if (!fittedSvg) {
     if (showWarnings && warnings.length > 0) {
       return (
         <div className="diagram-renderer-warning bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
@@ -176,10 +181,10 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
         </div>
       )}
       <div className="diagram-container">
-        {renderedSvg && (
+        {fittedSvg && (
           <div
             className="diagram-svg-wrapper"
-            dangerouslySetInnerHTML={{ __html: renderedSvg }}
+            dangerouslySetInnerHTML={{ __html: fittedSvg }}
           />
         )}
         {metadata.caption && (
