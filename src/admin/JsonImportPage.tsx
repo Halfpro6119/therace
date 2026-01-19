@@ -12,7 +12,6 @@ import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } 
 import {
   parseQuestionsJson,
   validateQuestion,
-  normalizedToDbFormat,
   type NormalizedQuestion,
   type ValidationResult,
 } from './jsonNormalizer';
@@ -167,6 +166,8 @@ export function JsonImportPage() {
             };
           }
 
+          console.log('Importing question with meta:', JSON.stringify(meta, null, 2));
+
           // Create the prompt with full metadata
           await db.createPrompt({
             subjectId: importSubject.id,
@@ -182,6 +183,7 @@ export function JsonImportPage() {
           
           result.imported++;
         } catch (error) {
+          console.error('Error importing question:', error);
           result.errors.push({
             index: preview.index,
             message: error instanceof Error ? error.message : 'Unknown error',
@@ -194,6 +196,7 @@ export function JsonImportPage() {
       setStep('complete');
       showToast('success', `Imported ${result.imported} question${result.imported !== 1 ? 's' : ''}`);
     } catch (error) {
+      console.error('Fatal import error:', error);
       showToast(
         'error',
         `Import error: ${error instanceof Error ? error.message : 'Unknown error'}`
