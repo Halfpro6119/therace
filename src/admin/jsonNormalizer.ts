@@ -121,6 +121,9 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
 
   // Extract diagram metadata (FULL SUPPORT)
   const diagram = normalizeDiagram(raw);
+  
+  console.log('[normalizeQuestion] Input has diagram:', !!raw.diagram);
+  console.log('[normalizeQuestion] Normalized diagram:', diagram);
 
   return {
     prompt,
