@@ -81,9 +81,15 @@ export function parseQuestionsJson(input: string): NormalizedQuestion[] {
   }
 
   // Normalize each question
+  console.log('[parseQuestionsJson] Parsed items:', parsed.length);
+  console.log('[parseQuestionsJson] First item:', JSON.stringify(parsed[0], null, 2));
+  
   return parsed
     .filter((item: any) => item && typeof item === 'object')
-    .map((item: any) => normalizeQuestion(item));
+    .map((item: any) => {
+      console.log('[parseQuestionsJson] Processing item with diagram:', !!item.diagram);
+      return normalizeQuestion(item);
+    });
 }
 
 /**
