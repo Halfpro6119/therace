@@ -1,0 +1,205 @@
+[
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Number",
+    "topic": "Fractions",
+    "type": "short",
+    "question": "What is 1/2 + 1/4?",
+    "answers": ["3/4", "0.75"],
+    "explanation": "Convert to common denominator: 2/4 + 1/4 = 3/4",
+    "hint": "Find a common denominator first",
+    "marks": 2,
+    "calculatorAllowed": true,
+    "drawingRecommended": false
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Geometry",
+    "topic": "Circle Theorems",
+    "type": "short",
+    "question": "What is the angle in a semicircle?",
+    "answers": ["90", "90 degrees"],
+    "explanation": "An angle inscribed in a semicircle is always a right angle (90 degrees)",
+    "hint": "The angle subtended by a diameter at the circumference",
+    "marks": 1,
+    "calculatorAllowed": false,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "angleInSemicircle",
+      "placement": "above",
+      "caption": "Angle in Semicircle",
+      "alt": "Diagram showing angle in semicircle"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Algebra",
+    "topic": "Linear Graphs",
+    "type": "short",
+    "question": "What is the gradient of the line shown?",
+    "answers": ["2"],
+    "explanation": "The gradient (slope) of the line is 2 (rises 2 units for every 1 unit right)",
+    "hint": "Count rise over run: vertical change / horizontal change",
+    "marks": 1,
+    "calculatorAllowed": true,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "linearAxesLine",
+      "placement": "inline",
+      "caption": "Linear Graph",
+      "alt": "Diagram showing straight line on axes"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Trigonometry",
+    "topic": "Right Triangles",
+    "type": "short",
+    "question": "In the right triangle, what is sin(θ)?",
+    "answers": ["opposite/hypotenuse", "0.6"],
+    "explanation": "In a right triangle, sine of an angle equals the opposite side divided by the hypotenuse",
+    "hint": "sin = opposite / hypotenuse",
+    "marks": 2,
+    "calculatorAllowed": true,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "rightTriangle",
+      "placement": "below",
+      "caption": "Right Triangle Trigonometry",
+      "alt": "Diagram of right triangle with labeled sides"
+    }
+  },
+  {
+    "subject": "Science",
+    "examBoard": "Edexcel Higher",
+    "unit": "Physics",
+    "topic": "Circuits",
+    "type": "short",
+    "question": "What is the total resistance in a series circuit with 2Ω, 3Ω, and 5Ω resistors?",
+    "answers": ["10", "10 ohms"],
+    "explanation": "Total resistance = 2 + 3 + 5 = 10 ohms",
+    "hint": "In series, resistances add together",
+    "marks": 1,
+    "calculatorAllowed": false,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "circuitSeries",
+      "placement": "side",
+      "caption": "Series Circuit",
+      "alt": "Diagram of resistors in series"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Geometry",
+    "topic": "Isosceles Triangles",
+    "type": "short",
+    "question": "What is the base angle of an isosceles triangle with apex angle 40°?",
+    "answers": ["70", "70 degrees"],
+    "explanation": "If apex angle is 40°, each base angle is (180° - 40°) / 2 = 70°",
+    "hint": "The two base angles are equal in an isosceles triangle",
+    "marks": 2,
+    "calculatorAllowed": true,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "isoscelesTriangle",
+      "placement": "above",
+      "caption": "Isosceles Triangle",
+      "alt": "Diagram of isosceles triangle with equal sides marked"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Statistics",
+    "topic": "Data Analysis",
+    "type": "short",
+    "question": "What is the median value shown in the box plot?",
+    "answers": ["5", "5.0"],
+    "explanation": "The median (middle value) is represented by the vertical line inside the box",
+    "hint": "The median is shown by the line inside the box",
+    "marks": 1,
+    "calculatorAllowed": false,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "boxPlot",
+      "placement": "inline",
+      "caption": "Box Plot Diagram",
+      "alt": "Diagram showing box plot with quartiles"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Geometry",
+    "topic": "Bearings",
+    "type": "short",
+    "question": "What is the bearing from A to B?",
+    "answers": ["045", "45 degrees"],
+    "explanation": "The bearing from point A to point B is 045 degrees (or N45°E)",
+    "hint": "Bearings are measured clockwise from North",
+    "marks": 1,
+    "calculatorAllowed": false,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "bearings",
+      "placement": "below",
+      "caption": "Bearings Diagram",
+      "alt": "Diagram showing compass bearings"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Sets",
+    "topic": "Venn Diagrams",
+    "type": "short",
+    "question": "How many elements are in set A only (not in B)?",
+    "answers": ["3"],
+    "explanation": "The region in A but not in B contains 3 elements",
+    "hint": "Count the elements in the left circle but not in the overlap",
+    "marks": 1,
+    "calculatorAllowed": false,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "vennTwoSet",
+      "placement": "side",
+      "caption": "Two-Set Venn Diagram",
+      "alt": "Diagram showing two overlapping sets"
+    }
+  },
+  {
+    "subject": "Maths",
+    "examBoard": "Edexcel Higher",
+    "unit": "Geometry",
+    "topic": "Pythagoras",
+    "type": "short",
+    "question": "What is the length of the diagonal of a cuboid with dimensions 3, 4, 5?",
+    "answers": ["7.07", "√50"],
+    "explanation": "The space diagonal of a 3×4×5 cuboid is √(9+16+25) = √50 ≈ 7.07",
+    "hint": "Use 3D Pythagoras: d² = 3² + 4² + 5²",
+    "marks": 2,
+    "calculatorAllowed": true,
+    "drawingRecommended": true,
+    "diagram": {
+      "mode": "template",
+      "templateId": "pythagorasCuboid",
+      "placement": "above",
+      "caption": "Cuboid with Diagonal",
+      "alt": "3D diagram of cuboid showing space diagonal"
+    }
+  }
+]

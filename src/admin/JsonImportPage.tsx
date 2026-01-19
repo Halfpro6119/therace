@@ -4,6 +4,7 @@
  * Improved admin interface for importing questions via JSON
  * Supports multiple formats with strict validation and preview
  * Integrates with database for actual import
+ * NOW SUPPORTS FULL METADATA INCLUDING DIAGRAMS
  */
 
 import { useState } from 'react';
@@ -146,31 +147,37 @@ export function JsonImportPage() {
       for (let i = 0; i < toImport.length; i++) {
         const preview = toImport[i];
         try {
-          const dbFormat = normalizedToDbFormat(preview.normalized);
+          const normalized = preview.normalized;
           
+          // Build complete metadata object with ALL fields
+          const meta: any = {
+            calculatorAllowed: normalized.calculatorAllowed,
+            drawingRecommended: normalized.drawingRecommended,
+          };
+
+          // Add diagram metadata if present
+          if (normalized.diagram) {
+            meta.diagram = {
+              mode: normalized.diagram.mode,
+              templateId: normalized.diagram.templateId,
+              placement: normalized.diagram.placement,
+              caption: normalized.diagram.caption,
+              alt: normalized.diagram.alt,
+              ...(normalized.diagram.params && { params: normalized.diagram.params }),
+            };
+          }
+
+          // Create the prompt with full metadata
           await db.createPrompt({
             subjectId: importSubject.id,
             unitId: importUnit.id,
             topicId: importTopic.id,
             type: 'short',
-            question: dbFormat.prompt,
-            answers: dbFormat.answers,
-            hint: dbFormat.hint,
-            explanation: dbFormat.explanation,
-            meta: {
-              calculatorAllowed: dbFormat.calculatorAllowed,
-              drawingRecommended: dbFormat.drawingRecommended,
-              ...(dbFormat.diagramMode && {
-                diagram: {
-                  mode: dbFormat.diagramMode,
-                  templateId: dbFormat.diagramTemplateId,
-                  placement: dbFormat.diagramPlacement,
-                  caption: dbFormat.diagramCaption,
-                  alt: dbFormat.diagramAlt,
-                  params: dbFormat.diagramParamsJson ? JSON.parse(dbFormat.diagramParamsJson) : undefined,
-                },
-              }),
-            },
+            question: normalized.prompt,
+            answers: normalized.answersAccepted,
+            hint: normalized.hint,
+            explanation: normalized.fullSolution,
+            meta: meta,
           });
           
           result.imported++;
@@ -206,13 +213,26 @@ export function JsonImportPage() {
       prompt: "What is 2 + 2?",
       answers: ["4"],
       fullSolution: "2 + 2 = 4",
-      hint: "Count on your fingers"
+      hint: "Count on your fingers",
+      marks: 1,
+      calculatorAllowed: false,
+      drawingRecommended: false
     },
     {
-      prompt: "What is the capital of France?",
-      answers: ["Paris"],
-      fullSolution: "The capital of France is Paris",
-      hint: "It's a major European city"
+      prompt: "What is the angle in a semicircle?",
+      answers: ["90", "90 degrees"],
+      fullSolution: "An angle inscribed in a semicircle is always a right angle (90 degrees)",
+      hint: "The angle subtended by a diameter at the circumference",
+      marks: 1,
+      calculatorAllowed: false,
+      drawingRecommended: true,
+      diagram: {
+        mode: "template",
+        templateId: "angleInSemicircle",
+        placement: "above",
+        caption: "Angle in Semicircle",
+        alt: "Diagram showing angle in semicircle"
+      }
     }
   ], null, 2);
 
@@ -221,7 +241,7 @@ export function JsonImportPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">JSON Question Import</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Import questions from JSON. Supports single objects, arrays, or wrapped payloads.
+          Import questions from JSON with full metadata support including diagrams, hints, solutions, and more.
         </p>
       </div>
 
@@ -327,6 +347,7 @@ export function JsonImportPage() {
                       <p className="font-semibold text-sm">Q{preview.index + 1}: {preview.prompt}</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                         {preview.answerCount} answer{preview.answerCount !== 1 ? 's' : ''}
+                        {preview.normalized.diagram && ' • Has diagram'}
                       </p>
                       {preview.validation.errors.length > 0 && (
                         <div className="mt-2 space-y-1">

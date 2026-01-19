@@ -3,6 +3,13 @@
  * 
  * Handles multiple JSON formats and schema variants with strict normalization
  * and defensive parsing to prevent crashes.
+ * 
+ * NOW SUPPORTS FULL METADATA:
+ * - Diagram information (mode, templateId, placement, caption, alt, params)
+ * - Calculator settings
+ * - Drawing recommendations
+ * - Marks/points
+ * - Hints and solutions
  */
 
 export interface NormalizedQuestion {
@@ -82,6 +89,7 @@ export function parseQuestionsJson(input: string): NormalizedQuestion[] {
 /**
  * Normalize a single question object
  * Handles both schema variants and missing fields
+ * NOW SUPPORTS FULL METADATA
  */
 export function normalizeQuestion(raw: any): NormalizedQuestion {
   if (!raw || typeof raw !== 'object') {
@@ -111,7 +119,7 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
   // Extract drawing recommended
   const drawingRecommended = extractBoolean(raw.drawingRecommended || raw.drawing_recommended);
 
-  // Extract diagram metadata
+  // Extract diagram metadata (FULL SUPPORT)
   const diagram = normalizeDiagram(raw);
 
   return {
@@ -166,12 +174,13 @@ export function normalizeAnswerList(rawAnswerField: unknown): string[] {
 /**
  * Normalize diagram metadata
  * Handles both object format and flat fields
+ * FULL METADATA SUPPORT
  */
 function normalizeDiagram(raw: any): NormalizedQuestion['diagram'] | undefined {
   // Check for diagram object
   if (raw.diagram && typeof raw.diagram === 'object') {
     const diagram = raw.diagram;
-    const mode = extractString(diagram.mode || 'auto') as any;
+    const mode = extractString(diagram.mode || 'template') as any;
     
     if (!['auto', 'template', 'asset'].includes(mode)) {
       return undefined;
