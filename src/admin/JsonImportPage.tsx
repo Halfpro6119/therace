@@ -157,7 +157,7 @@ export function JsonImportPage() {
 
           // Build diagram metadata object
           let diagramMetadata: any = null;
-          if (normalized.diagram) {
+          if (normalized.diagram && normalized.diagram.templateId) {
             diagramMetadata = {
               mode: normalized.diagram.mode,
               templateId: normalized.diagram.templateId,
