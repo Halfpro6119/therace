@@ -18,6 +18,7 @@ import {
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { db } from '../db/client';
+import { supabase } from '../db/client';
 
 type Step = 'input' | 'preview' | 'importing' | 'complete';
 
@@ -148,28 +149,16 @@ export function JsonImportPage() {
         try {
           const normalized = preview.normalized;
           
-          // Build complete metadata object with ALL fields
+          // Build metadata object for prompts.meta field
           const meta: any = {
             calculatorAllowed: normalized.calculatorAllowed,
             drawingRecommended: normalized.drawingRecommended,
           };
 
-          // Add diagram metadata if present
-          if (normalized.diagram) {
-            meta.diagram = {
-              mode: normalized.diagram.mode,
-              templateId: normalized.diagram.templateId,
-              placement: normalized.diagram.placement,
-              caption: normalized.diagram.caption,
-              alt: normalized.diagram.alt,
-              ...(normalized.diagram.params && { params: normalized.diagram.params }),
-            };
-          }
-
           console.log('Importing question with meta:', JSON.stringify(meta, null, 2));
 
-          // Create the prompt with full metadata
-          await db.createPrompt({
+          // Create the prompt with metadata
+          const createdPrompt = await db.createPrompt({
             subjectId: importSubject.id,
             unitId: importUnit.id,
             topicId: importTopic.id,
@@ -180,6 +169,35 @@ export function JsonImportPage() {
             explanation: normalized.fullSolution,
             meta: meta,
           });
+
+          // If diagram metadata exists, create a diagram_metadata record
+          if (normalized.diagram) {
+            console.log('Creating diagram metadata for prompt:', createdPrompt.id);
+            
+            const diagramMetadata = {
+              diagram_id: createdPrompt.id, // Using prompt ID as diagram ID for now
+              metadata: {
+                mode: normalized.diagram.mode,
+                templateId: normalized.diagram.templateId,
+                placement: normalized.diagram.placement,
+                caption: normalized.diagram.caption,
+                alt: normalized.diagram.alt,
+                ...(normalized.diagram.params && { params: normalized.diagram.params }),
+              },
+              version: 1,
+            };
+
+            const { error: diagramError } = await supabase
+              .from('diagram_metadata')
+              .insert(diagramMetadata);
+
+            if (diagramError) {
+              console.warn('Warning: Could not create diagram metadata:', diagramError);
+              // Don't fail the import if diagram metadata fails
+            } else {
+              console.log('Diagram metadata created successfully');
+            }
+          }
           
           result.imported++;
         } catch (error) {
