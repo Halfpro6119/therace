@@ -144,10 +144,14 @@ export function JsonImportPage() {
       }
 
       // Import each question
+      console.log('[handleImport] toImport length:', toImport.length);
+      console.log('[handleImport] First preview:', JSON.stringify(toImport[0], null, 2));
+      
       for (let i = 0; i < toImport.length; i++) {
         const preview = toImport[i];
         try {
           const normalized = preview.normalized;
+          console.log('[handleImport] Normalized question:', JSON.stringify(normalized, null, 2));
           
           // Build metadata object for prompts.meta field
           const meta: any = {
