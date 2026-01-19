@@ -155,50 +155,45 @@ export function JsonImportPage() {
             drawingRecommended: normalized.drawingRecommended,
           };
 
+          // Build diagram metadata object
+          let diagramMetadata: any = null;
+          if (normalized.diagram) {
+            diagramMetadata = {
+              mode: normalized.diagram.mode,
+              templateId: normalized.diagram.templateId,
+              placement: normalized.diagram.placement,
+              caption: normalized.diagram.caption,
+              alt: normalized.diagram.alt,
+              ...(normalized.diagram.params && { params: normalized.diagram.params }),
+            };
+          }
+
           console.log('Importing question with meta:', JSON.stringify(meta, null, 2));
+          console.log('Importing question with diagram_metadata:', JSON.stringify(diagramMetadata, null, 2));
 
           // Create the prompt with metadata
-          const createdPrompt = await db.createPrompt({
-            subjectId: importSubject.id,
-            unitId: importUnit.id,
-            topicId: importTopic.id,
-            type: 'short',
-            question: normalized.prompt,
-            answers: normalized.answersAccepted,
-            hint: normalized.hint,
-            explanation: normalized.fullSolution,
-            meta: meta,
-          });
+          const { data: createdPrompt, error: createError } = await supabase
+            .from('prompts')
+            .insert({
+              subject_id: importSubject.id,
+              unit_id: importUnit.id,
+              topic_id: importTopic.id,
+              type: 'short',
+              question: normalized.prompt,
+              answers: normalized.answersAccepted,
+              hint: normalized.hint,
+              explanation: normalized.fullSolution,
+              meta: meta,
+              diagram_metadata: diagramMetadata,
+            })
+            .select()
+            .single();
 
-          // If diagram metadata exists, create a diagram_metadata record
-          if (normalized.diagram) {
-            console.log('Creating diagram metadata for prompt:', createdPrompt.id);
-            
-            const diagramMetadata = {
-              diagram_id: createdPrompt.id, // Using prompt ID as diagram ID for now
-              metadata: {
-                mode: normalized.diagram.mode,
-                templateId: normalized.diagram.templateId,
-                placement: normalized.diagram.placement,
-                caption: normalized.diagram.caption,
-                alt: normalized.diagram.alt,
-                ...(normalized.diagram.params && { params: normalized.diagram.params }),
-              },
-              version: 1,
-            };
-
-            const { error: diagramError } = await supabase
-              .from('diagram_metadata')
-              .insert(diagramMetadata);
-
-            if (diagramError) {
-              console.warn('Warning: Could not create diagram metadata:', diagramError);
-              // Don't fail the import if diagram metadata fails
-            } else {
-              console.log('Diagram metadata created successfully');
-            }
+          if (createError) {
+            throw new Error(`Database error: ${createError.message}`);
           }
-          
+
+          console.log('Question created successfully:', createdPrompt.id);
           result.imported++;
         } catch (error) {
           console.error('Error importing question:', error);
