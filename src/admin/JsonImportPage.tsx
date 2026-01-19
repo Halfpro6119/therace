@@ -3,18 +3,21 @@
  * 
  * Improved admin interface for importing questions via JSON
  * Supports multiple formats with strict validation and preview
+ * Integrates with database for actual import
  */
 
 import { useState } from 'react';
-import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader } from 'lucide-react';
+import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
 import {
   parseQuestionsJson,
   validateQuestion,
+  normalizedToDbFormat,
   type NormalizedQuestion,
   type ValidationResult,
 } from './jsonNormalizer';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { db } from '../db/client';
 
 type Step = 'input' | 'preview' | 'importing' | 'complete';
 
@@ -26,6 +29,12 @@ interface QuestionPreview {
   normalized: NormalizedQuestion;
 }
 
+interface ImportResult {
+  imported: number;
+  skipped: number;
+  errors: Array<{ index: number; message: string }>;
+}
+
 export function JsonImportPage() {
   const { showToast } = useToast();
   const { confirm } = useConfirm();
@@ -34,12 +43,18 @@ export function JsonImportPage() {
   const [inputText, setInputText] = useState('');
   const [previews, setPreviews] = useState<QuestionPreview[]>([]);
   const [importing, setImporting] = useState(false);
-  const [importResult, setImportResult] = useState<any>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [importOnlyValid, setImportOnlyValid] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   const handleDetect = () => {
     try {
       const normalized = parseQuestionsJson(inputText);
+      
+      if (normalized.length === 0) {
+        showToast('warning', 'No valid questions detected in JSON');
+        return;
+      }
       
       const previews: QuestionPreview[] = normalized.map((q, index) => ({
         index,
@@ -51,7 +66,7 @@ export function JsonImportPage() {
 
       setPreviews(previews);
       setStep('preview');
-      showToast('success', `Detected ${previews.length} questions`);
+      showToast('success', `Detected ${previews.length} question${previews.length !== 1 ? 's' : ''}`);
     } catch (error) {
       showToast(
         'error',
@@ -79,19 +94,98 @@ export function JsonImportPage() {
     setImporting(true);
     setStep('importing');
 
+    const result: ImportResult = {
+      imported: 0,
+      skipped: 0,
+      errors: [],
+    };
+
     try {
-      // TODO: Implement actual import to database
-      // For now, just simulate success
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get default subject for imported questions
+      const subjects = await db.getSubjects();
+      let importSubject = subjects.find(s => s.name === 'Imported Questions');
+      
+      if (!importSubject) {
+        importSubject = await db.createSubject({
+          name: 'Imported Questions',
+          examBoard: 'General',
+          description: 'Questions imported via JSON',
+          icon: '📝',
+          themeColor: 'from-blue-500 to-blue-600',
+        });
+      }
 
-      setImportResult({
-        imported: toImport.length,
-        skipped: previews.length - toImport.length,
-        errors: [],
-      });
+      // Get or create default unit
+      const units = await db.getUnits(importSubject.id);
+      let importUnit = units.find(u => u.name === 'General');
+      
+      if (!importUnit) {
+        importUnit = await db.createUnit({
+          subjectId: importSubject.id,
+          name: 'General',
+          orderIndex: 1,
+          description: 'General imported questions',
+        });
+      }
 
+      // Get or create default topic
+      const topics = await db.getTopics(importSubject.id);
+      let importTopic = topics.find(t => t.name === 'Imported');
+      
+      if (!importTopic) {
+        importTopic = await db.createTopic({
+          subjectId: importSubject.id,
+          unitId: importUnit.id,
+          name: 'Imported',
+          orderIndex: 1,
+          description: 'Imported questions',
+        });
+      }
+
+      // Import each question
+      for (let i = 0; i < toImport.length; i++) {
+        const preview = toImport[i];
+        try {
+          const dbFormat = normalizedToDbFormat(preview.normalized);
+          
+          await db.createPrompt({
+            subjectId: importSubject.id,
+            unitId: importUnit.id,
+            topicId: importTopic.id,
+            type: 'short',
+            question: dbFormat.prompt,
+            answers: dbFormat.answers,
+            hint: dbFormat.hint,
+            explanation: dbFormat.explanation,
+            meta: {
+              calculatorAllowed: dbFormat.calculatorAllowed,
+              drawingRecommended: dbFormat.drawingRecommended,
+              ...(dbFormat.diagramMode && {
+                diagram: {
+                  mode: dbFormat.diagramMode,
+                  templateId: dbFormat.diagramTemplateId,
+                  placement: dbFormat.diagramPlacement,
+                  caption: dbFormat.diagramCaption,
+                  alt: dbFormat.diagramAlt,
+                  params: dbFormat.diagramParamsJson ? JSON.parse(dbFormat.diagramParamsJson) : undefined,
+                },
+              }),
+            },
+          });
+          
+          result.imported++;
+        } catch (error) {
+          result.errors.push({
+            index: preview.index,
+            message: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+
+      result.skipped = previews.length - toImport.length;
+      setImportResult(result);
       setStep('complete');
-      showToast('success', `Imported ${toImport.length} questions`);
+      showToast('success', `Imported ${result.imported} question${result.imported !== 1 ? 's' : ''}`);
     } catch (error) {
       showToast(
         'error',
@@ -106,6 +200,21 @@ export function JsonImportPage() {
   const validCount = previews.filter(p => p.validation.errors.length === 0).length;
   const warningCount = previews.filter(p => p.validation.warnings.length > 0).length;
   const errorCount = previews.filter(p => p.validation.errors.length > 0).length;
+
+  const exampleJson = JSON.stringify([
+    {
+      prompt: "What is 2 + 2?",
+      answers: ["4"],
+      fullSolution: "2 + 2 = 4",
+      hint: "Count on your fingers"
+    },
+    {
+      prompt: "What is the capital of France?",
+      answers: ["Paris"],
+      fullSolution: "The capital of France is Paris",
+      hint: "It's a major European city"
+    }
+  ], null, 2);
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
@@ -123,12 +232,38 @@ export function JsonImportPage() {
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder={`Paste JSON here. Examples:
-[{"prompt": "Q1?", "answers": ["A1", "A2"]}, ...]
-{"prompt": "Q1?", "answers": ["A1", "A2"]}
-{"questions": [{"prompt": "Q1?", "answers": ["A1", "A2"]}, ...]}`}
+              placeholder={`Paste JSON here. Examples:\n[{"prompt": "Q1?", "answers": ["A1", "A2"]}, ...]\n{"prompt": "Q1?", "answers": ["A1", "A2"]}\n{"questions": [{"prompt": "Q1?", "answers": ["A1", "A2"]}, ...]}`}
               className="w-full h-64 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 font-mono text-sm"
             />
+          </div>
+
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-semibold">Example JSON:</p>
+              <button
+                onClick={() => {
+                  setInputText(exampleJson);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3 h-3" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    Use Example
+                  </>
+                )}
+              </button>
+            </div>
+            <pre className="text-xs overflow-x-auto text-gray-700 dark:text-gray-300">
+              {exampleJson}
+            </pre>
           </div>
 
           <button
@@ -250,6 +385,13 @@ export function JsonImportPage() {
         </div>
       )}
 
+      {step === 'importing' && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
+          <Loader className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-lg font-semibold">Importing questions...</p>
+        </div>
+      )}
+
       {step === 'complete' && importResult && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center gap-3 mb-6">
@@ -269,6 +411,21 @@ export function JsonImportPage() {
               </div>
             )}
           </div>
+
+          {importResult.errors.length > 0 && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900 rounded-lg">
+              <p className="text-sm font-semibold text-red-700 dark:text-red-300 mb-2">
+                Errors ({importResult.errors.length}):
+              </p>
+              <div className="space-y-1">
+                {importResult.errors.map((err, i) => (
+                  <p key={i} className="text-xs text-red-600 dark:text-red-400">
+                    Q{err.index + 1}: {err.message}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button
             onClick={() => {

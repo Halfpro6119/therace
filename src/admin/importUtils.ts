@@ -39,7 +39,7 @@ export interface ImportSummary {
 
 function parseBoolean(value: string | undefined): boolean {
   if (!value) return false;
-  const normalized = value.toLowerCase().trim();
+  const normalized = String(value ?? "").toLowerCase().trim();
   return ['true', '1', 'yes', 'y', 'on'].includes(normalized);
 }
 

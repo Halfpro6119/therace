@@ -128,7 +128,7 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
 
 /**
  * Normalize answer list from various formats
- * Handles: array, pipe-delimited string, single string
+ * Handles: array, pipe-delimited string, single string, numbers
  */
 export function normalizeAnswerList(rawAnswerField: unknown): string[] {
   if (!rawAnswerField) {
@@ -265,7 +265,7 @@ export function validateQuestion(normalized: NormalizedQuestion): ValidationResu
 }
 
 /**
- * Helper: Extract string safely
+ * Helper: Extract string safely - NEVER returns undefined
  */
 function extractString(value: any): string {
   if (typeof value === 'string') return value;
@@ -292,7 +292,7 @@ function extractNumber(value: any, defaultValue: number = 0): number {
 function extractBoolean(value: any): boolean {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'string') {
-    const normalized = value.toLowerCase().trim();
+    const normalized = String(value ?? '').toLowerCase().trim();
     return ['true', '1', 'yes', 'y', 'on'].includes(normalized);
   }
   if (typeof value === 'number') return value !== 0;
@@ -320,9 +320,12 @@ function createDefaultQuestion(): NormalizedQuestion {
 export function normalizedToDbFormat(normalized: NormalizedQuestion): any {
   return {
     prompt: normalized.prompt,
+    question: normalized.prompt, // Alias for compatibility
     answer: normalized.answersAccepted.join('|'), // Pipe-delimited for DB
     answers: normalized.answersAccepted, // Also store as array
     fullSolution: normalized.fullSolution,
+    solution: normalized.fullSolution, // Alias
+    explanation: normalized.fullSolution, // Alias
     hint: normalized.hint,
     marks: normalized.marks,
     calculatorAllowed: normalized.calculatorAllowed,
