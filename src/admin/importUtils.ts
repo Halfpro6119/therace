@@ -514,3 +514,131 @@ export async function importPrompts(
 
   return result;
 }
+
+// -----------------------------
+// JSON IMPORT (for ImportPage)
+// -----------------------------
+
+/**
+ * Parse JSON for the Bulk Import Prompts page.
+ *
+ * Supports:
+ * - Single object
+ * - Array of objects
+ * - Wrapped payload: { questions: [...] } / { prompts: [...] } / { data: [...] }
+ *
+ * Diagram metadata can be provided as either:
+ * - diagram: { mode, templateId, placement, caption, alt, params }
+ * - flat fields: diagramMode, diagramTemplateId, diagramPlacement, diagramCaption, diagramAlt, diagramParamsJson
+ */
+export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
+  const trimmed = String(inputText ?? '').trim();
+  if (!trimmed) return [];
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch (e) {
+    throw new Error(`Invalid JSON: ${e instanceof Error ? e.message : String(e)}`);
+  }
+
+  // unwrap common wrappers
+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+    if (Array.isArray(parsed.questions)) parsed = parsed.questions;
+    else if (Array.isArray(parsed.prompts)) parsed = parsed.prompts;
+    else if (Array.isArray(parsed.data)) parsed = parsed.data;
+    else parsed = [parsed];
+  }
+
+  if (!Array.isArray(parsed)) parsed = [parsed];
+
+  const normalizeAnswers = (answersRaw: any): string[] => {
+    if (answersRaw === null || answersRaw === undefined) return [];
+    if (Array.isArray(answersRaw)) {
+      return answersRaw.map(a => String(a ?? '').trim()).filter(Boolean);
+    }
+    if (typeof answersRaw === 'number') return [String(answersRaw)];
+    if (typeof answersRaw === 'string') {
+      const s = answersRaw.trim();
+      if (!s) return [];
+      if (s.includes('|')) return s.split('|').map(x => x.trim()).filter(Boolean);
+      return [s];
+    }
+    return [];
+  };
+
+  const rows: ImportPromptRow[] = [];
+
+  for (const raw of parsed) {
+    if (!raw || typeof raw !== 'object') continue;
+
+    const answers = normalizeAnswers(raw.answers ?? raw.answer);
+
+    const diagramObj = raw.diagram && typeof raw.diagram === 'object' ? raw.diagram : undefined;
+
+    const diagramMode = String(
+      diagramObj?.mode ?? raw.diagramMode ?? raw.diagram_mode ?? ''
+    ).trim();
+
+    const diagramTemplateId = String(
+      diagramObj?.templateId ?? diagramObj?.template_id ?? raw.diagramTemplateId ?? raw.diagram_template_id ?? ''
+    ).trim();
+
+    const diagramPlacement = String(
+      diagramObj?.placement ?? raw.diagramPlacement ?? raw.diagram_placement ?? ''
+    ).trim();
+
+    const diagramCaption = diagramObj?.caption ?? raw.diagramCaption ?? raw.diagram_caption;
+    const diagramAlt = diagramObj?.alt ?? raw.diagramAlt ?? raw.diagram_alt;
+
+    // params can be object or string; store as JSON string in diagramParamsJson
+    let diagramParamsJson: string | undefined;
+    const paramsRaw =
+      diagramObj?.params ??
+      raw.diagramParams ??
+      raw.diagram_params ??
+      raw.diagramParamsJson ??
+      raw.diagram_params_json;
+
+    if (paramsRaw !== undefined && paramsRaw !== null && paramsRaw !== '') {
+      if (typeof paramsRaw === 'string') {
+        diagramParamsJson = paramsRaw;
+      } else {
+        try {
+          diagramParamsJson = JSON.stringify(paramsRaw);
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    const row: ImportPromptRow = {
+      subject: String(raw.subject ?? '').trim(),
+      examBoard: String(raw.examBoard ?? raw.exam_board ?? '').trim(),
+      unit: String(raw.unit ?? '').trim(),
+      topic: String(raw.topic ?? '').trim(),
+      type: (String(raw.type ?? 'short').trim() as any) || 'short',
+      question: String(raw.question ?? raw.prompt ?? raw.text ?? '').trim(),
+      answers,
+      hint: raw.hint !== undefined ? String(raw.hint) : undefined,
+      explanation: raw.explanation !== undefined ? String(raw.explanation) : undefined,
+      calculatorAllowed: raw.calculatorAllowed !== undefined ? !!raw.calculatorAllowed : undefined,
+      drawingRecommended: raw.drawingRecommended !== undefined ? !!raw.drawingRecommended : undefined,
+    };
+
+    if (diagramMode && ['auto', 'template', 'asset'].includes(diagramMode)) {
+      row.diagramMode = diagramMode as any;
+    }
+    if (diagramTemplateId) row.diagramTemplateId = diagramTemplateId;
+    if (diagramPlacement && ['above', 'below', 'inline', 'side'].includes(diagramPlacement)) {
+      row.diagramPlacement = diagramPlacement as any;
+    }
+    if (diagramCaption !== undefined) row.diagramCaption = String(diagramCaption);
+    if (diagramAlt !== undefined) row.diagramAlt = String(diagramAlt);
+    if (diagramParamsJson) row.diagramParamsJson = diagramParamsJson;
+
+    rows.push(row);
+  }
+
+  return rows;
+}
