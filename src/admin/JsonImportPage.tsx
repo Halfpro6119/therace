@@ -172,20 +172,26 @@ export function JsonImportPage() {
           console.log('Importing question with diagram_metadata:', JSON.stringify(diagramMetadata, null, 2));
 
           // Create the prompt with metadata
+          const insertData: any = {
+            subject_id: importSubject.id,
+            unit_id: importUnit.id,
+            topic_id: importTopic.id,
+            type: 'short',
+            question: normalized.prompt,
+            answers: normalized.answersAccepted,
+            hint: normalized.hint,
+            explanation: normalized.fullSolution,
+            meta: meta,
+          };
+
+          // Only include diagram_metadata if it exists
+          if (diagramMetadata) {
+            insertData.diagram_metadata = diagramMetadata;
+          }
+
           const { data: createdPrompt, error: createError } = await supabase
             .from('prompts')
-            .insert({
-              subject_id: importSubject.id,
-              unit_id: importUnit.id,
-              topic_id: importTopic.id,
-              type: 'short',
-              question: normalized.prompt,
-              answers: normalized.answersAccepted,
-              hint: normalized.hint,
-              explanation: normalized.fullSolution,
-              meta: meta,
-              diagram_metadata: diagramMetadata,
-            })
+            .insert(insertData)
             .select()
             .single();
 
