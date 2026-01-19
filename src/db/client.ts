@@ -33,6 +33,7 @@ const mapTopic = (row: any): Topic => ({
 });
 
 const mapPrompt = (row: any): Prompt => ({
+  diagram_metadata: row.diagram_metadata,
   id: row.id,
   subjectId: row.subject_id,
   unitId: row.unit_id,

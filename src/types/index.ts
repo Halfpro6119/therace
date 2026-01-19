@@ -55,6 +55,14 @@ export interface Prompt {
     drawingRecommended?: boolean;
     [key: string]: any;
   };
+  diagram_metadata?: {
+    mode?: 'auto' | 'template' | 'asset';
+    templateId?: string;
+    placement?: 'above' | 'inline' | 'below' | 'side';
+    caption?: string;
+    alt?: string;
+    params?: Record<string, any>;
+  };
 }
 
 export interface Attempt {
