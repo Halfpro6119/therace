@@ -33,6 +33,8 @@ const mapTopic = (row: any): Topic => ({
 });
 
 const mapPrompt = (row: any): Prompt => ({
+  paperId: row.paper_id,
+  calculatorAllowed: row.calculator_allowed,
   diagram_metadata: row.diagram_metadata,
   id: row.id,
   subjectId: row.subject_id,
@@ -867,4 +869,198 @@ export const db = {
   },
 
   // ===== COVERAGE FUNCTIONS =====
+
+  // ===== PAPERS SERVICE =====
+  /**
+   * List all papers for a given subject
+   * @param subjectId - The subject ID
+   * @returns Array of papers for the subject
+   */
+  listPapersBySubject: async (subjectId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .order('paper_number', { ascending: true });
+
+    if (error) throw error;
+    return (data || []).map(row => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperNumber: row.paper_number,
+      name: row.name,
+      calculatorAllowedDefault: row.calculator_allowed_default,
+      createdAt: row.created_at,
+    }));
+  },
+
+  /**
+   * Get a specific paper by subject and paper number
+   * @param subjectId - The subject ID
+   * @param paperNumber - The paper number (1, 2, or 3)
+   * @returns The paper or undefined if not found
+   */
+  getPaperByNumber: async (subjectId: string, paperNumber: number): Promise<any | undefined> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .eq('paper_number', paperNumber)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperNumber: data.paper_number,
+      name: data.name,
+      calculatorAllowedDefault: data.calculator_allowed_default,
+      createdAt: data.created_at,
+    } : undefined;
+  },
+
+  /**
+   * Get a paper by ID
+   * @param paperId - The paper ID
+   * @returns The paper or undefined if not found
+   */
+  getPaperById: async (paperId: string): Promise<any | undefined> => {
+    const { data, error } = await supabase
+      .from('papers')
+      .select('*')
+      .eq('id', paperId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperNumber: data.paper_number,
+      name: data.name,
+      calculatorAllowedDefault: data.calculator_allowed_default,
+      createdAt: data.created_at,
+    } : undefined;
+  },
+
+  /**
+   * Create or update a paper
+   * @param subjectId - The subject ID
+   * @param paperNumber - The paper number (1, 2, or 3)
+   * @param name - The paper name
+   * @param calculatorAllowedDefault - Whether calculator is allowed by default
+   * @returns The created/updated paper
+   */
+  upsertPaper: async (
+    subjectId: string,
+    paperNumber: number,
+    name: string,
+    calculatorAllowedDefault: boolean
+  ): Promise<any> => {
+    // First try to find existing paper
+    const existing = await db.getPaperByNumber(subjectId, paperNumber);
+
+    if (existing) {
+      // Update existing paper
+      const { data, error } = await supabase
+        .from('papers')
+        .update({
+          name,
+          calculator_allowed_default: calculatorAllowedDefault,
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return {
+        id: data.id,
+        subjectId: data.subject_id,
+        paperNumber: data.paper_number,
+        name: data.name,
+        calculatorAllowedDefault: data.calculator_allowed_default,
+        createdAt: data.created_at,
+      };
+    } else {
+      // Create new paper
+      const { data, error } = await supabase
+        .from('papers')
+        .insert({
+          subject_id: subjectId,
+          paper_number: paperNumber,
+          name,
+          calculator_allowed_default: calculatorAllowedDefault,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return {
+        id: data.id,
+        subjectId: data.subject_id,
+        paperNumber: data.paper_number,
+        name: data.name,
+        calculatorAllowedDefault: data.calculator_allowed_default,
+        createdAt: data.created_at,
+      };
+    }
+  },
+
+  /**
+   * Update a paper
+   * @param paperId - The paper ID
+   * @param updates - Fields to update
+   * @returns The updated paper
+   */
+  updatePaper: async (paperId: string, updates: any): Promise<any> => {
+    const dbUpdates: any = {};
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.calculatorAllowedDefault !== undefined) {
+      dbUpdates.calculator_allowed_default = updates.calculatorAllowedDefault;
+    }
+
+    const { data, error } = await supabase
+      .from('papers')
+      .update(dbUpdates)
+      .eq('id', paperId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      id: data.id,
+      subjectId: data.subject_id,
+      paperNumber: data.paper_number,
+      name: data.name,
+      calculatorAllowedDefault: data.calculator_allowed_default,
+      createdAt: data.created_at,
+    };
+  },
+
+  /**
+   * Delete a paper
+   * @param paperId - The paper ID
+   */
+  deletePaper: async (paperId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('papers')
+      .delete()
+      .eq('id', paperId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Get count of questions assigned to a paper
+   * @param paperId - The paper ID
+   * @returns Count of questions
+   */
+  getQuestionCountForPaper: async (paperId: string): Promise<number> => {
+    const { count, error } = await supabase
+      .from('prompts')
+      .select('*', { count: 'exact', head: true })
+      .eq('paper_id', paperId);
+
+    if (error) throw error;
+    return count || 0;
+  },
 };

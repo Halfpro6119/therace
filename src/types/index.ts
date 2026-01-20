@@ -48,6 +48,8 @@ export interface Prompt {
   type: PromptType;
   question: string;
   answers: string[];
+  paperId?: string;
+  calculatorAllowed?: boolean;
   hint?: string;
   explanation?: string;
   meta?: {
@@ -303,4 +305,14 @@ export interface DiagramValidationResult {
   ok: boolean;
   warnings: string[];
   errors: string[];
+}
+
+// ===== PAPERS =====
+export interface Paper {
+  id: string;
+  subjectId: string;
+  paperNumber: 1 | 2 | 3;
+  name: string;
+  calculatorAllowedDefault: boolean;
+  createdAt: string;
 }

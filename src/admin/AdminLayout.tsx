@@ -98,6 +98,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { path: '/admin/subjects', icon: BookOpen, label: 'Subjects' },
     { path: '/admin/units', icon: Layers, label: 'Units' },
     { path: '/admin/topics', icon: Tag, label: 'Topics' },
+    { path: '/admin/papers', icon: FileText, label: 'Papers' },
     { path: '/admin/prompts', icon: FileText, label: 'Prompts' },
     { path: '/admin/diagrams', icon: Image, label: 'Diagrams' },
     { path: '/admin/diagram-templates', icon: Layout, label: 'Diagram Templates' },

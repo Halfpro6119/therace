@@ -18,6 +18,7 @@ import { ImportPage } from './admin/ImportPage';
 import { SubjectsPage as AdminSubjectsPage } from './admin/SubjectsPage';
 import { UnitsPage } from './admin/UnitsPage';
 import { TopicsPage } from './admin/TopicsPage';
+import { PapersPage } from './admin/PapersPage';
 import { PromptsPage } from './admin/PromptsPage';
 import { DiagramsPage } from './admin/DiagramsPage';
 import { DiagramEditor } from './admin/DiagramEditor';
@@ -53,6 +54,7 @@ function App() {
           <Route path="subjects" element={<AdminSubjectsPage />} />
           <Route path="units" element={<UnitsPage />} />
           <Route path="topics" element={<TopicsPage />} />
+          <Route path="papers" element={<PapersPage />} />
           <Route path="prompts" element={<PromptsPage />} />
           <Route path="diagrams" element={<DiagramsPage />} />
           <Route path="diagram-templates" element={<DiagramTemplatesPage />} />
