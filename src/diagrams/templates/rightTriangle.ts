@@ -69,7 +69,6 @@ export const rightTriangle: DiagramEngineTemplate = {
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; font-style: italic; }
     .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
-    .diagram-right-angle-square { fill: rgba(59, 130, 246, 0.15); stroke: #3b82f6; stroke-width: 1.5; filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5)); }
   </style>
 
   <g id="grp:main">
@@ -87,7 +86,7 @@ export const rightTriangle: DiagramEngineTemplate = {
 
     ${showRightAngleMark ? `
     <!-- Hologram-like right angle square at C (the right angle vertex) -->
-    <rect id="mk:rightAngle" x="${ccx - rightAngleSize}" y="${ccy}" width="${rightAngleSize}" height="${rightAngleSize}" class="diagram-right-angle-square"/>
+    <rect id="mk:rightAngle" x="${ccx - rightAngleSize}" y="${ccy}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
     ` : ''}
 
     ${showSideLabels ? `
