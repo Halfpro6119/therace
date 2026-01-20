@@ -53,13 +53,22 @@ export const rightTriangle: DiagramEngineTemplate = {
     const ccx = bx;
     const ccy = cy - opposite;
 
+    // Calculate angle mark position - place it on the outside of the triangle
+    // Position it further away from the triangle to avoid overlap
+    const angleMarkDistance = 50;
+    const angleMarkX = ax + angleMarkDistance * Math.cos(angleRad);
+    const angleMarkY = ay - angleMarkDistance * Math.sin(angleRad);
+
+    // Right angle mark size
+    const rightAngleSize = 15;
+
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
     .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
     .diagram-point { fill: #cbd5e1; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; font-style: italic; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
     .diagram-right-angle { stroke: #94a3b8; stroke-width: 2; fill: none; }
   </style>
 
@@ -76,7 +85,11 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:B" x="${bx + 10}" y="${by + 5}" class="diagram-text">${labelB}</text>
     <text id="txt:C" x="${ccx + 10}" y="${ccy + 5}" class="diagram-text">${labelC}</text>
 
-    ${showRightAngleMark ? `<rect id="mk:rightAngle" x="${bx - 15}" y="${by - 15}" width="15" height="15" class="diagram-right-angle"/>` : ''}
+    ${showRightAngleMark ? `
+    <!-- Right angle mark at B (always 90 degrees) -->
+    <line x1="${bx - rightAngleSize}" y1="${by}" x2="${bx - rightAngleSize}" y2="${by - rightAngleSize}" class="diagram-right-angle"/>
+    <line x1="${bx - rightAngleSize}" y1="${by - rightAngleSize}" x2="${bx}" y2="${by - rightAngleSize}" class="diagram-right-angle"/>
+    ` : ''}
 
     ${showSideLabels ? `
     <text id="txt:adjacent" x="${(ax + bx) / 2}" y="${ay + 25}" text-anchor="middle" class="diagram-text-side">${labelAdjacent}</text>
@@ -84,7 +97,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:hypotenuse" x="${(ax + ccx) / 2 - 30}" y="${(ay + ccy) / 2 - 10}" text-anchor="middle" class="diagram-text-side">${labelHypotenuse}</text>
     ` : ''}
 
-    ${showAngleLabel ? `<text id="txt:angle" x="${ax + 30}" y="${ay - 15}" class="diagram-text-angle">${angleValue}°</text>` : ''}
+    ${showAngleLabel ? `<text id="txt:angle" x="${angleMarkX}" y="${angleMarkY - 10}" class="diagram-text-angle">${angleValue}°</text>` : ''}
   </g>
 </svg>`;
 
