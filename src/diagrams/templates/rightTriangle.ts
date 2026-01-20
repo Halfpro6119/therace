@@ -59,8 +59,8 @@ export const rightTriangle: DiagramEngineTemplate = {
     const angleMarkY = ay - angleMarkDistance * Math.sin(angleRad);
 
     // Right angle mark size (hologram square)
-    // The right angle is at point C (ccx, ccy) where the two perpendicular sides meet
-    // Position the square INSIDE the triangle, starting from the right angle point
+    // The right angle is at point C where the two perpendicular sides meet
+    // The square needs to be rotated -90 degrees to align with the triangle
     const rightAngleSize = 12;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -86,8 +86,10 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:C" x="${ccx + 10}" y="${ccy + 5}" class="diagram-text">${labelC}</text>
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at the actual right angle (where perpendicular sides meet at C) -->
-    <rect id="mk:rightAngle" x="${ccx - rightAngleSize}" y="${ccy - rightAngleSize}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
+    <!-- Hologram-like right angle square at C, rotated to align with the triangle -->
+    <g transform="translate(${ccx}, ${ccy}) rotate(-90)">
+      <rect id="mk:rightAngle" x="${-rightAngleSize / 2}" y="${-rightAngleSize / 2}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
+    </g>
     ` : ''}
 
     ${showSideLabels ? `

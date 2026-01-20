@@ -50,6 +50,13 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     // Right angle mark size (hologram square)
     // The right angle is at point C where the two lines from A and B meet
     const rightAngleSize = 12;
+    
+    // Calculate the angle to rotate the square to align with the angle at C
+    // The angle between CA and CB
+    const angleCA = Math.atan2(cy - ay, cx - ax);
+    const angleCB = Math.atan2(cy - by, cx - bx);
+    const midAngle = (angleCA + angleCB) / 2;
+    const rotationAngle = (midAngle * 180) / Math.PI;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -79,8 +86,10 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at the actual right angle (where the two lines meet at C) -->
-    <rect id="mk:rightAngle" x="${cx - rightAngleSize}" y="${cy - rightAngleSize}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
+    <!-- Hologram-like right angle square at C, rotated to align with the angle -->
+    <g transform="translate(${cx}, ${cy}) rotate(${rotationAngle})">
+      <rect id="mk:rightAngle" x="${-rightAngleSize / 2}" y="${-rightAngleSize / 2}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
+    </g>
     ` : ''}
     ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 25}" y="${cy + 15}" class="diagram-text-angle">90°</text>` : ''}
   </g>
