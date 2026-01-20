@@ -62,7 +62,7 @@ export function QuizPlayerPage() {
   const currentPrompt = quizPrompts[currentPromptIndex];
   const isMathsSubject = quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
   const calculatorAllowed = currentPrompt?.meta?.calculatorAllowed === true;
-  const diagramMetadata = currentPrompt?.meta?.diagram as DiagramMetadata | undefined;
+  const diagramMetadata = (currentPrompt?.meta?.diagram || (currentPrompt as any)?.diagram_metadata) as DiagramMetadata | undefined;
 
   useEffect(() => {
     localStorage.setItem('mathsToolkit_open', toolkitOpen.toString());

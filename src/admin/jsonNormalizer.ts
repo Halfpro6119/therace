@@ -81,13 +81,10 @@ export function parseQuestionsJson(input: string): NormalizedQuestion[] {
   }
 
   // Normalize each question
-  console.log('[parseQuestionsJson] Parsed items:', parsed.length);
-  console.log('[parseQuestionsJson] First item:', JSON.stringify(parsed[0], null, 2));
   
   return parsed
     .filter((item: any) => item && typeof item === 'object')
     .map((item: any) => {
-      console.log('[parseQuestionsJson] Processing item with diagram:', !!item.diagram);
       return normalizeQuestion(item);
     });
 }
@@ -128,8 +125,6 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
   // Extract diagram metadata (FULL SUPPORT)
   const diagram = normalizeDiagram(raw);
   
-  console.log('[normalizeQuestion] Input has diagram:', !!raw.diagram);
-  console.log('[normalizeQuestion] Normalized diagram:', diagram);
 
   return {
     prompt,
