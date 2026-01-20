@@ -1,3 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Tell Netlify's secret scanner to ignore these env var names in build output
+  # These are VITE_ prefixed variables which are intentionally embedded in the client bundle
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

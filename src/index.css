@@ -743,13 +743,49 @@
     @apply shadow-sm;
   }
 
+  /* Hologram Effect Styles */
   .diagram-svg-wrapper {
+    position: relative;
+    background: rgb(var(--surface));
     @apply flex items-center justify-center min-h-[300px];
+    border-radius: 12px;
+    overflow: hidden;
   }
 
   .diagram-svg-wrapper svg {
+    position: relative;
+    z-index: 1;
     @apply max-w-full h-auto;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Hologram glow effect - subtle and static */
+  .diagram-svg-wrapper svg line,
+  .diagram-svg-wrapper svg circle,
+  .diagram-svg-wrapper svg path,
+  .diagram-svg-wrapper svg rect {
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+  }
+
+  .diagram-svg-wrapper svg text {
+    filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
+    font-weight: 600;
+  }
+
+  /* Light blue fill for shapes */
+  .diagram-svg-wrapper svg [fill="#cbd5e1"],
+  .diagram-svg-wrapper svg circle {
+    fill: rgba(59, 130, 246, 0.15) !important;
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+  }
+
+  /* Solid blue lines */
+  .diagram-svg-wrapper svg line,
+  .diagram-svg-wrapper svg [stroke="#94a3b8"],
+  .diagram-svg-wrapper svg [stroke="#3b82f6"] {
+    stroke: #3b82f6 !important;
+    stroke-width: 2.5 !important;
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
   }
 
   .diagram-caption {

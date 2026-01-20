@@ -5,6 +5,7 @@
  * - Multiple accepted answers (pipe-delimited or array)
  * - Common mathematical variants (0.5 vs 1/2, etc.)
  * - Prevents partial/incorrect matches
+ * - DEFENSIVE: Never crashes on undefined/null values
  */
 
 /**
@@ -12,11 +13,15 @@
  * - Trim whitespace
  * - Convert to lowercase
  * - Handle common mathematical variants
+ * DEFENSIVE: Safely handles undefined/null/non-string values
  */
-export function normalizeAnswer(answer: string): string {
-  if (!answer || typeof answer !== 'string') return '';
+export function normalizeAnswer(answer: unknown): string {
+  // Defensive: Convert to string safely, never call toLowerCase on undefined
+  const str = String(answer ?? '').trim();
   
-  let normalized = answer.trim().toLowerCase();
+  if (!str) return '';
+  
+  let normalized = str.toLowerCase();
   
   // Handle common mathematical variants
   // 0.5 <-> 1/2
@@ -48,19 +53,31 @@ export function normalizeAnswer(answer: string): string {
  * - Array of strings: ['answer1', 'answer2']
  * - Pipe-delimited string: 'answer1|answer2'
  * - Single string: 'answer'
+ * DEFENSIVE: Handles undefined/null/non-string values
  */
-export function parseAnswerList(answers: string | string[]): string[] {
+export function parseAnswerList(answers: unknown): string[] {
   if (!answers) return [];
   
   if (Array.isArray(answers)) {
-    return answers.filter(a => typeof a === 'string' && a.trim().length > 0);
+    return answers
+      .map(a => String(a ?? '').trim())
+      .filter(a => a.length > 0);
   }
   
   if (typeof answers === 'string') {
     if (answers.includes('|')) {
-      return answers.split('|').map(a => a.trim()).filter(a => a.length > 0);
+      return answers
+        .split('|')
+        .map(a => a.trim())
+        .filter(a => a.length > 0);
     }
-    return answers.trim().length > 0 ? [answers] : [];
+    const trimmed = answers.trim();
+    return trimmed.length > 0 ? [trimmed] : [];
+  }
+  
+  // Handle numbers
+  if (typeof answers === 'number') {
+    return [String(answers)];
   }
   
   return [];
@@ -72,11 +89,13 @@ export function parseAnswerList(answers: string | string[]): string[] {
  * @param userAnswer - The answer provided by the user
  * @param acceptedAnswers - Array of accepted answers or pipe-delimited string
  * @returns true if the answer is correct, false otherwise
+ * DEFENSIVE: Never crashes on undefined/null values
  */
 export function isAnswerCorrect(
-  userAnswer: string,
-  acceptedAnswers: string | string[]
+  userAnswer: unknown,
+  acceptedAnswers: unknown
 ): boolean {
+  // Defensive: Handle undefined/null
   if (!userAnswer || !acceptedAnswers) return false;
   
   const normalizedUserAnswer = normalizeAnswer(userAnswer);
@@ -95,10 +114,11 @@ export function isAnswerCorrect(
 /**
  * Validate answer with detailed feedback
  * Useful for debugging and testing
+ * DEFENSIVE: Handles undefined/null values
  */
 export function validateAnswerDetailed(
-  userAnswer: string,
-  acceptedAnswers: string | string[]
+  userAnswer: unknown,
+  acceptedAnswers: unknown
 ): {
   isCorrect: boolean;
   normalizedUserAnswer: string;

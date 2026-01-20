@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Upload, FileJson, FileText, CheckCircle, AlertCircle, Loader, Database, BookOpen, Layers, FolderTree } from 'lucide-react';
 import {
   parseCSV,
+  parseImportJsonPrompts,
   validateImportRows,
   detectDuplicates,
   importPrompts,
@@ -66,8 +67,7 @@ export function ImportPage() {
       let parsed: ImportPromptRow[] = [];
 
       if (inputType === 'json') {
-        const data = JSON.parse(inputText);
-        parsed = Array.isArray(data) ? data : [data];
+        parsed = parseImportJsonPrompts(inputText);
       } else {
         parsed = parseCSV(inputText);
       }
