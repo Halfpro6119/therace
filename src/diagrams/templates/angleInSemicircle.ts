@@ -48,13 +48,30 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const showRightAngleMark = params.visibility?.showRightAngleMark !== false;
 
     // Right angle mark size (hologram square)
-    // The right angle is at point C where the two lines from A and B meet
     const rightAngleSize = 12;
     
-    // Calculate the angle to rotate the square to align with the angle at C
-    // The angle between CA and CB
-    const angleCA = Math.atan2(cy - ay, cx - ax);
-    const angleCB = Math.atan2(cy - by, cx - bx);
+    // Calculate vectors from C to A and C to B
+    const caX = ax - cx;
+    const caY = ay - cy;
+    const cbX = bx - cx;
+    const cbY = by - cy;
+    
+    // Normalize vectors
+    const caLen = Math.sqrt(caX * caX + caY * caY);
+    const cbLen = Math.sqrt(cbX * cbX + cbY * cbY);
+    const caNormX = caX / caLen;
+    const caNormY = caY / caLen;
+    const cbNormX = cbX / cbLen;
+    const cbNormY = cbY / cbLen;
+    
+    // Position the square inside the angle, offset from C
+    const offset = 15;
+    const squareX = cx + (caNormX + cbNormX) * offset;
+    const squareY = cy + (caNormY + cbNormY) * offset;
+    
+    // Calculate the angle to rotate the square
+    const angleCA = Math.atan2(caY, caX);
+    const angleCB = Math.atan2(cbY, cbX);
     const midAngle = (angleCA + angleCB) / 2;
     const rotationAngle = (midAngle * 180) / Math.PI;
 
@@ -86,8 +103,8 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at C, rotated to align with the angle -->
-    <g transform="translate(${cx}, ${cy}) rotate(${rotationAngle})">
+    <!-- Hologram-like right angle square inside the angle at C, rotated to align -->
+    <g transform="translate(${squareX}, ${squareY}) rotate(${rotationAngle})">
       <rect id="mk:rightAngle" x="${-rightAngleSize / 2}" y="${-rightAngleSize / 2}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
     </g>
     ` : ''}
