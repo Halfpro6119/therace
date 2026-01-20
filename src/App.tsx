@@ -24,6 +24,8 @@ import { DiagramEditor } from './admin/DiagramEditor';
 import { DiagramTemplatesPage } from './admin/DiagramTemplatesPage';
 import { DiagramTemplateEditor } from './admin/DiagramTemplateEditor';
 import { DiagramTemplateDetailPage } from './admin/DiagramTemplateDetailPage';
+import { PapersPage } from './admin/PapersPage';
+import { PaperForm } from './admin/PaperForm';
 import { QuizzesPage } from './admin/QuizzesPage';
 import { PlaylistsPage } from './admin/PlaylistsPage';
 import { ToolsPage } from './admin/ToolsPage';
@@ -73,6 +75,9 @@ function App() {
         <Route path="/admin/diagrams/:diagramId" element={<DiagramEditor />} />
         <Route path="/admin/diagram-templates/:templateId" element={<DiagramTemplateEditor />} />
         <Route path="/admin/diagram-templates/view/:id" element={<DiagramTemplateDetailPage />} />
+        <Route path="/admin/papers" element={<PapersPage />} />
+        <Route path="/admin/papers/new" element={<PaperForm />} />
+        <Route path="/admin/papers/:id" element={<PaperForm />} />
 
         <Route
           path="*"
