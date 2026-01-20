@@ -47,6 +47,9 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const showAngleLabel = params.visibility?.showAngleLabel !== false;
     const showRightAngleMark = params.visibility?.showRightAngleMark !== false;
 
+    // Right angle mark size (hologram square)
+    const rightAngleSize = 12;
+
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
     .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
@@ -56,7 +59,6 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; }
     .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #f87171; }
-    .diagram-angle-mark { stroke: #f87171; stroke-width: 2; fill: none; }
   </style>
 
   <g id="grp:main">
@@ -75,7 +77,10 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     <text id="txt:C" x="${cx + 5}" y="${cy - 10}" class="diagram-text">${labelC}</text>
     ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
 
-    ${showRightAngleMark ? `<path id="mk:angleC" d="M ${cx - 15} ${cy + 5} L ${cx - 15} ${cy + 20} L ${cx} ${cy + 20}" class="diagram-angle-mark"/>` : ''}
+    ${showRightAngleMark ? `
+    <!-- Hologram-like right angle square at C (the right angle vertex) -->
+    <rect id="mk:rightAngle" x="${cx - rightAngleSize}" y="${cy}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
+    ` : ''}
     ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 25}" y="${cy + 15}" class="diagram-text-angle">90°</text>` : ''}
   </g>
 </svg>`;
