@@ -58,9 +58,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     const angleMarkX = ax + angleMarkDistance * Math.cos(angleRad);
     const angleMarkY = ay - angleMarkDistance * Math.sin(angleRad);
 
-    // Right angle mark size (hologram square)
-    // The right angle is at point C where the two perpendicular sides meet
-    // The square needs to be rotated -90 degrees to align with the triangle
+    // Right angle mark size
     const rightAngleSize = 12;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -70,6 +68,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; font-style: italic; }
     .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
+    .diagram-right-angle { stroke: #3b82f6; stroke-width: 1.5; fill: none; filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5)); }
   </style>
 
   <g id="grp:main">
@@ -86,10 +85,9 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:C" x="${ccx + 10}" y="${ccy + 5}" class="diagram-text">${labelC}</text>
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at C, rotated to align with the triangle -->
-    <g transform="translate(${ccx}, ${ccy}) rotate(-90)">
-      <rect id="mk:rightAngle" x="${-rightAngleSize / 2}" y="${-rightAngleSize / 2}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
-    </g>
+    <!-- Right angle indicator at C (two perpendicular lines forming an L) -->
+    <line id="mk:rightAngle1" x1="${ccx - rightAngleSize}" y1="${ccy}" x2="${ccx - rightAngleSize}" y2="${ccy - rightAngleSize}" class="diagram-right-angle"/>
+    <line id="mk:rightAngle2" x1="${ccx - rightAngleSize}" y1="${ccy - rightAngleSize}" x2="${ccx}" y2="${ccy - rightAngleSize}" class="diagram-right-angle"/>
     ` : ''}
 
     ${showSideLabels ? `

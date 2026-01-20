@@ -47,10 +47,10 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const showAngleLabel = params.visibility?.showAngleLabel !== false;
     const showRightAngleMark = params.visibility?.showRightAngleMark !== false;
 
-    // Right angle mark size (hologram square)
+    // Right angle mark size
     const rightAngleSize = 12;
     
-    // Calculate vectors from C to A and C to B
+    // Calculate vectors from C to A and C to B to determine the angle orientation
     const caX = ax - cx;
     const caY = ay - cy;
     const cbX = bx - cx;
@@ -64,16 +64,14 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const cbNormX = cbX / cbLen;
     const cbNormY = cbY / cbLen;
     
-    // Position the square inside the angle, offset from C
+    // Position the right angle indicator inside the angle
     const offset = 15;
-    const squareX = cx + (caNormX + cbNormX) * offset;
-    const squareY = cy + (caNormY + cbNormY) * offset;
-    
-    // Calculate the angle to rotate the square
-    const angleCA = Math.atan2(caY, caX);
-    const angleCB = Math.atan2(cbY, cbX);
-    const midAngle = (angleCA + angleCB) / 2;
-    const rotationAngle = (midAngle * 180) / Math.PI;
+    const p1X = cx + caNormX * offset;
+    const p1Y = cy + caNormY * offset;
+    const p2X = cx + (caNormX + cbNormX) * offset;
+    const p2Y = cy + (caNormY + cbNormY) * offset;
+    const p3X = cx + cbNormX * offset;
+    const p3Y = cy + cbNormY * offset;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -84,6 +82,7 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; }
     .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #f87171; }
+    .diagram-right-angle { stroke: #3b82f6; stroke-width: 1.5; fill: none; filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5)); }
   </style>
 
   <g id="grp:main">
@@ -103,10 +102,9 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square inside the angle at C, rotated to align -->
-    <g transform="translate(${squareX}, ${squareY}) rotate(${rotationAngle})">
-      <rect id="mk:rightAngle" x="${-rightAngleSize / 2}" y="${-rightAngleSize / 2}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
-    </g>
+    <!-- Right angle indicator at C (two perpendicular lines forming an L) -->
+    <line id="mk:rightAngle1" x1="${p1X}" y1="${p1Y}" x2="${p2X}" y2="${p2Y}" class="diagram-right-angle"/>
+    <line id="mk:rightAngle2" x1="${p2X}" y1="${p2Y}" x2="${p3X}" y2="${p3Y}" class="diagram-right-angle"/>
     ` : ''}
     ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 25}" y="${cy + 15}" class="diagram-text-angle">90°</text>` : ''}
   </g>
