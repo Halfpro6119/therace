@@ -744,6 +744,7 @@
   }
 
   .diagram-svg-wrapper {
+    background: rgb(var(--surface));
     @apply flex items-center justify-center min-h-[300px];
   }
 
