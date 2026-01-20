@@ -59,7 +59,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     const angleMarkX = ax + angleMarkDistance * Math.cos(angleRad);
     const angleMarkY = ay - angleMarkDistance * Math.sin(angleRad);
 
-    // Right angle mark size (hologram square)
+    // Right angle mark size (hologram square) - positioned at point C
     const rightAngleSize = 12;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -86,8 +86,8 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:C" x="${ccx + 10}" y="${ccy + 5}" class="diagram-text">${labelC}</text>
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at B -->
-    <rect id="mk:rightAngle" x="${bx - rightAngleSize}" y="${by - rightAngleSize}" width="${rightAngleSize}" height="${rightAngleSize}" class="diagram-right-angle-square"/>
+    <!-- Hologram-like right angle square at C (the right angle vertex) -->
+    <rect id="mk:rightAngle" x="${ccx - rightAngleSize}" y="${ccy}" width="${rightAngleSize}" height="${rightAngleSize}" class="diagram-right-angle-square"/>
     ` : ''}
 
     ${showSideLabels ? `
