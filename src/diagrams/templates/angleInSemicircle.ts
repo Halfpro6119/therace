@@ -72,6 +72,17 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const p2Y = cy + (caNormY + cbNormY) * offset;
     const p3X = cx + cbNormX * offset;
     const p3Y = cy + cbNormY * offset;
+    
+    // Position labels outside the circle
+    const labelOffsetA = 30;
+    const labelOffsetB = 30;
+    const labelOffsetC = 30;
+    const labelA_x = ax - labelOffsetA;
+    const labelA_y = ay + 10;
+    const labelB_x = bx + labelOffsetB;
+    const labelB_y = by + 10;
+    const labelC_x = cx + labelOffsetC * Math.cos(cAngle);
+    const labelC_y = cy - labelOffsetC * Math.sin(cAngle);
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -96,17 +107,18 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     <circle id="pt:C" cx="${cx}" cy="${cy}" r="5" class="diagram-point-highlight"/>
     ${showCenter ? `<circle id="pt:O" cx="${centerX}" cy="${centerY}" r="5" class="diagram-point"/>` : ''}
 
-    <text id="txt:A" x="${ax - 20}" y="${ay + 5}" class="diagram-text">${labelA}</text>
-    <text id="txt:B" x="${bx + 10}" y="${by + 5}" class="diagram-text">${labelB}</text>
-    <text id="txt:C" x="${cx + 5}" y="${cy - 10}" class="diagram-text">${labelC}</text>
-    ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
+    <!-- Vertex labels positioned outside the circle -->
+    <text id="txt:A" x="${labelA_x}" y="${labelA_y}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${labelB_x}" y="${labelB_y}" class="diagram-text">${labelB}</text>
+    <text id="txt:C" x="${labelC_x}" y="${labelC_y}" class="diagram-text">${labelC}</text>
+    ${showCenter ? `<text id="txt:O" x="${centerX + 10}" y="${centerY + 25}" class="diagram-text-small">${labelO}</text>` : ''}
 
     ${showRightAngleMark ? `
     <!-- Right angle indicator at C (two perpendicular lines forming an L) -->
     <line id="mk:rightAngle1" x1="${p1X}" y1="${p1Y}" x2="${p2X}" y2="${p2Y}" class="diagram-right-angle"/>
     <line id="mk:rightAngle2" x1="${p2X}" y1="${p2Y}" x2="${p3X}" y2="${p3Y}" class="diagram-right-angle"/>
     ` : ''}
-    ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 25}" y="${cy + 15}" class="diagram-text-angle">90°</text>` : ''}
+    ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 35}" y="${cy + 25}" class="diagram-text-angle">90°</text>` : ''}
   </g>
 </svg>`;
 

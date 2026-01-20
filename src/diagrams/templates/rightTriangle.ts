@@ -80,9 +80,10 @@ export const rightTriangle: DiagramEngineTemplate = {
     <circle id="pt:B" cx="${bx}" cy="${by}" r="4" class="diagram-point"/>
     <circle id="pt:C" cx="${ccx}" cy="${ccy}" r="4" class="diagram-point"/>
 
-    <text id="txt:A" x="${ax - 20}" y="${ay + 5}" class="diagram-text">${labelA}</text>
-    <text id="txt:B" x="${bx + 10}" y="${by + 5}" class="diagram-text">${labelB}</text>
-    <text id="txt:C" x="${ccx + 10}" y="${ccy + 5}" class="diagram-text">${labelC}</text>
+    <!-- Vertex labels positioned outside the triangle -->
+    <text id="txt:A" x="${ax - 25}" y="${ay + 20}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${bx + 15}" y="${by + 20}" class="diagram-text">${labelB}</text>
+    <text id="txt:C" x="${ccx + 15}" y="${ccy - 15}" class="diagram-text">${labelC}</text>
 
     ${showRightAngleMark ? `
     <!-- Right angle indicator at C (two perpendicular lines forming an L) -->
@@ -91,9 +92,10 @@ export const rightTriangle: DiagramEngineTemplate = {
     ` : ''}
 
     ${showSideLabels ? `
-    <text id="txt:adjacent" x="${(ax + bx) / 2}" y="${ay + 25}" text-anchor="middle" class="diagram-text-side">${labelAdjacent}</text>
-    <text id="txt:opposite" x="${bx + 30}" y="${(by + ccy) / 2}" text-anchor="middle" class="diagram-text-side">${labelOpposite}</text>
-    <text id="txt:hypotenuse" x="${(ax + ccx) / 2 - 30}" y="${(ay + ccy) / 2 - 10}" text-anchor="middle" class="diagram-text-side">${labelHypotenuse}</text>
+    <!-- Side labels positioned outside the triangle -->
+    <text id="txt:adjacent" x="${(ax + bx) / 2}" y="${ay + 35}" text-anchor="middle" class="diagram-text-side">${labelAdjacent}</text>
+    <text id="txt:opposite" x="${bx + 50}" y="${(by + ccy) / 2}" text-anchor="middle" class="diagram-text-side">${labelOpposite}</text>
+    <text id="txt:hypotenuse" x="${(ax + ccx) / 2 - 50}" y="${(ay + ccy) / 2 - 20}" text-anchor="middle" class="diagram-text-side">${labelHypotenuse}</text>
     ` : ''}
 
     ${showAngleLabel ? `<text id="txt:angle" x="${angleMarkX}" y="${angleMarkY - 10}" class="diagram-text-angle">${angleValue}°</text>` : ''}
