@@ -47,7 +47,7 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const showAngleLabel = params.visibility?.showAngleLabel !== false;
     const showRightAngleMark = params.visibility?.showRightAngleMark !== false;
 
-    // Right angle mark size (hologram square)
+    // Right angle mark size (hologram square) - positioned inside the angle at point C
     const rightAngleSize = 12;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +78,7 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     ${showCenter ? `<text id="txt:O" x="${centerX + 5}" y="${centerY + 20}" class="diagram-text-small">${labelO}</text>` : ''}
 
     ${showRightAngleMark ? `
-    <!-- Hologram-like right angle square at C (the right angle vertex) -->
+    <!-- Hologram-like right angle square inside the angle at C (the right angle vertex) -->
     <rect id="mk:rightAngle" x="${cx - rightAngleSize}" y="${cy}" width="${rightAngleSize}" height="${rightAngleSize}" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5" style="filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));"/>
     ` : ''}
     ${showAngleLabel ? `<text id="txt:angleC" x="${cx - 25}" y="${cy + 15}" class="diagram-text-angle">90°</text>` : ''}
