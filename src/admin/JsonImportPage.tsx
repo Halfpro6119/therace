@@ -10,7 +10,6 @@
 import { useState, useEffect } from 'react';
 import { Subject, Paper } from '../types';
 import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
-import { Subject, Paper } from '../types';
 import {
   parseQuestionsJson,
   validateQuestion,
