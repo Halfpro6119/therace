@@ -43,10 +43,10 @@ export const isoscelesTriangle: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-point { fill: #cbd5e1; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #3b82f6; }
     .diagram-equal-mark { stroke: #f87171; stroke-width: 2; }
   </style>
 

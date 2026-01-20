@@ -29,10 +29,10 @@ export const circuitSeries: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-wire { stroke: #94a3b8; stroke-width: 3; fill: none; }
-    .diagram-component { stroke: #60a5fa; stroke-width: 3; fill: none; }
-    .diagram-battery-pos { stroke: #94a3b8; stroke-width: 4; }
-    .diagram-battery-neg { stroke: #94a3b8; stroke-width: 2; }
+    .diagram-wire { stroke: #3b82f6; stroke-width: 3; fill: none; }
+    .diagram-component { stroke: #3b82f6; stroke-width: 3; fill: none; }
+    .diagram-battery-pos { stroke: #3b82f6; stroke-width: 4; }
+    .diagram-battery-neg { stroke: #3b82f6; stroke-width: 2; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; text-anchor: middle; }
   </style>
 
@@ -110,10 +110,10 @@ export const circuitParallel: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-wire { stroke: #94a3b8; stroke-width: 3; fill: none; }
-    .diagram-component { stroke: #60a5fa; stroke-width: 3; fill: none; }
-    .diagram-battery-pos { stroke: #94a3b8; stroke-width: 4; }
-    .diagram-battery-neg { stroke: #94a3b8; stroke-width: 2; }
+    .diagram-wire { stroke: #3b82f6; stroke-width: 3; fill: none; }
+    .diagram-component { stroke: #3b82f6; stroke-width: 3; fill: none; }
+    .diagram-battery-pos { stroke: #3b82f6; stroke-width: 4; }
+    .diagram-battery-neg { stroke: #3b82f6; stroke-width: 2; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; text-anchor: middle; }
   </style>
 
@@ -205,11 +205,11 @@ export const rayReflection: DiagramEngineTemplate = {
     </marker>
   </defs>
   <style>
-    .diagram-mirror { stroke: #94a3b8; stroke-width: 4; }
-    .diagram-normal { stroke: #60a5fa; stroke-width: 2; stroke-dasharray: 4,4; }
+    .diagram-mirror { stroke: #3b82f6; stroke-width: 4; }
+    .diagram-normal { stroke: #3b82f6; stroke-width: 2; stroke-dasharray: 4,4; }
     .diagram-ray { stroke: #f87171; stroke-width: 2; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #3b82f6; }
   </style>
 
   <g id="grp:main">
@@ -268,9 +268,9 @@ export const titrationSetup: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-glass { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-liquid { fill: #3b82f6; fill-opacity: 0.3; stroke: #60a5fa; stroke-width: 2; }
-    .diagram-stand { stroke: #94a3b8; stroke-width: 3; fill: none; }
+    .diagram-glass { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-liquid { fill: #3b82f6; fill-opacity: 0.3; stroke: #3b82f6; stroke-width: 2; }
+    .diagram-stand { stroke: #3b82f6; stroke-width: 3; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #e2e8f0; text-anchor: middle; }
   </style>
 

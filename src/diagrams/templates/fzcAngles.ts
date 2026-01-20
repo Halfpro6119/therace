@@ -33,13 +33,13 @@ export const fzcAngles: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-transversal { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-transversal { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-angle1 { fill: #f87171; fill-opacity: 0.3; }
     .diagram-angle2 { fill: #4ade80; fill-opacity: 0.3; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; }
     .diagram-text-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; }
-    .diagram-parallel-mark { stroke: #94a3b8; stroke-width: 2; }
+    .diagram-parallel-mark { stroke: #3b82f6; stroke-width: 2; }
   </style>
 
   <g id="grp:main">

@@ -35,11 +35,11 @@ export const circleTangentRadius: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-tangent { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-circle { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-tangent { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-point-highlight { fill: #3b82f6; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-angle-mark { stroke: #f87171; stroke-width: 2; fill: none; }
   </style>
@@ -113,11 +113,11 @@ export const circleTwoTangents: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-tangent { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-circle { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-tangent { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-point-highlight { fill: #3b82f6; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-equal-mark { stroke: #f87171; stroke-width: 2; }
   </style>
@@ -207,12 +207,12 @@ export const cyclicQuadrilateral: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-quad { fill: #1e40af; fill-opacity: 0.1; stroke: #60a5fa; stroke-width: 2; }
+    .diagram-circle { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-quad { fill: #1e40af; fill-opacity: 0.1; stroke: #3b82f6; stroke-width: 2; }
     .diagram-point { fill: #cbd5e1; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #3b82f6; }
   </style>
 
   <g id="grp:main">

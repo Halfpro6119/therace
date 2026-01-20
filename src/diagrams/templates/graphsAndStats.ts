@@ -45,24 +45,24 @@ export const axesBlank: DiagramEngineTemplate = {
     <g id="grp:grid" opacity="0.2">
       ${Array.from({ length: xMax - xMin + 1 }, (_, i) => {
         const x = padding + i * gridSize;
-        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#3b82f6" stroke-width="1"/>`;
       }).join('\n')}
       ${Array.from({ length: yMax - yMin + 1 }, (_, i) => {
         const y = padding + i * gridSize;
-        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#3b82f6" stroke-width="1"/>`;
       }).join('\n')}
     </g>` : '';
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#3b82f6"/>
     </marker>
   </defs>
   <style>
-    .diagram-axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-axis { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
+    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #3b82f6; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
@@ -135,11 +135,11 @@ export const boxPlot: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #60a5fa; stroke-width: 2; }
+    .diagram-line { stroke: #3b82f6; stroke-width: 2; fill: none; }
+    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #3b82f6; stroke-width: 2; }
     .diagram-median { stroke: #f87171; stroke-width: 3; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #e2e8f0; text-anchor: middle; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #3b82f6; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
@@ -214,15 +214,15 @@ export const functionMachine: DiagramEngineTemplate = {
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead-machine" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#60a5fa"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#3b82f6"/>
     </marker>
   </defs>
   <style>
-    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #60a5fa; stroke-width: 2; rx: 8; }
-    .diagram-arrow { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #3b82f6; stroke-width: 2; rx: 8; }
+    .diagram-arrow { stroke: #3b82f6; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: bold; fill: #e2e8f0; text-anchor: middle; }
-    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; text-anchor: middle; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #3b82f6; text-anchor: middle; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; fill: #3b82f6; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
