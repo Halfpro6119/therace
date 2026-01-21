@@ -1071,4 +1071,251 @@ export const db = {
     if (error) throw error;
     return count || 0;
   },
+
+  // ===== PAPER RELATIONSHIPS =====
+  /**
+   * Get all prompts assigned to a paper
+   */
+  getPromptsByPaper: async (paperId: string): Promise<Prompt[]> => {
+    const { data, error } = await supabase
+      .from('prompts')
+      .select('*')
+      .eq('paper_id', paperId)
+      .order('created_at');
+
+    if (error) throw error;
+    return (data || []).map(mapPrompt);
+  },
+
+  /**
+   * Get all units linked to a paper
+   */
+  getUnitsByPaper: async (paperId: string): Promise<Unit[]> => {
+    const { data, error } = await supabase
+      .from('unit_papers')
+      .select('unit_id')
+      .eq('paper_id', paperId);
+
+    if (error) throw error;
+    
+    const unitIds = (data || []).map(row => row.unit_id);
+    if (unitIds.length === 0) return [];
+
+    const { data: units, error: unitsError } = await supabase
+      .from('units')
+      .select('*')
+      .in('id', unitIds);
+
+    if (unitsError) throw unitsError;
+    return (units || []).map(mapUnit);
+  },
+
+  /**
+   * Get all topics linked to a paper
+   */
+  getTopicsByPaper: async (paperId: string): Promise<Topic[]> => {
+    const { data, error } = await supabase
+      .from('topic_papers')
+      .select('topic_id')
+      .eq('paper_id', paperId);
+
+    if (error) throw error;
+    
+    const topicIds = (data || []).map(row => row.topic_id);
+    if (topicIds.length === 0) return [];
+
+    const { data: topics, error: topicsError } = await supabase
+      .from('topics')
+      .select('*')
+      .in('id', topicIds);
+
+    if (topicsError) throw topicsError;
+    return (topics || []).map(mapTopic);
+  },
+
+  /**
+   * Link a unit to a paper
+   */
+  linkUnitToPaper: async (unitId: string, paperId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('unit_papers')
+      .insert({ unit_id: unitId, paper_id: paperId });
+
+    if (error && error.code !== 'PGRST116') throw error;
+  },
+
+  /**
+   * Link a topic to a paper
+   */
+  linkTopicToPaper: async (topicId: string, paperId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('topic_papers')
+      .insert({ topic_id: topicId, paper_id: paperId });
+
+    if (error && error.code !== 'PGRST116') throw error;
+  },
+
+  /**
+   * Unlink a unit from a paper
+   */
+  unlinkUnitFromPaper: async (unitId: string, paperId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('unit_papers')
+      .delete()
+      .eq('unit_id', unitId)
+      .eq('paper_id', paperId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Unlink a topic from a paper
+   */
+  unlinkTopicFromPaper: async (topicId: string, paperId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('topic_papers')
+      .delete()
+      .eq('topic_id', topicId)
+      .eq('paper_id', paperId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Assign all prompts in a topic to a paper
+   */
+  assignTopicPromptsToPaper: async (topicId: string, paperId: string, onlyUnassigned: boolean = false): Promise<number> => {
+    let query = supabase
+      .from('prompts')
+      .select('id')
+      .eq('topic_id', topicId);
+
+    if (onlyUnassigned) {
+      query = query.is('paper_id', null);
+    }
+
+    const { data: prompts, error: selectError } = await query;
+    if (selectError) throw selectError;
+
+    if (!prompts || prompts.length === 0) return 0;
+
+    const { error: updateError } = await supabase
+      .from('prompts')
+      .update({ paper_id: paperId })
+      .in('id', prompts.map(p => p.id));
+
+    if (updateError) throw updateError;
+
+    await db.linkTopicToPaper(topicId, paperId);
+
+    return prompts.length;
+  },
+
+  /**
+   * Assign all prompts in a unit to a paper
+   */
+  assignUnitPromptsToPaper: async (unitId: string, paperId: string, onlyUnassigned: boolean = false): Promise<number> => {
+    let query = supabase
+      .from('prompts')
+      .select('id')
+      .eq('unit_id', unitId);
+
+    if (onlyUnassigned) {
+      query = query.is('paper_id', null);
+    }
+
+    const { data: prompts, error: selectError } = await query;
+    if (selectError) throw selectError;
+
+    if (!prompts || prompts.length === 0) return 0;
+
+    const { error: updateError } = await supabase
+      .from('prompts')
+      .update({ paper_id: paperId })
+      .in('id', prompts.map(p => p.id));
+
+    if (updateError) throw updateError;
+
+    await db.linkUnitToPaper(unitId, paperId);
+
+    return prompts.length;
+  },
+
+  /**
+   * Assign multiple prompts to a paper
+   */
+  assignPromptsToPaper: async (promptIds: string[], paperId: string): Promise<number> => {
+    if (promptIds.length === 0) return 0;
+
+    const { error } = await supabase
+      .from('prompts')
+      .update({ paper_id: paperId })
+      .in('id', promptIds);
+
+    if (error) throw error;
+    return promptIds.length;
+  },
+
+  /**
+   * Get papers linked to a unit
+   */
+  getPapersForUnit: async (unitId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('unit_papers')
+      .select('paper_id')
+      .eq('unit_id', unitId);
+
+    if (error) throw error;
+
+    const paperIds = (data || []).map(row => row.paper_id);
+    if (paperIds.length === 0) return [];
+
+    const { data: papers, error: papersError } = await supabase
+      .from('papers')
+      .select('*')
+      .in('id', paperIds)
+      .order('paper_number');
+
+    if (papersError) throw papersError;
+    return (papers || []).map(row => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperNumber: row.paper_number,
+      name: row.name,
+      calculatorAllowedDefault: row.calculator_allowed_default,
+      createdAt: row.created_at,
+    }));
+  },
+
+  /**
+   * Get papers linked to a topic
+   */
+  getPapersForTopic: async (topicId: string): Promise<any[]> => {
+    const { data, error } = await supabase
+      .from('topic_papers')
+      .select('paper_id')
+      .eq('topic_id', topicId);
+
+    if (error) throw error;
+
+    const paperIds = (data || []).map(row => row.paper_id);
+    if (paperIds.length === 0) return [];
+
+    const { data: papers, error: papersError } = await supabase
+      .from('papers')
+      .select('*')
+      .in('id', paperIds)
+      .order('paper_number');
+
+    if (papersError) throw papersError;
+    return (papers || []).map(row => ({
+      id: row.id,
+      subjectId: row.subject_id,
+      paperNumber: row.paper_number,
+      name: row.name,
+      calculatorAllowedDefault: row.calculator_allowed_default,
+      createdAt: row.created_at,
+    }));
+  },
+
 };
