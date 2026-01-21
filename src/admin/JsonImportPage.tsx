@@ -10,6 +10,7 @@
 import { useState, useEffect } from 'react';
 import { Subject, Paper } from '../types';
 import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
+import { Subject, Paper } from '../types';
 import {
   parseQuestionsJson,
   validateQuestion,
@@ -56,10 +57,6 @@ export function JsonImportPage() {
   const [selectedPaper, setSelectedPaper] = useState<string>('');
 
   // NEW: Paper assignment support
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [papers, setPapers] = useState<Paper[]>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string>('');
-  const [selectedPaper, setSelectedPaper] = useState<string>('');
 
   const handleDetect = () => {
     try {
@@ -131,27 +128,19 @@ export function JsonImportPage() {
     }
   }, [selectedSubject]);
 
-  const loadSubjects = async () => {
-    try {
-      const data = await db.getSubjects();
-      setSubjects(data);
-      if (data.length > 0) {
-        setSelectedSubject(data[0].id);
-      }
-    } catch (error) {
-      console.error('Failed to load subjects:', error);
-    }
-  };
 
-  const loadPapersForSubject = async () => {
-    if (!selectedSubject) return;
-    try {
-      const data = await db.listPapersBySubject(selectedSubject);
-      setPapers(data);
-    } catch (error) {
-      console.error('Failed to load papers:', error);
+
+  useEffect(() => {
+    loadSubjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedSubject) {
+      loadPapersForSubject();
     }
-  };
+  }, [selectedSubject]);
+
+
 
   const handleImport = async (onlyValid: boolean) => {
     const toImport = onlyValid
@@ -163,14 +152,6 @@ export function JsonImportPage() {
       return;
     }
 
-    const confirmed = await confirm({
-      title: "Import Questions",
-      message: `Import ${toImport.length} question${toImport.length !== 1 ? "s" : ""}?`
-    });
-    const confirmed = await confirm({
-      title: "Import Questions",
-      message: `Import ${toImport.length} question${toImport.length !== 1 ? "s" : ""}?`
-    });
     const confirmed = await confirm({
       title: "Import Questions",
       message: `Import ${toImport.length} question${toImport.length !== 1 ? "s" : ""}?`
@@ -270,6 +251,11 @@ export function JsonImportPage() {
             explanation: normalized.fullSolution,
             meta: meta,
           };
+
+          // NEW: Add paper assignment if selected
+          if (selectedPaper) {
+            insertData.paper_id = selectedPaper;
+          }
 
           // NEW: Add paper assignment if selected
           if (selectedPaper) {
@@ -418,6 +404,44 @@ export function JsonImportPage() {
 
       {step === 'preview' && (
         <div className="space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Import Settings
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Subject
+              </label>
+              <select
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                {subjects.map(s => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Assign to Paper (Optional)
+              </label>
+              <select
+                value={selectedPaper}
+                onChange={(e) => setSelectedPaper(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <option value="">No Paper Assignment</option>
+                {papers.map(p => (
+                  <option key={p.id} value={p.id}>Paper {p.paperNumber}: {p.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Import Settings
