@@ -56,13 +56,16 @@ export function PromptsPage() {
 
       const unitsPromises = subjectsData.map(s => db.getUnits(s.id));
       const topicsPromises = subjectsData.map(s => db.getTopics(s.id));
-      const [unitsData, topicsData] = await Promise.all([
+      const papersPromises = subjectsData.map(s => db.listPapersBySubject(s.id));
+      const [unitsData, topicsData, papersData] = await Promise.all([
         Promise.all(unitsPromises),
         Promise.all(topicsPromises),
+        Promise.all(papersPromises),
       ]);
 
       setUnits(unitsData.flat());
       setTopics(topicsData.flat());
+      setPapers(papersData.flat());
     } catch (error) {
       console.error('Failed to load data:', error);
       showToast('error', 'Failed to load prompts');
@@ -305,6 +308,34 @@ export function PromptsPage() {
                   <option value="multiple-choice">Multiple Choice</option>
                   <option value="true-false">True/False</option>
                 </select>
+
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Paper (optional)
+                </label>
+                <select
+                  value={editingPrompt.paperId || ''}
+                  onChange={(e) => setEditingPrompt({
+                    ...editingPrompt,
+                    paperId: e.target.value ? e.target.value : undefined
+                  })}
+                  className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="">None</option>
+                  {papers
+                    .filter(p => p.subjectId === editingPrompt.subjectId)
+                    .sort((a, b) => a.paperNumber - b.paperNumber)
+                    .map((paper) => (
+                      <option key={paper.id} value={paper.id}>
+                        Paper {paper.paperNumber}: {paper.name}
+                      </option>
+                    ))}
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Assign this prompt to a specific paper so it appears in Paper Master Quizzes.
+                </p>
+              </div>
               </div>
 
               <div>
