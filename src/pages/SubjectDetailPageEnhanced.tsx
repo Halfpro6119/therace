@@ -14,12 +14,14 @@ import { HeatmapGrid } from '../components/HeatmapGrid';
 import { storage } from '../utils/storage';
 import { MasteryLevel, Subject, Quiz, Topic, Paper } from '../types';
 
+type PaperFilter = 'all' | 1 | 2 | 3;
 type TabType = 'topics' | 'units' | 'papers' | 'full' | 'heatmap';
 
 export function SubjectDetailPageEnhanced() {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('topics');
+  const [paperFilter, setPaperFilter] = useState<PaperFilter>('all');
   const [subject, setSubject] = useState<Subject | null>(null);
   const [subjectQuizzes, setSubjectQuizzes] = useState<Quiz[]>([]);
   const [paperMasterQuizzes, setPaperMasterQuizzes] = useState<Quiz[]>([]);
@@ -158,7 +160,39 @@ export function SubjectDetailPageEnhanced() {
         </div>
       </div>
 
-      {/* Tabs */}
+      
+      {/* Paper Filter */}
+      {papers.length > 0 && (
+        <div className="flex justify-end">
+          <div className="inline-flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setPaperFilter('all')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                paperFilter === 'all'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              All Papers
+            </button>
+            {papers.sort((a, b) => a.paperNumber - b.paperNumber).map(paper => (
+              <button
+                key={paper.id}
+                onClick={() => setPaperFilter(paper.paperNumber as PaperFilter)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  paperFilter === paper.paperNumber
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Paper {paper.paperNumber}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+{/* Tabs */}
       <div className="border-b border-gray-200 dark:border-gray-700">
         <div className="flex gap-8 overflow-x-auto">
           {tabs.map(tab => (
@@ -182,7 +216,7 @@ export function SubjectDetailPageEnhanced() {
         {activeTab === 'topics' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {topicQuizzes.map(quiz => (
-              <QuizTile key={quiz.id} quiz={quiz} />
+              <QuizTile key={quiz.id} quiz={quiz} paperFilter={paperFilter} />
             ))}
           </div>
         )}
@@ -190,7 +224,7 @@ export function SubjectDetailPageEnhanced() {
         {activeTab === 'units' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {unitQuizzes.map(quiz => (
-              <QuizTile key={quiz.id} quiz={quiz} />
+              <QuizTile key={quiz.id} quiz={quiz} paperFilter={paperFilter} />
             ))}
           </div>
         )}
@@ -216,7 +250,7 @@ export function SubjectDetailPageEnhanced() {
         {activeTab === 'full' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {fullQuizzes.map(quiz => (
-              <QuizTile key={quiz.id} quiz={quiz} />
+              <QuizTile key={quiz.id} quiz={quiz} paperFilter={paperFilter} />
             ))}
           </div>
         )}
