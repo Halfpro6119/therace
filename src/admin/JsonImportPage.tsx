@@ -17,9 +17,6 @@ import {
 } from './paperAssignmentUtils';
 import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
 import {
-  resolvePaperAssignment,
-  calculatePaperStats,
-  formatPaperAssignment,
   PaperAssignmentResult,
   ImportPaperStats,
 } from './paperAssignmentUtils';
