@@ -1,0 +1,58 @@
+{
+  "questions": [
+    {
+      "prompt": "What is the capital of France?",
+      "answersAccepted": ["Paris"],
+      "hint": "It's in Western Europe",
+      "fullSolution": "Paris is the capital and largest city of France",
+      "paper_number": 1,
+      "unit": "Geography",
+      "topic": "European Capitals"
+    },
+    {
+      "prompt": "What is 2 + 2?",
+      "answersAccepted": ["4"],
+      "hint": "Count on your fingers",
+      "fullSolution": "2 + 2 = 4",
+      "paper_number": 1,
+      "unit": "Mathematics",
+      "topic": "Basic Arithmetic"
+    },
+    {
+      "prompt": "What is the chemical formula for water?",
+      "answersAccepted": ["H2O"],
+      "hint": "Two hydrogen atoms and one oxygen atom",
+      "fullSolution": "Water is H2O (dihydrogen monoxide)",
+      "paper_number": 2,
+      "unit": "Chemistry",
+      "topic": "Chemical Formulas"
+    },
+    {
+      "prompt": "What is photosynthesis?",
+      "answersAccepted": ["Process where plants convert light to chemical energy"],
+      "hint": "Plants use sunlight",
+      "fullSolution": "Photosynthesis is the process by which plants convert light energy into chemical energy",
+      "paper_number": 2,
+      "unit": "Biology",
+      "topic": "Plant Processes"
+    },
+    {
+      "prompt": "What is the speed of light?",
+      "answersAccepted": ["299792458 m/s", "3 x 10^8 m/s", "300000 km/s"],
+      "hint": "Approximately 300,000 km per second",
+      "fullSolution": "The speed of light is approximately 299,792,458 meters per second",
+      "paper_number": 3,
+      "unit": "Physics",
+      "topic": "Light and Waves"
+    },
+    {
+      "prompt": "What is the largest planet in our solar system?",
+      "answersAccepted": ["Jupiter"],
+      "hint": "It's a gas giant",
+      "fullSolution": "Jupiter is the largest planet in our solar system",
+      "paper_number": 3,
+      "unit": "Astronomy",
+      "topic": "Planets"
+    }
+  ]
+}
