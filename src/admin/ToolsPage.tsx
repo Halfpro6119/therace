@@ -13,6 +13,20 @@ export function ToolsPage() {
   const [papers, setPapers] = useState<Paper[]>([]);
   const [selectedPaperNumber, setSelectedPaperNumber] = useState<1 | 2 | 3>(1);
 
+
+
+  const formatError = (err: any): string => {
+    if (!err) return 'Unknown error';
+    if (typeof err === 'string') return err;
+    if (err instanceof Error) return err.message;
+    if (typeof err.message === 'string') return err.message;
+    try {
+      return JSON.stringify(err);
+    } catch {
+      return String(err);
+    }
+  };
+
   useEffect(() => {
     loadSubjects();
   }, []);
@@ -81,7 +95,8 @@ export function ToolsPage() {
       const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
       setResult(`Successfully created ${totalCreated} ${type} quiz${totalCreated !== 1 ? 'zes' : ''} for ${selectedSubject?.name}`);
     } catch (error) {
-      setResult(`Error: ${error}`);
+      console.error(error);
+      setResult(`Error: ${formatError(error)}`);
     } finally {
       setLoading(false);
     }
@@ -114,7 +129,8 @@ export function ToolsPage() {
         setResult(`Successfully created Paper ${num} quiz for ${selectedSubject?.name}`);
       }
     } catch (error) {
-      setResult(`Error: ${error}`);
+      console.error(error);
+      setResult(`Error: ${formatError(error)}`);
     } finally {
       setLoading(false);
     }
@@ -133,7 +149,8 @@ export function ToolsPage() {
         setResult(`Error: ${result.error}`);
       }
     } catch (error) {
-      setResult(`Error: ${error}`);
+      console.error(error);
+      setResult(`Error: ${formatError(error)}`);
     } finally {
       setLoading(false);
     }
