@@ -9,8 +9,22 @@
 
 import { useState, useEffect } from 'react';
 import { Subject, Paper } from '../types';
+import {
+  resolvePaperAssignment,
+  calculatePaperStats,
+  formatPaperAssignment,
+  PaperAssignmentResult,
+  ImportPaperStats,
+} from './paperAssignmentUtils';
 import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
 import { Subject, Paper } from '../types';
+import {
+  resolvePaperAssignment,
+  calculatePaperStats,
+  formatPaperAssignment,
+  PaperAssignmentResult,
+  ImportPaperStats,
+} from './paperAssignmentUtils';
 import {
   parseQuestionsJson,
   validateQuestion,
@@ -30,12 +44,14 @@ interface QuestionPreview {
   answerCount: number;
   validation: ValidationResult;
   normalized: NormalizedQuestion;
+  paperAssignment?: PaperAssignmentResult;
 }
 
 interface ImportResult {
   imported: number;
   skipped: number;
   errors: Array<{ index: number; message: string }>;
+  paperStats?: ImportPaperStats;
 }
 
 export function JsonImportPage() {
@@ -47,6 +63,7 @@ export function JsonImportPage() {
   const [previews, setPreviews] = useState<QuestionPreview[]>([]);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [paperStats, setPaperStats] = useState<ImportPaperStats | null>(null);
   const [importOnlyValid, setImportOnlyValid] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -67,15 +84,26 @@ export function JsonImportPage() {
         return;
       }
       
+      // Calculate paper assignments for preview
+      const paperAssignments = normalized.map(q => 
+        resolvePaperAssignment(q, papers, selectedSubject, selectedPaper)
+      );
+
       const previews: QuestionPreview[] = normalized.map((q, index) => ({
         index,
         prompt: q.prompt.substring(0, 100) + (q.prompt.length > 100 ? '...' : ''),
         answerCount: q.answersAccepted.length,
         validation: validateQuestion(q),
         normalized: q,
+        paperAssignment: paperAssignments[index],
       }));
 
       setPreviews(previews);
+      
+      // Calculate and display paper stats
+      const stats = calculatePaperStats(paperAssignments, papers);
+      setPaperStats(stats);
+      
       setStep('preview');
       showToast('success', `Detected ${previews.length} question${previews.length !== 1 ? 's' : ''}`);
     } catch (error) {
@@ -251,6 +279,17 @@ export function JsonImportPage() {
             explanation: normalized.fullSolution,
             meta: meta,
           };
+
+          // Resolve and add paper assignment
+          const paperAssignment = resolvePaperAssignment(
+            normalized,
+            papers,
+            importSubject.id,
+            selectedPaper
+          );
+          if (paperAssignment.paperId) {
+            insertData.paper_id = paperAssignment.paperId;
+          }
 
           // NEW: Add paper assignment if selected
           if (selectedPaper) {
@@ -442,6 +481,45 @@ export function JsonImportPage() {
             </div>
           </div>
         </div>
+
+        {paperStats && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4 mb-6">
+            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-3">
+              Paper Assignment Summary
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-blue-700 dark:text-blue-300">Assigned to Paper</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{paperStats.assignedToPaper}</p>
+              </div>
+              <div>
+                <p className="text-blue-700 dark:text-blue-300">Unassigned</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{paperStats.unassigned}</p>
+              </div>
+            </div>
+            {Object.entries(paperStats.byPaper).map(([paperNum, count]) => 
+              count > 0 && (
+                <div key={paperNum} className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                  Paper {paperNum}: {count} question{count !== 1 ? 's' : ''}
+                </div>
+              )
+            )}
+            {paperStats.warnings.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-2">Warnings:</p>
+                <ul className="text-xs text-amber-700 dark:text-amber-300 space-y-1">
+                  {paperStats.warnings.slice(0, 5).map((w, i) => (
+                    <li key={i}>• {w}</li>
+                  ))}
+                  {paperStats.warnings.length > 5 && (
+                    <li>• ... and {paperStats.warnings.length - 5} more</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Import Settings
@@ -480,6 +558,45 @@ export function JsonImportPage() {
             </div>
           </div>
         </div>
+
+        {paperStats && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4 mb-6">
+            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-3">
+              Paper Assignment Summary
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-blue-700 dark:text-blue-300">Assigned to Paper</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{paperStats.assignedToPaper}</p>
+              </div>
+              <div>
+                <p className="text-blue-700 dark:text-blue-300">Unassigned</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{paperStats.unassigned}</p>
+              </div>
+            </div>
+            {Object.entries(paperStats.byPaper).map(([paperNum, count]) => 
+              count > 0 && (
+                <div key={paperNum} className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                  Paper {paperNum}: {count} question{count !== 1 ? 's' : ''}
+                </div>
+              )
+            )}
+            {paperStats.warnings.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-2">Warnings:</p>
+                <ul className="text-xs text-amber-700 dark:text-amber-300 space-y-1">
+                  {paperStats.warnings.slice(0, 5).map((w, i) => (
+                    <li key={i}>• {w}</li>
+                  ))}
+                  {paperStats.warnings.length > 5 && (
+                    <li>• ... and {paperStats.warnings.length - 5} more</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Import Settings
