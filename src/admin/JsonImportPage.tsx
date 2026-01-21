@@ -8,7 +8,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Subject, Paper } from '../types';
 import {
   resolvePaperAssignment,
   calculatePaperStats,
@@ -17,7 +16,6 @@ import {
   ImportPaperStats,
 } from './paperAssignmentUtils';
 import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
-import { Subject, Paper } from '../types';
 import {
   resolvePaperAssignment,
   calculatePaperStats,

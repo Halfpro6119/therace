@@ -13,10 +13,11 @@
 
 import { useEffect, useState } from 'react';
 import { db } from '../db/client';
-import { Paper, Subject } from '../types';
+import { Paper, Subject, Unit, Topic, Prompt } from '../types';
 import { Plus, Edit2, Trash2, Save, X, AlertCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { getPaperUnits, getPaperTopics, getPromptsForPaper } from './paperRelationshipService';
 
 export function PapersPage() {
   const { showToast } = useToast();
@@ -28,6 +29,10 @@ export function PapersPage() {
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [editingPaper, setEditingPaper] = useState<Paper | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedPaperView, setSelectedPaperView] = useState<Paper | null>(null);
+  const [paperUnits, setPaperUnits] = useState<Unit[]>([]);
+  const [paperTopics, setPaperTopics] = useState<Topic[]>([]);
+  const [paperPrompts, setPaperPrompts] = useState<Prompt[]>([]);
   const [questionCounts, setQuestionCounts] = useState<Record<string, number>>({});
   const [formData, setFormData] = useState({
     paperNumber: 1 as 1 | 2 | 3,
@@ -58,7 +63,37 @@ export function PapersPage() {
     }
   };
 
-  const loadPapers = async () => {
+  
+
+  const loadPaperDetails = async (paper: Paper) => {
+    try {
+      const [unitsData, topicsData, promptsData] = await Promise.all([
+        getPaperUnits(paper.id),
+        getPaperTopics(paper.id),
+        getPromptsForPaper(paper.id),
+      ]);
+      setPaperUnits(unitsData);
+      setPaperTopics(topicsData);
+      setPaperPrompts(promptsData.map((r: any) => ({
+        id: r.id,
+        subjectId: r.subject_id,
+        unitId: r.unit_id,
+        topicId: r.topic_id,
+        paperId: r.paper_id,
+        calculatorAllowed: r.calculator_allowed,
+        type: r.type,
+        question: r.question,
+        answers: r.answers,
+        hint: r.hint,
+        explanation: r.explanation,
+        meta: r.meta,
+      })));
+    } catch (e) {
+      console.error(e);
+      showToast('error', 'Failed to load paper details');
+    }
+  };
+const loadPapers = async () => {
     if (!selectedSubject) return;
     
     try {
@@ -352,7 +387,65 @@ export function PapersPage() {
             </table>
           </div>
         )}
-      </div>
+      
+
+      {selectedPaperView && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Paper Details: Paper {selectedPaperView.paperNumber}
+            </h2>
+            <button
+              onClick={() => setSelectedPaperView(null)}
+              className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm"
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Linked Units</h3>
+              {paperUnits.length === 0 ? (
+                <p className="text-sm text-gray-500">None linked</p>
+              ) : (
+                <ul className="space-y-1">
+                  {paperUnits.map(u => (
+                    <li key={u.id} className="text-sm text-gray-700 dark:text-gray-300">• {u.name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Linked Topics</h3>
+              {paperTopics.length === 0 ? (
+                <p className="text-sm text-gray-500">None linked</p>
+              ) : (
+                <ul className="space-y-1">
+                  {paperTopics.map(t => (
+                    <li key={t.id} className="text-sm text-gray-700 dark:text-gray-300">• {t.name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Assigned Prompts</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                {paperPrompts.length} prompt{paperPrompts.length !== 1 ? 's' : ''} assigned
+              </p>
+              {paperPrompts.slice(0, 5).map(p => (
+                <div key={p.id} className="text-xs text-gray-600 dark:text-gray-400 truncate">• {p.question}</div>
+              ))}
+              {paperPrompts.length > 5 && (
+                <div className="text-xs text-gray-500 mt-1">... and {paperPrompts.length - 5} more</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+</div>
     </div>
   );
 }

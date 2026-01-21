@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { db } from '../db/client';
-import { Unit, Subject } from '../types';
+import { Unit, Subject, Paper } from '../types';
 import { Layers, Edit2, Trash2, Search, X } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { PaperBulkAssignDialog } from './components/PaperBulkAssignDialog';
+import { assignUnitPromptsToPaper, assignUnassignedUnitPromptsToPaper } from './paperRelationshipService';
 
 export function UnitsPage() {
   const { showToast } = useToast();
@@ -11,6 +13,8 @@ export function UnitsPage() {
   const [loading, setLoading] = useState(true);
   const [units, setUnits] = useState<Unit[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [bulkAssignUnit, setBulkAssignUnit] = useState<Unit | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSubject, setFilterSubject] = useState<string>('');
   const [editingUnit, setEditingUnit] = useState<Unit | null>(null);
@@ -31,7 +35,7 @@ export function UnitsPage() {
       setUnits(unitsData.flat());
     } catch (error) {
       console.error('Failed to load data:', error);
-      showToast('Failed to load units', 'error');
+      showToast('error', 'Failed to load units');
     } finally {
       setLoading(false);
     }
@@ -42,11 +46,11 @@ export function UnitsPage() {
 
     try {
       await db.deleteUnit(unit.id);
-      showToast('Unit deleted successfully', 'success');
+      showToast('success', 'Unit deleted successfully');
       await loadData();
     } catch (error) {
       console.error('Failed to delete unit:', error);
-      showToast('Failed to delete unit', 'error');
+      showToast('error', 'Failed to delete unit');
     }
   };
 
@@ -55,12 +59,12 @@ export function UnitsPage() {
 
     try {
       await db.updateUnit(editingUnit.id, editingUnit);
-      showToast('Unit updated successfully', 'success');
+      showToast('success', 'Unit updated successfully');
       setEditingUnit(null);
       await loadData();
     } catch (error) {
       console.error('Failed to update unit:', error);
-      showToast('Failed to update unit', 'error');
+      showToast('error', 'Failed to update unit');
     }
   };
 
@@ -156,6 +160,13 @@ export function UnitsPage() {
                         <Edit2 size={16} />
                       </button>
                       <button
+                        onClick={() => setBulkAssignUnit(unit)}
+                        className="p-1.5 hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded transition-colors"
+                        title="Assign prompts to paper"
+                      >
+                        <Layers size={16} />
+                      </button>
+                      <button
                         onClick={() => handleDelete(unit)}
                         className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded transition-colors"
                       >
@@ -244,6 +255,25 @@ export function UnitsPage() {
           </div>
         </div>
       )}
-    </div>
+    
+
+      <PaperBulkAssignDialog
+        isOpen={bulkAssignUnit !== null}
+        onClose={() => setBulkAssignUnit(null)}
+        title={bulkAssignUnit ? `Assign Unit: ${bulkAssignUnit.name} to Paper` : 'Assign Unit to Paper'}
+        description={bulkAssignUnit ? `This will assign prompts in the unit "${bulkAssignUnit.name}" to the selected paper.` : ''}
+        papers={bulkAssignUnit ? papers.filter(p => p.subjectId === bulkAssignUnit.subjectId).sort((a,b) => a.paperNumber - b.paperNumber) : []}
+        onAssign={async (paperId, onlyUnassigned) => {
+          if (!bulkAssignUnit) return 0;
+          const count = onlyUnassigned
+            ? await assignUnassignedUnitPromptsToPaper(bulkAssignUnit.id, paperId)
+            : await assignUnitPromptsToPaper(bulkAssignUnit.id, paperId);
+          showToast('success', `Assigned ${count} prompts`);
+          await loadData();
+          return count;
+        }}
+      />
+
+</div>
   );
 }

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { db } from '../db/client';
-import { Topic, Subject, Unit } from '../types';
+import { Topic, Subject, Unit, Paper } from '../types';
 import { Tag, Edit2, Trash2, Search, X } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { PaperBulkAssignDialog } from './components/PaperBulkAssignDialog';
+import { assignTopicPromptsToPaper } from './paperRelationshipService';
 
 export function TopicsPage() {
   const { showToast } = useToast();
@@ -12,6 +14,8 @@ export function TopicsPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [bulkAssignTopic, setBulkAssignTopic] = useState<Topic | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSubject, setFilterSubject] = useState<string>('');
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
@@ -38,7 +42,7 @@ export function TopicsPage() {
       setTopics(topicsData.flat());
     } catch (error) {
       console.error('Failed to load data:', error);
-      showToast('Failed to load topics', 'error');
+      showToast('error', 'Failed to load topics');
     } finally {
       setLoading(false);
     }
@@ -49,11 +53,11 @@ export function TopicsPage() {
 
     try {
       await db.deleteTopic(topic.id);
-      showToast('Topic deleted successfully', 'success');
+      showToast('success', 'Topic deleted successfully');
       await loadData();
     } catch (error) {
       console.error('Failed to delete topic:', error);
-      showToast('Failed to delete topic', 'error');
+      showToast('error', 'Failed to delete topic');
     }
   };
 
@@ -62,12 +66,12 @@ export function TopicsPage() {
 
     try {
       await db.updateTopic(editingTopic.id, editingTopic);
-      showToast('Topic updated successfully', 'success');
+      showToast('success', 'Topic updated successfully');
       setEditingTopic(null);
       await loadData();
     } catch (error) {
       console.error('Failed to update topic:', error);
-      showToast('Failed to update topic', 'error');
+      showToast('error', 'Failed to update topic');
     }
   };
 
@@ -168,6 +172,13 @@ export function TopicsPage() {
                         <Edit2 size={16} />
                       </button>
                       <button
+                        onClick={() => setBulkAssignTopic(topic)}
+                        className="p-1.5 hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded transition-colors"
+                        title="Assign prompts to paper"
+                      >
+                        <Tag size={16} />
+                      </button>
+                      <button
                         onClick={() => handleDelete(topic)}
                         className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded transition-colors"
                       >
@@ -256,6 +267,23 @@ export function TopicsPage() {
           </div>
         </div>
       )}
-    </div>
+    
+
+      <PaperBulkAssignDialog
+        isOpen={bulkAssignTopic !== null}
+        onClose={() => setBulkAssignTopic(null)}
+        title={bulkAssignTopic ? `Assign Topic: ${bulkAssignTopic.name} to Paper` : 'Assign Topic to Paper'}
+        description={bulkAssignTopic ? `This will assign prompts in the topic "${bulkAssignTopic.name}" to the selected paper.` : ''}
+        papers={bulkAssignTopic ? papers.filter(p => p.subjectId === bulkAssignTopic.subjectId).sort((a,b) => a.paperNumber - b.paperNumber) : []}
+        onAssign={async (paperId, _onlyUnassigned) => {
+          if (!bulkAssignTopic) return 0;
+          const count = await assignTopicPromptsToPaper(bulkAssignTopic.id, paperId);
+          showToast('success', `Assigned ${count} prompts`);
+          await loadData();
+          return count;
+        }}
+      />
+
+</div>
   );
 }

@@ -313,6 +313,10 @@ export const db = {
         subject_id: prompt.subjectId,
         unit_id: prompt.unitId,
         topic_id: prompt.topicId,
+        // Paper assignment (nullable)
+        paper_id: prompt.paperId ?? null,
+        // Calculator override (nullable)
+        calculator_allowed: prompt.calculatorAllowed ?? null,
         type: prompt.type,
         question: prompt.question,
         answers: prompt.answers,
@@ -335,6 +339,10 @@ export const db = {
     if (updates.explanation !== undefined) dbUpdates.explanation = updates.explanation;
     if (updates.type) dbUpdates.type = updates.type;
     if (updates.meta !== undefined) dbUpdates.meta = updates.meta;
+
+    // Paper assignment + calculator override
+    if (updates.paperId !== undefined) dbUpdates.paper_id = updates.paperId;
+    if (updates.calculatorAllowed !== undefined) dbUpdates.calculator_allowed = updates.calculatorAllowed;
 
     const { error } = await supabase
       .from('prompts')

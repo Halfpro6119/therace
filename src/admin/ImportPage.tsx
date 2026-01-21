@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, FileJson, FileText, CheckCircle, AlertCircle, Loader, Database, BookOpen, Layers, FolderTree } from 'lucide-react';
+import { db } from '../db/client';
+import { Paper, Subject } from '../types';
 import {
   parseCSV,
   parseImportJsonPrompts,
@@ -44,11 +46,44 @@ export function ImportPage() {
   const [skipDuplicates, setSkipDuplicates] = useState(true);
   const [enableCalculators, setEnableCalculators] = useState(false);
   const [metaOverwriteMode, setMetaOverwriteMode] = useState(false);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [defaultPaperNumber, setDefaultPaperNumber] = useState<number | undefined>(undefined);
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [createQuizzes, setCreateQuizzes] = useState(false);
   const [quizTypes, setQuizTypes] = useState({ topic: true, unit: true, full: false });
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<any>(null);
-  const [progress, setProgress] = useState<ImportProgressState>({
+  
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const subs = await db.getSubjects();
+        setSubjects(subs);
+        if (subs.length > 0) {
+          setSelectedSubjectId(subs[0].id);
+          const ps = await db.listPapersBySubject(subs[0].id);
+          setPapers(ps);
+        }
+      } catch (e) {
+        // ignore; import still works
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!selectedSubjectId) return;
+      try {
+        const ps = await db.listPapersBySubject(selectedSubjectId);
+        setPapers(ps);
+      } catch {
+        setPapers([]);
+      }
+    })();
+  }, [selectedSubjectId]);
+const [progress, setProgress] = useState<ImportProgressState>({
     phase: 'prompts',
     currentItem: '',
     promptsProcessed: 0,
@@ -101,7 +136,7 @@ export function ImportPage() {
         createdTopics: [],
         importedPrompts: 0,
         skippedPrompts: 0,
-      });
+      }, defaultPaperNumber);
 
       const result = await importPrompts(rows, skipDuplicates, enableCalculators, metaOverwriteMode, (importProgress: ImportProgress) => {
         setProgress(prev => ({
@@ -116,7 +151,7 @@ export function ImportPage() {
           importedPrompts: importProgress.importedPrompts,
           skippedPrompts: importProgress.skippedPrompts,
         }));
-      });
+      }, defaultPaperNumber);
 
       if (createQuizzes && result.imported > 0 && result.affectedSubjectIds.length > 0) {
         const { db } = await import('../db/client');
@@ -135,7 +170,7 @@ export function ImportPage() {
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            });
+            }, defaultPaperNumber);
           }
           if (quizTypes.unit) {
             setProgress(prev => ({ ...prev, phase: 'unit-quizzes', currentItem: `Creating unit quizzes for ${subject.name}...` }));
@@ -147,7 +182,7 @@ export function ImportPage() {
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            });
+            }, defaultPaperNumber);
           }
           if (quizTypes.full) {
             setProgress(prev => ({ ...prev, phase: 'full-quizzes', currentItem: `Creating full quiz for ${subject.name}...` }));
@@ -159,7 +194,7 @@ export function ImportPage() {
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            });
+            }, defaultPaperNumber);
           }
         }
       }
@@ -177,7 +212,7 @@ export function ImportPage() {
         duplicates: Array.from(duplicates.entries()).flatMap(([question, rows]) =>
           rows.map(row => ({ row, question }))
         ),
-      });
+      }, defaultPaperNumber);
 
       setImportResult(result);
       setStep('complete');
@@ -233,6 +268,42 @@ export function ImportPage() {
               <FileJson size={20} />
               <span>JSON Format</span>
             </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Subject (for paper dropdown)
+              </label>
+              <select
+                value={selectedSubjectId}
+                onChange={(e) => { setSelectedSubjectId(e.target.value); setDefaultPaperNumber(undefined); }}
+                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {subjects.map(s => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Default Paper (optional)
+              </label>
+              <select
+                value={defaultPaperNumber ?? ''}
+                onChange={(e) => setDefaultPaperNumber(e.target.value ? parseInt(e.target.value, 10) : undefined)}
+                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">No default paper</option>
+                {papers.sort((a,b) => a.paperNumber - b.paperNumber).map(p => (
+                  <option key={p.id} value={p.paperNumber}>Paper {p.paperNumber}: {p.name}</option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Per-row overrides: paper_id or paper_number columns/fields.
+              </p>
+            </div>
           </div>
 
           <div className="mb-4">

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { db, supabase } from '../db/client';
-import { Prompt, Subject, Unit, Topic, Diagram, DiagramMetadata } from '../types';
+import { Prompt, Subject, Unit, Topic, Diagram, DiagramMetadata, Paper } from '../types';
 import { FileText, Edit2, Trash2, Search, Filter, X, Plus } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { DiagramParamsEditor } from './DiagramParamsEditor';
+import { PaperSelector } from './components/PaperSelector';
 
 export function PromptsPage() {
   const { showToast } = useToast();
@@ -14,10 +15,12 @@ export function PromptsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [papers, setPapers] = useState<Paper[]>([]);
   const [diagrams, setDiagrams] = useState<Diagram[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSubject, setFilterSubject] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('');
+  const [filterPaper, setFilterPaper] = useState<string>('');
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export function PromptsPage() {
       setTopics(topicsData.flat());
     } catch (error) {
       console.error('Failed to load data:', error);
-      showToast('Failed to load prompts', 'error');
+      showToast('error', 'Failed to load prompts');
     } finally {
       setLoading(false);
     }
@@ -73,11 +76,11 @@ export function PromptsPage() {
 
     try {
       await db.deletePrompt(prompt.id);
-      showToast('Prompt deleted successfully', 'success');
+      showToast('success', 'Prompt deleted successfully');
       await loadData();
     } catch (error) {
       console.error('Failed to delete prompt:', error);
-      showToast('Failed to delete prompt', 'error');
+      showToast('error', 'Failed to delete prompt');
     }
   };
 
@@ -86,7 +89,7 @@ export function PromptsPage() {
 
     const filteredAnswers = editingPrompt.answers.filter(a => a.trim());
     if (filteredAnswers.length === 0) {
-      showToast('At least one answer is required', 'error');
+      showToast('error', 'At least one answer is required');
       return;
     }
 
@@ -95,12 +98,12 @@ export function PromptsPage() {
         ...editingPrompt,
         answers: filteredAnswers
       });
-      showToast('Prompt updated successfully', 'success');
+      showToast('success', 'Prompt updated successfully');
       setEditingPrompt(null);
       await loadData();
     } catch (error) {
       console.error('Failed to update prompt:', error);
-      showToast('Failed to update prompt', 'error');
+      showToast('error', 'Failed to update prompt');
     }
   };
 
@@ -110,7 +113,8 @@ export function PromptsPage() {
       prompt.explanation?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSubject = !filterSubject || prompt.subjectId === filterSubject;
     const matchesType = !filterType || prompt.type === filterType;
-    return matchesSearch && matchesSubject && matchesType;
+    const matchesPaper = !filterPaper || prompt.paperId === filterPaper;
+    return matchesSearch && matchesSubject && matchesType && matchesPaper;
   });
 
   const getSubjectName = (id: string) => subjects.find(s => s.id === id)?.name || 'Unknown';
@@ -159,6 +163,20 @@ export function PromptsPage() {
             ))}
           </select>
           <select
+            value={filterPaper}
+            onChange={(e) => setFilterPaper(e.target.value)}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            <option value="">All Papers</option>
+            {papers
+              .filter(p => !filterSubject || p.subjectId === filterSubject)
+              .sort((a,b) => a.paperNumber - b.paperNumber)
+              .map(p => (
+                <option key={p.id} value={p.id}>Paper {p.paperNumber}</option>
+              ))}
+          </select>
+          
+          <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -182,6 +200,7 @@ export function PromptsPage() {
                 <th className="px-4 py-3">Subject</th>
                 <th className="px-4 py-3">Unit</th>
                 <th className="px-4 py-3">Topic</th>
+                <th className="px-4 py-3">Paper</th>
                 <th className="px-4 py-3">Answers</th>
                 <th className="px-4 py-3">Actions</th>
               </tr>
@@ -205,6 +224,14 @@ export function PromptsPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
                     {getTopicName(prompt.topicId)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded text-xs font-medium">
+                      {prompt.paperId ? (() => {
+                        const paper = papers.find(p => p.id === prompt.paperId);
+                        return paper ? `Paper ${paper.paperNumber}` : 'Unknown';
+                      })() : 'None'}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
                     {prompt.answers.length}

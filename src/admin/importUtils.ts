@@ -19,7 +19,11 @@ export interface ImportPromptRow {
   diagramCaption?: string;
   diagramAlt?: string;
   diagramParamsJson?: string;
+  // Paper assignment (optional)
+  paperId?: string;
+  paperNumber?: number;
 }
+
 
 export interface ValidationError {
   row: number;
@@ -74,6 +78,12 @@ export function parseCSV(csvText: string): ImportPromptRow[] {
       explanation: row.explanation || undefined,
       calculatorAllowed: parseBoolean(row.calculatorallowed || row.calculator_allowed),
       drawingRecommended: parseBoolean(row.drawingrecommended || row.drawing_recommended),
+      paperId: (row.paper_id || row.paperid || '').trim() || undefined,
+      paperNumber: (() => {
+        const v = (row.paper_number || row.papernumber || '').trim();
+        const n = parseInt(v, 10);
+        return !isNaN(n) ? n : undefined;
+      })(),
     });
   }
 
@@ -269,7 +279,8 @@ export async function importPrompts(
   skipDuplicates: boolean = true,
   enableCalculators: boolean = false,
   metaOverwriteMode: boolean = false,
-  onProgress?: (progress: ImportProgress) => void
+  onProgress?: (progress: ImportProgress) => void,
+  defaultPaperNumber?: number
 ): Promise<{
   imported: number;
   skipped: number;
@@ -296,6 +307,23 @@ export async function importPrompts(
 
   try {
     const subjects = await db.getSubjects();
+
+    // Preload papers for all subjects so we can resolve paper_id quickly during import
+    const papersBySubjectId = new Map<string, { byNumber: Map<number, string>; ids: Set<string> }>();
+    for (const s of subjects) {
+      try {
+        const papers = await db.listPapersBySubject(s.id);
+        const byNumber = new Map<number, string>();
+        const ids = new Set<string>();
+        for (const p of papers) {
+          byNumber.set(p.paperNumber, p.id);
+          ids.add(p.id);
+        }
+        papersBySubjectId.set(s.id, { byNumber, ids });
+      } catch (e) {
+        // ignore - papers optional
+      }
+    }
     const allUnits: Unit[] = [];
     const allTopics: Topic[] = [];
 
@@ -351,6 +379,39 @@ export async function importPrompts(
         }
 
         const shouldEnableCalculator = enableCalculators && subject.id === MATHS_SUBJECT_ID;
+
+        // Resolve paper_id for this row (strict order)
+        let resolvedPaperId: string | null = null;
+        const paperCache = papersBySubjectId.get(subject.id);
+
+        // a) paperId provided
+        if (row.paperId) {
+          const pid = String(row.paperId).trim();
+          if (pid && paperCache?.ids?.has(pid)) {
+            resolvedPaperId = pid;
+          } else if (pid) {
+            // warning only (do not crash)
+            result.errors.push(`Row ${i + 2}: Invalid paper_id ${pid}. Paper assignment skipped.`);
+          }
+        }
+
+        // b) paperNumber provided
+        if (!resolvedPaperId && row.paperNumber !== undefined && row.paperNumber !== null) {
+          const n = parseInt(String(row.paperNumber), 10);
+          if ([1,2,3].includes(n)) {
+            const pid = paperCache?.byNumber?.get(n);
+            if (pid) resolvedPaperId = pid;
+            else result.errors.push(`Row ${i + 2}: Paper ${n} does not exist for subject ${subject.name}. Create it in Papers tab.`);
+          } else {
+            result.errors.push(`Row ${i + 2}: Invalid paper_number ${row.paperNumber}. Must be 1,2,3.`);
+          }
+        }
+
+        // c) default paper number
+        if (!resolvedPaperId && defaultPaperNumber && [1,2,3].includes(defaultPaperNumber)) {
+          const pid = paperCache?.byNumber?.get(defaultPaperNumber);
+          if (pid) resolvedPaperId = pid;
+        }
 
         let meta: any = {};
         if (shouldEnableCalculator) {
@@ -447,6 +508,7 @@ export async function importPrompts(
               hint: row.hint,
               explanation: row.explanation,
               meta: Object.keys(mergedMeta).length > 0 ? mergedMeta : undefined,
+              paperId: resolvedPaperId,
             });
 
             result.updated++;
@@ -480,6 +542,7 @@ export async function importPrompts(
           hint: row.hint,
           explanation: row.explanation,
           meta: Object.keys(meta).length > 0 ? meta : undefined,
+          paperId: resolvedPaperId,
         });
 
         result.imported++;
@@ -624,6 +687,13 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
       explanation: raw.explanation !== undefined ? String(raw.explanation) : undefined,
       calculatorAllowed: raw.calculatorAllowed !== undefined ? !!raw.calculatorAllowed : undefined,
       drawingRecommended: raw.drawingRecommended !== undefined ? !!raw.drawingRecommended : undefined,
+      paperId: raw.paper_id ? String(raw.paper_id).trim() : (raw.paperId ? String(raw.paperId).trim() : undefined),
+      paperNumber: (() => {
+        const v = raw.paper_number ?? raw.paperNumber;
+        if (v === undefined || v === null || v === '') return undefined;
+        const n = parseInt(String(v), 10);
+        return !isNaN(n) ? n : undefined;
+      })(),
     };
 
     if (diagramMode && ['auto', 'template', 'asset'].includes(diagramMode)) {
