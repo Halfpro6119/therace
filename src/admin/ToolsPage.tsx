@@ -3,13 +3,15 @@ import { db } from '../db/client';
 import { createTopicQuizzes, createUnitQuizzes, createPaperQuizzes, createSinglePaperQuiz, createFullGCSEQuiz } from './quizBuilder';
 import { seedDiagramTemplates } from './seedDiagramTemplates';
 import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen } from 'lucide-react';
-import { Subject } from '../types';
+import { Subject, Paper } from '../types';
 
 export function ToolsPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string>('');
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [selectedPaperNumber, setSelectedPaperNumber] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     loadSubjects();
@@ -26,6 +28,29 @@ export function ToolsPage() {
       console.error('Failed to load subjects:', error);
     }
   };
+
+  const loadPapersForSubject = async (subjectId: string) => {
+    try {
+      const data = await db.listPapersBySubject(subjectId);
+      setPapers(data);
+      // Prefer Paper 1 if present, otherwise first available
+      const p1 = data.find(p => p.paperNumber === 1);
+      if (p1) setSelectedPaperNumber(1);
+      else if (data.length > 0) setSelectedPaperNumber(data[0].paperNumber);
+    } catch (error) {
+      console.error('Failed to load papers:', error);
+      setPapers([]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSubjectId) {
+      loadPapersForSubject(selectedSubjectId);
+    } else {
+      setPapers([]);
+    }
+  }, [selectedSubjectId]);
+
 
   const handleBatchQuizCreation = async (type: 'topic' | 'unit' | 'paper' | 'full') => {
     if (!selectedSubjectId) {
@@ -70,10 +95,9 @@ export function ToolsPage() {
       return;
     }
 
-    const input = window.prompt('Enter paper number (1, 2, or 3)');
-    const num = input ? parseInt(input, 10) : NaN;
+    const num = selectedPaperNumber;
     if (![1, 2, 3].includes(num)) {
-      setResult('Error: Invalid paper number. Please enter 1, 2, or 3.');
+      setResult('Error: Invalid paper number. Please select Paper 1, 2, or 3.');
       return;
     }
 
@@ -95,6 +119,7 @@ export function ToolsPage() {
       setLoading(false);
     }
   };
+
 
   const handleSeedDiagramTemplates = async () => {
     setLoading(true);
@@ -216,6 +241,33 @@ export function ToolsPage() {
               </div>
 
               <div className="p-6">
+                {tool.id === 'single-paper-quiz' && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Select Paper
+                    </label>
+                    <select
+                      value={selectedPaperNumber}
+                      onChange={(e) => setSelectedPaperNumber(parseInt(e.target.value, 10) as 1 | 2 | 3)}
+                      disabled={loading || !selectedSubjectId || papers.length === 0}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      {papers.length === 0 ? (
+                        <option value="1">No papers available</option>
+                      ) : (
+                        papers
+                          .slice()
+                          .sort((a, b) => a.paperNumber - b.paperNumber)
+                          .map((p) => (
+                            <option key={p.id} value={p.paperNumber}>
+                              Paper {p.paperNumber} — {p.name}{p.calculatorAllowedDefault ? ' (Calculator)' : ' (Non-calculator)'}
+                            </option>
+                          ))
+                      )}
+                    </select>
+                  </div>
+                )}
+
                 <button
                   onClick={tool.action}
                   disabled={loading || !selectedSubjectId}
