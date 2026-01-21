@@ -25,6 +25,15 @@ export interface Topic {
 }
 
 export type QuizScopeType = 'topic' | 'unit' | 'full';
+
+export type QuizType = 'subject_master' | 'paper_master' | 'unit' | 'topic';
+
+export interface QuizSettings {
+  questionLimit?: number;
+  difficultyRamp?: boolean;
+  timeTarget?: number;
+  [key: string]: any;
+}
 export type PromptType = 'short' | 'mcq' | 'fill' | 'match' | 'label';
 
 export interface Quiz {
@@ -38,6 +47,10 @@ export interface Quiz {
   timeLimitSec: number;
   grade9TargetSec: number;
   promptIds: string[];
+  paperId?: string;           // NEW: for paper master quizzes
+  quizType?: QuizType;        // NEW: subject_master | paper_master | unit | topic
+  isActive?: boolean;         // NEW: enable/disable quizzes
+  settings?: QuizSettings;    // NEW: configuration
 }
 
 export interface Prompt {

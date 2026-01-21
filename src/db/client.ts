@@ -1318,4 +1318,199 @@ export const db = {
     }));
   },
 
+
+  // ===== PAPER MASTER QUIZ METHODS =====
+  /**
+   * Get all quizzes for a subject (including paper master quizzes)
+   */
+  getQuizzesForSubject: async (subjectId: string): Promise<Quiz[]> => {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .eq('is_active', true)
+      .order('quiz_type', { ascending: true })
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return (data || []).map(mapQuiz);
+  },
+
+  /**
+   * Get paper master quiz for a specific paper
+   */
+  getPaperMasterQuiz: async (paperId: string): Promise<Quiz | undefined> => {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('paper_id', paperId)
+      .eq('quiz_type', 'paper_master')
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? mapQuiz(data) : undefined;
+  },
+
+  /**
+   * Get all paper master quizzes for a subject
+   */
+  getPaperMasterQuizzesForSubject: async (subjectId: string): Promise<Quiz[]> => {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .eq('quiz_type', 'paper_master')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return (data || []).map(mapQuiz);
+  },
+
+  /**
+   * Get subject master quiz (all prompts for subject)
+   */
+  getSubjectMasterQuiz: async (subjectId: string): Promise<Quiz | undefined> => {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .eq('quiz_type', 'subject_master')
+      .is('paper_id', null)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? mapQuiz(data) : undefined;
+  },
+
+  /**
+   * Create or update a paper master quiz
+   */
+  upsertPaperMasterQuiz: async (
+    subjectId: string,
+    paperId: string,
+    title: string,
+    description: string,
+    settings?: any
+  ): Promise<Quiz> => {
+    // First check if it exists
+    const existing = await db.getPaperMasterQuiz(paperId);
+
+    if (existing) {
+      // Update existing
+      const { data, error } = await supabase
+        .from('quizzes')
+        .update({
+          title,
+          description,
+          settings: settings || {},
+          is_active: true,
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return mapQuiz(data);
+    } else {
+      // Create new
+      const { data, error } = await supabase
+        .from('quizzes')
+        .insert({
+          subject_id: subjectId,
+          paper_id: paperId,
+          quiz_type: 'paper_master',
+          title,
+          description,
+          time_limit_sec: 0,
+          grade9_target_sec: 0,
+          prompt_ids: [],
+          is_active: true,
+          settings: settings || {},
+          scope_type: 'full',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return mapQuiz(data);
+    }
+  },
+
+  /**
+   * Get prompts for a paper master quiz
+   */
+  getPromptsForPaperMasterQuiz: async (paperId: string): Promise<Prompt[]> => {
+    const { data, error } = await supabase
+      .from('prompts')
+      .select('*')
+      .eq('paper_id', paperId)
+      .order('created_at');
+
+    if (error) throw error;
+    return (data || []).map(mapPrompt);
+  },
+
+  /**
+   * Get prompts for subject master quiz (all prompts for subject)
+   */
+  getPromptsForSubjectMasterQuiz: async (subjectId: string): Promise<Prompt[]> => {
+    const { data, error } = await supabase
+      .from('prompts')
+      .select('*')
+      .eq('subject_id', subjectId)
+      .order('created_at');
+
+    if (error) throw error;
+    return (data || []).map(mapPrompt);
+  },
+
+  /**
+   * Sync paper master quizzes for a subject
+   * Creates/updates master quizzes for all papers in the subject
+   */
+  syncPaperMasterQuizzesForSubject: async (subjectId: string): Promise<number> => {
+    try {
+      // Get all papers for the subject
+      const papers = await db.listPapersBySubject(subjectId);
+      
+      let created = 0;
+      
+      for (const paper of papers) {
+        const title = `Paper ${paper.paperNumber} Master Quiz`;
+        const description = `All questions from ${paper.name}`;
+        
+        await db.upsertPaperMasterQuiz(
+          subjectId,
+          paper.id,
+          title,
+          description,
+          {
+            paperNumber: paper.paperNumber,
+            calculatorAllowed: paper.calculatorAllowedDefault,
+          }
+        );
+        
+        created++;
+      }
+      
+      return created;
+    } catch (error) {
+      console.error('Failed to sync paper master quizzes:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Toggle paper master quiz active status
+   */
+  togglePaperMasterQuizActive: async (quizId: string, isActive: boolean): Promise<void> => {
+    const { error } = await supabase
+      .from('quizzes')
+      .update({ is_active: isActive })
+      .eq('id', quizId);
+
+    if (error) throw error;
+  },
+
 };
