@@ -32,14 +32,17 @@ export function TopicsPage() {
 
       const unitsPromises = subjectsData.map(s => db.getUnits(s.id));
       const topicsPromises = subjectsData.map(s => db.getTopics(s.id));
+      const papersPromises = subjectsData.map(s => db.listPapersBySubject(s.id));
 
-      const [unitsData, topicsData] = await Promise.all([
+      const [unitsData, topicsData, papersData] = await Promise.all([
         Promise.all(unitsPromises),
         Promise.all(topicsPromises),
+        Promise.all(papersPromises),
       ]);
 
       setUnits(unitsData.flat());
       setTopics(topicsData.flat());
+      setPapers(papersData.flat());
     } catch (error) {
       console.error('Failed to load data:', error);
       showToast('error', 'Failed to load topics');
