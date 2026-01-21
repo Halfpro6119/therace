@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { db } from '../db/client';
-import { createTopicQuizzes, createUnitQuizzes, createFullGCSEQuiz } from './quizBuilder';
+import { createTopicQuizzes, createUnitQuizzes, createPaperQuizzes, createSinglePaperQuiz, createFullGCSEQuiz } from './quizBuilder';
 import { seedDiagramTemplates } from './seedDiagramTemplates';
-import { Wrench, Zap, Database, CheckCircle, Layout } from 'lucide-react';
+import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen } from 'lucide-react';
 import { Subject } from '../types';
 
 export function ToolsPage() {
@@ -27,7 +27,7 @@ export function ToolsPage() {
     }
   };
 
-  const handleBatchQuizCreation = async (type: 'topic' | 'unit' | 'full') => {
+  const handleBatchQuizCreation = async (type: 'topic' | 'unit' | 'paper' | 'full') => {
     if (!selectedSubjectId) {
       setResult('Error: Please select a subject');
       return;
@@ -45,6 +45,9 @@ export function ToolsPage() {
       } else if (type === 'unit') {
         const quizzes = await createUnitQuizzes(selectedSubjectId);
         totalCreated += quizzes.length;
+      } else if (type === 'paper') {
+        const quizzes = await createPaperQuizzes(selectedSubjectId);
+        totalCreated += quizzes.length;
       } else if (type === 'full') {
         await createFullGCSEQuiz(selectedSubjectId);
         totalCreated += 1;
@@ -52,6 +55,40 @@ export function ToolsPage() {
 
       const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
       setResult(`Successfully created ${totalCreated} ${type} quiz${totalCreated !== 1 ? 'zes' : ''} for ${selectedSubject?.name}`);
+    } catch (error) {
+      setResult(`Error: ${error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  const handleSinglePaperQuizCreation = async () => {
+    if (!selectedSubjectId) {
+      setResult('Error: Please select a subject');
+      return;
+    }
+
+    const input = window.prompt('Enter paper number (1, 2, or 3)');
+    const num = input ? parseInt(input, 10) : NaN;
+    if (![1, 2, 3].includes(num)) {
+      setResult('Error: Invalid paper number. Please enter 1, 2, or 3.');
+      return;
+    }
+
+    setLoading(true);
+    setResult('');
+
+    try {
+      const quiz = await createSinglePaperQuiz(selectedSubjectId, num as 1 | 2 | 3);
+      const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
+
+      if (!quiz) {
+        setResult(`Error: No prompts found for Paper ${num} in ${selectedSubject?.name}. Ensure prompts are assigned to that paper.`);
+      } else {
+        setResult(`Successfully created Paper ${num} quiz for ${selectedSubject?.name}`);
+      }
     } catch (error) {
       setResult(`Error: ${error}`);
     } finally {
@@ -95,6 +132,14 @@ export function ToolsPage() {
       action: () => handleBatchQuizCreation('unit'),
     },
     {
+      id: 'paper-quizzes',
+      title: 'Create Paper Quizzes',
+      description: 'Generate a quiz for each paper (1, 2, 3) with all its prompts',
+      icon: BookOpen,
+      color: 'from-indigo-500 to-blue-500',
+      action: () => handleBatchQuizCreation('paper'),
+    },
+    {
       id: 'full-quizzes',
       title: 'Create Full GCSE Quizzes',
       description: 'Generate one comprehensive quiz per subject with all prompts',
@@ -102,6 +147,15 @@ export function ToolsPage() {
       color: 'from-purple-500 to-pink-500',
       action: () => handleBatchQuizCreation('full'),
     },
+    {
+      id: 'single-paper-quiz',
+      title: 'Create Quiz for One Paper',
+      description: 'Generate a quiz containing prompts from a single paper (choose 1, 2, or 3)',
+      icon: BookOpen,
+      color: 'from-indigo-500 to-blue-500',
+      action: handleSinglePaperQuizCreation,
+    },
+
     {
       id: 'seed-diagram-templates',
       title: 'Seed Diagram Templates',

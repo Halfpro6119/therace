@@ -23,7 +23,7 @@ export function calculateTimeLimits(promptCount: number): { timeLimit: number; g
 }
 
 export interface QuizProgress {
-  type: 'topic' | 'unit' | 'full';
+  type: 'topic' | 'unit' | 'paper' | 'full';
   currentItem: string;
   processed: number;
   total: number;
@@ -125,6 +125,86 @@ export async function createUnitQuizzes(
   }
 
   return createdQuizzes;
+}
+
+export async function createPaperQuizzes(
+  subjectId: string,
+  onProgress?: (progress: QuizProgress) => void
+): Promise<Quiz[]> {
+  const papers = await db.listPapersBySubject(subjectId);
+  const createdQuizzes: Quiz[] = [];
+  let processed = 0;
+
+  for (const paper of papers) {
+    const prompts = await db.getPromptsForPaperMasterQuiz(paper.id);
+
+    if (prompts.length === 0) {
+      continue;
+    }
+
+    if (onProgress) {
+      onProgress({
+        type: 'paper',
+        currentItem: `Creating quiz for Paper ${paper.paperNumber}: ${paper.name}`,
+        processed,
+        total: papers.length,
+      });
+    }
+
+    const { timeLimit, grade9Target } = calculateTimeLimits(prompts.length);
+
+    const quiz = await db.upsertPaperMasterQuiz(
+      subjectId,
+      paper.id,
+      `Paper ${paper.paperNumber} Master Quiz`,
+      `All questions from ${paper.name}`,
+      {
+        paperNumber: paper.paperNumber,
+        calculatorAllowed: paper.calculatorAllowedDefault,
+      }
+    );
+
+    createdQuizzes.push(quiz);
+    processed++;
+  }
+
+  return createdQuizzes;
+}
+
+
+export async function createSinglePaperQuiz(
+  subjectId: string,
+  paperNumber: 1 | 2 | 3,
+  onProgress?: (progress: QuizProgress) => void
+): Promise<Quiz | null> {
+  const paper = await db.getPaperByNumber(subjectId, paperNumber);
+  if (!paper) return null;
+
+  const prompts = await db.getPromptsForPaperMasterQuiz(paper.id);
+  if (prompts.length === 0) return null;
+
+  if (onProgress) {
+    onProgress({
+      type: 'paper',
+      currentItem: `Creating quiz for Paper ${paper.paperNumber}: ${paper.name}`,
+      processed: 0,
+      total: 1,
+    });
+  }
+
+  // Deterministic: upsert a paper master quiz entity
+  const quiz = await db.upsertPaperMasterQuiz(
+    subjectId,
+    paper.id,
+    `Paper ${paper.paperNumber} Master Quiz`,
+    `All questions from ${paper.name}`,
+    {
+      paperNumber: paper.paperNumber,
+      calculatorAllowed: paper.calculatorAllowedDefault,
+    }
+  );
+
+  return quiz;
 }
 
 export async function createFullGCSEQuiz(
