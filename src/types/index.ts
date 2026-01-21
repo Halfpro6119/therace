@@ -28,6 +28,9 @@ export type QuizScopeType = 'topic' | 'unit' | 'full';
 
 export type QuizType = 'subject_master' | 'paper_master' | 'unit' | 'topic';
 
+export type TierLevel = 'higher' | 'foundation' | null;
+export type TierFilter = 'all' | 'higher' | 'foundation';
+
 export interface QuizSettings {
   questionLimit?: number;
   difficultyRamp?: boolean;
@@ -51,6 +54,7 @@ export interface Quiz {
   quizType?: QuizType;        // NEW: subject_master | paper_master | unit | topic
   isActive?: boolean;         // NEW: enable/disable quizzes
   settings?: QuizSettings;    // NEW: configuration
+  tierFilter?: TierFilter;    // NEW: tier filtering for quizzes
 }
 
 export interface Prompt {
@@ -62,6 +66,7 @@ export interface Prompt {
   question: string;
   answers: string[];
   paperId?: string;
+  tier?: TierLevel;           // NEW: tier assignment (higher, foundation, or null)
   calculatorAllowed?: boolean;
   hint?: string;
   explanation?: string;
