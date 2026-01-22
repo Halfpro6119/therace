@@ -52,14 +52,28 @@ export const rightTriangle: DiagramEngineTemplate = {
     const by = cy;
     const ccx = bx;
     const ccy = cy - opposite;
+    // Angle label position: near vertex A, inside the angle (uses angle bisector)
+    const angleLabelDistance = 34;
+    // Unit vector along AB (to the right)
+    const u1x = 1;
+    const u1y = 0;
+    // Unit vector along AC (towards C)
+    const u2x = Math.cos(angleRad);
+    const u2y = -Math.sin(angleRad);
+    // Angle bisector direction = normalize(u1 + u2)
+    const bisx = u1x + u2x;
+    const bisy = u1y + u2y;
+    const bisLen = Math.sqrt(bisx * bisx + bisy * bisy) || 1;
+    const angleLabelX = ax + (angleLabelDistance * bisx) / bisLen;
+    const angleLabelY = ay + (angleLabelDistance * bisy) / bisLen;
 
-    // Calculate angle mark position - place it on the outside of the triangle
-    const angleMarkDistance = 50;
-    const angleMarkX = ax + angleMarkDistance * Math.cos(angleRad);
-    const angleMarkY = ay - angleMarkDistance * Math.sin(angleRad);
 
     // Right angle mark size
     const rightAngleSize = 12;
+    // Place the right-angle symbol slightly inside the corner at B
+    const rightAngleInset = 8;
+    const raX = bx - rightAngleInset;
+    const raY = by - rightAngleInset;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -86,9 +100,9 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:C" x="${ccx + 15}" y="${ccy - 15}" class="diagram-text">${labelC}</text>
 
     ${showRightAngleMark ? `
-    <!-- Right angle indicator at C (two perpendicular lines forming an L) -->
-    <line id="mk:rightAngle1" x1="${ccx - rightAngleSize}" y1="${ccy}" x2="${ccx - rightAngleSize}" y2="${ccy - rightAngleSize}" class="diagram-right-angle"/>
-    <line id="mk:rightAngle2" x1="${ccx - rightAngleSize}" y1="${ccy - rightAngleSize}" x2="${ccx}" y2="${ccy - rightAngleSize}" class="diagram-right-angle"/>
+    <!-- Right angle indicator at B (between AB and BC) -->
+    <line id="mk:rightAngle1" x1="${raX}" y1="${raY}" x2="${raX - rightAngleSize}" y2="${raY}" class="diagram-right-angle"/>
+    <line id="mk:rightAngle2" x1="${raX}" y1="${raY}" x2="${raX}" y2="${raY - rightAngleSize}" class="diagram-right-angle"/>
     ` : ''}
 
     ${showSideLabels ? `
@@ -98,7 +112,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:hypotenuse" x="${(ax + ccx) / 2 - 50}" y="${(ay + ccy) / 2 - 20}" text-anchor="middle" class="diagram-text-side">${labelHypotenuse}</text>
     ` : ''}
 
-    ${showAngleLabel ? `<text id="txt:angle" x="${angleMarkX}" y="${angleMarkY - 10}" class="diagram-text-angle">${angleValue}°</text>` : ''}
+    ${showAngleLabel ? `<text id="txt:angle" x="${angleLabelX}" y="${angleLabelY - 6}" class="diagram-text-angle">${angleValue}°</text>` : ''}
   </g>
 </svg>`;
 
