@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../db/client';
 import { Subject, Unit, Topic, TierFilter } from '../types';
 import { countTopicPromptsByTier, countUnitPromptsByTier } from '../admin/tierFilterService';
@@ -13,6 +13,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
  */
 export function SubjectDetailPageWithTier() {
   const { subjectId } = useParams<{ subjectId: string }>();
+  const navigate = useNavigate();
   const [subject, setSubject] = useState<Subject | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -53,6 +54,37 @@ export function SubjectDetailPageWithTier() {
       console.error('Failed to load subject:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  /**
+   * Get or create quiz for a topic with tier filter
+   */
+  const handleStartQuiz = async (topic: Topic) => {
+    try {
+      // Get prompts for this topic with tier filter
+      let prompts = await db.getPromptsByTopic(topic.id);
+      
+      // Apply tier filter
+      if (tierFilter === 'higher') {
+        prompts = prompts.filter(p => p.tier === 'higher');
+      } else if (tierFilter === 'foundation') {
+        prompts = prompts.filter(p => p.tier === 'foundation');
+      }
+      
+      if (prompts.length === 0) {
+        alert('No prompts available for this topic and tier combination');
+        return;
+      }
+      
+      // Create or get quiz for this topic
+      const quiz = await db.getOrCreateTopicQuiz(topic.id, prompts);
+      if (quiz) {
+        navigate(`/quiz/${quiz.id}`);
+      }
+    } catch (error) {
+      console.error('Failed to start quiz:', error);
+      alert('Failed to start quiz');
     }
   };
 
@@ -211,7 +243,10 @@ export function SubjectDetailPageWithTier() {
                           </div>
 
                           {/* Quiz Button */}
-                          <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors whitespace-nowrap">
+                          <button 
+                            onClick={() => handleStartQuiz(topic)}
+                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors whitespace-nowrap"
+                          >
                             Start Quiz
                           </button>
                         </div>
