@@ -1,440 +1,428 @@
-# JSON Import System - Deployment Guide
+# 🚀 TIER SYSTEM - DEPLOYMENT GUIDE
 
-## 🎯 Project Status: ✅ COMPLETE
-
-### Summary
-Successfully upgraded the admin import system with robust JSON question import functionality. Fixed critical crash: "Cannot read properties of undefined (reading 'toLowerCase')" with defensive parsing and strict schema normalization.
-
----
-
-## 📦 Deliverables
-
-### 1. Code Changes
-✅ **4 files modified** with zero breaking changes:
-- `src/admin/jsonNormalizer.ts` - Enhanced normalizer with defensive parsing
-- `src/utils/answerValidation.ts` - Fixed toLowerCase crash
-- `src/admin/JsonImportPage.tsx` - Added database integration
-- `src/admin/importUtils.ts` - Fixed toLowerCase calls
-
-### 2. GitHub Integration
-✅ **Branch:** `feature/json-import-upgrade`
-✅ **Commit:** `2495212d`
-✅ **Status:** Ready for PR review
-✅ **URL:** https://github.com/Halfpro6119/therace/pull/new/feature/json-import-upgrade
-
-### 3. Build Status
-✅ **TypeScript:** Compiles successfully (warnings only)
-✅ **Vite Build:** ✓ built in 11.00s
-✅ **Bundle Size:** 1,616 KB JS + 76 KB CSS
-✅ **No breaking changes**
-
-### 4. Testing
-✅ **Unit Tests:** All normalizer functions tested
-✅ **Defensive Parsing:** Verified no crashes on undefined/null
-✅ **JSON Formats:** All 3 formats supported and tested
-✅ **Schema Variants:** Both answer formats working
+**Status**: Ready for Production Deployment
+**Date**: January 22, 2026
+**Repository**: https://github.com/Halfpro6119/therace/tree/feature/json-import-upgrade
 
 ---
 
-## 🚀 Features Implemented
+## 📋 DEPLOYMENT CHECKLIST
 
-### A. Multiple JSON Format Support
-```
-✅ Single object:     {"prompt": "...", "answers": [...]}
-✅ Array:             [{...}, {...}]
-✅ Wrapped payload:   {"questions": [{...}]}
-```
+### Phase 1: Database Migration ✅
+- [x] Migration file created: `supabase/migrations/20260121_add_tier_system.sql`
+- [ ] **TODO**: Run migration in Supabase
 
-### B. Schema Variant Support
-```
-✅ Array answers:     "answers": ["A1", "A2"]
-✅ String answers:    "answer": "A1|A2"
-✅ Mixed fields:      "question", "solution", "explanation"
-```
+### Phase 2: Admin UI Integration ✅
+- [x] All admin components created
+- [ ] **TODO**: Update admin routing
 
-### C. Auto-Fix Capabilities
-```
-✅ Numeric answers → String conversion
-✅ Missing fields → Safe defaults
-✅ Unknown fields → Ignored safely
-✅ Undefined values → No crashes
-```
+### Phase 3: Quiz Integration ✅
+- [x] QuizPlayerPageWithTier created
+- [ ] **TODO**: Update quiz routing
 
-### D. Validation & Preview
-```
-✅ Error detection (blocks import)
-✅ Warning detection (allows import)
-✅ Preview before import
-✅ Detailed error reporting
-```
+### Phase 4: User-Facing Features ✅
+- [x] SubjectDetailPageWithTier created
+- [ ] **TODO**: Update user-facing routing
 
-### E. Database Integration
-```
-✅ Auto-creates subject/unit/topic
-✅ Stores all metadata
-✅ Maintains compatibility
-✅ Supports diagram metadata
-```
+### Phase 5: Testing & Deployment
+- [ ] **TODO**: Run acceptance tests
+- [ ] **TODO**: Deploy to production
 
 ---
 
-## 🔧 Technical Details
+## 🔧 STEP 1: RUN DATABASE MIGRATION
 
-### Defensive Parsing Pattern
+### Option A: Via Supabase Dashboard (Recommended)
+
+1. **Go to Supabase Dashboard**
+   - URL: https://app.supabase.com
+   - Project: therace
+   - Sign in with your credentials
+
+2. **Navigate to SQL Editor**
+   - Click "SQL Editor" in left sidebar
+   - Click "New Query"
+
+3. **Paste Migration SQL**
+   - Copy the entire migration from: `supabase/migrations/20260121_add_tier_system.sql`
+   - Paste into the SQL editor
+
+4. **Execute Migration**
+   - Click "Run" button
+   - Wait for success message
+   - Verify: Check "Tables" section to see `tier` column in `prompts` table
+
+### Option B: Via CLI
+
+```bash
+# Install Supabase CLI if not already installed
+npm install -g supabase
+
+# Login to Supabase
+supabase login
+
+# Link to your project
+supabase link --project-ref hivklkobksraktxynacv
+
+# Run migration
+supabase db push
+
+# Or manually run SQL file
+psql -h db.hivklkobksraktxynacv.supabase.co \
+     -U postgres \
+     -d postgres \
+     -f supabase/migrations/20260121_add_tier_system.sql
+```
+
+### Verification Checklist
+
+After running migration, verify:
+
+```sql
+-- Check tier column exists in prompts
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'prompts' AND column_name = 'tier';
+
+-- Check tier_filter column exists in quizzes
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'quizzes' AND column_name = 'tier_filter';
+
+-- Check indexes exist
+SELECT indexname FROM pg_indexes
+WHERE tablename = 'prompts' AND indexname LIKE '%tier%';
+```
+
+Expected output:
+- ✅ `prompts.tier` column exists (text, nullable)
+- ✅ `quizzes.tier_filter` column exists (text, default 'all')
+- ✅ 4 indexes created: `idx_prompts_subject_tier`, `idx_prompts_paper_tier`, `idx_prompts_topic_tier`, `idx_prompts_unit_tier`
+
+---
+
+## 🔧 STEP 2: UPDATE ADMIN ROUTING
+
+### File: `src/admin/AdminLayout.tsx` or your admin router
+
+**Before:**
 ```typescript
-// BEFORE (crashes on undefined)
-const normalized = value.toLowerCase();
-
-// AFTER (safe)
-const normalized = String(value ?? '').toLowerCase();
+import { PromptsPage } from './PromptsPage';
+import { TopicsPage } from './TopicsPage';
+import { UnitsPage } from './UnitsPage';
+import { ImportPage } from './ImportPage';
+import { JsonImportPage } from './JsonImportPage';
 ```
 
-### Answer Normalization
+**After:**
 ```typescript
-// Handles all formats:
-normalizeAnswerList(["4", "4.0"])      // → ["4", "4.0"]
-normalizeAnswerList("30|30.0")         // → ["30", "30.0"]
-normalizeAnswerList("Paris")           // → ["Paris"]
-normalizeAnswerList(25)                // → ["25"]
-normalizeAnswerList(undefined)         // → [] (no crash!)
+import { PromptsPageWithTier } from './PromptsPageWithTier';
+import { TopicsPageWithTier } from './TopicsPageWithTier';
+import { UnitsPageWithTier } from './UnitsPageWithTier';
+import { CsvImportPageWithTier } from './CsvImportPageWithTier';
+import { JsonImportPageWithTier } from './JsonImportPageWithTier';
+import { QuizPlayerPageWithTier } from './QuizPlayerPageWithTier';
 ```
 
-### Field Mapping
-```
-Input                    → Normalized Field
-prompt/question/text     → prompt
-answers/answer           → answersAccepted
-fullSolution/solution    → fullSolution
-hint                     → hint
-marks/mark               → marks
-calculatorAllowed        → calculatorAllowed
-drawingRecommended       → drawingRecommended
-diagram                  → diagram
-```
+### Update Route Mappings
 
----
-
-## 📋 Validation Rules
-
-### Errors (Block Import)
-- ❌ Missing prompt/question
-- ❌ No answers provided
-
-### Warnings (Allow Import)
-- ⚠️ No solution/explanation
-- ⚠️ Marks < 1
-- ⚠️ Diagram mode auto without templateId
-
----
-
-## 🗄️ Database Schema
-
-### Auto-Created Structure
-```
-Subject: "Imported Questions"
-├── Unit: "General"
-│   └── Topic: "Imported"
-│       └── Prompts: [imported questions]
+**Before:**
+```typescript
+const routes = [
+  { path: '/admin/prompts', component: PromptsPage },
+  { path: '/admin/topics', component: TopicsPage },
+  { path: '/admin/units', component: UnitsPage },
+  { path: '/admin/import', component: ImportPage },
+  { path: '/admin/import-json', component: JsonImportPage },
+];
 ```
 
-### Stored Fields
-```
-- prompt: string
-- answers: string[]
-- answer: string (pipe-delimited)
-- hint: string
-- explanation: string
-- meta.calculatorAllowed: boolean
-- meta.drawingRecommended: boolean
-- meta.diagram: object (optional)
+**After:**
+```typescript
+const routes = [
+  { path: '/admin/prompts', component: PromptsPageWithTier },
+  { path: '/admin/topics', component: TopicsPageWithTier },
+  { path: '/admin/units', component: UnitsPageWithTier },
+  { path: '/admin/import-csv', component: CsvImportPageWithTier },
+  { path: '/admin/import-json', component: JsonImportPageWithTier },
+  { path: '/admin/quiz-player', component: QuizPlayerPageWithTier },
+];
 ```
 
 ---
 
-## 🧪 Test Results
+## 🔧 STEP 3: UPDATE USER-FACING ROUTING
 
-### Normalizer Tests
-```
-✅ Array answers: ['4', '4.0'] → ['4', '4.0']
-✅ Pipe-delimited: '30|30.0' → ['30', '30.0']
-✅ Single string: 'Paris' → ['Paris']
-✅ Number: 25 → ['25']
-✅ Undefined: undefined → [] (no crash!)
-✅ Null: null → [] (no crash!)
-✅ extractString(undefined) → '' (no crash!)
+### File: `src/pages/SubjectDetailPage.tsx` or your user router
+
+**Before:**
+```typescript
+import { SubjectDetailPage } from './SubjectDetailPage';
+
+const routes = [
+  { path: '/subject/:subjectId', component: SubjectDetailPage },
+];
 ```
 
-### Build Tests
-```
-✅ TypeScript compilation: OK
-✅ Vite build: OK (11.00s)
-✅ No breaking changes: OK
-✅ Backward compatible: OK
+**After:**
+```typescript
+import { SubjectDetailPageWithTier } from './SubjectDetailPageWithTier';
+
+const routes = [
+  { path: '/subject/:subjectId', component: SubjectDetailPageWithTier },
+];
 ```
 
 ---
 
-## 📝 Usage Instructions
+## 🧪 STEP 4: RUN ACCEPTANCE TESTS
 
-### Step 1: Navigate to Import Page
-```
-URL: /admin/json-import
-```
+### Test 1: Import with Mixed Case Tier
 
-### Step 2: Paste JSON
-```json
-[
-  {
-    "prompt": "What is 2 + 2?",
-    "answers": ["4"],
-    "fullSolution": "2 + 2 = 4"
-  },
-  {
-    "prompt": "What is the capital of France?",
-    "answers": ["Paris"],
-    "fullSolution": "The capital of France is Paris"
-  }
-]
-```
-
-### Step 3: Click "Detect Questions"
-- Validates JSON
-- Shows preview
-- Lists errors/warnings
-
-### Step 4: Choose Import Option
-- "Import Valid Only" - Skip errors
-- "Import All" - Include warnings
-
-### Step 5: Confirm & Complete
-- View import report
-- See imported count
-- Check error details
-
----
-
-## 🔒 Security Features
-
-✅ Input validation on all fields
-✅ Safe JSON parsing with error handling
-✅ No eval() or dangerous operations
-✅ Type-safe with TypeScript
-✅ Sanitized database inserts
-✅ No SQL injection risks
-
----
-
-## 📊 Performance
-
-- Parse time: < 100ms for 1000 questions
-- Validation time: < 50ms per question
-- Database insert: Parallel processing
-- No UI blocking
-- Memory efficient
-
----
-
-## ✅ Compatibility
-
-### Backward Compatible
-- ✅ Existing CSV import still works
-- ✅ Existing database structure unchanged
-- ✅ No breaking changes to quiz player
-- ✅ All existing features preserved
-
-### Forward Compatible
-- ✅ Supports new diagram metadata
-- ✅ Supports calculator settings
-- ✅ Supports drawing recommendations
-- ✅ Extensible for future fields
-
----
-
-## 🐛 Bug Fixes
-
-### Critical: toLowerCase() Crash
-**Issue:** "Cannot read properties of undefined (reading 'toLowerCase')"
-**Root Cause:** Calling `.toLowerCase()` on undefined values
-**Solution:** Defensive parsing with `String(value ?? '').toLowerCase()`
-**Status:** ✅ FIXED
-
-### Answer Parsing Crash
-**Issue:** Crashes when answer array contains undefined
-**Root Cause:** Direct `.trim()` on undefined
-**Solution:** Map to string first: `String(a ?? '').trim()`
-**Status:** ✅ FIXED
-
----
-
-## 📚 Example JSON Files
-
-### Example 1: Array Format
-```json
-[
-  {
-    "prompt": "What is 2 + 2?",
-    "answers": ["4"],
-    "fullSolution": "2 + 2 = 4",
-    "hint": "Count on your fingers"
-  },
-  {
-    "prompt": "What is the capital of France?",
-    "answers": ["Paris"],
-    "fullSolution": "The capital of France is Paris"
-  }
-]
-```
-
-### Example 2: Single Object
+**Steps:**
+1. Open JsonImportPageWithTier
+2. Paste JSON:
 ```json
 {
-  "prompt": "What is 5 * 6?",
-  "answer": "30",
-  "fullSolution": "5 * 6 = 30"
-}
-```
-
-### Example 3: Wrapped Payload
-```json
-{
-  "questions": [
+  "prompts": [
     {
-      "prompt": "Question 1?",
-      "answers": ["Answer 1"]
-    },
-    {
-      "prompt": "Question 2?",
-      "answers": ["Answer 2"]
+      "subject": "Maths",
+      "unit": "Unit 1",
+      "topic": "Algebra",
+      "question": "What is 2+2?",
+      "answers": ["4"],
+      "tier": "Higher"
     }
   ]
 }
 ```
+3. Click "Import Prompts"
+
+**Expected Result:**
+- ✅ Prompt imported successfully
+- ✅ Tier saved as "higher" (lowercase)
+- ✅ Tier distribution shows: 1 Higher
 
 ---
 
-## 🚢 Deployment Steps
+### Test 2: CSV Import with Tier Column
 
-### 1. Merge PR
+**Steps:**
+1. Open CsvImportPageWithTier
+2. Paste CSV:
+```csv
+subject,examBoard,unit,topic,type,question,answers,tier
+Maths,GCSE,Unit 1,Algebra,short,What is 2+2?,4,higher
+Maths,GCSE,Unit 1,Algebra,short,What is 1+1?,2,foundation
+```
+3. Click "Import Prompts"
+
+**Expected Result:**
+- ✅ 2 prompts imported
+- ✅ Tier distribution: 1 Higher, 1 Foundation
+
+---
+
+### Test 3: Single Prompt Tier Update
+
+**Steps:**
+1. Open PromptsPageWithTier
+2. Click Edit on any prompt
+3. Select tier: "Higher Tier"
+4. Click "Save Changes"
+
+**Expected Result:**
+- ✅ Prompt updated in database
+- ✅ Tier badge appears on prompt list
+
+---
+
+### Test 4: Bulk Topic Assignment
+
+**Steps:**
+1. Open TopicsPageWithTier
+2. Click "Set Tier" on a topic
+3. Select "Higher Tier"
+4. Click confirm
+
+**Expected Result:**
+- ✅ All prompts in topic updated
+- ✅ Tier distribution updated
+- ✅ Success message shown
+
+---
+
+### Test 5: Tier Filtering
+
+**Steps:**
+1. Open PromptsPageWithTier
+2. Select tier filter: "Higher Tier"
+3. Verify list updates
+
+**Expected Result:**
+- ✅ Only higher tier prompts shown
+- ✅ Count updates correctly
+
+---
+
+### Test 6: Combined Paper + Tier Filter
+
+**Steps:**
+1. Open QuizPlayerPageWithTier
+2. Select quiz type: "Paper"
+3. Select paper: "Paper 1"
+4. Select tier: "Foundation Tier"
+5. Click "Start Quiz"
+
+**Expected Result:**
+- ✅ Quiz loads with only Paper 1 + Foundation prompts
+- ✅ Tier badges visible on questions
+
+---
+
+### Test 7: Backwards Compatibility
+
+**Steps:**
+1. Open PromptsPageWithTier
+2. Select tier filter: "All Tiers"
+3. Verify old prompts (tier=NULL) appear
+
+**Expected Result:**
+- ✅ Prompts without tier assignment still visible
+- ✅ No errors in console
+- ✅ Quiz runs with mixed tier prompts
+
+---
+
+## 🚀 STEP 5: DEPLOY TO PRODUCTION
+
+### Option A: Merge to Main Branch
+
 ```bash
+# Switch to main branch
 git checkout main
+
+# Pull latest changes
 git pull origin main
+
+# Merge feature branch
 git merge feature/json-import-upgrade
+
+# Push to main
 git push origin main
+
+# Deploy (depends on your CI/CD setup)
+# If using Vercel: automatic deployment on push
+# If using other platform: follow your deployment process
 ```
 
-### 2. Build
-```bash
-npm install
-npm run build
-```
+### Option B: Create Pull Request
 
-### 3. Deploy
-```bash
-# Deploy to your hosting platform
-# (Vercel, Netlify, etc.)
-```
+1. Go to GitHub: https://github.com/Halfpro6119/therace
+2. Click "Pull requests"
+3. Click "New pull request"
+4. Base: `main`, Compare: `feature/json-import-upgrade`
+5. Create pull request
+6. Review changes
+7. Merge when ready
 
-### 4. Verify
-```
-✅ Navigate to /admin/json-import
-✅ Test with example JSON
-✅ Verify database integration
-✅ Check error handling
-```
+### Post-Deployment Verification
+
+After deployment, verify:
+
+1. **Admin Pages Load**
+   - PromptsPageWithTier loads without errors
+   - TopicsPageWithTier loads without errors
+   - UnitsPageWithTier loads without errors
+   - Import pages load without errors
+
+2. **Database Connected**
+   - Tier column accessible
+   - Tier filter works
+   - Bulk assignment works
+
+3. **User-Facing Features**
+   - SubjectDetailPageWithTier loads
+   - Tier filter visible
+   - Tier badges display correctly
+
+4. **No Console Errors**
+   - Open browser DevTools (F12)
+   - Check Console tab
+   - Verify no errors or warnings
 
 ---
 
-## 📞 Support
+## 📊 DEPLOYMENT SUMMARY
 
-### Common Issues
-
-**Q: JSON not parsing?**
-A: Check JSON syntax. Use online JSON validator.
-
-**Q: Questions not importing?**
-A: Check validation errors in preview. Fix required fields.
-
-**Q: Crash on import?**
-A: Check browser console. Report with error message.
-
-**Q: Database not updating?**
-A: Verify Supabase connection. Check database permissions.
+| Step | Status | Time |
+|------|--------|------|
+| 1. Database Migration | ⏳ TODO | 5 min |
+| 2. Admin Routing | ⏳ TODO | 10 min |
+| 3. User Routing | ⏳ TODO | 5 min |
+| 4. Acceptance Tests | ⏳ TODO | 20 min |
+| 5. Production Deploy | ⏳ TODO | 10 min |
+| **TOTAL** | **⏳ TODO** | **~50 min** |
 
 ---
 
-## 🎓 Training
+## 🆘 TROUBLESHOOTING
 
-### For Admins
-1. Navigate to `/admin/json-import`
-2. Paste JSON (use provided examples)
-3. Click "Detect Questions"
-4. Review preview
-5. Click "Import Valid Only" or "Import All"
-6. Confirm import
+### Migration Fails
 
-### For Developers
-1. Review `jsonNormalizer.ts` for parsing logic
-2. Review `answerValidation.ts` for validation logic
-3. Review `JsonImportPage.tsx` for UI implementation
-4. Check `importUtils.ts` for database integration
+**Error**: "Column already exists"
+- **Solution**: Column may already exist from previous attempt. Check with:
+  ```sql
+  SELECT column_name FROM information_schema.columns 
+  WHERE table_name = 'prompts' AND column_name = 'tier';
+  ```
 
----
+**Error**: "Permission denied"
+- **Solution**: Ensure you're using correct Supabase credentials with admin access
 
-## 📈 Future Enhancements
+### Components Don't Load
 
-- [ ] Bulk edit after preview
-- [ ] CSV to JSON converter
-- [ ] Template questions
-- [ ] Duplicate detection
-- [ ] Import history/rollback
-- [ ] Batch scheduling
-- [ ] Export to JSON
-- [ ] Import from URL
+**Error**: "Module not found: PromptsPageWithTier"
+- **Solution**: Verify file exists at `src/admin/PromptsPageWithTier.tsx`
+- **Solution**: Check import path is correct
 
----
+**Error**: "Cannot read property 'tier' of undefined"
+- **Solution**: Ensure database migration ran successfully
+- **Solution**: Check tier column exists in prompts table
 
-## 📄 Files Modified
+### Tests Fail
 
-```
-src/admin/jsonNormalizer.ts          (+211 lines)
-src/utils/answerValidation.ts        (+30 lines)
-src/admin/JsonImportPage.tsx         (+50 lines)
-src/admin/importUtils.ts             (+5 lines)
-```
-
-**Total Changes:** 296 lines added, 31 lines modified
-**Breaking Changes:** 0
-**New Dependencies:** 0
+**Error**: "Tier not saved"
+- **Solution**: Verify database migration completed
+- **Solution**: Check browser console for errors
+- **Solution**: Verify Supabase connection string is correct
 
 ---
 
-## ✨ Quality Metrics
+## 📞 SUPPORT
 
-- ✅ Code Coverage: 100% of new code
-- ✅ TypeScript Strict: Yes
-- ✅ ESLint: Passing
-- ✅ Performance: Optimized
-- ✅ Security: Hardened
-- ✅ Accessibility: Maintained
-- ✅ Documentation: Complete
+All code is documented in:
+- `TIER_SYSTEM_IMPLEMENTATION.md` - Architecture details
+- `README_TIER_SYSTEM.md` - Quick reference
+- `TIER_SYSTEM_FINAL_DELIVERY.md` - Complete delivery info
 
 ---
 
-## 🎉 Conclusion
+## ✅ DEPLOYMENT COMPLETE
 
-The JSON import system is now:
-- ✅ **EASY** - Simple paste-and-import workflow
-- ✅ **RELIABLE** - Defensive parsing prevents crashes
-- ✅ **FLEXIBLE** - Supports multiple formats and schemas
-- ✅ **SAFE** - Comprehensive validation and error handling
-- ✅ **FAST** - Optimized for performance
-- ✅ **COMPATIBLE** - No breaking changes
+Once all steps are complete:
 
-**Ready for production deployment!**
+1. ✅ Database migration applied
+2. ✅ Admin routing updated
+3. ✅ User routing updated
+4. ✅ All 7 acceptance tests passed
+5. ✅ Code deployed to production
+
+**Status**: Ready for production use
 
 ---
 
-**Status:** ✅ COMPLETE
-**Date:** January 19, 2026
-**Version:** 1.0.0
-**Author:** Admin Bot
+**Deployed**: [Date]
+**Deployed By**: [Your Name]
+**Version**: 1.0.0
+
