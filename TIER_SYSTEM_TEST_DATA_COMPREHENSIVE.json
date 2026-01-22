@@ -1,0 +1,234 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Comprehensive test data for Tier System implementation",
+    "defaultTier": "higher",
+    "notes": "This file demonstrates all tier system features including import, filtering, and bulk assignment"
+  },
+  "prompts": [
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Algebra",
+      "topic": "Linear Equations",
+      "type": "short",
+      "question": "Solve: 2x + 5 = 13",
+      "answers": ["4", "x = 4"],
+      "hint": "Subtract 5 from both sides first",
+      "explanation": "2x + 5 = 13 → 2x = 8 → x = 4",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Algebra",
+      "topic": "Linear Equations",
+      "type": "short",
+      "question": "Solve: 3(x - 2) = 2x + 4",
+      "answers": ["10", "x = 10"],
+      "hint": "Expand the brackets first",
+      "explanation": "3x - 6 = 2x + 4 → x = 10",
+      "tier": "higher",
+      "paperNumber": 2
+    },
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Algebra",
+      "topic": "Quadratic Equations",
+      "type": "short",
+      "question": "Solve: x² - 5x + 6 = 0",
+      "answers": ["2, 3", "x = 2 or x = 3"],
+      "hint": "Factor the quadratic",
+      "explanation": "(x - 2)(x - 3) = 0, so x = 2 or x = 3",
+      "tier": "higher",
+      "paperNumber": 1
+    },
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Geometry",
+      "topic": "Angles",
+      "type": "mcq",
+      "question": "What is the sum of angles in a triangle?",
+      "answers": ["180°", "360°", "90°", "270°"],
+      "hint": "Think about straight lines",
+      "explanation": "The sum of angles in any triangle is always 180°",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Geometry",
+      "topic": "Angles",
+      "type": "short",
+      "question": "In a triangle, two angles are 45° and 65°. Find the third angle.",
+      "answers": ["70°", "70"],
+      "hint": "Use the angle sum property",
+      "explanation": "180° - 45° - 65° = 70°",
+      "tier": "foundation",
+      "paperNumber": 2
+    },
+    {
+      "subject": "Mathematics",
+      "examBoard": "Edexcel",
+      "unit": "Geometry",
+      "topic": "Trigonometry",
+      "type": "short",
+      "question": "In a right triangle with angle 30°, if the opposite side is 5cm, find the hypotenuse.",
+      "answers": ["10", "10cm"],
+      "hint": "Use sin(30°) = 0.5",
+      "explanation": "sin(30°) = opposite/hypotenuse = 5/h → h = 10",
+      "tier": "higher",
+      "paperNumber": 3
+    },
+    {
+      "subject": "English Literature",
+      "examBoard": "AQA",
+      "unit": "Poetry",
+      "topic": "Romantic Poetry",
+      "type": "short",
+      "question": "Who wrote 'The Tyger'?",
+      "answers": ["William Blake", "Blake"],
+      "hint": "A famous Romantic poet",
+      "explanation": "'The Tyger' is a famous poem by William Blake from 1794",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "English Literature",
+      "examBoard": "AQA",
+      "unit": "Poetry",
+      "topic": "Romantic Poetry",
+      "type": "short",
+      "question": "Analyze the use of repetition in Blake's 'The Tyger'. What effect does it create?",
+      "answers": ["emphasis", "creates emphasis and rhythm"],
+      "hint": "Look at the repeated lines",
+      "explanation": "The repetition of 'Tyger Tyger' creates emphasis and a hypnotic rhythm that reinforces the poem's themes",
+      "tier": "higher",
+      "paperNumber": 2
+    },
+    {
+      "subject": "English Literature",
+      "examBoard": "AQA",
+      "unit": "Prose",
+      "topic": "Modern Novels",
+      "type": "short",
+      "question": "What is the main theme of 'To Kill a Mockingbird'?",
+      "answers": ["racism", "racial injustice", "prejudice"],
+      "hint": "Consider the trial and its outcome",
+      "explanation": "The novel explores themes of racial injustice and prejudice in the American South",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "English Literature",
+      "examBoard": "AQA",
+      "unit": "Prose",
+      "topic": "Modern Novels",
+      "type": "short",
+      "question": "How does Harper Lee use the character of Scout to develop the novel's themes?",
+      "answers": ["through her perspective", "as a narrator and observer"],
+      "hint": "Consider the narrative voice",
+      "explanation": "Scout's first-person narrative allows readers to experience her moral growth and understanding of injustice",
+      "tier": "higher",
+      "paperNumber": 3
+    },
+    {
+      "subject": "Biology",
+      "examBoard": "OCR",
+      "unit": "Cell Biology",
+      "topic": "Cell Structure",
+      "type": "short",
+      "question": "What is the function of mitochondria?",
+      "answers": ["energy production", "ATP production", "respiration"],
+      "hint": "Think about cellular energy",
+      "explanation": "Mitochondria are the powerhouse of the cell, producing ATP through aerobic respiration",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "Biology",
+      "examBoard": "OCR",
+      "unit": "Cell Biology",
+      "topic": "Cell Structure",
+      "type": "short",
+      "question": "Explain why cells with high metabolic rates have more mitochondria.",
+      "answers": ["they need more energy", "higher ATP demand"],
+      "hint": "Consider energy requirements",
+      "explanation": "Cells with high metabolic rates require more ATP, so they have more mitochondria to meet this energy demand",
+      "tier": "higher",
+      "paperNumber": 2
+    },
+    {
+      "subject": "Biology",
+      "examBoard": "OCR",
+      "unit": "Genetics",
+      "topic": "DNA and Inheritance",
+      "type": "short",
+      "question": "What does DNA stand for?",
+      "answers": ["deoxyribonucleic acid"],
+      "hint": "It's a nucleic acid",
+      "explanation": "DNA stands for deoxyribonucleic acid, the molecule that carries genetic information",
+      "tier": "foundation",
+      "paperNumber": 1
+    },
+    {
+      "subject": "Biology",
+      "examBoard": "OCR",
+      "unit": "Genetics",
+      "topic": "DNA and Inheritance",
+      "type": "short",
+      "question": "Describe the process of DNA replication and explain why semi-conservative replication is important.",
+      "answers": ["ensures accuracy", "maintains genetic information"],
+      "hint": "Think about accuracy and inheritance",
+      "explanation": "Semi-conservative replication ensures each new DNA molecule contains one original strand and one new strand, maintaining genetic accuracy across generations",
+      "tier": "higher",
+      "paperNumber": 3
+    }
+  ],
+  "testScenarios": {
+    "scenario1": {
+      "name": "Import with explicit tier values",
+      "description": "Test importing prompts with tier field explicitly set",
+      "expectedResult": "All prompts should have correct tier assignments (higher/foundation)"
+    },
+    "scenario2": {
+      "name": "Import with default tier",
+      "description": "Test importing prompts without tier field, using default tier",
+      "expectedResult": "All prompts should have default tier applied"
+    },
+    "scenario3": {
+      "name": "Filter by tier in admin",
+      "description": "Test filtering prompts by tier in PromptsPage",
+      "expectedResult": "Only prompts matching selected tier should be displayed"
+    },
+    "scenario4": {
+      "name": "Bulk assign tier to topic",
+      "description": "Test bulk assigning tier to all prompts in a topic",
+      "expectedResult": "All prompts in topic should have new tier"
+    },
+    "scenario5": {
+      "name": "Combined paper + tier filtering",
+      "description": "Test filtering by both paper and tier",
+      "expectedResult": "Only prompts matching both filters should be returned"
+    },
+    "scenario6": {
+      "name": "Tier-aware quiz running",
+      "description": "Test running a quiz with tier filter applied",
+      "expectedResult": "Quiz should only include prompts matching tier filter"
+    },
+    "scenario7": {
+      "name": "Tier distribution display",
+      "description": "Test displaying tier distribution in topics/units",
+      "expectedResult": "Should show counts of higher/foundation/unassigned prompts"
+    },
+    "scenario8": {
+      "name": "Backwards compatibility",
+      "description": "Test that prompts without tier (NULL) work correctly",
+      "expectedResult": "Unassigned prompts should appear in 'All tiers' filter"
+    }
+  }
+}

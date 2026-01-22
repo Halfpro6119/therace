@@ -3,7 +3,7 @@ import { db } from '../db/client';
 import { useToast } from '../contexts/ToastContext';
 import { Upload, AlertCircle } from 'lucide-react';
 import { normalizeTier } from './tierNormalizer';
-import { extractTierFromRow, validateTierInRow } from './importUtils_tier';
+import { extractTierFromRawRow, validateTierInRow } from './importUtils_tier';
 import { TierLevel } from '../types';
 
 /**
@@ -116,7 +116,7 @@ export function CsvImportPageWithTier() {
           }
 
           // NEW: Extract and normalize tier from row
-          let tier = extractTierFromRow(row);
+          let tier = extractTierFromRawRow(row);
           
           // NEW: Apply default tier if not specified
           if (tier === null && defaultTier !== null) {
@@ -164,7 +164,7 @@ export function CsvImportPageWithTier() {
           };
 
           // Import prompt
-          await db.importPrompt(prompt);
+          await db.createPrompt(prompt);
           results.successful++;
         } catch (error: any) {
           results.failed++;
@@ -181,7 +181,7 @@ export function CsvImportPageWithTier() {
         showToast('success', `Successfully imported ${results.successful} prompts`);
         setCsvInput('');
       } else {
-        showToast('warning', `Imported ${results.successful} prompts, ${results.failed} failed`);
+        showToast('success', `Imported ${results.successful} prompts, ${results.failed} failed`);
       }
     } catch (error: any) {
       showToast('error', `Import error: ${error.message}`);

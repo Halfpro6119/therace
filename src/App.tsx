@@ -16,10 +16,10 @@ import { AdminLayout } from './admin/AdminLayout';
 import { AdminDashboard } from './admin/AdminDashboard';
 import { ImportPage } from './admin/ImportPage';
 import { SubjectsPage as AdminSubjectsPage } from './admin/SubjectsPage';
-import { UnitsPage } from './admin/UnitsPage';
-import { TopicsPage } from './admin/TopicsPage';
+import { UnitsPageWithTier } from './admin/UnitsPageWithTier';
+import { TopicsPageWithTier } from './admin/TopicsPageWithTier';
 import { PapersPage } from './admin/PapersPage';
-import { PromptsPage } from './admin/PromptsPage';
+import { PromptsPageWithTier } from './admin/PromptsPageWithTier';
 import { DiagramsPage } from './admin/DiagramsPage';
 import { DiagramEditor } from './admin/DiagramEditor';
 import { DiagramTemplatesPage } from './admin/DiagramTemplatesPage';
@@ -35,7 +35,8 @@ import { ImportLogPage } from './admin/ops/ImportLogPage';
 import { CoveragePage } from './admin/CoveragePage';
 import { DiagramMetadataManager } from './admin/DiagramMetadataManager';
 import { DiagramMetadataImporter } from './admin/DiagramMetadataImporter';
-import { JsonImportPage } from './admin/JsonImportPage';
+import { JsonImportPageWithTier } from './admin/JsonImportPageWithTier';
+import { CsvImportPageWithTier } from './admin/CsvImportPageWithTier';
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
 import { CommandPalette } from './components/CommandPalette';
@@ -52,10 +53,10 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="subjects" element={<AdminSubjectsPage />} />
-          <Route path="units" element={<UnitsPage />} />
-          <Route path="topics" element={<TopicsPage />} />
+          <Route path="units" element={<UnitsPageWithTier />} />
+          <Route path="topics" element={<TopicsPageWithTier />} />
           <Route path="papers" element={<PapersPage />} />
-          <Route path="prompts" element={<PromptsPage />} />
+          <Route path="prompts" element={<PromptsPageWithTier />} />
           <Route path="diagrams" element={<DiagramsPage />} />
           <Route path="diagram-templates" element={<DiagramTemplatesPage />} />
           <Route path="quizzes" element={<QuizzesPage />} />
@@ -63,7 +64,8 @@ function App() {
           <Route path="coverage" element={<CoveragePage />} />
           <Route path="diagram-metadata" element={<DiagramMetadataManager />} />
           <Route path="diagram-import" element={<DiagramMetadataImporter />} />
-          <Route path="json-import" element={<JsonImportPage />} />
+          <Route path="json-import" element={<JsonImportPageWithTier />} />
+          <Route path="csv-import" element={<CsvImportPageWithTier />} />
           <Route path="ops" element={<ContentOpsHome />} />
           <Route path="ops/subjects/:subjectId" element={<SubjectOpsDetail />} />
           <Route path="ops/import-log" element={<ImportLogPage />} />
