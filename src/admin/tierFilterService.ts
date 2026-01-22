@@ -6,7 +6,9 @@
  */
 
 import { TierFilter, TierLevel } from '../types';
-import { db } from '../db/client';
+// IMPORTANT: `db` is an app-level wrapper (methods), not the Supabase client.
+// This service needs the raw Supabase query builder for `.from()`.
+import { supabase } from '../db/client';
 
 /**
  * Build WHERE clause for tier filtering
@@ -59,7 +61,7 @@ export async function getTopicPromptsWithTierFilter(
   tierFilter: TierFilter
 ): Promise<any[]> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .select('*')
       .eq('topic_id', topicId);
@@ -92,7 +94,7 @@ export async function getUnitPromptsWithTierFilter(
   tierFilter: TierFilter
 ): Promise<any[]> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .select('*')
       .eq('unit_id', unitId);
@@ -124,7 +126,7 @@ export async function getPaperPromptsWithTierFilter(
   tierFilter: TierFilter
 ): Promise<any[]> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .select('*')
       .eq('paper_id', paperId);
@@ -156,7 +158,7 @@ export async function getSubjectPromptsWithTierFilter(
   tierFilter: TierFilter
 ): Promise<any[]> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .select('*')
       .eq('subject_id', subjectId);
@@ -190,7 +192,7 @@ export async function getPromptsWithPaperAndTierFilter(
   tierFilter: TierFilter
 ): Promise<any[]> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .select('*')
       .eq('subject_id', subjectId);
@@ -227,7 +229,7 @@ export async function countTopicPromptsByTier(topicId: string): Promise<{
   foundation: number;
 }> {
   try {
-    const { data, error } = await db
+    const { data, error } = await supabase
       .from('prompts')
       .select('tier', { count: 'exact' })
       .eq('topic_id', topicId);
@@ -258,7 +260,7 @@ export async function countUnitPromptsByTier(unitId: string): Promise<{
   foundation: number;
 }> {
   try {
-    const { data, error } = await db
+    const { data, error } = await supabase
       .from('prompts')
       .select('tier', { count: 'exact' })
       .eq('unit_id', unitId);

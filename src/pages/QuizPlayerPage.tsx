@@ -202,6 +202,16 @@ export function QuizPlayerPage() {
 
   if (!quiz) return <div>Quiz not found</div>;
 
+  // Guard: quizzes can exist with 0 promptIds (or fetch may fail).
+  // Never allow currentPrompt to be undefined (prevents runtime crashes).
+  if (!currentPrompt) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div style={{ color: "rgb(var(--text-secondary))" }}>No questions found for this quiz.</div>
+      </div>
+    );
+  }
+
   const masteryState = storage.getMasteryState(quiz.id);
 
   const startQuiz = () => {
@@ -220,6 +230,7 @@ export function QuizPlayerPage() {
     }
 
     // Use robust answer validation
+    if (!currentPrompt) return;
     const isCorrect = isAnswerCorrect(value, currentPrompt.answers);
 
     if (isCorrect) {
@@ -237,6 +248,7 @@ export function QuizPlayerPage() {
       setTimeout(() => setShowXPPopup(false), 1500);
 
       // Create new solved set with this question added
+      if (!currentPrompt) return;
       const newSolvedPrompts = new Set([...solvedPrompts, currentPrompt.id]);
       setSolvedPrompts(newSolvedPrompts);
 
@@ -261,6 +273,7 @@ export function QuizPlayerPage() {
 
     try {
       // Use robust answer validation
+      if (!currentPrompt) return;
       const isCorrect = isAnswerCorrect(currentInput, currentPrompt.answers);
 
       if (!isCorrect) {
@@ -722,7 +735,7 @@ export function QuizPlayerPage() {
                   )}
 
                   <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
-                    {currentPrompt.question}
+                    {currentPrompt?.question ?? ""}
                   </h3>
 
                   {diagramMetadata && diagramMetadata.placement === 'below' && (
