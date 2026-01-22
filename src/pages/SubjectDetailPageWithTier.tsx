@@ -17,18 +17,15 @@ export function SubjectDetailPageWithTier() {
   const [subject, setSubject] = useState<Subject | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
-  const [tierFilter, setTierFilter] = useState<TierFilter>('all'); // NEW: Tier filter
+  const [tierFilter, setTierFilter] = useState<TierFilter>('all');
   const [expandedUnit, setExpandedUnit] = useState<string | null>(null);
-  const [tierDistributions, setTierDistributions] = useState<Record<string, any>>({}); // NEW: Tier distribution
+  const [tierDistributions, setTierDistributions] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
   }, [subjectId]);
 
-  /**
-   * Load subject data
-   */
   const loadData = async () => {
     if (!subjectId) return;
 
@@ -44,7 +41,6 @@ export function SubjectDetailPageWithTier() {
       setUnits(unitsData);
       setTopics(topicsData);
 
-      // NEW: Load tier distributions for all topics
       const distributions: Record<string, any> = {};
       for (const topic of topicsData) {
         distributions[topic.id] = await countTopicPromptsByTier(topic.id);
@@ -57,40 +53,6 @@ export function SubjectDetailPageWithTier() {
     }
   };
 
-  /**
-   * Get or create quiz for a topic with tier filter
-   */
-  const handleStartQuiz = async (topic: Topic) => {
-    try {
-      // Get prompts for this topic with tier filter
-      let prompts = await db.getPromptsByTopic(topic.id);
-      
-      // Apply tier filter
-      if (tierFilter === 'higher') {
-        prompts = prompts.filter(p => p.tier === 'higher');
-      } else if (tierFilter === 'foundation') {
-        prompts = prompts.filter(p => p.tier === 'foundation');
-      }
-      
-      if (prompts.length === 0) {
-        alert('No prompts available for this topic and tier combination');
-        return;
-      }
-      
-      // Create or get quiz for this topic
-      const quiz = await db.getOrCreateTopicQuiz(topic.id, prompts);
-      if (quiz) {
-        navigate(`/quiz/${quiz.id}`);
-      }
-    } catch (error) {
-      console.error('Failed to start quiz:', error);
-      alert('Failed to start quiz');
-    }
-  };
-
-  /**
-   * Filter topics based on tier
-   */
   const getFilteredTopics = (unitId: string) => {
     const unitTopics = topics.filter(t => t.unitId === unitId);
     
@@ -98,7 +60,6 @@ export function SubjectDetailPageWithTier() {
       return unitTopics;
     }
 
-    // Filter by tier distribution
     return unitTopics.filter(topic => {
       const dist = tierDistributions[topic.id];
       if (!dist) return false;
@@ -110,6 +71,27 @@ export function SubjectDetailPageWithTier() {
       }
       return true;
     });
+  };
+
+  const handleStartQuiz = async (topic: Topic) => {
+    try {
+      // Get existing quizzes for this topic
+      const quizzes = await db.getQuizzesByTopic(topic.id);
+      
+      if (quizzes.length === 0) {
+        alert('No quiz available for this topic');
+        return;
+      }
+      
+      // Use the first quiz
+      const quiz = quizzes[0];
+      
+      // Navigate to quiz player with tier filter as URL param
+      navigate(`/quiz/${quiz.id}?tier=${tierFilter}`);
+    } catch (error) {
+      console.error('Failed to start quiz:', error);
+      alert('Failed to start quiz');
+    }
   };
 
   if (loading) {
@@ -132,7 +114,7 @@ export function SubjectDetailPageWithTier() {
         </p>
       </div>
 
-      {/* NEW: Tier Filter */}
+      {/* Tier Filter */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Filter by Tier
@@ -201,7 +183,7 @@ export function SubjectDetailPageWithTier() {
                               {topic.name}
                             </h3>
 
-                            {/* NEW: Tier Distribution */}
+                            {/* Tier Distribution */}
                             {distribution && (
                               <div className="flex items-center gap-3 text-xs mb-3">
                                 <span className="text-gray-600 dark:text-gray-400">
