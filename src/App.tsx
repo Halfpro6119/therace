@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { HomePage } from './pages/HomePage';
 import { SubjectsPage } from './pages/SubjectsPage';
-import { SubjectDetailPage } from './pages/SubjectDetailPage';
+import { SubjectDetailPageWithTier } from './pages/SubjectDetailPageWithTier';
 import { QuizPlayerPage } from './pages/QuizPlayerPage';
 import { ResultsPage } from './pages/ResultsPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -86,7 +86,7 @@ function App() {
                 <Route path="/playlists/:playlistId" element={<PlaylistDetailPage />} />
                 <Route path="/library" element={<LibraryPage />} />
                 <Route path="/subjects" element={<SubjectsPage />} />
-                <Route path="/subjects/:subjectId" element={<SubjectDetailPage />} />
+                <Route path="/subjects/:subjectId" element={<SubjectDetailPageWithTier />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />
