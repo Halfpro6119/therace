@@ -12,6 +12,7 @@ export function ToolsPage() {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [papers, setPapers] = useState<Paper[]>([]);
   const [selectedPaperNumber, setSelectedPaperNumber] = useState<1 | 2 | 3>(1);
+  const [selectedTier, setSelectedTier] = useState<'all' | 'higher' | 'foundation'>('all');
 
 
 
@@ -120,13 +121,14 @@ export function ToolsPage() {
     setResult('');
 
     try {
-      const quiz = await createSinglePaperQuiz(selectedSubjectId, num as 1 | 2 | 3);
+      const quiz = await createSinglePaperQuiz(selectedSubjectId, num as 1 | 2 | 3, selectedTier);
       const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
 
       if (!quiz) {
         setResult(`Error: No prompts found for Paper ${num} in ${selectedSubject?.name}. Ensure prompts are assigned to that paper.`);
       } else {
-        setResult(`Successfully created Paper ${num} quiz for ${selectedSubject?.name}`);
+        const tierLabel = selectedTier === 'all' ? 'All Tiers' : selectedTier === 'higher' ? 'Higher Tier' : 'Foundation Tier';
+        setResult(`Successfully created Paper ${num} (${tierLabel}) quiz for ${selectedSubject?.name}`);
       }
     } catch (error) {
       console.error(error);
@@ -192,58 +194,60 @@ export function ToolsPage() {
     {
       id: 'single-paper-quiz',
       title: 'Create Quiz for One Paper',
-      description: 'Generate a quiz containing prompts from a single paper (choose 1, 2, or 3)',
+      description: 'Generate a quiz containing prompts from a single paper (choose 1, 2, or 3) and tier',
       icon: BookOpen,
       color: 'from-indigo-500 to-blue-500',
       action: handleSinglePaperQuizCreation,
     },
 
     {
-      id: 'seed-diagram-templates',
+      id: 'seed-diagrams',
       title: 'Seed Diagram Templates',
-      description: 'Load starter diagram templates for maths (circle theorems, parallel lines, graphs)',
+      description: 'Initialize diagram templates for the system',
       icon: Layout,
-      color: 'from-orange-500 to-red-500',
+      color: 'from-cyan-500 to-blue-500',
       action: handleSeedDiagramTemplates,
     },
   ];
 
+  const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Batch Tools</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          Batch Tools
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
           Automated tools for batch operations
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+      {/* Subject Selector */}
+      <div className="mb-8 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Select Subject
         </label>
         <select
           value={selectedSubjectId}
           onChange={(e) => setSelectedSubjectId(e.target.value)}
+          disabled={loading}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
         >
           {subjects.length === 0 ? (
-            <option value="">No subjects available</option>
+            <option value="">Please create subjects first before using batch tools</option>
           ) : (
-            subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>
-                {subject.name} ({subject.examBoard})
+            subjects.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.name}
               </option>
             ))
           )}
         </select>
-        {subjects.length === 0 && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Please create subjects first before using batch tools
-          </p>
-        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Tools Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
@@ -259,29 +263,47 @@ export function ToolsPage() {
 
               <div className="p-6">
                 {tool.id === 'single-paper-quiz' && (
-                  <div className="mb-4">
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                      Select Paper
-                    </label>
-                    <select
-                      value={selectedPaperNumber}
-                      onChange={(e) => setSelectedPaperNumber(parseInt(e.target.value, 10) as 1 | 2 | 3)}
-                      disabled={loading || !selectedSubjectId || papers.length === 0}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    >
-                      {papers.length === 0 ? (
-                        <option value="1">No papers available</option>
-                      ) : (
-                        papers
-                          .slice()
-                          .sort((a, b) => a.paperNumber - b.paperNumber)
-                          .map((p) => (
-                            <option key={p.id} value={p.paperNumber}>
-                              Paper {p.paperNumber} — {p.name}{p.calculatorAllowedDefault ? ' (Calculator)' : ' (Non-calculator)'}
-                            </option>
-                          ))
-                      )}
-                    </select>
+                  <div className="space-y-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Select Paper
+                      </label>
+                      <select
+                        value={selectedPaperNumber}
+                        onChange={(e) => setSelectedPaperNumber(parseInt(e.target.value, 10) as 1 | 2 | 3)}
+                        disabled={loading || !selectedSubjectId || papers.length === 0}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      >
+                        {papers.length === 0 ? (
+                          <option value="1">No papers available</option>
+                        ) : (
+                          papers
+                            .slice()
+                            .sort((a, b) => a.paperNumber - b.paperNumber)
+                            .map((p) => (
+                              <option key={p.id} value={p.paperNumber}>
+                                Paper {p.paperNumber} — {p.name}{p.calculatorAllowedDefault ? ' (Calculator)' : ' (Non-calculator)'}
+                              </option>
+                            ))
+                        )}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Select Tier
+                      </label>
+                      <select
+                        value={selectedTier}
+                        onChange={(e) => setSelectedTier(e.target.value as 'all' | 'higher' | 'foundation')}
+                        disabled={loading || !selectedSubjectId}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      >
+                        <option value="all">All Tiers</option>
+                        <option value="higher">Higher Tier</option>
+                        <option value="foundation">Foundation Tier</option>
+                      </select>
+                    </div>
                   </div>
                 )}
 
@@ -319,14 +341,10 @@ export function ToolsPage() {
         <div className="flex items-start gap-4">
           <Wrench size={32} className="flex-shrink-0" />
           <div>
-            <h3 className="text-xl font-bold mb-2">How Batch Tools Work</h3>
-            <ul className="space-y-2 text-white/90">
-              <li>• <strong>Topic Quizzes:</strong> Creates one quiz per topic (for the selected subject) with all prompts in that topic</li>
-              <li>• <strong>Unit Quizzes:</strong> Creates one quiz per unit (for the selected subject) combining all prompts from all topics in that unit</li>
-              <li>• <strong>Full GCSE Quiz:</strong> Creates one comprehensive quiz for the selected subject with ALL prompts</li>
-              <li>• Time limits are auto-calculated: 30 seconds per prompt (15 for Grade 9 target)</li>
-              <li>• These tools will skip topics/units with no prompts</li>
-            </ul>
+            <h3 className="text-xl font-bold mb-2">⚠️ Use with Caution</h3>
+            <p className="text-white/90">
+              These tools perform batch operations that affect multiple records. Always backup your data before running these tools.
+            </p>
           </div>
         </div>
       </div>

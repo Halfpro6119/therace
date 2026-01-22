@@ -175,12 +175,21 @@ export async function createPaperQuizzes(
 export async function createSinglePaperQuiz(
   subjectId: string,
   paperNumber: 1 | 2 | 3,
+  tierFilter: 'all' | 'higher' | 'foundation' = 'all',
   onProgress?: (progress: QuizProgress) => void
 ): Promise<Quiz | null> {
   const paper = await db.getPaperByNumber(subjectId, paperNumber);
   if (!paper) return null;
 
-  const prompts = await db.getPromptsForPaperMasterQuiz(paper.id);
+  let prompts = await db.getPromptsForPaperMasterQuiz(paper.id);
+  
+  // Filter by tier if specified
+  if (tierFilter === 'higher') {
+    prompts = prompts.filter(p => p.tier === 'higher');
+  } else if (tierFilter === 'foundation') {
+    prompts = prompts.filter(p => p.tier === 'foundation');
+  }
+  
   if (prompts.length === 0) return null;
 
   if (onProgress) {
