@@ -264,13 +264,33 @@ export interface DiagramSchema {
   };
 }
 
-export type DiagramMode = 'asset' | 'template' | 'auto';
+export type DiagramMode = 'asset' | 'template' | 'auto' | 'custom';
 export type DiagramPlacementType = 'above' | 'inline' | 'below' | 'side';
+
+// Metadata-only (no-template) custom diagrams
+export interface DiagramCustomBlueprint {
+  version: number;
+  size?: { width: number; height: number };
+  viewBox?: string;
+  background?: { grid?: boolean; axes?: boolean };
+  defs?: {
+    points?: Record<string, { x: number; y: number }>;
+    labels?: Record<string, string>;
+    values?: Record<string, string | number>;
+  };
+  layers: Array<{
+    id: string;
+    items: Array<Record<string, any>>;
+  }>;
+}
+
 
 export interface DiagramMetadata {
   mode: DiagramMode;
   diagramId?: string;
   templateId?: string;
+  // When mode=custom (or when custom is present), render diagram directly from this blueprint
+  custom?: DiagramCustomBlueprint;
   placement?: DiagramPlacementType;
   caption?: string;
   alt?: string;

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { supabase } from '../db/client';
 import { renderDiagram } from '../diagrams/engine';
+import { CustomDiagramEngine } from '../diagrams/engine/customDiagramEngine';
 import type { DiagramMetadata, DiagramTemplate, Diagram, DiagramOverrides, DiagramSchema } from '../types';
 
 interface DiagramRendererProps {
@@ -122,6 +123,17 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
         width: template.width || 0,
         height: template.height || 0,
         warnings: [] as string[],
+      };
+    }
+
+    if ((metadata.mode === 'custom' || (metadata as any).custom) && (metadata as any).custom) {
+      const engine = new CustomDiagramEngine((metadata as any).custom);
+      const svg = engine.render();
+      return {
+        svg,
+        width: (metadata as any).custom?.size?.width || 0,
+        height: (metadata as any).custom?.size?.height || 0,
+        warnings: showWarnings ? engine.getWarnings() : [],
       };
     }
 
@@ -391,3 +403,20 @@ function applyStyleOverrides(doc: Document, styles: { highlight?: string[]; mute
     });
   }
 }
+
+// Add this import at the top of the file:
+// import { buildDiagramFromMetadata } from '../diagrams/engine/metadataDiagramBuilder';
+
+// Add this new mode handler in the loadDiagram function:
+// else if (metadata.mode === 'metadata' && metadata.shapes) {
+//   const svgString = buildDiagramFromMetadata({
+//     viewBox: metadata.viewBox,
+//     width: metadata.width,
+//     height: metadata.height,
+//     backgroundColor: metadata.backgroundColor,
+//     shapes: metadata.shapes,
+//     params: metadata.params,
+//   });
+//   setSvgContent(svgString);
+//   setLoading(false);
+// }

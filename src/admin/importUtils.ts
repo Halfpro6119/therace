@@ -14,7 +14,8 @@ export interface ImportPromptRow {
   explanation?: string;
   calculatorAllowed?: boolean;
   drawingRecommended?: boolean;
-  diagramMode?: 'auto' | 'template' | 'asset';
+  diagramMode?: 'auto' | 'template' | 'asset' | 'custom';
+  diagramCustomJson?: string;
   diagramTemplateId?: string;
   diagramPlacement?: 'above' | 'below' | 'inline' | 'side';
   diagramCaption?: string;
@@ -428,7 +429,20 @@ export async function importPrompts(
           meta.drawingRecommended = row.drawingRecommended;
         }
 
-        if (row.diagramMode && row.diagramTemplateId) {
+        if (row.diagramMode === 'custom' && row.diagramCustomJson) {
+          meta.diagram = {
+            mode: 'custom',
+            placement: row.diagramPlacement || 'above',
+            caption: row.diagramCaption,
+            alt: row.diagramAlt
+          };
+
+          try {
+            meta.diagram.custom = JSON.parse(row.diagramCustomJson);
+          } catch (e) {
+            console.warn('Failed to parse diagramCustomJson:', e);
+          }
+        } else if (row.diagramMode && row.diagramTemplateId) {
           meta.diagram = {
             mode: row.diagramMode,
             templateId: row.diagramTemplateId,
@@ -481,7 +495,20 @@ export async function importPrompts(
             }
 
             if (metaOverwriteMode || (row.diagramMode && row.diagramTemplateId)) {
-              if (row.diagramMode && row.diagramTemplateId) {
+              if (row.diagramMode === 'custom' && row.diagramCustomJson) {
+          meta.diagram = {
+            mode: 'custom',
+            placement: row.diagramPlacement || 'above',
+            caption: row.diagramCaption,
+            alt: row.diagramAlt
+          };
+
+          try {
+            meta.diagram.custom = JSON.parse(row.diagramCustomJson);
+          } catch (e) {
+            console.warn('Failed to parse diagramCustomJson:', e);
+          }
+        } else if (row.diagramMode && row.diagramTemplateId) {
                 mergedMeta.diagram = {
                   mode: row.diagramMode,
                   templateId: row.diagramTemplateId,
@@ -681,6 +708,22 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
       }
     }
 
+    // custom diagram can be object or string; store as JSON string in diagramCustomJson
+    let diagramCustomJson: string | undefined;
+    const customRaw = diagramObj?.custom ?? raw.diagramCustom ?? raw.diagram_custom ?? raw.diagramCustomJson ?? raw.diagram_custom_json;
+
+    if (customRaw !== undefined && customRaw !== null && customRaw !== '') {
+      if (typeof customRaw === 'string') {
+        diagramCustomJson = customRaw;
+      } else {
+        try {
+          diagramCustomJson = JSON.stringify(customRaw);
+        } catch {
+          // ignore
+        }
+      }
+    }
+
     const row: ImportPromptRow = {
       tier: extractTierFromAnyRow(raw),
       subject: String(raw.subject ?? '').trim(),
@@ -703,7 +746,7 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
       })(),
     };
 
-    if (diagramMode && ['auto', 'template', 'asset'].includes(diagramMode)) {
+    if (diagramMode && ['auto', 'template', 'asset', 'custom'].includes(diagramMode)) {
       row.diagramMode = diagramMode as any;
     }
     if (diagramTemplateId) row.diagramTemplateId = diagramTemplateId;
@@ -713,6 +756,7 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
     if (diagramCaption !== undefined) row.diagramCaption = String(diagramCaption);
     if (diagramAlt !== undefined) row.diagramAlt = String(diagramAlt);
     if (diagramParamsJson) row.diagramParamsJson = diagramParamsJson;
+    if (diagramCustomJson) row.diagramCustomJson = diagramCustomJson;
 
     rows.push(row);
   }

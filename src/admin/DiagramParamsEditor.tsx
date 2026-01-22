@@ -10,12 +10,14 @@ interface DiagramParamsEditorProps {
 }
 
 export function DiagramParamsEditor({ metadata, onChange }: DiagramParamsEditorProps) {
-  const [mode, setMode] = useState<'none' | 'auto' | 'template' | 'asset'>(metadata?.mode || 'none');
+  const [mode, setMode] = useState<'none' | 'auto' | 'template' | 'asset' | 'custom'>(metadata?.mode || 'none');
   const [templateId, setTemplateId] = useState(metadata?.templateId || '');
   const [placement, setPlacement] = useState(metadata?.placement || 'above');
   const [caption, setCaption] = useState(metadata?.caption || '');
   const [alt, setAlt] = useState(metadata?.alt || '');
   const [params, setParams] = useState<DiagramParams>(metadata?.params || {});
+  const [customJson, setCustomJson] = useState(() => metadata?.custom ? JSON.stringify(metadata.custom, null, 2) : '');
+  const [customJsonError, setCustomJsonError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [templates] = useState(getAllTemplates());
   const [selectedTemplate, setSelectedTemplate] = useState<DiagramEngineTemplate | null>(null);
@@ -73,17 +75,55 @@ export function DiagramParamsEditor({ metadata, onChange }: DiagramParamsEditorP
   useEffect(() => {
     if (mode === 'none' || (mode === 'auto' && !templateId)) {
       onChange(undefined);
-    } else {
-      onChange({
-        mode: mode as 'auto' | 'template' | 'asset',
-        templateId,
-        placement,
-        caption: caption || undefined,
-        alt: alt || undefined,
-        params: mode === 'auto' ? params : undefined
-      });
+      return;
     }
-  }, [mode, templateId, placement, caption, alt, params]);
+
+    if (mode === 'custom') {
+      // Parse custom JSON; never throw
+      if (!customJson.trim()) {
+        onChange({
+          mode: 'custom',
+          placement,
+          caption: caption || undefined,
+          alt: alt || undefined,
+          custom: undefined,
+        } as any);
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(customJson);
+        setCustomJsonError(null);
+        onChange({
+          mode: 'custom',
+          placement,
+          caption: caption || undefined,
+          alt: alt || undefined,
+          custom: parsed,
+        } as any);
+      } catch (e: any) {
+        setCustomJsonError(e?.message || 'Invalid JSON');
+        // Still emit metadata without crashing; renderer will show fallback
+        onChange({
+          mode: 'custom',
+          placement,
+          caption: caption || undefined,
+          alt: alt || undefined,
+          custom: undefined,
+        } as any);
+      }
+      return;
+    }
+
+    onChange({
+      mode: mode as 'auto' | 'template' | 'asset',
+      templateId,
+      placement,
+      caption: caption || undefined,
+      alt: alt || undefined,
+      params: mode === 'auto' ? params : undefined
+    });
+  }, [mode, templateId, placement, caption, alt, params, customJson]);
 
   const handleLabelChange = (key: string, value: string) => {
     setParams(prev => ({
