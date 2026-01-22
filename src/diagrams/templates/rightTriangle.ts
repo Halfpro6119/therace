@@ -52,20 +52,21 @@ export const rightTriangle: DiagramEngineTemplate = {
     const by = cy;
     const ccx = bx;
     const ccy = cy - opposite;
-    // Angle label position: near vertex A, inside the angle (uses angle bisector)
-    const angleLabelDistance = 34;
+    // Angle label position: near vertex A but OUTSIDE the triangle (below the base)
+    // We use the *exterior* angle bisector between AB and the reflection of AC across AB.
+    const angleLabelDistance = 36;
     // Unit vector along AB (to the right)
     const u1x = 1;
     const u1y = 0;
-    // Unit vector along AC (towards C)
+    // Exterior-bisector uses reflected AC (downwards)
     const u2x = Math.cos(angleRad);
-    const u2y = -Math.sin(angleRad);
-    // Angle bisector direction = normalize(u1 + u2)
+    const u2y = Math.sin(angleRad);
     const bisx = u1x + u2x;
     const bisy = u1y + u2y;
     const bisLen = Math.sqrt(bisx * bisx + bisy * bisy) || 1;
     const angleLabelX = ax + (angleLabelDistance * bisx) / bisLen;
     const angleLabelY = ay + (angleLabelDistance * bisy) / bisLen;
+
 
 
     // Right angle mark size
