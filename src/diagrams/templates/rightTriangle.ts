@@ -52,20 +52,11 @@ export const rightTriangle: DiagramEngineTemplate = {
     const by = cy;
     const ccx = bx;
     const ccy = cy - opposite;
-    // Angle label position: near vertex A but OUTSIDE the triangle (below the base)
-    // We use the *exterior* angle bisector between AB and the reflection of AC across AB.
-    const angleLabelDistance = 36;
-    // Unit vector along AB (to the right)
-    const u1x = 1;
-    const u1y = 0;
-    // Exterior-bisector uses reflected AC (downwards)
-    const u2x = Math.cos(angleRad);
-    const u2y = Math.sin(angleRad);
-    const bisx = u1x + u2x;
-    const bisy = u1y + u2y;
-    const bisLen = Math.sqrt(bisx * bisx + bisy * bisy) || 1;
-    const angleLabelX = ax + (angleLabelDistance * bisx) / bisLen;
-    const angleLabelY = ay + (angleLabelDistance * bisy) / bisLen;
+    // Angle label position: OUTSIDE the triangle, near vertex A (below AB, slightly to the right)
+    // This avoids overlap with the base line and the triangle interior.
+    const angleLabelX = ax + 34;
+    const angleLabelY = ay + 18;
+
 
 
 
@@ -113,7 +104,7 @@ export const rightTriangle: DiagramEngineTemplate = {
     <text id="txt:hypotenuse" x="${(ax + ccx) / 2 - 50}" y="${(ay + ccy) / 2 - 20}" text-anchor="middle" class="diagram-text-side">${labelHypotenuse}</text>
     ` : ''}
 
-    ${showAngleLabel ? `<text id="txt:angle" x="${angleLabelX}" y="${angleLabelY - 6}" class="diagram-text-angle">${angleValue}°</text>` : ''}
+    ${showAngleLabel ? `<text id="txt:angle" x="${angleLabelX}" y="${angleLabelY}" class="diagram-text-angle">${angleValue}°</text>` : ''}
   </g>
 </svg>`;
 
