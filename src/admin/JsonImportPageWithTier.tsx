@@ -3,7 +3,7 @@ import { db } from '../db/client';
 import { useToast } from '../contexts/ToastContext';
 import { Upload, AlertCircle, CheckCircle } from 'lucide-react';
 import { normalizeTier, getTierLabel } from './tierNormalizer';
-import { extractTierFromRow, applyDefaultTier, validateTierInRow } from './importUtils_tier';
+import { extractTierFromRawRow, applyDefaultTier, validateTierInRow } from './importUtils_tier';
 import { TierLevel, TierFilter } from '../types';
 
 /**
@@ -66,7 +66,7 @@ export function JsonImportPageWithTier() {
           }
 
           // NEW: Extract and normalize tier from row
-          let tier = extractTierFromRow(row);
+          let tier = extractTierFromRawRow(row);
           
           // NEW: Apply default tier if not specified
           if (tier === null && importDefaultTier !== null) {
