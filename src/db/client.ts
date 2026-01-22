@@ -34,6 +34,8 @@ const mapTopic = (row: any): Topic => ({
 
 const mapPrompt = (row: any): Prompt => ({
   paperId: row.paper_id,
+  // Tier separation (nullable; NULL => "All tiers")
+  tier: row.tier,
   calculatorAllowed: row.calculator_allowed,
   diagram_metadata: row.diagram_metadata,
   id: row.id,
@@ -315,6 +317,8 @@ export const db = {
         topic_id: prompt.topicId,
         // Paper assignment (nullable)
         paper_id: prompt.paperId ?? null,
+        // Tier assignment (nullable)
+        tier: (prompt as any).tier ?? null,
         // Calculator override (nullable)
         calculator_allowed: prompt.calculatorAllowed ?? null,
         type: prompt.type,
@@ -342,6 +346,9 @@ export const db = {
 
     // Paper assignment + calculator override
     if (updates.paperId !== undefined) dbUpdates.paper_id = updates.paperId;
+
+    // Tier assignment (nullable)
+    if ((updates as any).tier !== undefined) dbUpdates.tier = (updates as any).tier;
     if (updates.calculatorAllowed !== undefined) dbUpdates.calculator_allowed = updates.calculatorAllowed;
 
     const { error } = await supabase

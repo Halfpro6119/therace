@@ -1,3 +1,4 @@
+import { extractTierFromAnyRow } from './tierImport';
 import { Subject, Unit, Topic } from '../types';
 import { db } from '../db/client';
 
@@ -22,6 +23,8 @@ export interface ImportPromptRow {
   // Paper assignment (optional)
   paperId?: string;
   paperNumber?: number;
+  // Tier assignment (optional)
+  tier?: "higher" | "foundation" | null;
 }
 
 
@@ -78,6 +81,7 @@ export function parseCSV(csvText: string): ImportPromptRow[] {
       explanation: row.explanation || undefined,
       calculatorAllowed: parseBoolean(row.calculatorallowed || row.calculator_allowed),
       drawingRecommended: parseBoolean(row.drawingrecommended || row.drawing_recommended),
+      tier: extractTierFromAnyRow(row),
       paperId: (row.paper_id || row.paperid || '').trim() || undefined,
       paperNumber: (() => {
         const v = (row.paper_number || row.papernumber || '').trim();
@@ -509,6 +513,7 @@ export async function importPrompts(
               explanation: row.explanation,
               meta: Object.keys(mergedMeta).length > 0 ? mergedMeta : undefined,
               paperId: resolvedPaperId,
+              tier: (row as any).tier ?? null,
             });
 
             result.updated++;
@@ -543,6 +548,7 @@ export async function importPrompts(
           explanation: row.explanation,
           meta: Object.keys(meta).length > 0 ? meta : undefined,
           paperId: resolvedPaperId,
+          tier: (row as any).tier ?? null,
         });
 
         result.imported++;
@@ -676,6 +682,7 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
     }
 
     const row: ImportPromptRow = {
+      tier: extractTierFromAnyRow(raw),
       subject: String(raw.subject ?? '').trim(),
       examBoard: String(raw.examBoard ?? raw.exam_board ?? '').trim(),
       unit: String(raw.unit ?? '').trim(),

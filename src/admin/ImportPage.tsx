@@ -19,6 +19,7 @@ import {
   QuizProgress,
 } from './quizBuilder';
 import { logImportRun } from './ops/ImportLogPage';
+import { extractTierFromAnyRow, normalizeTierValue, TierValue } from "./tierImport";
 
 type Step = 'input' | 'preview' | 'importing' | 'complete';
 
@@ -49,6 +50,7 @@ export function ImportPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [defaultPaperNumber, setDefaultPaperNumber] = useState<number | undefined>(undefined);
+  const [defaultTier, setDefaultTier] = useState<TierValue>(null);
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [createQuizzes, setCreateQuizzes] = useState(false);
   const [quizTypes, setQuizTypes] = useState({ topic: true, unit: true, full: false });
@@ -103,9 +105,24 @@ const [progress, setProgress] = useState<ImportProgressState>({
 
       if (inputType === 'json') {
         parsed = parseImportJsonPrompts(inputText);
+        parsed = parsed.map(r => ({ ...r, tier: r.tier ?? null }));
       } else {
         parsed = parseCSV(inputText);
       }
+
+      // Apply default tier if provided (do not override per-row tier)
+      if (defaultTier) {
+        parsed = parsed.map(r => ({ ...r, tier: (r as any).tier ?? defaultTier }));
+      }
+
+      // Normalize tier values and warn on invalid (do not crash)
+      parsed = parsed.map((r: any) => {
+        const extracted = extractTierFromAnyRow(r);
+        const finalTier = extracted ?? r.tier ?? null;
+        return { ...r, tier: finalTier };
+      });
+
+      
 
       const validationErrors = validateImportRows(parsed);
       const dupes = detectDuplicates(parsed);
@@ -302,6 +319,26 @@ const [progress, setProgress] = useState<ImportProgressState>({
               </select>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Per-row overrides: paper_id or paper_number columns/fields.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Default Tier (optional)
+              </label>
+              <select
+                value={defaultTier ?? ""}
+                onChange={(e) => setDefaultTier(normalizeTierValue(e.target.value))}
+                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All/None (no default tier)</option>
+                <option value="higher">Higher Tier</option>
+                <option value="foundation">Foundation Tier</option>
+              </select>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Per-row overrides: tier/level/isHigher/isFoundation fields.
               </p>
             </div>
           </div>

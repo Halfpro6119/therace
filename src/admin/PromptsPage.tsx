@@ -1,3 +1,4 @@
+import { normalizeTierValue, TierValue } from "./tierImport";
 import { useEffect, useState } from 'react';
 import { db, supabase } from '../db/client';
 import { Prompt, Subject, Unit, Topic, Diagram, DiagramMetadata, Paper } from '../types';
@@ -16,6 +17,7 @@ export function PromptsPage() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
+  const [filterTier, setFilterTier] = useState<TierValue | "all">("all");
   const [diagrams, setDiagrams] = useState<Diagram[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSubject, setFilterSubject] = useState<string>('');
@@ -115,9 +117,10 @@ export function PromptsPage() {
       prompt.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       prompt.explanation?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSubject = !filterSubject || prompt.subjectId === filterSubject;
+    const matchesTier = filterTier === "all" || (filterTier === null ? prompt.tier === null : prompt.tier === filterTier);
     const matchesType = !filterType || prompt.type === filterType;
     const matchesPaper = !filterPaper || prompt.paperId === filterPaper;
-    return matchesSearch && matchesSubject && matchesType && matchesPaper;
+    return matchesSearch && matchesSubject && matchesType && matchesPaper && matchesTier;
   });
 
   const getSubjectName = (id: string) => subjects.find(s => s.id === id)?.name || 'Unknown';
@@ -164,6 +167,16 @@ export function PromptsPage() {
             {subjects.map(s => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
+          </select>
+          <select
+            value={filterTier ?? "all"}
+            onChange={(e) => setFilterTier(e.target.value === "all" ? "all" : normalizeTierValue(e.target.value))}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            <option value="all">All Tiers</option>
+            <option value="higher">Higher Tier</option>
+            <option value="foundation">Foundation Tier</option>
+            <option value="">Unassigned</option>
           </select>
           <select
             value={filterPaper}
