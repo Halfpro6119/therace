@@ -17,7 +17,6 @@ import { QuestionRenderer } from '../components/QuestionRenderer';
 import { QuizNavigation } from '../components/QuizNavigation';
 import { questionRegistry } from '../utils/questionRegistry';
 import { QuestionAnswer } from '../types/questionTypes';
-
 import { Attempt, Quiz, Prompt, DiagramMetadata } from '../types';
 
 export function QuizPlayerPage() {
@@ -63,6 +62,7 @@ export function QuizPlayerPage() {
   
   // Prevent race conditions: lock submission during processing
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Navigation and feedback state
   const [answeredPrompts, setAnsweredPrompts] = useState<Set<string>>(new Set());
   const [showFeedback, setShowFeedback] = useState(false);
@@ -87,9 +87,6 @@ export function QuizPlayerPage() {
   // NAVIGATION HANDLERS
   // ============================================================================
 
-  /**
-   * Skip to next question without answering
-   */
   const handleSkip = () => {
     if (currentPromptIndex < quizPrompts.length - 1) {
       setCurrentPromptIndex(currentPromptIndex + 1);
@@ -99,9 +96,6 @@ export function QuizPlayerPage() {
     }
   };
 
-  /**
-   * Go to previous question
-   */
   const handlePrevious = () => {
     if (currentPromptIndex > 0) {
       setCurrentPromptIndex(currentPromptIndex - 1);
@@ -111,9 +105,6 @@ export function QuizPlayerPage() {
     }
   };
 
-  /**
-   * Go to next question
-   */
   const handleNext = () => {
     if (currentPromptIndex < quizPrompts.length - 1) {
       setCurrentPromptIndex(currentPromptIndex + 1);
@@ -125,38 +116,27 @@ export function QuizPlayerPage() {
     }
   };
 
-  /**
-   * Submit and validate answer using registry system
-   */
   const handleSubmitAnswer = async () => {
     if (!currentPrompt || isSubmitting) return;
-
     setIsSubmitting(true);
-
     try {
       const handler = questionRegistry.getHandler(currentPrompt.type as any);
       if (!handler) {
-        console.error(`No handler for type: ${currentPrompt.type}`);
         setFeedbackMessage('Error: Unknown question type');
         setShowFeedback(true);
         setIsSubmitting(false);
         return;
       }
-
       const userAnswer: QuestionAnswer = {
         type: currentPrompt.type as any,
         value: currentInput,
       };
-
       const result = handler.validateAnswer(currentPrompt, userAnswer);
-
       setIsCorrect(result.isCorrect);
       setFeedbackMessage(result.feedback || '');
       setExplanation(currentPrompt.explanation || '');
       setShowFeedback(true);
-
       setAnsweredPrompts(prev => new Set([...prev, currentPrompt.id]));
-
       if (result.isCorrect) {
         solvedPrompts.add(currentPrompt.id);
         setCombo(combo + 1);
@@ -849,32 +829,45 @@ export function QuizPlayerPage() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Question Renderer - Handles all question types */}
-                  <QuestionRenderer
-                    prompt={currentPrompt}
-                    currentInput={currentInput}
-                    onInputChange={setCurrentInput}
-                    onSubmit={handleSubmitAnswer}
-                    isSubmitting={isSubmitting}
-                    showFeedback={showFeedback}
-                    feedbackMessage={feedbackMessage}
-                    isCorrect={isCorrect}
-                    explanation={explanation}
-                  />
+                  <div className="relative">
+                    <input
+                      ref={inputRefCallback}
+                      type="text"
+                      value={currentInput}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') checkAnswer();
+                      }}
+                      placeholder="Type your answer..."
+                      className={`quiz-input ${feedbackAnimation === 'correct' ? 'quiz-input-correct' : ''} ${feedbackAnimation === 'wrong' ? 'quiz-input-wrong' : ''}`}
+                      autoComplete="off"
+                      autoCapitalize="off"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      disabled={isSubmitting}
+                    />
+                  </div>
 
-                  {/* Navigation - Skip/Previous buttons */}
-                  <QuizNavigation
-                    currentIndex={currentPromptIndex}
-                    totalQuestions={quizPrompts.length}
-                    onPrevious={handlePrevious}
-                    onSkip={handleSkip}
-                    onNext={handleNext}
-                    onSubmit={handleSubmitAnswer}
-                    isSubmitting={isSubmitting}
-                    canGoBack={currentPromptIndex > 0}
-                    hasAnswered={answeredPrompts.has(currentPrompt.id)}
-                    showSubmitButton={!showFeedback}
-                  />
+                  <div className="flex gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={checkAnswer}
+                      className="btn-primary flex-1 py-4"
+                      disabled={!currentInput.trim() || isSubmitting}
+                    >
+                      Submit
+                    </motion.button>
+                    {!speedrunMode && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setShowHint(!showHint)}
+                        className="btn-secondary px-4"
+                      >
+                        <Lightbulb size={20} />
+                      </motion.button>
+                    )}
                     <div className="relative">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -942,6 +935,33 @@ export function QuizPlayerPage() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* NEW: Question Renderer and Navigation */}
+                <QuestionRenderer
+                  prompt={currentPrompt}
+                  currentInput={currentInput}
+                  onInputChange={setCurrentInput}
+                  onSubmit={handleSubmitAnswer}
+                  isSubmitting={isSubmitting}
+                  showFeedback={showFeedback}
+                  feedbackMessage={feedbackMessage}
+                  isCorrect={isCorrect}
+                  explanation={explanation}
+                />
+
+                <QuizNavigation
+                  currentIndex={currentPromptIndex}
+                  totalQuestions={quizPrompts.length}
+                  onPrevious={handlePrevious}
+                  onSkip={handleSkip}
+                  onNext={handleNext}
+                  onSubmit={handleSubmitAnswer}
+                  isSubmitting={isSubmitting}
+                  canGoBack={currentPromptIndex > 0}
+                  hasAnswered={answeredPrompts.has(currentPrompt.id)}
+                  showSubmitButton={!showFeedback}
+                />
+
               </motion.div>
             </AnimatePresence>
           </div>
