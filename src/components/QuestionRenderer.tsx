@@ -459,6 +459,26 @@ function renderLabel(props: QuestionRendererProps) {
 export function QuestionRenderer(props: QuestionRendererProps) {
   const { prompt } = props;
 
+  return (
+    <div className="space-y-4">
+      {/* Marks Display */}
+      {prompt.marks !== undefined && (
+        <div className="flex items-center justify-between p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+          <span className="text-sm font-medium text-gray-700">Question Marks:</span>
+          <span className="text-lg font-bold text-blue-600">{prompt.marks} mark{prompt.marks !== 1 ? 's' : ''}</span>
+        </div>
+      )}
+
+      {/* Question Content */}
+      {renderQuestionContent(prompt, props)}
+    </div>
+  );
+}
+
+/**
+ * Render question content based on type
+ */
+function renderQuestionContent(prompt: Prompt, props: QuestionRendererProps) {
   switch (prompt.type) {
     case 'short':
       return renderShortAnswer(props);
@@ -479,3 +499,6 @@ export function QuestionRenderer(props: QuestionRendererProps) {
       );
   }
 }
+
+// Import Prompt type at the top if not already imported
+

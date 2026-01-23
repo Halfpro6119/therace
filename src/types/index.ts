@@ -65,6 +65,7 @@ export interface Prompt {
   type: PromptType;
   question: string;
   answers: string[];
+  marks?: number;              // NEW: marks/points worth for this question
   paperId?: string;
   tier?: TierLevel;           // NEW: tier assignment (higher, foundation, or null)
   calculatorAllowed?: boolean;
