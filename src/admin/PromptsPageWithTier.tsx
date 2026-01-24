@@ -461,6 +461,20 @@ export function PromptsPageWithTier() {
                   Assign this prompt to a specific tier (Higher or Foundation) for GCSE difficulty segregation.
                 </p>
               </div>
+              {/* Marks */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Marks (optional)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={editingPrompt.marks || 1}
+                  onChange={(e) => setEditingPrompt({ ...editingPrompt, marks: parseInt(e.target.value) || 1 })}
+                  className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+
 
               {/* Answers */}
               <div>

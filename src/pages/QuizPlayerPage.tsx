@@ -13,7 +13,7 @@ import { storage, calculateMasteryLevel } from '../utils/storage';
 import { soundSystem } from '../utils/sounds';
 import { isAnswerCorrect } from '../utils/answerValidation';
 import { useConfirm } from '../contexts/ConfirmContext';
-import { QuestionRenderer } from '../components/QuestionRenderer';
+import { QuestionRenderer, gradeFromRenderer } from '../components/QuestionRenderer';
 import { QuizNavigation } from '../components/QuizNavigation';
 import { questionRegistry } from '../utils/questionRegistry';
 import { QuestionAnswer } from '../types/questionTypes';
@@ -69,6 +69,7 @@ export function QuizPlayerPage() {
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isCorrect, setIsCorrect] = useState(false);
   const [explanation, setExplanation] = useState('');
+  const [gradeResult, setGradeResult] = useState<any>(null);
 
   const currentPrompt = quizPrompts[currentPromptIndex];
   const isMathsSubject = quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
@@ -131,9 +132,13 @@ export function QuizPlayerPage() {
         type: currentPrompt.type as any,
         value: currentInput,
       };
-      const result = handler.validateAnswer(currentPrompt, userAnswer);
-      setIsCorrect(result.isCorrect);
-      setFeedbackMessage(result.feedback || '');
+      const grade = gradeFromRenderer(currentPrompt, currentInput);
+
+      setGradeResult(grade);
+      const result = { isCorrect: grade.isCorrect, feedback: grade.feedback.summary };
+
+      setIsCorrect(grade.isCorrect);
+      setFeedbackMessage(grade.feedback.summary || '');
       setExplanation(currentPrompt.explanation || '');
       setShowFeedback(true);
       setAnsweredPrompts(prev => new Set([...prev, currentPrompt.id]));
@@ -939,14 +944,12 @@ export function QuizPlayerPage() {
                 {/* NEW: Question Renderer and Navigation */}
                 <QuestionRenderer
                   prompt={currentPrompt}
-                  currentInput={currentInput}
-                  onInputChange={setCurrentInput}
-                  onSubmit={handleSubmitAnswer}
-                  isSubmitting={isSubmitting}
+                  value={currentInput}
+                  onChange={setCurrentInput}
+                  disabled={isSubmitting}
                   showFeedback={showFeedback}
-                  feedbackMessage={feedbackMessage}
-                  isCorrect={isCorrect}
-                  explanation={explanation}
+                  gradeResult={gradeResult}
+                  onSubmit={handleSubmitAnswer}
                 />
 
                 <QuizNavigation

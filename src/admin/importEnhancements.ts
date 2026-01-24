@@ -1,3 +1,4 @@
+import { normalizeQuestion, validateNormalizedQuestion } from '../utils/questionEngine'
 /**
  * IMPORT ENHANCEMENTS
  * 
@@ -422,3 +423,25 @@ export {
   validateImportRow,
   normalizeImportRow,
 };
+
+
+// Validate a raw import row via canonical normalizer + validator
+export function validateImportNormalized(rawRow: any) {
+  const q = normalizeQuestion({
+    id: rawRow.id || 'import',
+    subjectId: rawRow.subjectId || rawRow.subject || '',
+    unitId: rawRow.unitId || rawRow.unit || '',
+    topicId: rawRow.topicId || rawRow.topic || '',
+    paperId: rawRow.paperId || rawRow.paper_id || undefined,
+    tier: rawRow.tier ?? null,
+    type: rawRow.type || 'short',
+    question: rawRow.question || '',
+    answers: rawRow.answers || [],
+    marks: rawRow.marks || rawRow.mark || 1,
+    hint: rawRow.hint || '',
+    explanation: rawRow.explanation || '',
+    meta: rawRow.meta || { questionData: rawRow.questionData || {} },
+    ...rawRow,
+  })
+  return { q, ...validateNormalizedQuestion(q) }
+}
