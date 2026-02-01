@@ -1,8 +1,11 @@
 /**
- * QUIZ NAVIGATION COMPONENT
+ * QUIZ NAVIGATION COMPONENT (FIXED)
  * 
- * Provides skip and previous buttons for quiz navigation.
- * Allows students to move through questions flexibly.
+ * Key fixes:
+ * 1. Show "Continue" button after feedback is shown
+ * 2. Show "Submit" button when no feedback yet
+ * 3. Proper button state management
+ * 4. Clear visual feedback for user
  */
 
 import { ChevronLeft, ChevronRight, SkipForward } from 'lucide-react';
@@ -65,19 +68,32 @@ export function QuizNavigation({
           <span className="hidden sm:inline">Skip</span>
         </button>
 
-        {/* Submit Button (if not answered) */}
-        {showSubmitButton && !hasAnswered && (
+        {/* FIXED: Submit Button (shown when no feedback yet) */}
+        {showSubmitButton && (
           <button
             onClick={onSubmit}
             disabled={isSubmitting}
             className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            title="Submit your answer"
           >
             {isSubmitting ? 'Checking...' : 'Submit Answer'}
           </button>
         )}
 
-        {/* Next Button (if answered or last question) */}
-        {(hasAnswered || isLastQuestion) && (
+        {/* FIXED: Continue Button (shown when feedback is displayed) */}
+        {!showSubmitButton && hasAnswered && (
+          <button
+            onClick={onNext}
+            disabled={isSubmitting}
+            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            title="Continue to next question"
+          >
+            {isLastQuestion ? 'Finish Quiz' : 'Continue'}
+          </button>
+        )}
+
+        {/* Next Button (for navigation when already answered) */}
+        {!showSubmitButton && !hasAnswered && (
           <button
             onClick={onNext}
             disabled={isSubmitting}
