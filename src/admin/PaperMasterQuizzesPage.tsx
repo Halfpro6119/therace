@@ -89,7 +89,7 @@ export function PaperMasterQuizzesPage() {
   };
 
   const handleSyncPaperMasterQuizzes = async () => {
-    if (!await confirm('Create/sync paper master quizzes for all papers in this subject?')) return;
+    if (!await confirm({ title: 'Confirm', message: 'Create/sync paper master quizzes for all papers in this subject?' })) return;
 
     try {
       setSyncing(true);

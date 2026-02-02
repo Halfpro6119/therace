@@ -111,7 +111,7 @@ export function TopicsPageEnhanced() {
   };
 
   const handleDeleteTopic = async (topic: Topic) => {
-    if (!await confirm(`Delete topic: "${topic.name}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete topic: "${topic.name}"?` })) return;
 
     try {
       await db.deleteTopic(topic.id);
@@ -129,7 +129,7 @@ export function TopicsPageEnhanced() {
       return;
     }
 
-    if (!await confirm(`Assign all prompts in "${topic.name}" to this paper?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Assign all prompts in "${topic.name}" to this paper?` })) return;
 
     try {
       setBulkAssigning(true);
@@ -157,7 +157,7 @@ export function TopicsPageEnhanced() {
   };
 
   const handleUnlinkPaper = async (topic: TopicWithPapers, paperId: string) => {
-    if (!await confirm('Unlink this paper from the topic?')) return;
+    if (!await confirm({ title: 'Confirm', message: 'Unlink this paper from the topic?' })) return;
 
     try {
       await db.unlinkTopicFromPaper(topic.id, paperId);

@@ -148,7 +148,7 @@ export function UnitsPageEnhanced() {
   };
 
   const handleUnlinkPaper = async (unit: UnitWithPapers, paperId: string) => {
-    if (!await confirm('Unlink this paper from the unit?')) return;
+    if (!await confirm({ title: 'Confirm', message: 'Unlink this paper from the unit?' })) return;
 
     try {
       await db.unlinkUnitFromPaper(unit.id, paperId);

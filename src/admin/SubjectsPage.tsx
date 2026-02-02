@@ -70,7 +70,7 @@ export function SubjectsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this subject? This will also delete all associated units, topics, prompts, and quizzes.')) {
+    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this subject? This will also delete all associated units, topics, prompts, and quizzes.' })) {
       return;
     }
     try {

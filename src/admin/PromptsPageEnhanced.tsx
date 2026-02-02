@@ -105,7 +105,7 @@ export function PromptsPageEnhanced() {
   };
 
   const handleDeletePrompt = async (prompt: Prompt) => {
-    if (!await confirm(`Delete prompt: "${prompt.question}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete prompt: "${prompt.question}"?` })) return;
 
     try {
       await db.deletePrompt(prompt.id);
@@ -149,7 +149,7 @@ export function PromptsPageEnhanced() {
       return;
     }
 
-    if (!await confirm(`Assign ${selectedPrompts.size} prompt${selectedPrompts.size !== 1 ? 's' : ''} to this paper?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Assign ${selectedPrompts.size} prompt${selectedPrompts.size !== 1 ? 's' : ''} to this paper?` })) return;
 
     try {
       setBulkAssigning(true);

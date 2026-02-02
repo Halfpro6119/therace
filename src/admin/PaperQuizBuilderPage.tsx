@@ -121,7 +121,7 @@ export function PaperQuizBuilderPage() {
   };
 
   const handleSyncAllPapers = async () => {
-    if (!await confirm('Create/sync quizzes for all papers in this subject?')) return;
+    if (!await confirm({ title: 'Confirm', message: 'Create/sync quizzes for all papers in this subject?' })) return;
 
     try {
       setSyncing(true);
@@ -137,7 +137,7 @@ export function PaperQuizBuilderPage() {
   };
 
   const handleDeleteQuiz = async (quiz: PaperQuizWithStats) => {
-    if (!await confirm(`Delete quiz: "${quiz.title}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete quiz: "${quiz.title}"?` })) return;
 
     try {
       const { error } = await supabase

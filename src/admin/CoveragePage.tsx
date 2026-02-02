@@ -15,7 +15,7 @@ import {
   listMissingQuestionTypes,
 } from '../utils/coverageComputation';
 import { MATHS_TAXONOMY } from '../config/taxonomy/maths';
-import { AlertCircle, CheckCircle, AlertTriangle, TrendingUp, BookOpen, Zap } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, BookOpen, Zap } from 'lucide-react';
 
 interface CoveragePageProps {
   subjectId?: string;

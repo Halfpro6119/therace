@@ -55,7 +55,7 @@ export function JsonImportPage() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [paperStats, setPaperStats] = useState<ImportPaperStats | null>(null);
-  const [importOnlyValid, setImportOnlyValid] = useState(true);
+  // Removed unused: importOnlyValid, setImportOnlyValid
   const [copied, setCopied] = useState(false);
 
   // NEW: Paper assignment support
@@ -98,10 +98,7 @@ export function JsonImportPage() {
       setStep('preview');
       showToast('success', `Detected ${previews.length} question${previews.length !== 1 ? 's' : ''}`);
     } catch (error) {
-      showToast(
-        'error',
-        `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      showToast('error', `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -329,10 +326,7 @@ export function JsonImportPage() {
       showToast('success', `Imported ${result.imported} question${result.imported !== 1 ? 's' : ''}`);
     } catch (error) {
       console.error('Fatal import error:', error);
-      showToast(
-        'error',
-        `Import error: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      showToast('error', `Import error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setStep('preview');
     } finally {
       setImporting(false);

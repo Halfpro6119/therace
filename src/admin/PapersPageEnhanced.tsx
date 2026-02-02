@@ -126,7 +126,7 @@ export function PapersPageEnhanced() {
   };
 
   const handleDeletePaper = async (paper: Paper) => {
-    if (!await confirm(`Delete paper: "${paper.name}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete paper: "${paper.name}"?` })) return;
 
     try {
       await db.deletePaper(paper.id);
@@ -141,7 +141,7 @@ export function PapersPageEnhanced() {
   };
 
   const handleUnlinkUnit = async (paper: PaperWithRelations, unit: Unit) => {
-    if (!await confirm(`Unlink unit "${unit.name}" from this paper?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Unlink unit "${unit.name}" from this paper?` })) return;
 
     try {
       await db.unlinkUnitFromPaper(unit.id, paper.id);
@@ -156,7 +156,7 @@ export function PapersPageEnhanced() {
   };
 
   const handleUnlinkTopic = async (paper: PaperWithRelations, topic: Topic) => {
-    if (!await confirm(`Unlink topic "${topic.name}" from this paper?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Unlink topic "${topic.name}" from this paper?` })) return;
 
     try {
       await db.unlinkTopicFromPaper(topic.id, paper.id);

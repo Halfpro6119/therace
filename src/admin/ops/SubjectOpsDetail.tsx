@@ -60,14 +60,14 @@ export function SubjectOpsDetail() {
       setQuizzes(quizzesData);
     } catch (error) {
       console.error('Failed to load subject data:', error);
-      showToast('Failed to load subject data', 'error');
+      showToast('error', 'Failed to load subject data');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCreateMissingQuizzes = async () => {
-    if (!subject || !await confirm('Create missing quizzes for all topics, units, and full subject?')) {
+    if (!subject || !await confirm({ title: 'Confirm', message: 'Create missing quizzes for all topics, units, and full subject?' })) {
       return;
     }
 
@@ -136,12 +136,12 @@ export function SubjectOpsDetail() {
       await loadData();
     } catch (error) {
       console.error('Failed to create quizzes:', error);
-      showToast('Failed to create quizzes', 'error');
+      showToast('error', 'Failed to create quizzes');
     }
   };
 
   const handleFixAllCoverage = async () => {
-    if (!subject || !await confirm('Sync all quiz coverage to match their scope hierarchy?')) {
+    if (!subject || !await confirm({ title: 'Confirm', message: 'Sync all quiz coverage to match their scope hierarchy?' })) {
       return;
     }
 
@@ -162,7 +162,7 @@ export function SubjectOpsDetail() {
       await loadData();
     } catch (error) {
       console.error('Failed to fix coverage:', error);
-      showToast('Failed to fix coverage', 'error');
+      showToast('error', 'Failed to fix coverage');
     }
   };
 
@@ -170,11 +170,11 @@ export function SubjectOpsDetail() {
     try {
       const expectedIds = getExpectedPromptsForQuiz(quiz, prompts);
       await db.updateQuiz(quiz.id, { promptIds: expectedIds });
-      showToast('Coverage synced successfully', 'success');
+      showToast('success', 'Coverage synced successfully');
       await loadData();
     } catch (error) {
       console.error('Failed to sync coverage:', error);
-      showToast('Failed to sync coverage', 'error');
+      showToast('error', 'Failed to sync coverage');
     }
   };
 
@@ -311,7 +311,7 @@ export function SubjectOpsDetail() {
             await loadData();
             setShowTargetEditor(false);
             setSelectedQuiz(null);
-            showToast('Targets updated successfully', 'success');
+            showToast('success', 'Targets updated successfully');
           }}
         />
       )}

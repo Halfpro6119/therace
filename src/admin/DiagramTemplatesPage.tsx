@@ -259,10 +259,7 @@ export function DiagramTemplatesPage() {
           `Synced successfully: ${result.inserted} added, ${result.updated} updated`
         );
       } else {
-        showToast(
-          'error',
-          `Sync completed with errors: ${result.errors.length} errors`
-        );
+        showToast('error', `Sync completed with errors: ${result.errors.length} errors`);
         console.error('Sync errors:', result.errors);
       }
 

@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Upload, Download, AlertCircle, CheckCircle, Search } from 'lucide-react';
+import {  Upload, Download,  Search } from 'lucide-react';
 import { supabase } from '../db/client';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
@@ -33,7 +33,7 @@ interface MetadataUIState {
 
 export function DiagramMetadataManager() {
   const { showToast } = useToast();
-  const { confirm } = useConfirm();
+  // const { confirm } = useConfirm();
   const [state, setState] = useState<MetadataUIState>({
     diagrams: [],
     subjects: [],
@@ -80,7 +80,7 @@ export function DiagramMetadataManager() {
       }));
     } catch (error) {
       console.error('Error loading data:', error);
-      showToast('Failed to load diagrams', 'error');
+      showToast('error', 'Failed to load diagrams');
       setState(prev => ({ ...prev, loading: false }));
     }
   };
@@ -104,17 +104,17 @@ export function DiagramMetadataManager() {
     try {
       const result = await saveDiagramMetadata(state.selectedDiagramId, state.editingMetadata);
       if (result.success) {
-        showToast('Metadata saved successfully', 'success');
+        showToast('success', 'Metadata saved successfully');
         setState(prev => ({
           ...prev,
           selectedDiagramId: null,
           editingMetadata: null
         }));
       } else {
-        showToast(result.error || 'Failed to save metadata', 'error');
+        showToast('error', result.error || 'Failed to save metadata');
       }
     } catch (error) {
-      showToast('Error saving metadata', 'error');
+      showToast('error', 'Error saving metadata');
     }
   };
 
@@ -134,12 +134,12 @@ export function DiagramMetadataManager() {
 
       const result = await createDiagramFromMetadata(spec);
       if (result.success) {
-        showToast('Diagram created from metadata', 'success');
+        showToast('success', 'Diagram created from metadata');
       } else {
         showToast(result.errors.join(', '), 'error');
       }
     } catch (error) {
-      showToast('Error creating diagram', 'error');
+      showToast('error', 'Error creating diagram');
     }
   };
 
@@ -154,9 +154,9 @@ export function DiagramMetadataManager() {
       a.download = `diagram-metadata-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('Metadata exported successfully', 'success');
+      showToast('success', 'Metadata exported successfully');
     } catch (error) {
-      showToast('Error exporting metadata', 'error');
+      showToast('error', 'Error exporting metadata');
     }
   };
 
@@ -171,7 +171,7 @@ export function DiagramMetadataManager() {
       );
       loadData();
     } catch (error) {
-      showToast('Error importing metadata', 'error');
+      showToast('error', 'Error importing metadata');
     }
   };
 

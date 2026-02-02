@@ -48,7 +48,7 @@ export function DiagramsPage() {
       setSubjects(subjectsRes.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
-      showToast('Failed to load diagrams', 'error');
+      showToast('error', 'Failed to load diagrams');
     } finally {
       setLoading(false);
     }
@@ -76,11 +76,11 @@ export function DiagramsPage() {
     const { error } = await supabase.from('diagrams').delete().eq('id', diagram.id);
 
     if (error) {
-      showToast('Failed to delete diagram', 'error');
+      showToast('error', 'Failed to delete diagram');
       return;
     }
 
-    showToast('Diagram deleted', 'success');
+    showToast('success', 'Diagram deleted');
     loadData();
   };
 
@@ -99,11 +99,11 @@ export function DiagramsPage() {
     });
 
     if (error) {
-      showToast('Failed to duplicate diagram', 'error');
+      showToast('error', 'Failed to duplicate diagram');
       return;
     }
 
-    showToast('Diagram duplicated', 'success');
+    showToast('success', 'Diagram duplicated');
     loadData();
   };
 

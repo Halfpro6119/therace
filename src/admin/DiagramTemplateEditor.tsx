@@ -94,7 +94,7 @@ export function DiagramTemplateEditor() {
       }
     } catch (error) {
       console.error('Error loading data:', error);
-      showToast('Failed to load template', 'error');
+      showToast('error', 'Failed to load template');
     } finally {
       setLoading(false);
     }
@@ -107,22 +107,22 @@ export function DiagramTemplateEditor() {
 
   const handleSave = async () => {
     if (!formData.templateId.trim()) {
-      showToast('Template ID is required', 'error');
+      showToast('error', 'Template ID is required');
       return;
     }
 
     if (!validateTemplateId(formData.templateId)) {
-      showToast('Template ID must follow pattern: subject.topic.name.vN (e.g., math.circle_theorems.angle_in_semicircle.v1)', 'error');
+      showToast('error', 'Template ID must follow pattern: subject.topic.name.vN');
       return;
     }
 
     if (!formData.title.trim()) {
-      showToast('Title is required', 'error');
+      showToast('error', 'Title is required');
       return;
     }
 
     if (!formData.baseSvgData.trim()) {
-      showToast('SVG data is required', 'error');
+      showToast('error', 'SVG data is required');
       return;
     }
 
@@ -155,14 +155,14 @@ export function DiagramTemplateEditor() {
         if (error) throw error;
       }
 
-      showToast('Template saved successfully', 'success');
+      showToast('success', 'Template saved successfully');
       navigate('/admin/diagram-templates');
     } catch (error: any) {
       console.error('Error saving template:', error);
       if (error.code === '23505') {
-        showToast('Template ID already exists', 'error');
+        showToast('error', 'Template ID already exists');
       } else {
-        showToast('Failed to save template', 'error');
+        showToast('error', 'Failed to save template');
       }
     } finally {
       setSaving(false);

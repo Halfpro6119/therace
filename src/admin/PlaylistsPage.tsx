@@ -105,7 +105,7 @@ export function PlaylistsPage() {
   };
 
   const handleDeletePlaylist = async (playlistId: string) => {
-    if (!confirm('Are you sure you want to delete this playlist?')) return;
+    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this playlist?' })) return;
 
     try {
       await db.deletePlaylist(playlistId);

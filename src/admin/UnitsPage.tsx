@@ -47,7 +47,7 @@ export function UnitsPage() {
   };
 
   const handleDelete = async (unit: Unit) => {
-    if (!await confirm(`Delete unit "${unit.name}"? This will also delete all topics and prompts in this unit.`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete unit "${unit.name}"? This will also delete all topics and prompts in this unit.` })) return;
 
     try {
       await db.deleteUnit(unit.id);

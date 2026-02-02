@@ -63,7 +63,7 @@ export function TopicsPageWithTier() {
    * Delete a topic
    */
   const handleDelete = async (topic: Topic) => {
-    if (!await confirm(`Delete topic: "${topic.name}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete topic: "${topic.name}"?` })) return;
 
     try {
       await db.deleteTopic(topic.id);

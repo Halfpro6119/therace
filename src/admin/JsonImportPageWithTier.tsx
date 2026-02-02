@@ -127,7 +127,7 @@ export function JsonImportPageWithTier() {
         showToast('success', `Successfully imported ${results.successful} prompts`);
         setJsonInput('');
       } else {
-        showToast('warning', `Imported ${results.successful} prompts, ${results.failed} failed`);
+        showToast('error', `Imported ${results.successful} prompts, ${results.failed} failed`);
       }
     } catch (error: any) {
       showToast('error', `Invalid JSON: ${error.message}`);

@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import { Upload, AlertCircle, CheckCircle, FileJson, FileText } from 'lucide-react';
+import { Upload, AlertCircle, FileText } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import {
   createDiagramFromMetadata,
@@ -50,7 +50,7 @@ export function DiagramMetadataImporter() {
       if (error) throw error;
       setSubjects(data || []);
     } catch (error) {
-      showToast('Failed to load subjects', 'error');
+      showToast('error', 'Failed to load subjects');
     }
   };
 
@@ -65,15 +65,15 @@ export function DiagramMetadataImporter() {
       } else if (file.name.endsWith('.csv')) {
         data = parseCSV(text);
       } else {
-        showToast('Unsupported file format. Use JSON or CSV.', 'error');
+        showToast('error', 'Unsupported file format. Use JSON or CSV.');
         return;
       }
 
       setImportData(data);
       await loadSubjects();
-      showToast(`Loaded ${data.length} rows`, 'success');
+      showToast('success', `Loaded ${data.length} rows`);
     } catch (error) {
-      showToast('Error parsing file', 'error');
+      showToast('error', 'Error parsing file');
     } finally {
       setLoading(false);
     }
@@ -117,7 +117,7 @@ export function DiagramMetadataImporter() {
 
   const handleImport = async () => {
     if (importData.length === 0) {
-      showToast('No data to import', 'warning');
+      showToast('error', 'No data to import');
       return;
     }
 
@@ -153,7 +153,7 @@ export function DiagramMetadataImporter() {
         failed === 0 ? 'success' : 'warning'
       );
     } catch (error) {
-      showToast('Import failed', 'error');
+      showToast('error', 'Import failed');
     } finally {
       setImporting(false);
     }

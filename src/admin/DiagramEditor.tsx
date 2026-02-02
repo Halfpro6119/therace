@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   Save, ArrowLeft, Undo, Redo, ZoomIn, ZoomOut, Maximize,
   Grid3x3, MousePointer, Minus, ArrowRight, Square, Circle,
-  Type, Navigation, Eraser, Download, Eye, Pentagon
+  Type, Navigation, Eraser, Pentagon
 } from 'lucide-react';
 import { supabase } from '../db/client';
 import type { Diagram, CanvasData, CanvasElement, CanvasElementType, Subject } from '../types';
@@ -71,7 +71,7 @@ export function DiagramEditor() {
   const [polygonPreviewPoint, setPolygonPreviewPoint] = useState<{ x: number; y: number } | null>(null);
   const [angleConstraint, setAngleConstraint] = useState<number | null>(null);
   const [angleLabel, setAngleLabel] = useState<string>('');
-  const [showAngleDialog, setShowAngleDialog] = useState(false);
+  // Removed unused: showAngleDialog, setShowAngleDialog
   const [draggedVertex, setDraggedVertex] = useState<{ elementId: string; vertexIndex: number } | null>(null);
   const [hoveredVertex, setHoveredVertex] = useState<{ elementId: string; vertexIndex: number } | null>(null);
   const [selectionBox, setSelectionBox] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
@@ -192,7 +192,7 @@ export function DiagramEditor() {
       }
     } catch (error) {
       console.error('Error loading diagram:', error);
-      showToast('Failed to load diagram', 'error');
+      showToast('error', 'Failed to load diagram');
     } finally {
       setLoading(false);
     }
@@ -1218,10 +1218,10 @@ export function DiagramEditor() {
         navigate(`/admin/diagrams/${data.id}`, { replace: true });
       }
 
-      showToast('Diagram saved successfully', 'success');
+      showToast('success', 'Diagram saved successfully');
     } catch (error) {
       console.error('Error saving diagram:', error);
-      showToast('Failed to save diagram', 'error');
+      showToast('error', 'Failed to save diagram');
     } finally {
       setSaving(false);
     }
@@ -1230,26 +1230,26 @@ export function DiagramEditor() {
   const handleDelete = async () => {
     if (!diagramId || diagramId === 'new') return;
 
-    const confirmed = await confirm('Delete this diagram? This cannot be undone.');
+    const confirmed = await confirm({ title: 'Confirm', message: 'Delete this diagram? This cannot be undone.' });
     if (!confirmed) return;
 
     const { error } = await supabase.from('diagrams').delete().eq('id', diagramId);
 
     if (error) {
-      showToast('Failed to delete diagram', 'error');
+      showToast('error', 'Failed to delete diagram');
       return;
     }
 
-    showToast('Diagram deleted', 'success');
+    showToast('success', 'Diagram deleted');
     navigate('/admin/diagrams');
   };
 
   const deleteSelectedElement = () => {
-    if (!editorState.selectedElementId) return;
+    if (!editorState.selectedElementIds[0]) return;
 
     const newCanvasData = {
       ...editorState.canvasData,
-      elements: editorState.canvasData.elements.filter(e => e.id !== editorState.selectedElementId)
+      elements: editorState.canvasData.elements.filter(e => e.id !== editorState.selectedElementIds[0])
     };
 
     setEditorState(prev => ({ ...prev, canvasData: newCanvasData, selectedElementId: null }));
@@ -1257,9 +1257,9 @@ export function DiagramEditor() {
   };
 
   const duplicateSelectedElement = () => {
-    if (!editorState.selectedElementId) return;
+    if (!editorState.selectedElementIds[0]) return;
 
-    const element = editorState.canvasData.elements.find(e => e.id === editorState.selectedElementId);
+    const element = editorState.canvasData.elements.find(e => e.id === editorState.selectedElementIds[0]);
     if (!element) return;
 
     const newElement = {
@@ -1625,7 +1625,7 @@ export function DiagramEditor() {
               </div>
             )}
 
-            {editorState.selectedElementId && (
+            {editorState.selectedElementIds[0] && (
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <h4 className="font-medium mb-3">Selected Element</h4>
                 <div className="flex gap-2">
@@ -1653,7 +1653,7 @@ export function DiagramEditor() {
                     key={element.id}
                     onClick={() => setEditorState(prev => ({ ...prev, selectedElementId: element.id }))}
                     className={`px-3 py-2 rounded cursor-pointer ${
-                      element.id === editorState.selectedElementId
+                      element.id === editorState.selectedElementIds[0]
                         ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}

@@ -17,7 +17,7 @@ import {
   PaperAssignmentResult,
   ImportPaperStats,
 } from './paperAssignmentUtils';
-import { Upload, AlertCircle, CheckCircle, AlertTriangle, Loader, Copy, Check } from 'lucide-react';
+import { Upload, AlertCircle, CheckCircle, Loader, Copy, Check } from 'lucide-react';
 import {
   parseQuestionsJson,
   validateQuestion,
@@ -138,7 +138,7 @@ export function JsonImportPageEnhanced() {
   };
 
   const handleImport = async () => {
-    if (!await confirm(`Import ${previews.length} question${previews.length !== 1 ? 's' : ''}?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Import ${previews.length} question${previews.length !== 1 ? 's' : ''}?` })) return;
 
     try {
       setStep('importing');

@@ -56,7 +56,7 @@ export function ImportLogPage() {
   };
 
   const clearLog = () => {
-    if (confirm('Clear all import logs?')) {
+    if (confirm({ title: 'Confirm', message: 'Clear all import logs?' })) {
       localStorage.removeItem(STORAGE_KEY);
       setRuns([]);
       setSelectedRun(null);

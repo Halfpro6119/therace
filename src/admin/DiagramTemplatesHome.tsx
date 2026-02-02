@@ -6,7 +6,7 @@ import { Search, Filter, Eye, Copy } from 'lucide-react';
 import type { DiagramMetadata } from '../types';
 
 export function DiagramTemplatesHome() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 

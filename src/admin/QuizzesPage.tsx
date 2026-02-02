@@ -131,7 +131,7 @@ export function QuizzesPage() {
   };
 
   const deleteQuiz = async (quizId: string) => {
-    if (!confirm('Are you sure you want to delete this quiz?')) return;
+    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this quiz?' })) return;
 
     try {
       await db.deleteQuiz(quizId);

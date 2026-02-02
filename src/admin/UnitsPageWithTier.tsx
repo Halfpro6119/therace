@@ -63,7 +63,7 @@ export function UnitsPageWithTier() {
    * Delete a unit
    */
   const handleDelete = async (unit: Unit) => {
-    if (!await confirm(`Delete unit: "${unit.name}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete unit: "${unit.name}"?` })) return;
 
     try {
       await db.deleteUnit(unit.id);

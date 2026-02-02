@@ -91,7 +91,7 @@ export function PromptsPageWithTier() {
    * Delete a prompt
    */
   const handleDelete = async (prompt: Prompt) => {
-    if (!await confirm(`Delete prompt: "${prompt.question}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete prompt: "${prompt.question}"?` })) return;
 
     try {
       await db.deletePrompt(prompt.id);
