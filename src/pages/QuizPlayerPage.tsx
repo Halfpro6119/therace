@@ -427,13 +427,39 @@ export function QuizPlayerPage() {
 
   const endQuiz = () => {
     setHasEnded(true);
+    
+    // Calculate marks and performance metrics
     const totalMarks = quizPrompts.reduce((sum, p) => sum + (p.marks || 1), 0);
     const marksAwarded = Array.from(solvedPrompts).reduce((sum, id) => {
       const prompt = quizPrompts.find(p => p.id === id);
       return sum + (prompt?.marks || 1);
     }, 0);
 
-    navigate('/quiz-results', {
+    // Create attempt record in storage
+    const attemptId = `${quizId}-${quizStartTime}`;
+    const attempt = {
+      id: attemptId,
+      quizId: quizId!,
+      correctPromptIds: Array.from(solvedPrompts),
+      missedPromptIds: Array.from(missedPrompts),
+      totalMarks,
+      marksAwarded,
+      percentage: Math.round((marksAwarded / totalMarks) * 100),
+      timeTaken: Math.floor((Date.now() - quizStartTime) / 1000),
+      completedAt: new Date().toISOString(),
+    };
+    
+    // Save attempt to storage
+    try {
+      storage.saveAttempt(attempt);
+    } catch (error) {
+      console.error('Failed to save attempt:', error);
+    }
+    
+    // Navigate to results page with the correct route
+    // The route is /results/:attemptId, not /quiz-results
+    navigate(`/results/${attemptId}`, {
+      replace: true,
       state: {
         quizId,
         totalMarks,
