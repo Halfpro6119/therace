@@ -88,6 +88,9 @@ export function QuizPlayerPage() {
   const [currentInput, setCurrentInput] = useState('');
   const [solvedPrompts, setSolvedPrompts] = useState<Set<string>>(new Set());
   const [missedPrompts, setMissedPrompts] = useState<Set<string>>(new Set());
+
+  // Keep a synchronous reference to solved prompt IDs so endQuiz() never reads stale React state
+  const solvedPromptsRef = useRef<Set<string>>(new Set());
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [quizStartTime] = useState(Date.now());
@@ -134,6 +137,11 @@ export function QuizPlayerPage() {
   useEffect(() => {
     loadQuizData();
   }, [quizId]);
+
+  // Reset solved prompts ref when starting a new quiz run
+  useEffect(() => {
+    solvedPromptsRef.current = new Set();
+  }, [quizId, quizStartTime]);
 
   useEffect(() => {
     if (!hasStarted || hasEnded) return;
@@ -337,6 +345,8 @@ export function QuizPlayerPage() {
       // STEP 3: UPDATE COMBO, PLAY SOUNDS, SHOW ANIMATIONS
       // ====================================================================
       if (result.isCorrect) {
+        // Update React state AND the ref (ref updates immediately; state may be stale until next render)
+        solvedPromptsRef.current.add(currentPrompt.id);
         setSolvedPrompts(prev => new Set([...prev, currentPrompt.id]));
         setCombo(combo + 1);
         setShowXPPopup(true);
@@ -427,51 +437,43 @@ export function QuizPlayerPage() {
 
   const endQuiz = () => {
     setHasEnded(true);
-    
-    // Calculate marks and performance metrics
-    const totalMarks = quizPrompts.reduce((sum, p) => sum + (p.marks || 1), 0);
-    const marksAwarded = Array.from(solvedPrompts).reduce((sum, id) => {
-      const prompt = quizPrompts.find(p => p.id === id);
-      return sum + (prompt?.marks || 1);
-    }, 0);
 
-    // Create attempt record in storage
-    const attemptId = `${quizId}-${quizStartTime}`;
-    const attempt = {
+    // IMPORTANT: React state updates (setSolvedPrompts) may not have flushed yet when we end the quiz.
+    // Use the ref to avoid reading stale values and accidentally saving 0/0 results.
+    const correctIds = new Set<string>([...solvedPromptsRef.current, ...Array.from(solvedPrompts)]);
+
+    // Anything not correct is treated as missed (includes wrong answers and unanswered prompts)
+    const allPromptIds = quizPrompts.map(p => p.id);
+    const missedIds = allPromptIds.filter(id => !correctIds.has(id));
+
+    const totalCount = allPromptIds.length;
+    const timeTakenSec = Math.floor((Date.now() - quizStartTime) / 1000);
+    const accuracyPct = totalCount > 0 ? (correctIds.size / totalCount) * 100 : 0;
+
+    const attemptId = `${quizId}-${quizStartTime}-${Date.now()}`;
+
+    // Persist attempt in the shape that ResultsPage expects (see src/types/index.ts Attempt)
+    const attempt: Attempt = {
       id: attemptId,
       quizId: quizId!,
-      correctPromptIds: Array.from(solvedPrompts),
-      missedPromptIds: Array.from(missedPrompts),
-      totalMarks,
-      marksAwarded,
-      percentage: Math.round((marksAwarded / totalMarks) * 100),
-      timeTaken: Math.floor((Date.now() - quizStartTime) / 1000),
-      completedAt: new Date().toISOString(),
+      startedAt: new Date(quizStartTime).toISOString(),
+      finishedAt: new Date().toISOString(),
+      correctPromptIds: Array.from(correctIds),
+      missedPromptIds: missedIds,
+      timeTakenSec,
+      accuracyPct,
     };
-    
-    // Save attempt to storage
+
     try {
       storage.saveAttempt(attempt);
     } catch (error) {
       console.error('Failed to save attempt:', error);
     }
-    
-    // Navigate to results page with the correct route
-    // The route is /results/:attemptId, not /quiz-results
-    navigate(`/results/${attemptId}`, {
-      replace: true,
-      state: {
-        quizId,
-        totalMarks,
-        marksAwarded,
-        solvedCount: solvedPrompts.size,
-        totalCount: quizPrompts.length,
-        timeTaken: Math.floor((Date.now() - quizStartTime) / 1000),
-      },
-    });
+
+    navigate(`/results/${attemptId}`, { replace: true });
   };
 
-  // ========================================================================
+  // ==============================================================================
   // RENDER: LOADING STATE
   // ========================================================================
 
