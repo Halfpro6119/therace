@@ -91,6 +91,9 @@ export function QuizPlayerPage() {
 
   // Keep a synchronous reference to solved prompt IDs so endQuiz() never reads stale React state
   const solvedPromptsRef = useRef<Set<string>>(new Set());
+
+  // Keep the latest quiz prompts in a ref so endQuiz() can always compute totals (even from stale closures)
+  const quizPromptsRef = useRef<any[]>([]);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [quizStartTime] = useState(Date.now());
@@ -142,6 +145,11 @@ export function QuizPlayerPage() {
   useEffect(() => {
     solvedPromptsRef.current = new Set();
   }, [quizId, quizStartTime]);
+
+  // Always keep the latest prompt list in a ref (interval callbacks can otherwise capture an older empty array)
+  useEffect(() => {
+    quizPromptsRef.current = quizPrompts as any[];
+  }, [quizPrompts]);
 
   useEffect(() => {
     if (!hasStarted || hasEnded) return;
@@ -443,7 +451,8 @@ export function QuizPlayerPage() {
     const correctIds = new Set<string>([...solvedPromptsRef.current, ...Array.from(solvedPrompts)]);
 
     // Anything not correct is treated as missed (includes wrong answers and unanswered prompts)
-    const allPromptIds = quizPrompts.map(p => p.id);
+    const latestPrompts = (quizPromptsRef.current as any[]).length ? (quizPromptsRef.current as any[]) : quizPrompts;
+    const allPromptIds = latestPrompts.map((p: any) => p.id);
     const missedIds = allPromptIds.filter(id => !correctIds.has(id));
 
     const totalCount = allPromptIds.length;

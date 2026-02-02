@@ -16,8 +16,7 @@
 import { Prompt } from '../types'
 import { gradeFromRenderer } from '../components/QuestionRenderer'
 import { supabase } from '../db/client'
-import { storage, calculateMasteryLevel } from '../utils/storage'
-import { Attempt } from '../types'
+import { storage } from '../utils/storage'
 
 export interface SubmitAnswerResult {
   isCorrect: boolean
@@ -88,7 +87,19 @@ export async function submitAnswer(
     let attemptId: string | undefined
     try {
       console.log('[submitAnswer] Persisting attempt to Supabase...')
-      const attempt: Attempt = {
+      type AttemptRow = {
+        id: string
+        quizId: string
+        promptId: string
+        userAnswer: string
+        isCorrect: boolean
+        marksAwarded: number
+        maxMarks: number
+        timestamp: number
+        attemptNumber: number
+      }
+
+      const attempt: AttemptRow = {
         id: `${quizId}-${quizStartTime}-${prompt.id}`,
         quizId,
         promptId: prompt.id,
