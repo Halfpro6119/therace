@@ -26,6 +26,8 @@ export interface QuestionRendererProps {
   showFeedback: boolean
   gradeResult?: GradeResult
   onSubmit: () => void
+  /** Called with the answer input element when it mounts/unmounts (for toolkit/calculator insert) */
+  inputRefCallback?: (el: HTMLInputElement | null) => void
 }
 
 /**
@@ -74,7 +76,7 @@ export function isMinimallyAnswered(q: NormalizedQuestion, value: any): boolean 
   }
 }
 
-export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedback, gradeResult, onSubmit }: QuestionRendererProps) {
+export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedback, gradeResult, onSubmit, inputRefCallback }: QuestionRendererProps) {
   const q = useMemo(() => normalizeQuestion(prompt), [prompt])
 
   // Validate at runtime to prevent crashes.
@@ -101,7 +103,7 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
       <MarksBadge q={q} />
 
       {q.type === 'short' && (
-        <ShortQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+        <ShortQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
       {q.type === 'mcq' && (
         <MCQQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />

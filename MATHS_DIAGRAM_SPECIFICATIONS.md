@@ -977,18 +977,18 @@ export const templateName: DiagramEngineTemplate = {
 
 ## Implementation Checklist
 
-- [ ] Create `math.graphs.coordinate_point.v1` template
-- [ ] Create `math.geometry.straight_line_angles.v1` template
-- [ ] Create `math.geometry.compound_lshape.v1` template
-- [ ] Create `math.circle.basic.v1` template
-- [ ] Create `math.statistics.bar_chart.v1` template
-- [ ] Create `math.statistics.scatter_plot.v1` template
-- [ ] Create `math.algebra.number_line.v1` template
-- [ ] Create `math.geometry.similar_triangles.v1` template
-- [ ] Create `math.trig.sine_rule_triangle.v1` template
-- [ ] Create `math.trig.cosine_rule_triangle.v1` template
-- [ ] Create `math.statistics.histogram.v1` template
-- [ ] Register all new templates in `src/diagrams/engine/registry.ts`
+- [x] Create `math.graphs.coordinate_point.v1` template
+- [x] Create `math.geometry.straight_line_angles.v1` template
+- [x] Create `math.geometry.compound_lshape.v1` template
+- [x] Create `math.circle.basic.v1` template
+- [x] Create `math.statistics.bar_chart.v1` template
+- [x] Create `math.statistics.scatter_plot.v1` template
+- [x] Create `math.algebra.number_line.v1` template
+- [x] Create `math.geometry.similar_triangles.v1` template
+- [x] Create `math.trig.sine_rule_triangle.v1` template
+- [x] Create `math.trig.cosine_rule_triangle.v1` template
+- [x] Create `math.statistics.histogram.v1` template
+- [x] Register all new templates in `src/diagrams/engine/registry.ts`
 - [ ] Test each template with the exact parameters specified above
 - [ ] Update question prompts to reference correct template IDs
 
@@ -996,6 +996,7 @@ export const templateName: DiagramEngineTemplate = {
 
 ## Notes
 
+- **Status:** All Priority 1 and Priority 2 diagram templates are implemented and registered in `src/diagrams/engine/registry.ts`. The quadratic–linear graph uses a scaled y-origin for the x-axis when 0 is in range.
 - All diagrams should use consistent styling (see existing templates for CSS classes)
 - Colors: axes/lines `#94a3b8`, highlights `#60a5fa`, text `#e2e8f0`
 - Font: system font stack (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`)

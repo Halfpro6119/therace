@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { X, Clock, CheckCircle, Lightbulb, Flag, Settings, Eye, EyeOff, Zap, Volume2, VolumeX, Check, MoreHorizontal, RotateCcw, Wrench, Calculator } from 'lucide-react';
+import { X, Clock, CheckCircle, Lightbulb, Flag, Settings, Eye, EyeOff, Zap, Volume2, VolumeX, Check, MoreHorizontal, RotateCcw, Wrench, Calculator, Keyboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db, supabase } from '../db/client';
 import { MasteryChip } from '../components/MasteryChip';
@@ -26,6 +26,7 @@ import { storage, calculateMasteryLevel } from '../utils/storage';
 import { soundSystem } from '../utils/sounds';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { QuestionRenderer, gradeFromRenderer } from '../components/QuestionRenderer';
+import { QuestionDoodlePad } from '../components/QuestionDoodlePad';
 import { QuizNavigation } from '../components/QuizNavigation';
 import { questionRegistry } from '../utils/questionRegistry';
 import { QuestionAnswer } from '../types/questionTypes';
@@ -70,6 +71,7 @@ export function QuizPlayerPage() {
   const { confirm } = useConfirm();
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [subjectName, setSubjectName] = useState<string | null>(null);
   const [quizPrompts, setQuizPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedbackAnimation, setFeedbackAnimation] = useState<'correct' | 'wrong' | null>(null);
@@ -92,6 +94,7 @@ export function QuizPlayerPage() {
     return localStorage.getItem('mathsToolkit_open') === 'true';
   });
   const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
+  const [toolkitOpenWithTab, setToolkitOpenWithTab] = useState<'keyboard' | 'draw' | 'calculator' | null>(null);
 
   // ========================================================================
   // QUIZ STATE
@@ -129,7 +132,9 @@ export function QuizPlayerPage() {
   const [gradeResult, setGradeResult] = useState<any>(null);
 
   const currentPrompt = quizPrompts[currentPromptIndex];
-  const isMathsSubject = quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
+  const isMathsSubject =
+    (!!subjectName && /maths?|mathematics|further\s*maths?/i.test(subjectName)) ||
+    quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
   const calculatorAllowed = currentPrompt?.calculatorAllowed === true || currentPrompt?.meta?.calculatorAllowed === true;
   // Check diagram_metadata field first, then fall back to meta.diagram for backward compatibility
   const diagramMetadata = (currentPrompt?.diagram_metadata || currentPrompt?.meta?.diagram) as DiagramMetadata | undefined;
@@ -443,11 +448,19 @@ export function QuizPlayerPage() {
       const quizData = await db.getQuiz(quizId);
       if (quizData) {
         setQuiz(quizData);
+        const subject = await db.getSubject(quizData.subjectId);
+        setSubjectName(subject?.name ?? null);
 
-        // Master quizzes derive prompts from the paper/subject, not promptIds
+        // Master quizzes derive prompts from the paper/subject, not promptIds.
+        // Topic/unit quizzes must use promptIds (DB default quiz_type is subject_master, so prefer scopeType + promptIds).
         let promptsData: Prompt[];
         if (quizData.quizType === 'paper_master' && quizData.paperId) {
           promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
+        } else if (
+          (quizData.scopeType === 'topic' || quizData.scopeType === 'unit') &&
+          quizData.promptIds?.length
+        ) {
+          promptsData = await db.getPromptsByIds(quizData.promptIds);
         } else if (quizData.quizType === 'subject_master') {
           promptsData = await db.getPromptsForSubjectMasterQuiz(quizData.subjectId);
         } else if (quizData.promptIds?.length) {
@@ -724,7 +737,20 @@ export function QuizPlayerPage() {
                 )}
 
                 {isMathsSubject && (
-                  <div className="relative">
+                  <div className="relative flex items-center gap-1">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setToolkitOpenWithTab('keyboard');
+                        setToolkitOpen(true);
+                      }}
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      style={{ color: 'rgb(var(--text))' }}
+                      title="Maths Keyboard (powers, roots, symbols)"
+                    >
+                      <Keyboard size={20} />
+                    </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -865,24 +891,46 @@ export function QuizPlayerPage() {
 
                 {/* QUESTION CONTENT */}
                 <div className="mb-8">
-                  {calculatorAllowed && (
+                  {isMathsSubject && (
                     <div className="mb-4 flex items-center gap-3 flex-wrap">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <Wrench size={16} className="text-blue-600 dark:text-blue-400" />
-                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                          Calculator Available
-                        </span>
-                      </div>
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setCalculatorModalOpen(true)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
-                        title="Open Calculator"
+                        onClick={() => {
+                          setToolkitOpenWithTab('keyboard');
+                          setToolkitOpen(true);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors shadow-md"
+                        style={{
+                          background: 'rgb(var(--accent) / 0.15)',
+                          color: 'rgb(var(--accent))',
+                          border: '1px solid rgb(var(--accent) / 0.3)'
+                        }}
+                        title="Maths Keyboard (powers, roots, symbols)"
                       >
-                        <Calculator size={18} />
-                        <span className="text-sm font-medium">Calculator</span>
+                        <Keyboard size={18} />
+                        <span className="text-sm font-medium">Maths Keyboard</span>
                       </motion.button>
+                      {calculatorAllowed && (
+                        <>
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                            <Wrench size={16} className="text-blue-600 dark:text-blue-400" />
+                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                              Calculator Available
+                            </span>
+                          </div>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setCalculatorModalOpen(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+                            title="Open Calculator"
+                          >
+                            <Calculator size={18} />
+                            <span className="text-sm font-medium">Calculator</span>
+                          </motion.button>
+                        </>
+                      )}
                     </div>
                   )}
 
@@ -890,21 +938,9 @@ export function QuizPlayerPage() {
                     <DiagramRenderer metadata={diagramMetadata} />
                   )}
 
-                  <div className="flex flex-wrap items-baseline gap-3">
-                    <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
-                      {currentPrompt?.question ?? ""}
-                    </h3>
-                    <span
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium shrink-0"
-                      style={{
-                        background: 'rgb(var(--accent) / 0.15)',
-                        color: 'rgb(var(--accent))',
-                        border: '1px solid rgb(var(--accent) / 0.3)',
-                      }}
-                    >
-                      {(currentPrompt?.marks ?? 1)} mark{(currentPrompt?.marks ?? 1) === 1 ? '' : 's'}
-                    </span>
-                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
+                    {currentPrompt?.question ?? ""}
+                  </h3>
 
                   {diagramMetadata && diagramMetadata.placement === 'below' && (
                     <DiagramRenderer metadata={diagramMetadata} />
@@ -944,6 +980,13 @@ export function QuizPlayerPage() {
                   showFeedback={showFeedback}
                   gradeResult={gradeResult}
                   onSubmit={handleSubmitAnswer}
+                  inputRefCallback={inputRefCallback}
+                />
+
+                {/* SCRATCH PAD – doodle under the question */}
+                <QuestionDoodlePad
+                  sessionId={`${quiz?.id ?? 'quiz'}-${quizStartTime}`}
+                  className="mt-4"
                 />
 
                 {/* NAVIGATION */}
@@ -1022,6 +1065,8 @@ export function QuizPlayerPage() {
                 calculatorAllowed={calculatorAllowed}
                 attemptId={`${quiz.id}-${quizStartTime}`}
                 inputRef={inputRef}
+                openWithTab={toolkitOpenWithTab}
+                onOpenWithTabHandled={() => setToolkitOpenWithTab(null)}
               />
             )}
           </AnimatePresence>

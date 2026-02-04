@@ -167,12 +167,14 @@ export function JsonImportPageEnhanced() {
               ? { ...(preview.normalized.meta || {}), diagram: preview.normalized.diagram }
               : preview.normalized.meta;
 
-            // If unit/topic names are provided instead of IDs, use importPrompt to resolve them
+            // If unit/topic names are provided instead of IDs, use importPrompt to resolve them.
+            // When user has selected a subject, always use its name/examBoard so we target that
+            // subject and never create a duplicate.
             if (preview.normalized.unitName || preview.normalized.topicName) {
               const subject = subjects.find(s => s.id === selectedSubject);
               await db.importPrompt({
-                subjectName: preview.normalized.subjectName || subject?.name || 'Maths',
-                examBoard: preview.normalized.examBoard || subject?.examBoard || 'Edexcel',
+                subjectName: subject?.name ?? preview.normalized.subjectName ?? 'Maths',
+                examBoard: subject?.examBoard ?? preview.normalized.examBoard ?? 'Edexcel',
                 unitName: preview.normalized.unitName || '',
                 topicName: preview.normalized.topicName || '',
                 type: (preview.normalized.type as PromptType) ?? 'short',

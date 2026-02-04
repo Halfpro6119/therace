@@ -48,11 +48,13 @@ export const quadraticLinear: DiagramEngineTemplate = {
     const showIntersectionPoints = params.visibility?.showIntersectionPoints !== false;
 
     const centerX = width / 2;
-    const centerY = height / 2;
+    const chartHeight = height - 2 * padding;
     const gridSize = (width - 2 * padding) / (xMax - xMin);
 
     const convertX = (x: number) => padding + (x - xMin) * gridSize;
-    const convertY = (y: number) => height - padding - (y - yMin) * (height - 2 * padding) / (yMax - yMin);
+    const convertY = (y: number) => height - padding - (y - yMin) * chartHeight / (yMax - yMin);
+    const axisY = 0 >= yMin && 0 <= yMax ? convertY(0) : (0 < yMin ? height - padding : padding);
+    const showOrigin = 0 >= yMin && 0 <= yMax && 0 >= xMin && 0 <= xMax;
 
     // Generate quadratic curve points
     const quadraticPoints: Array<{ x: number; y: number }> = [];
@@ -141,12 +143,12 @@ export const quadraticLinear: DiagramEngineTemplate = {
   <g id="grp:main">
     ${gridMarkup}
 
-    <line id="ln:xAxis" x1="${padding}" y1="${centerY}" x2="${width - padding}" y2="${centerY}" class="diagram-axis" marker-end="url(#arrowhead)"/>
+    <line id="ln:xAxis" x1="${padding}" y1="${axisY}" x2="${width - padding}" y2="${axisY}" class="diagram-axis" marker-end="url(#arrowhead)"/>
     <line id="ln:yAxis" x1="${centerX}" y1="${height - padding}" x2="${centerX}" y2="${padding}" class="diagram-axis" marker-end="url(#arrowhead)"/>
 
-    <text id="txt:xLabel" x="${width - padding + 15}" y="${centerY + 5}" class="diagram-text">${labelX}</text>
+    <text id="txt:xLabel" x="${width - padding + 15}" y="${axisY + 5}" class="diagram-text">${labelX}</text>
     <text id="txt:yLabel" x="${centerX + 5}" y="${padding - 10}" class="diagram-text">${labelY}</text>
-    <text id="txt:origin" x="${centerX - 15}" y="${centerY + 15}" class="diagram-text-small">0</text>
+    ${showOrigin ? `<text id="txt:origin" x="${convertX(0) - 15}" y="${axisY + 15}" class="diagram-text-small">0</text>` : ''}
 
     ${showQuadratic && quadraticPath ? `<path id="path:quadratic" d="${quadraticPath}" class="diagram-quadratic"/>` : ''}
     ${showLinear && linearPath ? `<path id="path:linear" d="${linearPath}" class="diagram-linear"/>` : ''}

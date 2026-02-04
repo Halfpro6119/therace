@@ -1,23 +1,26 @@
 # Maths Gold Questions Import Guide
 
-This guide explains how to import the hard-coded GCSE Maths mastery question set (59 questions: F01-F27 Foundation, H01-H32 Higher) into the application.
+This guide explains how to import the complete GCSE Maths mastery question set (59 questions: F01-F27 Foundation, H01-H32 Higher) with full marks, time estimates, and diagram metadata.
 
 ## Files
 
-- **MATHS_GOLD_QUESTIONS.json** - Contains all 59 questions in JSON format, ready for import
+- **MATHS_GOLD_QUESTIONS_COMPLETE.json** - Complete JSON file with all 59 questions, marks, time estimates, and diagram metadata
 - **MATHS_QUESTIONS_GOLD_LIST.md** - Original specification document with question details
 
 ## Import Method
 
 ### Option 1: Using the JSON Import Page (Recommended)
 
-1. Navigate to the Admin section → JSON Import page
+1. Navigate to the Admin section → JSON Import page (`/admin/json-import`)
 2. Select "Maths" as the subject
 3. Optionally select a default paper (Paper 1, 2, or 3) if you want all questions assigned to a specific paper
-4. Open `MATHS_GOLD_QUESTIONS.json` and copy its entire contents
+4. Open `MATHS_GOLD_QUESTIONS_COMPLETE.json` and copy its entire contents
 5. Paste the JSON into the import textarea
 6. Click "Detect Questions" to preview
-7. Review the preview to ensure all questions are detected correctly
+7. Review the preview to ensure all questions are detected correctly:
+   - Check that all 59 questions are detected
+   - Verify marks and time estimates are shown
+   - Check diagram metadata is present for questions that need diagrams
 8. Click "Import" to import all questions
 
 **Note:** The JSON uses unit/topic **names** (e.g., "Number", "Algebra", "Fractions"), not IDs. The import system will automatically resolve these names to create or find the corresponding units and topics in the database.
@@ -28,7 +31,7 @@ If you need to import programmatically, you can use the `importPrompt` function 
 
 ```typescript
 import { db } from './src/db/client';
-import goldQuestions from './MATHS_GOLD_QUESTIONS.json';
+import goldQuestions from './MATHS_GOLD_QUESTIONS_COMPLETE.json';
 
 for (const question of goldQuestions) {
   await db.importPrompt({
@@ -43,7 +46,10 @@ for (const question of goldQuestions) {
     explanation: question.explanation,
     tier: question.tier,
     calculatorAllowed: question.calculatorAllowed,
+    marks: question.marks,
+    timeAllowanceSec: question.timeAllowanceSec,
     meta: question.meta,
+    diagram_metadata: question.diagram_metadata,
   });
 }
 ```
@@ -55,117 +61,103 @@ Each question in the JSON includes:
 - **id**: Unique identifier (F01-F27 for Foundation, H01-H32 for Higher)
 - **subject**: "Maths"
 - **examBoard**: "Edexcel"
-- **unit**: Unit name (e.g., "Number", "Algebra", "Geometry", "Statistics & Probability")
-- **topic**: Topic name within the unit
-- **type**: Question type (mostly "short" with appropriate metadata)
-- **question**: The question text
+- **unit**: Unit name from taxonomy (Number, Algebra, Geometry, Statistics & Probability)
+- **topic**: Topic name from taxonomy
+- **type**: Question type (mostly "short" - numeric/expression types normalize to short)
+- **question**: The question prompt text
 - **answers**: Array of accepted answer strings
-- **explanation**: Step-by-step solution
+- **marks**: Number of marks (1-5)
+- **timeAllowanceSec**: Recommended time in seconds (30-180)
 - **hint**: Helpful hint for students
+- **explanation**: Full solution/explanation
 - **tier**: "foundation" or "higher"
-- **calculatorAllowed**: Boolean indicating if calculator is allowed
-- **meta**: Metadata including:
-  - `questionData.numericTolerance`: For numeric questions (e.g., 0.01, 0.1)
-  - `goldQuestionId`: The original question ID (F01, H01, etc.)
-- **diagram**: Optional diagram metadata (for questions requiring diagrams)
+- **calculatorAllowed**: Boolean (true for F23, H04, H23, H24, H25, H32)
+- **meta.questionData**: Type-specific data (e.g., numericTolerance for numeric questions)
+- **meta.goldQuestionId**: Reference to the original ID (F01-H32)
+- **diagram_metadata**: Complete diagram specification (for questions with diagrams)
 
-## Question Type Handling
+## Diagram Metadata
 
-The questions use various types that are normalized as follows:
+Questions with diagrams include a `diagram_metadata` field with:
+
+- **mode**: "auto" (generated from template)
+- **templateId**: Template ID (e.g., "math.graphs.coordinate_point.v1")
+- **params**: Template parameters (labels, values, visibility settings)
+- **placement**: "inline" (diagram appears inline with question)
+
+**Note:** Some diagram templates may not exist yet (see MATHS_DIAGRAM_SPECIFICATIONS.md). Questions will import successfully, but diagrams won't render until templates are created.
+
+## Question Type Mapping
+
+The gold list uses maths-specific types that normalize to standard types:
 
 - **numeric** → `type: "short"` with `meta.questionData.numericTolerance`
-- **multiNumeric** → `type: "short"` with comma-separated answers (e.g., "45, 27")
-- **expression** → `type: "short"` with multiple accepted answer formats
-- **tableFill** → `type: "short"` (can be enhanced later with dedicated type)
-- **graphPlot** → `type: "short"` (can be enhanced later)
-- **graphRead** → `type: "short"` with diagram metadata
-- **proofShort** → `type: "short"` with accepted proof text
+- **multiNumeric** → `type: "short"` (for now, until multiNumeric UI exists)
+- **expression** → `type: "short"` with multiple accepted answers
+- **tableFill** → `type: "short"` (for now)
+- **graphPlot** → `type: "short"` (asks for equation instead of plotting)
+- **graphRead** → `type: "short"` with diagram
+- **proofShort** → `type: "short"` with long accepted answer
 
-## Taxonomy Mapping
+## Marks and Time Summary
 
-Questions are mapped to the Maths taxonomy as follows:
+### Foundation (27 questions)
+- **Total marks**: 60 marks
+- **Total time**: ~1,800 seconds (30 minutes)
+- **Average**: ~2.2 marks per question, ~67 seconds per question
 
-### Foundation Questions (F01-F27)
-- **Number & Arithmetic** (F01-F08) → Number unit
-- **Algebra Basics** (F09-F14) → Algebra unit → Expressions and Equations topic
-- **Graphs & Coordinates** (F15-F17) → Algebra unit → Graphs topic
-- **Angles** (F18) → Geometry unit → Angles and Lines topic
-- **Geometry & Measures** (F19-F23) → Geometry unit → Various topics
-- **Probability & Statistics** (F24-F27) → Statistics & Probability unit → Various topics
+### Higher (32 questions)
+- **Total marks**: 110 marks
+- **Total time**: ~2,400 seconds (40 minutes)
+- **Average**: ~3.4 marks per question, ~75 seconds per question
 
-### Higher Questions (H01-H32)
-- **Algebra** (H01-H10) → Algebra unit → Various topics
-- **Ratio, Proportion, Standard Form** (H11-H13) → Number unit
-- **Graphs, Sequences, Functions** (H14-H18) → Algebra unit
-- **Geometry & Trigonometry** (H19-H25) → Geometry unit → Various topics
-- **Probability & Statistics** (H26-H29) → Statistics & Probability unit
-- **Grade 9 Reasoning** (H30-H32) → Various units
+### Combined
+- **Total questions**: 59
+- **Total marks**: 170 marks
+- **Total time**: ~4,200 seconds (70 minutes)
 
-## Calculator Flags
+## Verification After Import
 
-The following questions have `calculatorAllowed: true`:
-- F23 (circumference calculation)
-- H04 (quadratic formula)
-- H23 (trigonometry)
-- H24 (sine rule)
-- H25 (cosine rule)
-- H32 (compound interest)
+After importing, verify:
 
-All other questions default to `calculatorAllowed: false` (Paper 1 style).
-
-## Diagram Requirements
-
-Questions requiring diagrams include diagram metadata:
-- **F15**: Coordinate grid with point P
-- **F17**: Coordinate grid
-- **F26**: Bar chart
-- **F27**: Scatter plot
-- **H19**: Circle theorem (angle in semicircle)
-- **H20**: Circle theorem (tangent-radius)
-- **H28**: Histogram
-- **H29**: Box plots
-
-## Verification
-
-After import, verify the questions by:
-
-1. Checking the Prompts page in Admin
-2. Filtering by tier (foundation/higher)
-3. Verifying calculator flags are set correctly
-4. Checking that diagrams are associated where expected
-5. Testing a few questions in the Quiz Player
+1. **Count**: Check that all 59 questions were imported
+2. **Marks**: Verify marks are set correctly (1-5)
+3. **Time**: Check timeAllowanceSec values
+4. **Diagrams**: Verify diagram_metadata is stored for questions that need diagrams
+5. **Tier**: Confirm foundation/higher tier assignment
+6. **Calculator**: Verify calculatorAllowed flag for F23, H04, H23, H24, H25, H32
+7. **Answers**: Test a few questions to ensure answers are accepted correctly
 
 ## Troubleshooting
 
 ### Questions not importing
-- Check that the JSON is valid (use a JSON validator)
-- Ensure unit/topic names match the taxonomy exactly
-- Check browser console for error messages
+- Check JSON syntax is valid (use a JSON validator)
+- Ensure all required fields are present (subject, unit, topic, question, answers)
+- Check unit/topic names match the taxonomy exactly
 
-### Units/Topics not found
-- The import system will create missing units/topics automatically
-- Verify the names match the taxonomy in `src/config/taxonomy/maths.ts`
+### Diagrams not rendering
+- Verify diagram templates exist in the registry
+- Check template IDs match exactly (case-sensitive)
+- See MATHS_DIAGRAM_SPECIFICATIONS.md for template requirements
 
-### Tier not showing
-- Ensure the JSON import page has been updated to handle the `tier` field
-- Check that `tier` values are exactly "foundation" or "higher" (lowercase)
-
-### Diagrams not displaying
-- Verify diagram template IDs exist in the system
-- Check that diagram metadata is properly formatted in the JSON
+### Answers not matching
+- Check numeric tolerance settings for numeric questions
+- Verify multiple accepted answers are included for expression questions
+- Test with various formats (spaces, commas, etc.)
 
 ## Next Steps
 
-After importing:
+1. **Create missing diagram templates** (see MATHS_DIAGRAM_SPECIFICATIONS.md)
+2. **Test questions** in quiz player to ensure rendering and grading work correctly
+3. **Add to quizzes** - Create quizzes using these gold questions
+4. **Monitor usage** - Track which questions students struggle with
 
-1. **Create Master Quizzes**: Use the Paper Quiz Builder to create master quizzes for each paper/tier combination
-2. **Test Questions**: Play through some quizzes to verify questions work correctly
-3. **Review Answers**: Check that answer matching works for all question types
-4. **Enhance Types**: Consider implementing dedicated handlers for multiNumeric, expression, tableFill, etc.
+## Updating Questions
 
-## Support
+To update questions:
 
-For issues or questions about the gold question set, refer to:
-- `MATHS_QUESTIONS_GOLD_LIST.md` - Original specification
-- `QUESTION_TYPES_GUIDE.md` - Question type system documentation
-- `ADMIN_IMPORT_GUIDE.md` - General import guide
+1. Edit `MATHS_GOLD_QUESTIONS_COMPLETE.json`
+2. Re-import (existing questions with same `id` will be updated, or delete and re-import)
+3. Or use the admin interface to edit individual questions
+
+**Note:** The `id` field (F01-H32) is used as a stable reference. If you change it, the system will treat it as a new question.

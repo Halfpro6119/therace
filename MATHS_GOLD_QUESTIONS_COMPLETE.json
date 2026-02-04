@@ -1,0 +1,1636 @@
+[
+  {
+    "id": "F01",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Integers and Decimals",
+    "type": "short",
+    "question": "Work out: 18 − 3 × (4 + 2)",
+    "answers": ["0"],
+    "marks": 1,
+    "timeAllowanceSec": 45,
+    "hint": "Remember BIDMAS: brackets first, then multiplication, then subtraction",
+    "explanation": "Using BIDMAS: First calculate (4 + 2) = 6, then 3 × 6 = 18, then 18 − 18 = 0",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F01"
+    }
+  },
+  {
+    "id": "F02",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Integers and Decimals",
+    "type": "short",
+    "question": "Calculate 4.8 ÷ 0.6",
+    "answers": ["8"],
+    "marks": 1,
+    "timeAllowanceSec": 30,
+    "hint": "Multiply both numbers by 10 to make the division easier",
+    "explanation": "4.8 ÷ 0.6 = 48 ÷ 6 = 8",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F02"
+    }
+  },
+  {
+    "id": "F03",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Fractions",
+    "type": "short",
+    "question": "Find 3/5 of 240",
+    "answers": ["144"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "To find a fraction of a number, multiply by the numerator and divide by the denominator",
+    "explanation": "3/5 of 240 = (3 × 240) ÷ 5 = 720 ÷ 5 = 144",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F03"
+    }
+  },
+  {
+    "id": "F04",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Fractions",
+    "type": "short",
+    "question": "Write 12/18 in its simplest form.",
+    "answers": ["2/3", "4/6"],
+    "marks": 1,
+    "timeAllowanceSec": 30,
+    "hint": "Find the highest common factor (HCF) of the numerator and denominator",
+    "explanation": "Find the HCF of 12 and 18, which is 6. Divide both by 6: 12/18 = 2/3",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F04"
+    }
+  },
+  {
+    "id": "F05",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "Find 12% of £250",
+    "answers": ["30", "£30"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Convert percentage to decimal and multiply",
+    "explanation": "12% of 250 = 0.12 × 250 = 30",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F05"
+    }
+  },
+  {
+    "id": "F06",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "A price increases from £80 to £92. Find the percentage increase.",
+    "answers": ["15", "15%"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Find the increase first, then divide by the original amount and multiply by 100",
+    "explanation": "Increase = £92 − £80 = £12. Percentage increase = (12/80) × 100 = 15%",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F06"
+    }
+  },
+  {
+    "id": "F07",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "Split £72 in the ratio 5 : 3",
+    "answers": ["45, 27", "45 and 27"],
+    "marks": 3,
+    "timeAllowanceSec": 75,
+    "hint": "Add the parts (5 + 3 = 8), divide £72 by 8 to find one part, then multiply",
+    "explanation": "Total parts = 5 + 3 = 8. One part = £72 ÷ 8 = £9. First share = 5 × £9 = £45. Second share = 3 × £9 = £27",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F07"
+    }
+  },
+  {
+    "id": "F08",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Standard Form",
+    "type": "short",
+    "question": "Write 3,400,000 in standard form.",
+    "answers": ["3.4 × 10^6", "3.4×10^6", "3.4 × 10⁶", "3.4×10⁶"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Move the decimal point so there's one non-zero digit before it, count how many places you moved",
+    "explanation": "3,400,000 = 3.4 × 1,000,000 = 3.4 × 10⁶",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F08"
+    }
+  },
+  {
+    "id": "F09",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Evaluate 2x + 7 when x = −4",
+    "answers": ["-1", "-1"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Substitute −4 for x and remember the rules for negative numbers",
+    "explanation": "2(−4) + 7 = −8 + 7 = −1",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F09"
+    }
+  },
+  {
+    "id": "F10",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Simplify: 3a + 5a − 2",
+    "answers": ["8a − 2", "8a-2", "8a - 2"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Combine like terms (terms with the same variable)",
+    "explanation": "3a + 5a = 8a, so 3a + 5a − 2 = 8a − 2",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F10"
+    }
+  },
+  {
+    "id": "F11",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve: x − 9 = 15",
+    "answers": ["24"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Add 9 to both sides of the equation",
+    "explanation": "x − 9 = 15, so x = 15 + 9 = 24",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F11"
+    }
+  },
+  {
+    "id": "F12",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve: 4x + 3 = 27",
+    "answers": ["6"],
+    "marks": 2,
+    "timeAllowanceSec": 60,
+    "hint": "First subtract 3 from both sides, then divide by 4",
+    "explanation": "4x + 3 = 27, so 4x = 27 − 3 = 24, therefore x = 24 ÷ 4 = 6",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F12"
+    }
+  },
+  {
+    "id": "F13",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Expand: 3(2x − 5)",
+    "answers": ["6x − 15", "6x-15", "6x - 15"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Multiply each term inside the brackets by 3",
+    "explanation": "3(2x − 5) = 3 × 2x − 3 × 5 = 6x − 15",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F13"
+    }
+  },
+  {
+    "id": "F14",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Factorise: 6x + 9",
+    "answers": ["3(2x + 3)", "3(2x+3)"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Find the highest common factor (HCF) of 6 and 9",
+    "explanation": "HCF of 6 and 9 is 3. 6x + 9 = 3(2x) + 3(3) = 3(2x + 3)",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F14"
+    }
+  },
+  {
+    "id": "F15",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "Write down the coordinates of point P.",
+    "answers": ["3, 2", "(3, 2)", "3,2"],
+    "marks": 2,
+    "timeAllowanceSec": 60,
+    "hint": "Read the x-coordinate first (horizontal), then the y-coordinate (vertical)",
+    "explanation": "Point P is at x = 3 and y = 2, so the coordinates are (3, 2)",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.graphs.coordinate_point.v1",
+      "params": {
+        "labels": {
+          "xLabel": "x",
+          "yLabel": "y",
+          "pointLabel": "P"
+        },
+        "values": {
+          "xMin": -5,
+          "xMax": 5,
+          "yMin": -5,
+          "yMax": 5,
+          "pointX": 3,
+          "pointY": 2
+        },
+        "visibility": {
+          "showGrid": true,
+          "showNumbers": true,
+          "showPoint": true,
+          "highlightPoint": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "goldQuestionId": "F15"
+    }
+  },
+  {
+    "id": "F16",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "Complete the table for y = 2x − 1 when x = −1, 0, 2, 4.",
+    "answers": ["-3, -1, 3, 7", "-3,-1,3,7"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Substitute each x value into the equation y = 2x − 1",
+    "explanation": "When x = −1: y = 2(−1) − 1 = −3. When x = 0: y = 2(0) − 1 = −1. When x = 2: y = 2(2) − 1 = 3. When x = 4: y = 2(4) − 1 = 7",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F16"
+    }
+  },
+  {
+    "id": "F17",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "Find the equation of the line passing through (0,1) and (4,9).",
+    "answers": ["y = 2x + 1", "y=2x+1"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Find the gradient first: (y₂ − y₁)/(x₂ − x₁), then use y = mx + c",
+    "explanation": "Gradient = (9 − 1)/(4 − 0) = 8/4 = 2. Using point (0,1): 1 = 2(0) + c, so c = 1. Equation: y = 2x + 1",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.graphs.linear_axes_line.v1",
+      "params": {
+        "labels": {
+          "xLabel": "x",
+          "yLabel": "y"
+        },
+        "values": {
+          "gradient": 2,
+          "intercept": 1
+        },
+        "visibility": {
+          "showGrid": true,
+          "showLine": false,
+          "showPoints": true
+        },
+        "positions": {
+          "point1": {
+            "x": 0.1,
+            "y": 0.55
+          },
+          "point2": {
+            "x": 0.7,
+            "y": 0.45
+          }
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "goldQuestionId": "F17"
+    }
+  },
+  {
+    "id": "F18",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Angles and Lines",
+    "type": "short",
+    "question": "Two angles on a straight line are (3x + 10)° and (2x + 30)°. Find x.",
+    "answers": ["28"],
+    "marks": 3,
+    "timeAllowanceSec": 75,
+    "hint": "Angles on a straight line add up to 180°. Set up an equation: (3x + 10) + (2x + 30) = 180",
+    "explanation": "Angles on a straight line sum to 180°. So (3x + 10) + (2x + 30) = 180. Simplifying: 5x + 40 = 180, so 5x = 140, therefore x = 28",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.geometry.straight_line_angles.v1",
+      "params": {
+        "labels": {
+          "angle1Label": "(3x + 10)°",
+          "angle2Label": "(2x + 30)°"
+        },
+        "values": {
+          "angle1": 100,
+          "angle2": 80
+        },
+        "visibility": {
+          "showLine": true,
+          "showAngleArcs": true,
+          "showAngleLabels": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F18"
+    }
+  },
+  {
+    "id": "F19",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Angles and Lines",
+    "type": "short",
+    "question": "A triangle has angles 52° and 71°. Find the third angle.",
+    "answers": ["57", "57°"],
+    "marks": 2,
+    "timeAllowanceSec": 60,
+    "hint": "The angles in a triangle add up to 180°",
+    "explanation": "Sum of angles in a triangle = 180°. So third angle = 180° − 52° − 71° = 57°",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.triangle.basic_angles.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C"
+        },
+        "values": {
+          "angleA": 52,
+          "angleB": 71,
+          "angleC": 57
+        },
+        "visibility": {
+          "showAngleA": true,
+          "showAngleB": true,
+          "showAngleC": false
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F19"
+    }
+  },
+  {
+    "id": "F20",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "Find the area of a triangle with base 12 cm and height 7 cm.",
+    "answers": ["42", "42 cm²", "42cm²"],
+    "marks": 2,
+    "timeAllowanceSec": 60,
+    "hint": "Use the formula: Area = ½ × base × height",
+    "explanation": "Area = ½ × base × height = ½ × 12 × 7 = 6 × 7 = 42 cm²",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.trig.right_triangle.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C",
+          "adjacent": "12 cm",
+          "opposite": "7 cm"
+        },
+        "values": {
+          "angle": 30
+        },
+        "visibility": {
+          "showRightAngleMark": true,
+          "showSideLabels": true,
+          "showAngleLabel": false
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F20"
+    }
+  },
+  {
+    "id": "F21",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "Find the perimeter of an L-shape with side lengths: 8 cm, 4 cm, 6 cm, 4 cm, 4 cm, 10 cm.",
+    "answers": ["36", "36 cm"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Add all the side lengths together",
+    "explanation": "Perimeter = 8 + 4 + 6 + 4 + 4 + 10 = 36 cm",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.geometry.compound_lshape.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C",
+          "D": "D",
+          "E": "E",
+          "F": "F"
+        },
+        "values": {
+          "width1": 8,
+          "height1": 4,
+          "width2": 4,
+          "height2": 6,
+          "unit": "cm"
+        },
+        "visibility": {
+          "showSideLengths": true,
+          "showVertexLabels": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F21"
+    }
+  },
+  {
+    "id": "F22",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "A cuboid is 8 cm by 5 cm by 3 cm. Find its volume.",
+    "answers": ["120", "120 cm³", "120cm³"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Volume of a cuboid = length × width × height",
+    "explanation": "Volume = length × width × height = 8 × 5 × 3 = 120 cm³",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F22"
+    }
+  },
+  {
+    "id": "F23",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Circles",
+    "type": "short",
+    "question": "Radius is 6 cm. Find the circumference. Give answer to 1 dp.",
+    "answers": ["37.7", "37.7 cm", "37.7cm"],
+    "marks": 3,
+    "timeAllowanceSec": 75,
+    "hint": "Use the formula: Circumference = 2πr, where π ≈ 3.14159",
+    "explanation": "Circumference = 2πr = 2 × π × 6 = 12π ≈ 37.7 cm (to 1 decimal place)",
+    "tier": "foundation",
+    "calculatorAllowed": true,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.circle.basic.v1",
+      "params": {
+        "labels": {
+          "O": "O",
+          "radiusLabel": "6 cm"
+        },
+        "values": {
+          "radius": 6
+        },
+        "visibility": {
+          "showCenter": true,
+          "showRadius": true,
+          "showRadiusLabel": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.1
+      },
+      "goldQuestionId": "F23"
+    }
+  },
+  {
+    "id": "F24",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Probability",
+    "type": "short",
+    "question": "A bag has 5 red, 3 blue, 2 green counters. Find P(blue).",
+    "answers": ["3/10", "0.3", "3/10"],
+    "marks": 2,
+    "timeAllowanceSec": 45,
+    "hint": "Probability = number of blue counters / total number of counters",
+    "explanation": "Total counters = 5 + 3 + 2 = 10. P(blue) = 3/10 = 0.3",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "F24"
+    }
+  },
+  {
+    "id": "F25",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Averages and Spread",
+    "type": "short",
+    "question": "Find the mean from this frequency table: x: 2, 3, 4, 5; f: 3, 5, 2, 4",
+    "answers": ["3.5", "3.5"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Mean = sum of (value × frequency) / sum of frequencies",
+    "explanation": "Sum of (x × f) = (2×3) + (3×5) + (4×2) + (5×4) = 6 + 15 + 8 + 20 = 49. Sum of f = 3 + 5 + 2 + 4 = 14. Mean = 49/14 = 3.5",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "F25"
+    }
+  },
+  {
+    "id": "F26",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Data Representation",
+    "type": "short",
+    "question": "Read values and compare from a bar chart. Which category has the highest frequency?",
+    "answers": ["C", "Category C"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Look at the height of each bar on the y-axis",
+    "explanation": "Category C has the highest bar, indicating the highest frequency of 15",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.statistics.bar_chart.v1",
+      "params": {
+        "labels": {
+          "xAxisLabel": "Category",
+          "yAxisLabel": "Frequency"
+        },
+        "values": {
+          "categories": ["A", "B", "C", "D"],
+          "frequencies": [12, 8, 15, 10],
+          "yMax": 20
+        },
+        "visibility": {
+          "showGrid": true,
+          "showValues": true,
+          "showLabels": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "goldQuestionId": "F26"
+    }
+  },
+  {
+    "id": "F27",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Data Representation",
+    "type": "short",
+    "question": "Describe the correlation and spot an outlier.",
+    "answers": ["positive correlation, outlier at (10, 4)", "positive correlation, outlier (10,4)", "positive correlation"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Look at the general trend of the points, then identify any point that doesn't fit the pattern",
+    "explanation": "Most points show a positive correlation (as x increases, y increases). The point at (10, 4) is an outlier as it doesn't follow this trend",
+    "tier": "foundation",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.statistics.scatter_plot.v1",
+      "params": {
+        "labels": {
+          "xAxisLabel": "X Variable",
+          "yAxisLabel": "Y Variable"
+        },
+        "values": {
+          "points": [
+            { "x": 2, "y": 3 },
+            { "x": 4, "y": 5 },
+            { "x": 5, "y": 6 },
+            { "x": 7, "y": 8 },
+            { "x": 8, "y": 9 },
+            { "x": 10, "y": 4 }
+          ],
+          "xMin": 0,
+          "xMax": 12,
+          "yMin": 0,
+          "yMax": 10
+        },
+        "visibility": {
+          "showGrid": true,
+          "showPoints": true,
+          "highlightOutlier": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "goldQuestionId": "F27"
+    }
+  },
+  {
+    "id": "H01",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Expand and simplify: (2x − 3)(x + 5)",
+    "answers": ["2x² + 7x − 15", "2x^2 + 7x - 15", "2x²+7x-15"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Use FOIL: First, Outer, Inner, Last, then collect like terms",
+    "explanation": "(2x − 3)(x + 5) = 2x(x) + 2x(5) − 3(x) − 3(5) = 2x² + 10x − 3x − 15 = 2x² + 7x − 15",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H01"
+    }
+  },
+  {
+    "id": "H02",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Factorise: x² + 7x + 10",
+    "answers": ["(x + 2)(x + 5)", "(x+2)(x+5)"],
+    "marks": 2,
+    "timeAllowanceSec": 75,
+    "hint": "Find two numbers that multiply to 10 and add to 7",
+    "explanation": "We need two numbers that multiply to 10 and add to 7. These are 2 and 5. So x² + 7x + 10 = (x + 2)(x + 5)",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H02"
+    }
+  },
+  {
+    "id": "H03",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve: x² + 7x + 10 = 0",
+    "answers": ["-2, -5", "-2 and -5", "x = -2, x = -5"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Factorise first, then set each bracket equal to zero",
+    "explanation": "Factorising: x² + 7x + 10 = (x + 2)(x + 5) = 0. So x + 2 = 0 or x + 5 = 0, giving x = −2 or x = −5",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H03"
+    }
+  },
+  {
+    "id": "H04",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve: 3x² − 5x − 2 = 0. Give answers to 2 dp.",
+    "answers": ["2.00, -0.33", "2.00 and -0.33", "x = 2.00, x = -0.33"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Use the quadratic formula: x = (-b ± √(b² - 4ac)) / 2a",
+    "explanation": "Using quadratic formula with a=3, b=−5, c=−2: x = (5 ± √(25 + 24)) / 6 = (5 ± 7) / 6. So x = 12/6 = 2.00 or x = −2/6 = −0.33 (to 2 dp)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H04"
+    }
+  },
+  {
+    "id": "H05",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve: 2x + y = 11 and x − y = 1",
+    "answers": ["x = 4, y = 3", "4, 3", "x=4, y=3"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Add the two equations to eliminate y, or use substitution",
+    "explanation": "Adding the equations: (2x + y) + (x − y) = 11 + 1, so 3x = 12, giving x = 4. Substituting into x − y = 1: 4 − y = 1, so y = 3",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H05"
+    }
+  },
+  {
+    "id": "H06",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Solve simultaneously: y = x² and y = 2x + 3",
+    "answers": ["x = -1, x = 3", "-1, 3", "x=-1, x=3"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Substitute y = x² into the second equation, then solve the quadratic",
+    "explanation": "Substituting: x² = 2x + 3, so x² − 2x − 3 = 0. Factorising: (x + 1)(x − 3) = 0, giving x = −1 or x = 3",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H06"
+    }
+  },
+  {
+    "id": "H07",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Inequalities",
+    "type": "short",
+    "question": "Solve: 3x − 7 < 11",
+    "answers": ["x < 6", "x<6"],
+    "marks": 3,
+    "timeAllowanceSec": 75,
+    "hint": "Add 7 to both sides, then divide by 3",
+    "explanation": "3x − 7 < 11, so 3x < 18, therefore x < 6",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H07"
+    }
+  },
+  {
+    "id": "H08",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Inequalities",
+    "type": "short",
+    "question": "Solve: x² − 5x + 6 > 0",
+    "answers": ["x < 2 or x > 3", "x<2 or x>3"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Factorise first: (x − 2)(x − 3) > 0, then consider when each bracket is positive or negative",
+    "explanation": "Factorising: (x − 2)(x − 3) > 0. This is positive when both brackets are positive (x > 3) or both are negative (x < 2). So x < 2 or x > 3",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H08"
+    }
+  },
+  {
+    "id": "H09",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Make x the subject: y = 3x − 4",
+    "answers": ["x = (y + 4)/3", "x=(y+4)/3", "x = (y + 4) ÷ 3"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Add 4 to both sides, then divide by 3",
+    "explanation": "y = 3x − 4, so y + 4 = 3x, therefore x = (y + 4)/3",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H09"
+    }
+  },
+  {
+    "id": "H10",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Simplify: (x² − 9)/(x² + 3x)",
+    "answers": ["(x − 3)/x", "(x-3)/x"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Factorise the numerator (difference of two squares) and denominator (common factor)",
+    "explanation": "Numerator: x² − 9 = (x + 3)(x − 3). Denominator: x² + 3x = x(x + 3). Cancelling (x + 3): (x − 3)/x",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H10"
+    }
+  },
+  {
+    "id": "H11",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "y is directly proportional to x. When x = 4, y = 18. Find y when x = 10.",
+    "answers": ["45"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Find the constant of proportionality k first: y = kx",
+    "explanation": "Since y ∝ x, we have y = kx. When x = 4, y = 18, so 18 = 4k, giving k = 4.5. When x = 10, y = 4.5 × 10 = 45",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H11"
+    }
+  },
+  {
+    "id": "H12",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "y is inversely proportional to x. When x = 5, y = 12. Find y when x = 8.",
+    "answers": ["7.5"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "For inverse proportion, y = k/x. Find k first",
+    "explanation": "Since y ∝ 1/x, we have y = k/x. When x = 5, y = 12, so 12 = k/5, giving k = 60. When x = 8, y = 60/8 = 7.5",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H12"
+    }
+  },
+  {
+    "id": "H13",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Standard Form",
+    "type": "short",
+    "question": "(3.2×10⁵) ÷ (8×10²) in standard form.",
+    "answers": ["4 × 10²", "4×10²", "4 × 10^2"],
+    "marks": 3,
+    "timeAllowanceSec": 75,
+    "hint": "Divide the numbers and subtract the powers: (3.2 ÷ 8) × 10^(5 − 2)",
+    "explanation": "(3.2×10⁵) ÷ (8×10²) = (3.2 ÷ 8) × 10^(5−2) = 0.4 × 10³ = 4 × 10²",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H13"
+    }
+  },
+  {
+    "id": "H14",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "Find the gradient of the line through (−2, 7) and (4, −5).",
+    "answers": ["-2"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Gradient = (y₂ − y₁)/(x₂ − x₁)",
+    "explanation": "Gradient = (−5 − 7)/(4 − (−2)) = −12/6 = −2",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H14"
+    }
+  },
+  {
+    "id": "H15",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "Find the equation of the line with gradient 3 passing through (2, −1).",
+    "answers": ["y = 3x − 7", "y=3x-7"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Use y − y₁ = m(x − x₁) or find c using y = mx + c",
+    "explanation": "Using y = mx + c: −1 = 3(2) + c, so −1 = 6 + c, giving c = −7. Equation: y = 3x − 7",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H15"
+    }
+  },
+  {
+    "id": "H16",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Graphs",
+    "type": "short",
+    "question": "For y = x² − 6x + 5, find the turning point.",
+    "answers": ["(3, −4)", "3, -4", "x=3, y=-4"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Complete the square or use x = -b/(2a) for the x-coordinate",
+    "explanation": "Completing the square: y = (x − 3)² − 9 + 5 = (x − 3)² − 4. So turning point is at (3, −4)",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H16"
+    }
+  },
+  {
+    "id": "H17",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Sequences",
+    "type": "short",
+    "question": "Find the nth term of: 5, 9, 13, 17, …",
+    "answers": ["4n + 1", "4n+1"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Find the common difference first, then use nth term = an + b",
+    "explanation": "Common difference = 4. When n = 1, term = 5, so 5 = 4(1) + b, giving b = 1. nth term = 4n + 1",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H17"
+    }
+  },
+  {
+    "id": "H18",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Sequences",
+    "type": "short",
+    "question": "Find the nth term of: 1, 4, 9, 16, …",
+    "answers": ["n²"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "These are square numbers: 1², 2², 3², 4², …",
+    "explanation": "The sequence is 1², 2², 3², 4², …, so the nth term is n²",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H18"
+    }
+  },
+  {
+    "id": "H19",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Circles",
+    "type": "short",
+    "question": "In a circle, AB is a diameter and C is a point on the circle. Find ∠ACB.",
+    "answers": ["90", "90°"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Use the circle theorem: angle in a semicircle is 90°",
+    "explanation": "By the circle theorem, the angle in a semicircle is always 90°. Since AB is a diameter and C is on the circle, ∠ACB = 90°",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.circle_theorems.angle_in_semicircle.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C",
+          "O": "O"
+        },
+        "positions": {
+          "C": {
+            "x": 0.5,
+            "y": 0.2
+          }
+        },
+        "visibility": {
+          "showCenter": true,
+          "showAngleLabel": true,
+          "showRightAngleMark": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H19"
+    }
+  },
+  {
+    "id": "H20",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Circles",
+    "type": "short",
+    "question": "A tangent touches a circle at P. OP is a radius. What is the angle between OP and the tangent?",
+    "answers": ["90", "90°"],
+    "marks": 2,
+    "timeAllowanceSec": 60,
+    "hint": "Use the circle theorem: tangent is perpendicular to radius at point of contact",
+    "explanation": "By the circle theorem, a tangent is perpendicular to the radius at the point of contact. So the angle between OP and the tangent is 90°",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.circle_theorems.tangent_radius.v1",
+      "params": {
+        "labels": {
+          "O": "O",
+          "A": "P",
+          "T": "T"
+        },
+        "visibility": {
+          "showRightAngle": true,
+          "showCenter": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H20"
+    }
+  },
+  {
+    "id": "H21",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "Two triangles are similar. Triangle 1 has sides 6 cm, 8 cm, 10 cm. Triangle 2 has sides 9 cm, 12 cm, and one missing side. Find the missing side.",
+    "answers": ["15", "15 cm"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Find the scale factor first, then multiply the corresponding side",
+    "explanation": "Scale factor = 9/6 = 1.5. The missing side corresponds to 10 cm, so missing side = 10 × 1.5 = 15 cm",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.geometry.similar_triangles.v1",
+      "params": {
+        "labels": {
+          "triangle1": {
+            "A": "A",
+            "B": "B",
+            "C": "C"
+          },
+          "triangle2": {
+            "D": "D",
+            "E": "E",
+            "F": "F"
+          }
+        },
+        "values": {
+          "triangle1": {
+            "sideAB": 6,
+            "sideBC": 8,
+            "sideAC": 10
+          },
+          "triangle2": {
+            "sideDE": 9,
+            "sideEF": 12,
+            "sideDF": null
+          },
+          "scaleFactor": 1.5
+        },
+        "visibility": {
+          "showSideLengths": true,
+          "showCorrespondingAngles": true,
+          "showScaleFactor": false
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H21"
+    }
+  },
+  {
+    "id": "H22",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "A right triangle has legs 7 cm and 24 cm. Find the hypotenuse.",
+    "answers": ["25", "25 cm"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Use Pythagoras' theorem: a² + b² = c²",
+    "explanation": "Using Pythagoras: c² = 7² + 24² = 49 + 576 = 625, so c = √625 = 25 cm",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H22"
+    }
+  },
+  {
+    "id": "H23",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "In a right triangle, angle = 38°, adjacent = 12 cm. Find hypotenuse.",
+    "answers": ["15.2", "15.2 cm"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Use cosine: cos(angle) = adjacent/hypotenuse",
+    "explanation": "Using cos(38°) = adjacent/hypotenuse: cos(38°) = 12/h, so h = 12/cos(38°) ≈ 15.2 cm (to 1 dp)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.trig.right_triangle.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C",
+          "adjacent": "12 cm",
+          "hypotenuse": "?"
+        },
+        "values": {
+          "angle": 38
+        },
+        "visibility": {
+          "showRightAngleMark": true,
+          "showSideLabels": true,
+          "showAngleLabel": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.1
+      },
+      "goldQuestionId": "H23"
+    }
+  },
+  {
+    "id": "H24",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "In triangle ABC, a = 8, A = 35°, B = 72°. Find b.",
+    "answers": ["13.3"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Use the sine rule: a/sin A = b/sin B",
+    "explanation": "Using sine rule: a/sin A = b/sin B, so 8/sin(35°) = b/sin(72°). Therefore b = (8 × sin(72°))/sin(35°) ≈ 13.3 (to 1 dp)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.trig.sine_rule_triangle.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C"
+        },
+        "values": {
+          "sideA": 8,
+          "angleA": 35,
+          "angleB": 72,
+          "angleC": 73,
+          "sideB": null,
+          "sideC": null
+        },
+        "visibility": {
+          "showSideLengths": true,
+          "showAngles": true,
+          "showAngleArcs": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.1
+      },
+      "goldQuestionId": "H24"
+    }
+  },
+  {
+    "id": "H25",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Geometry",
+    "topic": "Triangles and Congruence",
+    "type": "short",
+    "question": "Find the length of side c when a = 7, b = 9, angle C = 120°.",
+    "answers": ["14.0"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Use the cosine rule: c² = a² + b² − 2ab cos C",
+    "explanation": "Using cosine rule: c² = 7² + 9² − 2(7)(9)cos(120°) = 49 + 81 − 126(−0.5) = 130 + 63 = 193. So c = √193 ≈ 14.0 (to 1 dp)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.trig.cosine_rule_triangle.v1",
+      "params": {
+        "labels": {
+          "A": "A",
+          "B": "B",
+          "C": "C"
+        },
+        "values": {
+          "sideA": 7,
+          "sideB": 9,
+          "sideC": null,
+          "angleC": 120
+        },
+        "visibility": {
+          "showSideLengths": true,
+          "showAngleC": true,
+          "showAngleArc": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.1
+      },
+      "goldQuestionId": "H25"
+    }
+  },
+  {
+    "id": "H26",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Probability",
+    "type": "short",
+    "question": "A bag contains 5 red, 3 blue, 2 green counters. Two counters are drawn without replacement. Find the probability that both are red.",
+    "answers": ["2/9"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "P(first red) × P(second red given first was red)",
+    "explanation": "P(first red) = 5/10 = 1/2. After one red is removed, P(second red) = 4/9. So P(both red) = (1/2) × (4/9) = 4/18 = 2/9",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H26"
+    }
+  },
+  {
+    "id": "H27",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Probability",
+    "type": "short",
+    "question": "Given P(A)=0.6, P(B)=0.5, P(A∩B)=0.3, find P(A|B).",
+    "answers": ["0.6"],
+    "marks": 3,
+    "timeAllowanceSec": 90,
+    "hint": "Use the formula: P(A|B) = P(A∩B) / P(B)",
+    "explanation": "P(A|B) = P(A∩B) / P(B) = 0.3 / 0.5 = 0.6",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H27"
+    }
+  },
+  {
+    "id": "H28",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Data Representation",
+    "type": "short",
+    "question": "A histogram shows frequency density. For the class 20-40 minutes with frequency density 2, find the frequency.",
+    "answers": ["40"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Frequency = frequency density × class width",
+    "explanation": "Class width = 40 − 20 = 20. Frequency = frequency density × class width = 2 × 20 = 40",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.statistics.histogram.v1",
+      "params": {
+        "labels": {
+          "xAxisLabel": "Time (minutes)",
+          "yAxisLabel": "Frequency Density"
+        },
+        "values": {
+          "classes": [
+            {
+              "start": 0,
+              "end": 10,
+              "frequency": 20,
+              "frequencyDensity": 2
+            },
+            {
+              "start": 10,
+              "end": 20,
+              "frequency": 30,
+              "frequencyDensity": 3
+            },
+            {
+              "start": 20,
+              "end": 40,
+              "frequency": 40,
+              "frequencyDensity": 2
+            },
+            {
+              "start": 40,
+              "end": 60,
+              "frequency": 30,
+              "frequencyDensity": 1.5
+            }
+          ],
+          "yMax": 4
+        },
+        "visibility": {
+          "showGrid": true,
+          "showFrequencies": false,
+          "showFrequencyDensity": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "H28"
+    }
+  },
+  {
+    "id": "H29",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Statistics & Probability",
+    "topic": "Averages and Spread",
+    "type": "short",
+    "question": "Compare the distributions using median and IQR. Group A: median 25, IQR 20. Group B: median 30, IQR 20.",
+    "answers": ["Group B has higher median, same IQR", "Group B higher median, same spread"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Compare medians (central tendency) and IQRs (spread)",
+    "explanation": "Group B has a higher median (30 vs 25), indicating higher central values. Both groups have the same IQR (20), indicating similar spread",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram_metadata": {
+      "mode": "auto",
+      "templateId": "math.statistics.boxplot.v1",
+      "params": {
+        "values": {
+          "min": 5,
+          "q1": 15,
+          "median": 25,
+          "q3": 35,
+          "max": 50
+        },
+        "visibility": {
+          "showLabels": true,
+          "showValues": true
+        }
+      },
+      "placement": "inline"
+    },
+    "meta": {
+      "goldQuestionId": "H29"
+    }
+  },
+  {
+    "id": "H30",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Prove that the square of any odd number is odd.",
+    "answers": ["Let n be any integer. An odd number can be written as 2n+1. (2n+1)² = 4n²+4n+1 = 2(2n²+2n)+1, which is odd"],
+    "marks": 5,
+    "timeAllowanceSec": 180,
+    "hint": "Express an odd number as 2n+1, then square it and show it's in the form 2k+1",
+    "explanation": "Let n be any integer. An odd number can be written as 2n+1. Squaring: (2n+1)² = 4n²+4n+1 = 2(2n²+2n)+1. Since 2n²+2n is an integer, this is of the form 2k+1, which is odd. Therefore, the square of any odd number is odd.",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H30"
+    }
+  },
+  {
+    "id": "H31",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Algebra",
+    "topic": "Expressions and Equations",
+    "type": "short",
+    "question": "Show that (n+1)(n+2) is always even.",
+    "answers": ["For any integer n, either n or n+1 is even. If n is even, n+2 is even, so product is even. If n is odd, n+1 is even, so product is even"],
+    "marks": 4,
+    "timeAllowanceSec": 150,
+    "hint": "Consider two cases: when n is even and when n is odd",
+    "explanation": "For any integer n, either n or n+1 is even (consecutive integers). If n is even, then n+2 is even, so (n+1)(n+2) contains an even factor, making the product even. If n is odd, then n+1 is even, so the product is even. Therefore, (n+1)(n+2) is always even.",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "H31"
+    }
+  },
+  {
+    "id": "H32",
+    "subject": "Maths",
+    "examBoard": "Edexcel",
+    "unit": "Number",
+    "topic": "Percentages",
+    "type": "short",
+    "question": "Population increases by 3% each year. Start 40,000. Find after 5 years.",
+    "answers": ["46371", "46371"],
+    "marks": 4,
+    "timeAllowanceSec": 120,
+    "hint": "Use compound interest formula or multiply by 1.03 five times",
+    "explanation": "After 5 years: 40,000 × (1.03)⁵ = 40,000 × 1.1593 ≈ 46,371 (nearest whole number)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 1
+      },
+      "goldQuestionId": "H32"
+    }
+  }
+]

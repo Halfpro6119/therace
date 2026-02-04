@@ -5,17 +5,21 @@ import { MathsKeyboard } from './MathsKeyboard';
 import { DrawingCanvas } from './DrawingCanvas';
 import { Calculator } from './Calculator';
 
+type Tab = 'keyboard' | 'draw' | 'calculator';
+
 interface MathsToolkitProps {
   isOpen: boolean;
   onClose: () => void;
   calculatorAllowed: boolean;
   attemptId: string;
   inputRef: React.RefObject<HTMLInputElement>;
+  /** When set, switch to this tab when opened (e.g. when user clicks keyboard button) */
+  openWithTab?: Tab | null;
+  /** Called after openWithTab has been applied, so parent can clear it */
+  onOpenWithTabHandled?: () => void;
 }
 
-type Tab = 'keyboard' | 'draw' | 'calculator';
-
-export function MathsToolkit({ isOpen, onClose, calculatorAllowed, attemptId, inputRef }: MathsToolkitProps) {
+export function MathsToolkit({ isOpen, onClose, calculatorAllowed, attemptId, inputRef, openWithTab, onOpenWithTabHandled }: MathsToolkitProps) {
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const saved = localStorage.getItem('mathsToolkit_lastTab');
     return (saved as Tab) || 'keyboard';
@@ -30,6 +34,13 @@ export function MathsToolkit({ isOpen, onClose, calculatorAllowed, attemptId, in
       setActiveTab('keyboard');
     }
   }, [isOpen, calculatorAllowed, activeTab]);
+
+  useEffect(() => {
+    if (isOpen && openWithTab) {
+      setActiveTab(openWithTab);
+      onOpenWithTabHandled?.();
+    }
+  }, [isOpen, openWithTab, onOpenWithTabHandled]);
 
   // Automatically switch to calculator tab when it becomes available (if previously saved as calculator)
   useEffect(() => {

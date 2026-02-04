@@ -503,6 +503,10 @@ export const db = {
   },
 
   createQuiz: async (quiz: Omit<Quiz, 'id'>): Promise<Quiz> => {
+    // Store quiz_type so topic/unit quizzes use promptIds, not subject_master (all subject prompts)
+    const quizType =
+      quiz.quizType ??
+      (quiz.scopeType === 'topic' ? 'topic' : quiz.scopeType === 'unit' ? 'unit' : 'subject_master');
     const { data, error } = await supabase
       .from('quizzes')
       .insert({
@@ -515,6 +519,7 @@ export const db = {
         time_limit_sec: quiz.timeLimitSec,
         grade9_target_sec: quiz.grade9TargetSec,
         prompt_ids: quiz.promptIds,
+        quiz_type: quizType,
       })
       .select()
       .single();

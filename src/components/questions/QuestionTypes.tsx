@@ -9,7 +9,7 @@
  *   - badge, badge-accent, badge-success, badge-warning
  */
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { CheckCircle, XCircle } from 'lucide-react'
 import type { NormalizedQuestion, UserResponse } from '../../utils/questionEngine'
 import { safeTrim } from '../../utils/questionEngine'
@@ -28,6 +28,8 @@ export type QuestionComponentProps = {
     summary: string
   }
   onSubmit: () => void
+  /** Called with the answer input element (for toolkit/calculator insert) */
+  inputRefCallback?: (el: HTMLInputElement | null) => void
 }
 
 export function MarksBadge({ q }: { q: NormalizedQuestion }) {
@@ -84,7 +86,7 @@ export function FeedbackBlock({ show, gradeResult, explanation }: { show: boolea
 // Short
 // ---------------------------
 
-export function ShortQuestion({ q, value, onChange, disabled, onSubmit }: QuestionComponentProps) {
+export function ShortQuestion({ q, value, onChange, disabled, onSubmit, inputRefCallback }: QuestionComponentProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -92,11 +94,19 @@ export function ShortQuestion({ q, value, onChange, disabled, onSubmit }: Questi
     if (!disabled) inputRef.current?.focus()
   }, [disabled, q.id])
 
+  const setRef = useCallback(
+    (el: HTMLInputElement | null) => {
+      ;(inputRef as { current: HTMLInputElement | null }).current = el
+      inputRefCallback?.(el ?? null)
+    },
+    [inputRefCallback]
+  )
+
   return (
     <div className="space-y-4">
       <div className="relative">
         <input
-          ref={inputRef}
+          ref={setRef}
           type="text"
           className="quiz-input"
           value={typeof value === 'string' ? value : ''}
