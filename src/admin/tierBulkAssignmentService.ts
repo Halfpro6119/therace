@@ -8,7 +8,7 @@
  */
 
 import { TierLevel } from '../types';
-import { db } from '../db/client';
+import { supabase } from '../db/client';
 
 export interface BulkAssignmentResult {
   success: boolean;
@@ -29,7 +29,7 @@ export async function assignTierToTopicPrompts(
   onlyNullTiers: boolean = false
 ): Promise<BulkAssignmentResult> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .update({ tier })
       .eq('topic_id', topicId);
@@ -76,7 +76,7 @@ export async function assignTierToUnitPrompts(
   onlyNullTiers: boolean = false
 ): Promise<BulkAssignmentResult> {
   try {
-    let query = db
+    let query = supabase
       .from('prompts')
       .update({ tier })
       .eq('unit_id', unitId);
@@ -128,7 +128,7 @@ export async function assignTierToPrompts(
   }
 
   try {
-    const { error, count } = await db
+    const { error, count } = await supabase
       .from('prompts')
       .update({ tier })
       .in('id', promptIds);
@@ -185,7 +185,7 @@ export async function getTopicTierDistribution(topicId: string): Promise<{
   unassigned: number;
 }> {
   try {
-    const { data, error } = await db
+    const { data, error } = await supabase
       .from('prompts')
       .select('tier')
       .eq('topic_id', topicId);
@@ -194,9 +194,9 @@ export async function getTopicTierDistribution(topicId: string): Promise<{
 
     const distribution = {
       total: data?.length || 0,
-      higher: data?.filter(p => p.tier === 'higher').length || 0,
-      foundation: data?.filter(p => p.tier === 'foundation').length || 0,
-      unassigned: data?.filter(p => p.tier === null).length || 0,
+      higher: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === 'higher').length || 0,
+      foundation: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === 'foundation').length || 0,
+      unassigned: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === null).length || 0,
     };
 
     return distribution;
@@ -218,7 +218,7 @@ export async function getUnitTierDistribution(unitId: string): Promise<{
   unassigned: number;
 }> {
   try {
-    const { data, error } = await db
+    const { data, error } = await supabase
       .from('prompts')
       .select('tier')
       .eq('unit_id', unitId);
@@ -227,9 +227,9 @@ export async function getUnitTierDistribution(unitId: string): Promise<{
 
     const distribution = {
       total: data?.length || 0,
-      higher: data?.filter(p => p.tier === 'higher').length || 0,
-      foundation: data?.filter(p => p.tier === 'foundation').length || 0,
-      unassigned: data?.filter(p => p.tier === null).length || 0,
+      higher: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === 'higher').length || 0,
+      foundation: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === 'foundation').length || 0,
+      unassigned: (data as { tier: TierLevel | null }[] | null)?.filter((p: { tier: TierLevel | null }) => p.tier === null).length || 0,
     };
 
     return distribution;

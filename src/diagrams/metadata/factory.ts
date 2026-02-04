@@ -114,8 +114,9 @@ function createFromTemplate(
     params
   });
 
-  if (renderResult.warnings.length > 0) {
-    warnings.push(...renderResult.warnings);
+  const resultWarnings = renderResult.warnings ?? [];
+  if (resultWarnings.length > 0) {
+    warnings.push(...resultWarnings);
   }
 
   // Create diagram object

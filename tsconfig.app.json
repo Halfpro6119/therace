@@ -20,5 +20,6 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/pages/QuizPlayerPage.backup.tsx", "src/pages/QuizPlayerPage.enhanced.tsx", "src/pages/QuizPlayerPage.fixed.tsx"]
 }

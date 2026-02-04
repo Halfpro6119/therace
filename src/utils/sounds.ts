@@ -1,3 +1,7 @@
+/**
+ * Sound system for correct/wrong/level-up feedback.
+ * Preference is persisted in localStorage (key: grade9_sounds_enabled) and restored on load.
+ */
 class SoundSystem {
   private enabled: boolean = false;
   private audioContext: AudioContext | null = null;
@@ -22,6 +26,11 @@ class SoundSystem {
 
   isEnabled(): boolean {
     return this.enabled;
+  }
+
+  setEnabled(value: boolean): void {
+    this.enabled = value;
+    localStorage.setItem('grade9_sounds_enabled', String(this.enabled));
   }
 
   playCorrect() {

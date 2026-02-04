@@ -1,0 +1,465 @@
+[
+  {
+    "id": "FM01",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Quadratics",
+    "type": "multiNumeric",
+    "question": "Solve x² + 6x − 7 = 0 by completing the square.",
+    "answers": ["-7", "1", "-7, 1", "x = -7, x = 1"],
+    "explanation": "Complete the square: x² + 6x − 7 = (x + 3)² − 9 − 7 = (x + 3)² − 16. Set equal to 0: (x + 3)² = 16, so x + 3 = ±4, giving x = 1 or x = −7",
+    "hint": "Complete the square by adding and subtracting (b/2)², then solve",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM01"
+    }
+  },
+  {
+    "id": "FM02",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Quadratics",
+    "type": "expression",
+    "question": "Rewrite y = x² − 8x + 3 in the form y = (x − a)² + b.",
+    "answers": ["(x − 4)² − 13", "(x-4)²-13", "(x-4)^2-13"],
+    "explanation": "Complete the square: x² − 8x + 3 = (x − 4)² − 16 + 3 = (x − 4)² − 13",
+    "hint": "Complete the square by adding and subtracting (b/2)²",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM02"
+    }
+  },
+  {
+    "id": "FM03",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Quadratics",
+    "type": "numeric",
+    "question": "How many real solutions does 2x² − 3x + 5 = 0 have?",
+    "answers": ["0"],
+    "explanation": "Discriminant = b² − 4ac = (−3)² − 4(2)(5) = 9 − 40 = −31. Since discriminant < 0, there are no real solutions",
+    "hint": "Calculate the discriminant: b² − 4ac. If negative, no real solutions",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM03"
+    }
+  },
+  {
+    "id": "FM04",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Functions",
+    "type": "expression",
+    "question": "f(x) = 2x + 3, g(x) = x². Find fg(x).",
+    "answers": ["2x² + 3", "2x^2+3", "2x²+3"],
+    "explanation": "fg(x) = f(g(x)) = f(x²) = 2(x²) + 3 = 2x² + 3",
+    "hint": "Substitute g(x) into f(x): replace x in f(x) with g(x)",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM04"
+    }
+  },
+  {
+    "id": "FM05",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Functions",
+    "type": "expression",
+    "question": "Find f⁻¹(x) for f(x) = 3x − 5.",
+    "answers": ["(x + 5)/3", "(x+5)/3", "x/3 + 5/3"],
+    "explanation": "Let y = 3x − 5. Rearrange: y + 5 = 3x, so x = (y + 5)/3. Therefore f⁻¹(x) = (x + 5)/3",
+    "hint": "Set y = f(x), rearrange to make x the subject, then replace y with x",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM05"
+    }
+  },
+  {
+    "id": "FM06",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Functions",
+    "type": "short",
+    "question": "Why must x ≥ 0 for f(x) = √x to have an inverse?",
+    "answers": ["The function must be one-to-one", "It must be injective", "Each output must come from exactly one input", "The function must pass the horizontal line test"],
+    "explanation": "For a function to have an inverse, it must be one-to-one (injective). For x < 0, √x is not defined in the real numbers, and restricting to x ≥ 0 ensures each output comes from exactly one input",
+    "hint": "Think about what conditions are needed for a function to have an inverse",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM06"
+    }
+  },
+  {
+    "id": "FM07",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Graphs and Transformations",
+    "type": "short",
+    "question": "Describe the transformation from y = x² to y = (x − 3)² + 4.",
+    "answers": ["Translation by vector (3, 4)", "Translation 3 units right and 4 units up", "Translate 3 right, 4 up"],
+    "explanation": "The graph of y = (x − 3)² + 4 is obtained by translating y = x² by 3 units to the right and 4 units up, which is translation by vector (3, 4)",
+    "hint": "Compare the forms: (x − a) translates right by a, + b translates up by b",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM07"
+    }
+  },
+  {
+    "id": "FM08",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Graphs and Transformations",
+    "type": "graphPlot",
+    "question": "Sketch y = x³ − 2x.",
+    "answers": ["Cubic curve passing through origin with turning points"],
+    "explanation": "This is a cubic function. It passes through the origin (0, 0), has turning points where dy/dx = 3x² − 2 = 0, i.e., at x = ±√(2/3)",
+    "hint": "Identify key points: y-intercept, x-intercepts (where y = 0), and turning points",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram": {
+      "mode": "template",
+      "templateId": "math.graphs.axes_blank.v1",
+      "placement": "above",
+      "caption": "Coordinate grid",
+      "params": {}
+    },
+    "meta": {
+      "goldQuestionId": "FM08"
+    }
+  },
+  {
+    "id": "FM09",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Graphs and Transformations",
+    "type": "graphRead",
+    "question": "Solve x² = 3x + 4 using a graph.",
+    "answers": ["-1", "4", "-1, 4", "x = -1, x = 4"],
+    "explanation": "Rearranging: x² − 3x − 4 = 0. Factorising: (x − 4)(x + 1) = 0, so x = 4 or x = −1. On a graph, these are the x-coordinates where y = x² intersects y = 3x + 4",
+    "hint": "Find the points where the parabola y = x² intersects the line y = 3x + 4",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "diagram": {
+      "mode": "template",
+      "templateId": "math.graphs.linear_axes_line.v1",
+      "placement": "above",
+      "caption": "Graph showing y = x² and y = 3x + 4",
+      "params": {}
+    },
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.1
+      },
+      "goldQuestionId": "FM09"
+    }
+  },
+  {
+    "id": "FM10",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Number",
+    "topic": "Surds",
+    "type": "expression",
+    "question": "Simplify √72.",
+    "answers": ["6√2", "6√2"],
+    "explanation": "√72 = √(36 × 2) = √36 × √2 = 6√2",
+    "hint": "Find the largest perfect square factor of 72",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM10"
+    }
+  },
+  {
+    "id": "FM11",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Number",
+    "topic": "Surds",
+    "type": "expression",
+    "question": "Rationalise: 5 / (3 − √2)",
+    "answers": ["(15 + 5√2)/7", "(15+5√2)/7", "15/7 + 5√2/7"],
+    "explanation": "Multiply numerator and denominator by the conjugate (3 + √2): 5(3 + √2) / ((3 − √2)(3 + √2)) = 5(3 + √2) / (9 − 2) = 5(3 + √2) / 7 = (15 + 5√2)/7",
+    "hint": "Multiply numerator and denominator by the conjugate of the denominator",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM11"
+    }
+  },
+  {
+    "id": "FM12",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Matrices",
+    "type": "matrixInput",
+    "question": "Find A+B where A = [[2,1],[0,3]] and B = [[1,4],[5,2]].",
+    "answers": ["[[3,5],[5,5]]", "[[3,5],[5,5]]"],
+    "explanation": "Add corresponding entries: A+B = [[2+1, 1+4], [0+5, 3+2]] = [[3, 5], [5, 5]]",
+    "hint": "Add corresponding entries in each position",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM12"
+    }
+  },
+  {
+    "id": "FM13",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Matrices",
+    "type": "matrixInput",
+    "question": "Find AB for A = [[1,2],[3,4]] and B = [[0,1],[2,3]].",
+    "answers": ["[[4,7],[8,15]]", "[[4,7],[8,15]]"],
+    "explanation": "AB = [[1×0+2×2, 1×1+2×3], [3×0+4×2, 3×1+4×3]] = [[4, 7], [8, 15]]",
+    "hint": "Use matrix multiplication: row × column for each entry",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM13"
+    }
+  },
+  {
+    "id": "FM14",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Matrices",
+    "type": "short",
+    "question": "Describe the transformation matrix [[0,−1],[1,0]].",
+    "answers": ["Rotation 90° anticlockwise about the origin", "Rotation 90° counterclockwise", "90° anticlockwise rotation"],
+    "explanation": "The matrix [[0,−1],[1,0]] represents a rotation of 90° anticlockwise about the origin. It maps (1,0) to (0,1) and (0,1) to (−1,0)",
+    "hint": "Consider what happens to the unit vectors (1,0) and (0,1) under this transformation",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM14"
+    }
+  },
+  {
+    "id": "FM15",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Binomial Expansion",
+    "type": "expression",
+    "question": "Expand (1 + 3x)³.",
+    "answers": ["1 + 9x + 27x² + 27x³", "1+9x+27x²+27x³", "1+9x+27x^2+27x^3"],
+    "explanation": "Using binomial expansion: (1 + 3x)³ = 1³ + 3(1²)(3x) + 3(1)(3x)² + (3x)³ = 1 + 9x + 27x² + 27x³",
+    "hint": "Use the binomial theorem: (a+b)ⁿ = Σ C(n,r) a^(n-r) b^r",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM15"
+    }
+  },
+  {
+    "id": "FM16",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Binomial Expansion",
+    "type": "expression",
+    "question": "Expand (2 − x)⁴.",
+    "answers": ["16 − 32x + 24x² − 8x³ + x⁴", "16-32x+24x²-8x³+x⁴", "16-32x+24x^2-8x^3+x^4"],
+    "explanation": "Using binomial expansion: (2 − x)⁴ = 2⁴ + 4(2³)(−x) + 6(2²)(−x)² + 4(2)(−x)³ + (−x)⁴ = 16 − 32x + 24x² − 8x³ + x⁴",
+    "hint": "Use the binomial theorem, remembering that (−x)ⁿ alternates signs",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM16"
+    }
+  },
+  {
+    "id": "FM17",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Geometry",
+    "topic": "Circle Geometry",
+    "type": "multiNumeric",
+    "question": "Find the centre and radius of x² + y² − 6x + 4y = 12.",
+    "answers": ["3", "-2", "5", "3, -2, 5", "centre (3, -2), radius 5"],
+    "explanation": "Complete the square: (x² − 6x) + (y² + 4y) = 12. (x − 3)² − 9 + (y + 2)² − 4 = 12, so (x − 3)² + (y + 2)² = 25. Centre is (3, −2) and radius is √25 = 5",
+    "hint": "Complete the square for both x and y terms",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM17"
+    }
+  },
+  {
+    "id": "FM18",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Geometry",
+    "topic": "Circle Geometry",
+    "type": "numeric",
+    "question": "Find gradient of tangent to x² + y² = 25 at (3, 4).",
+    "answers": ["-3/4", "-0.75"],
+    "explanation": "Differentiate implicitly: 2x + 2y(dy/dx) = 0, so dy/dx = −x/y. At (3, 4), gradient = −3/4. The tangent gradient is −3/4",
+    "hint": "Use implicit differentiation or find the gradient of the radius and use the fact that tangent is perpendicular to radius",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM18"
+    }
+  },
+  {
+    "id": "FM19",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Geometry",
+    "topic": "Vectors",
+    "type": "multiNumeric",
+    "question": "Find vector AB given A(2, −1) and B(7, 3).",
+    "answers": ["5", "4", "5, 4", "(5, 4)"],
+    "explanation": "Vector AB = B − A = (7, 3) − (2, −1) = (5, 4)",
+    "hint": "Subtract the coordinates of A from the coordinates of B",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM19"
+    }
+  },
+  {
+    "id": "FM20",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Geometry",
+    "topic": "Vectors",
+    "type": "proofShort",
+    "question": "Prove that midpoints of a trapezium's diagonals lie on a straight line.",
+    "answers": ["Use coordinate geometry: set up trapezium with coordinates, find midpoints of diagonals, show they are collinear"],
+    "explanation": "Let trapezium have vertices A(0,0), B(a,0), C(c,h), D(d,h). Diagonals AC and BD have midpoints M₁((c/2, h/2)) and M₂((a+d)/2, h/2). Both have y = h/2, so they lie on the horizontal line y = h/2, proving they are collinear",
+    "hint": "Use coordinate geometry: assign coordinates to vertices and find midpoints",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM20"
+    }
+  },
+  {
+    "id": "FM21",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Algebraic Proof",
+    "type": "proofShort",
+    "question": "Prove that n³ − n is always divisible by 6.",
+    "answers": ["n³ − n = n(n² − 1) = n(n−1)(n+1). This is the product of three consecutive integers, so at least one is even and one is divisible by 3, hence divisible by 6"],
+    "explanation": "Factorise: n³ − n = n(n² − 1) = n(n−1)(n+1). This is the product of three consecutive integers. Among any three consecutive integers, at least one is even (divisible by 2) and exactly one is divisible by 3. Therefore the product is divisible by 2 × 3 = 6",
+    "hint": "Factorise n³ − n and consider properties of consecutive integers",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM21"
+    }
+  },
+  {
+    "id": "FM22",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Iteration",
+    "type": "numeric",
+    "question": "Use iteration to solve x = cos(x). Start x₀ = 1.",
+    "answers": ["0.739", "0.74"],
+    "explanation": "Iteration: xₙ₊₁ = cos(xₙ). Starting with x₀ = 1: x₁ = cos(1) ≈ 0.540, x₂ = cos(0.540) ≈ 0.858, x₃ = cos(0.858) ≈ 0.654, x₄ = cos(0.654) ≈ 0.793, x₅ = cos(0.793) ≈ 0.702, converging to approximately 0.739",
+    "hint": "Apply the iteration formula repeatedly: xₙ₊₁ = cos(xₙ)",
+    "tier": "higher",
+    "calculatorAllowed": true,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM22"
+    }
+  },
+  {
+    "id": "FM23",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Calculus",
+    "type": "expression",
+    "question": "Differentiate y = 4x³ − 2x² + 6x.",
+    "answers": ["12x² − 4x + 6", "12x^2-4x+6", "12x²-4x+6"],
+    "explanation": "Using the power rule: dy/dx = 3(4x³) − 2(2x²) + 6 = 12x² − 4x + 6",
+    "hint": "Use the power rule: d/dx(xⁿ) = nxⁿ⁻¹",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM23"
+    }
+  },
+  {
+    "id": "FM24",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Calculus",
+    "type": "multiNumeric",
+    "question": "Find stationary points of y = x³ − 3x² + 2.",
+    "answers": ["0", "2", "0, 2", "x = 0, x = 2"],
+    "explanation": "dy/dx = 3x² − 6x = 3x(x − 2). Set equal to 0: x = 0 or x = 2. When x = 0, y = 2; when x = 2, y = −2. So stationary points are at (0, 2) and (2, −2)",
+    "hint": "Find dy/dx, set it equal to 0, and solve for x",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "questionData": {
+        "numericTolerance": 0.01
+      },
+      "goldQuestionId": "FM24"
+    }
+  },
+  {
+    "id": "FM25",
+    "subject": "Further Maths",
+    "examBoard": "AQA",
+    "unit": "Algebra",
+    "topic": "Functions",
+    "type": "expression",
+    "question": "Find (fg)⁻¹(x) for f(x) = x + 1, g(x) = 2x.",
+    "answers": ["(x − 1)/2", "(x-1)/2", "x/2 − 1/2"],
+    "explanation": "First find fg(x) = f(g(x)) = f(2x) = 2x + 1. To find (fg)⁻¹(x), let y = 2x + 1, so x = (y − 1)/2. Therefore (fg)⁻¹(x) = (x − 1)/2",
+    "hint": "First find fg(x), then find its inverse",
+    "tier": "higher",
+    "calculatorAllowed": false,
+    "meta": {
+      "goldQuestionId": "FM25"
+    }
+  }
+]

@@ -20,7 +20,7 @@ import { useConfirm } from '../../contexts/ConfirmContext';
 export function SubjectOpsDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { success, error: showError } = useToast();
   const { confirm } = useConfirm();
 
   const [loading, setLoading] = useState(true);
@@ -60,7 +60,7 @@ export function SubjectOpsDetail() {
       setQuizzes(quizzesData);
     } catch (error) {
       console.error('Failed to load subject data:', error);
-      showToast('error', 'Failed to load subject data');
+      showError('Failed to load subject data');
     } finally {
       setLoading(false);
     }
@@ -80,8 +80,8 @@ export function SubjectOpsDetail() {
         await db.createQuiz({
           subjectId: subject.id,
           scopeType: 'full',
-          topicId: null,
-          unitId: null,
+          topicId: undefined,
+          unitId: undefined,
           title: generateQuizTitle('full', subject.name),
           description: `Complete GCSE ${subject.name} coverage`,
           timeLimitSec: fullPromptIds.length * 20,
@@ -98,7 +98,7 @@ export function SubjectOpsDetail() {
           await db.createQuiz({
             subjectId: subject.id,
             scopeType: 'unit',
-            topicId: null,
+            topicId: undefined,
             unitId: unit.id,
             title: generateQuizTitle('unit', unit.name),
             description: `Complete ${unit.name} unit coverage`,
@@ -129,14 +129,13 @@ export function SubjectOpsDetail() {
         }
       }
 
-      showToast(
-        `Created ${created.topic} topic, ${created.unit} unit, and ${created.full} full quiz(zes)`,
-        'success'
+      success(
+        `Created ${created.topic} topic, ${created.unit} unit, and ${created.full} full quiz(zes)`
       );
       await loadData();
     } catch (error) {
       console.error('Failed to create quizzes:', error);
-      showToast('error', 'Failed to create quizzes');
+      showError('Failed to create quizzes');
     }
   };
 
@@ -158,11 +157,11 @@ export function SubjectOpsDetail() {
         }
       }
 
-      showToast(`Fixed coverage for ${fixed} quiz(zes)`, 'success');
+      success(`Fixed coverage for ${fixed} quiz(zes)`);
       await loadData();
     } catch (error) {
       console.error('Failed to fix coverage:', error);
-      showToast('error', 'Failed to fix coverage');
+      showError('Failed to fix coverage');
     }
   };
 
@@ -170,11 +169,11 @@ export function SubjectOpsDetail() {
     try {
       const expectedIds = getExpectedPromptsForQuiz(quiz, prompts);
       await db.updateQuiz(quiz.id, { promptIds: expectedIds });
-      showToast('success', 'Coverage synced successfully');
+      success('Coverage synced successfully');
       await loadData();
     } catch (error) {
       console.error('Failed to sync coverage:', error);
-      showToast('error', 'Failed to sync coverage');
+      showError('Failed to sync coverage');
     }
   };
 
@@ -311,7 +310,7 @@ export function SubjectOpsDetail() {
             await loadData();
             setShowTargetEditor(false);
             setSelectedQuiz(null);
-            showToast('success', 'Targets updated successfully');
+            success('Targets updated successfully');
           }}
         />
       )}

@@ -3,6 +3,7 @@ import { Attempt, MasteryState, StreakState, UserProfile } from '../types';
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
   MASTERY: 'grade9sprint_mastery',
+  MASTERY_BY_PROMPT: 'grade9sprint_mastery_by_prompt',
   STREAK: 'grade9sprint_streak',
   PROFILE: 'grade9sprint_profile',
   THEME: 'grade9sprint_theme',
@@ -71,6 +72,18 @@ export const storage = {
     const states = storage.getMasteryStates();
     states[state.quizId] = state;
     localStorage.setItem(STORAGE_KEYS.MASTERY, JSON.stringify(states));
+  },
+
+  getMasteryByPromptId: (promptId: string): number => {
+    const data = localStorage.getItem(STORAGE_KEYS.MASTERY_BY_PROMPT);
+    const map = data ? (JSON.parse(data) as Record<string, number>) : {};
+    return map[promptId] ?? 0;
+  },
+  setMasteryByPromptId: (promptId: string, level: number): void => {
+    const data = localStorage.getItem(STORAGE_KEYS.MASTERY_BY_PROMPT);
+    const map = data ? (JSON.parse(data) as Record<string, number>) : {};
+    map[promptId] = level;
+    localStorage.setItem(STORAGE_KEYS.MASTERY_BY_PROMPT, JSON.stringify(map));
   },
 
   getStreak: (): StreakState => {

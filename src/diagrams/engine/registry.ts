@@ -13,6 +13,21 @@ import { circleTangentRadius, circleTwoTangents, cyclicQuadrilateral } from '../
 import { pythagorasCuboid } from '../templates/pythagorasCuboid';
 import { axesBlank, boxPlot, functionMachine } from '../templates/graphsAndStats';
 import { circuitSeries, circuitParallel, rayReflection, titrationSetup } from '../templates/scienceTemplates';
+import { coordinatePoint } from '../templates/coordinatePoint';
+import { straightLineAngles } from '../templates/straightLineAngles';
+import { compoundLShape } from '../templates/compoundLShape';
+import { circleBasic } from '../templates/circleBasic';
+import { barChart } from '../templates/barChart';
+import { scatterPlot } from '../templates/scatterPlot';
+import { numberLine } from '../templates/numberLine';
+import { similarTriangles } from '../templates/similarTriangles';
+import { sineRuleTriangle } from '../templates/sineRuleTriangle';
+import { cosineRuleTriangle } from '../templates/cosineRuleTriangle';
+import { histogram } from '../templates/histogram';
+import { quadraticLinear } from '../templates/quadraticLinear';
+import { treeDiagram } from '../templates/treeDiagram';
+import { boxplotComparison } from '../templates/boxplotComparison';
+import { cuboid } from '../templates/cuboid';
 
 const templates = new Map<string, DiagramEngineTemplate>();
 
@@ -41,6 +56,22 @@ registerTemplate(circuitSeries);
 registerTemplate(circuitParallel);
 registerTemplate(rayReflection);
 registerTemplate(titrationSetup);
+// New templates from MATHS_DIAGRAM_SPECIFICATIONS.md
+registerTemplate(coordinatePoint);
+registerTemplate(straightLineAngles);
+registerTemplate(compoundLShape);
+registerTemplate(circleBasic);
+registerTemplate(barChart);
+registerTemplate(scatterPlot);
+registerTemplate(numberLine);
+registerTemplate(similarTriangles);
+registerTemplate(sineRuleTriangle);
+registerTemplate(cosineRuleTriangle);
+registerTemplate(histogram);
+registerTemplate(quadraticLinear);
+registerTemplate(treeDiagram);
+registerTemplate(boxplotComparison);
+registerTemplate(cuboid);
 
 export function getTemplate(templateId: string): DiagramEngineTemplate | undefined {
   return templates.get(templateId);

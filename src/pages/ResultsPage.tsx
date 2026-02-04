@@ -62,7 +62,7 @@ export function ResultsPage() {
         setMissedPrompts(missedPromptsData);
 
         const subjectData = await db.getSubject(quizData.subjectId);
-        setSubject(subjectData);
+        setSubject(subjectData ?? null);
 
         const allAttempts = storage.getAttemptsByQuizId(quizData.id);
         if (allAttempts.length > 1) {

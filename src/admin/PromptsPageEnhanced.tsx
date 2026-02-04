@@ -119,7 +119,7 @@ export function PromptsPageEnhanced() {
 
   const handleAssignPaperToPrompt = async (prompt: Prompt, paperId: string | null) => {
     try {
-      await db.updatePrompt(prompt.id, { paperId });
+      await db.updatePrompt(prompt.id, { paperId: paperId ?? undefined });
       showToast('success', 'Paper assignment updated');
       await loadData();
     } catch (error) {
@@ -428,6 +428,31 @@ export function PromptsPageEnhanced() {
                       placeholder={`Answer ${idx + 1}`}
                     />
                   ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Marks</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editingPrompt.marks ?? ''}
+                    onChange={(e) => setEditingPrompt({ ...editingPrompt, marks: e.target.value ? parseInt(e.target.value, 10) : undefined })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time (seconds)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editingPrompt.timeAllowanceSec ?? ''}
+                    onChange={(e) => setEditingPrompt({ ...editingPrompt, timeAllowanceSec: e.target.value ? parseInt(e.target.value, 10) : undefined })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="30"
+                  />
                 </div>
               </div>
 

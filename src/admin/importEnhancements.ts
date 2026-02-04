@@ -18,11 +18,19 @@ import { questionRegistry } from '../utils/questionRegistry';
  * Detect question type from import row
  * Falls back to 'short' if type is not specified
  */
+/** Lowercase to canonical QuestionType for import. */
+const TYPE_ALIAS: Record<string, QuestionType> = {
+  short: 'short', mcq: 'mcq', fill: 'fill', match: 'match', label: 'label',
+  numeric: 'numeric', multinumeric: 'multiNumeric', expression: 'expression',
+  tablefill: 'tableFill', ordersteps: 'orderSteps', graphplot: 'graphPlot',
+  graphread: 'graphRead', geometryconstruct: 'geometryConstruct',
+  proofshort: 'proofShort', dragmatch: 'dragMatch',
+};
+
 export function detectQuestionType(row: any): QuestionType {
   const type = row.type?.toLowerCase();
-  
-  if (['short', 'mcq', 'fill', 'match', 'label'].includes(type)) {
-    return type as QuestionType;
+  if (type && TYPE_ALIAS[type] !== undefined) {
+    return TYPE_ALIAS[type];
   }
 
   // Auto-detect based on available fields
@@ -407,23 +415,6 @@ export function normalizeImportRow(row: any): EnhancedImportRow {
     metaJson: JSON.stringify(extractQuestionMetadata(row, type)),
   };
 }
-
-// ============================================================================
-// EXPORT
-// ============================================================================
-
-export {
-  detectQuestionType,
-  extractMCQChoices,
-  extractFillData,
-  extractMatchData,
-  extractLabelData,
-  extractAnswers,
-  extractQuestionMetadata,
-  validateImportRow,
-  normalizeImportRow,
-};
-
 
 // Validate a raw import row via canonical normalizer + validator
 export function validateImportNormalized(rawRow: any) {

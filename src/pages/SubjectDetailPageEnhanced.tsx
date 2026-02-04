@@ -256,7 +256,7 @@ export function SubjectDetailPageEnhanced() {
         )}
 
         {activeTab === 'heatmap' && (
-          <HeatmapGrid subjectId={subjectId!} />
+          <HeatmapGrid topics={subjectTopics} quizzes={subjectQuizzes} />
         )}
       </div>
     </div>

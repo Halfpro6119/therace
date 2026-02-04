@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { X, Clock, CheckCircle, Lightbulb, Flag, Settings, Eye, EyeOff, Zap, Volume2, VolumeX, Check, MoreHorizontal, RotateCcw, Wrench } from 'lucide-react';
+import { X, Clock, CheckCircle, Lightbulb, Flag, Settings, Eye, EyeOff, Zap, Volume2, VolumeX, Check, MoreHorizontal, RotateCcw, Wrench, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db, supabase } from '../db/client';
 import { MasteryChip } from '../components/MasteryChip';
@@ -20,6 +20,7 @@ import { ProgressBar } from '../components/ProgressBar';
 import { XPPopup } from '../components/XPPopup';
 import { ComboTracker } from '../components/ComboTracker';
 import { MathsToolkit } from '../components/toolkit/MathsToolkit';
+import { CalculatorModal } from '../components/CalculatorModal';
 import { DiagramRenderer } from '../components/DiagramRenderer';
 import { storage, calculateMasteryLevel } from '../utils/storage';
 import { soundSystem } from '../utils/sounds';
@@ -29,7 +30,7 @@ import { QuizNavigation } from '../components/QuizNavigation';
 import { questionRegistry } from '../utils/questionRegistry';
 import { QuestionAnswer } from '../types/questionTypes';
 import { Attempt, Quiz, Prompt, DiagramMetadata } from '../types';
-import { submitAnswer } from '../utils/submitAnswerPipeline';
+import { submitAnswer, hasMinimalResponse } from '../utils/submitAnswerPipeline';
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -44,6 +45,15 @@ function formatTime(seconds: number): string {
     return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
   return `${minutes}:${String(secs).padStart(2, '0')}`;
+}
+
+const DEFAULT_TIME_PER_QUESTION_SEC = 30;
+
+/** Total quiz time = sum of per-question time allowances; falls back to quiz.timeLimitSec if none set */
+function computeTotalQuizTimeSec(prompts: Prompt[], fallbackSec: number): number {
+  const anyHaveAllowance = prompts.some(p => p.timeAllowanceSec != null && p.timeAllowanceSec > 0);
+  if (!anyHaveAllowance) return fallbackSec;
+  return prompts.reduce((s, p) => s + (p.timeAllowanceSec ?? DEFAULT_TIME_PER_QUESTION_SEC), 0);
 }
 
 // ============================================================================
@@ -81,6 +91,7 @@ export function QuizPlayerPage() {
   const [toolkitOpen, setToolkitOpen] = useState(() => {
     return localStorage.getItem('mathsToolkit_open') === 'true';
   });
+  const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
 
   // ========================================================================
   // QUIZ STATE
@@ -119,8 +130,9 @@ export function QuizPlayerPage() {
 
   const currentPrompt = quizPrompts[currentPromptIndex];
   const isMathsSubject = quiz?.subjectId === '0d9b0cc0-1779-4097-a684-f41d5b994f50';
-  const calculatorAllowed = currentPrompt?.meta?.calculatorAllowed === true;
-  const diagramMetadata = (currentPrompt?.meta?.diagram || (currentPrompt as any)?.diagram_metadata) as DiagramMetadata | undefined;
+  const calculatorAllowed = currentPrompt?.calculatorAllowed === true || currentPrompt?.meta?.calculatorAllowed === true;
+  // Check diagram_metadata field first, then fall back to meta.diagram for backward compatibility
+  const diagramMetadata = (currentPrompt?.diagram_metadata || currentPrompt?.meta?.diagram) as DiagramMetadata | undefined;
 
   // ========================================================================
   // PROGRESS CALCULATION
@@ -177,14 +189,25 @@ export function QuizPlayerPage() {
     }
   }, [currentPromptIndex, hasStarted, hasEnded]);
 
+  // Close calculator modal when question changes
+  useEffect(() => {
+    setCalculatorModalOpen(false);
+  }, [currentPromptIndex]);
+
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
       if (e.key === 'Escape' && hasStarted && !hasEnded) {
+        // Close calculator modal if open
+        if (calculatorModalOpen) {
+          setCalculatorModalOpen(false);
+          return;
+        }
+        
         const shouldEnd = await confirm({
           title: 'End Quiz?',
           message: 'Are you sure you want to end this quiz? Your progress will be saved.',
-          confirmText: 'End Quiz',
-          cancelText: 'Continue',
+          confirmLabel: 'End Quiz',
+          cancelLabel: 'Continue',
         });
         if (shouldEnd) {
           endQuiz();
@@ -194,7 +217,7 @@ export function QuizPlayerPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hasStarted, hasEnded, confirm]);
+  }, [hasStarted, hasEnded, confirm, calculatorModalOpen]);
 
   // ========================================================================
   // REAL-TIME ANSWER DETECTION
@@ -407,7 +430,7 @@ export function QuizPlayerPage() {
   }, []);
 
   const inputRefCallback = useCallback((element: HTMLInputElement | null) => {
-    inputRef.current = element;
+    (inputRef as React.MutableRefObject<HTMLInputElement | null>).current = element;
     if (element) {
       (element as any).insertTextAtCursor = insertTextAtCursor;
     }
@@ -420,9 +443,18 @@ export function QuizPlayerPage() {
       const quizData = await db.getQuiz(quizId);
       if (quizData) {
         setQuiz(quizData);
-        setTimeRemaining(quizData.timeLimitSec);
 
-        let promptsData = await db.getPromptsByIds(quizData.promptIds);
+        // Master quizzes derive prompts from the paper/subject, not promptIds
+        let promptsData: Prompt[];
+        if (quizData.quizType === 'paper_master' && quizData.paperId) {
+          promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
+        } else if (quizData.quizType === 'subject_master') {
+          promptsData = await db.getPromptsForSubjectMasterQuiz(quizData.subjectId);
+        } else if (quizData.promptIds?.length) {
+          promptsData = await db.getPromptsByIds(quizData.promptIds);
+        } else {
+          promptsData = [];
+        }
 
         if (isFixItMode) {
           const lastAttempts = storage.getAttemptsByQuizId(quizData.id);
@@ -435,6 +467,8 @@ export function QuizPlayerPage() {
         }
 
         setQuizPrompts(promptsData);
+        const totalTimeSec = computeTotalQuizTimeSec(promptsData, quizData.timeLimitSec);
+        setTimeRemaining(totalTimeSec);
       }
     } catch (error) {
       console.error('Failed to load quiz:', error);
@@ -535,7 +569,7 @@ export function QuizPlayerPage() {
               {isFixItMode ? 'Fix-It Drill' : quiz.title}
             </h1>
             <p className="text-lg mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
-              {quizPrompts.length} questions • {formatTime(quiz.timeLimitSec)} time limit
+              {quizPrompts.length} questions • {formatTime(timeRemaining)} time limit
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -548,7 +582,7 @@ export function QuizPlayerPage() {
               <div className="card p-6">
                 <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Time Limit</p>
                 <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
-                  {formatTime(quiz.timeLimitSec)}
+                  {formatTime(timeRemaining)}
                 </p>
               </div>
               <div className="card p-6">
@@ -832,11 +866,23 @@ export function QuizPlayerPage() {
                 {/* QUESTION CONTENT */}
                 <div className="mb-8">
                   {calculatorAllowed && (
-                    <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                      <Wrench size={16} className="text-blue-600 dark:text-blue-400" />
-                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                        Calculator Available
-                      </span>
+                    <div className="mb-4 flex items-center gap-3 flex-wrap">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <Wrench size={16} className="text-blue-600 dark:text-blue-400" />
+                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                          Calculator Available
+                        </span>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setCalculatorModalOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+                        title="Open Calculator"
+                      >
+                        <Calculator size={18} />
+                        <span className="text-sm font-medium">Calculator</span>
+                      </motion.button>
                     </div>
                   )}
 
@@ -844,9 +890,21 @@ export function QuizPlayerPage() {
                     <DiagramRenderer metadata={diagramMetadata} />
                   )}
 
-                  <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
-                    {currentPrompt?.question ?? ""}
-                  </h3>
+                  <div className="flex flex-wrap items-baseline gap-3">
+                    <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
+                      {currentPrompt?.question ?? ""}
+                    </h3>
+                    <span
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium shrink-0"
+                      style={{
+                        background: 'rgb(var(--accent) / 0.15)',
+                        color: 'rgb(var(--accent))',
+                        border: '1px solid rgb(var(--accent) / 0.3)',
+                      }}
+                    >
+                      {(currentPrompt?.marks ?? 1)} mark{(currentPrompt?.marks ?? 1) === 1 ? '' : 's'}
+                    </span>
+                  </div>
 
                   {diagramMetadata && diagramMetadata.placement === 'below' && (
                     <DiagramRenderer metadata={diagramMetadata} />
@@ -900,6 +958,7 @@ export function QuizPlayerPage() {
                   canGoBack={currentPromptIndex > 0}
                   hasAnswered={answeredPrompts.has(currentPrompt.id)}
                   showSubmitButton={!showFeedback}
+                  submitDisabled={!hasMinimalResponse(currentInput, currentPrompt?.type ?? 'short')}
                 />
               </motion.div>
             </AnimatePresence>
@@ -966,6 +1025,15 @@ export function QuizPlayerPage() {
               />
             )}
           </AnimatePresence>
+        )}
+
+        {/* CALCULATOR MODAL */}
+        {calculatorAllowed && (
+          <CalculatorModal
+            isOpen={calculatorModalOpen}
+            onClose={() => setCalculatorModalOpen(false)}
+            inputRef={inputRef}
+          />
         )}
       </div>
     </motion.div>

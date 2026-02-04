@@ -19,10 +19,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     `;
 
     const variantStyles = {
-      primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500 active:scale-95',
-      secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900 focus:ring-gray-500 active:scale-95',
-      ghost: 'hover:bg-gray-100 text-gray-700 focus:ring-gray-500 active:scale-95',
-      destructive: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500 active:scale-95',
+      primary: 'bg-[rgb(var(--accent))] hover:bg-[rgb(var(--accent-hover))] text-white focus:ring-[rgb(var(--accent))] active:scale-95',
+      secondary: 'bg-[rgb(var(--surface-2))] hover:bg-[rgb(var(--border))] text-[rgb(var(--text))] focus:ring-[rgb(var(--muted))] active:scale-95',
+      ghost: 'hover:bg-[rgb(var(--surface-2))] text-[rgb(var(--text))] focus:ring-[rgb(var(--accent))] active:scale-95',
+      destructive: 'bg-[rgb(var(--danger))] hover:opacity-90 text-white focus:ring-[rgb(var(--danger))] active:scale-95',
     };
 
     const sizeStyles = {

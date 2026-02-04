@@ -224,7 +224,7 @@ export function UnitsPage() {
                 </label>
                 <textarea
                   value={editingUnit.description || ''}
-                  onChange={(e) => setEditingUnit({ ...editingUnit, description: e.target.value || undefined })}
+                  onChange={(e) => setEditingUnit({ ...editingUnit, description: e.target.value || '' })}
                   rows={3}
                   className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 />

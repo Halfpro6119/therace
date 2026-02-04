@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, GripVertical, PlayCircle, X, Save } from 'lucide-react';
 import { db } from '../db/client';
 import { Playlist, Quiz } from '../types';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 export function PlaylistsPage() {
+  const { confirm } = useConfirm();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,7 +107,8 @@ export function PlaylistsPage() {
   };
 
   const handleDeletePlaylist = async (playlistId: string) => {
-    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this playlist?' })) return;
+    const ok = await confirm({ title: 'Confirm', message: 'Are you sure you want to delete this playlist?' });
+    if (!ok) return;
 
     try {
       await db.deletePlaylist(playlistId);

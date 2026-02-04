@@ -98,7 +98,7 @@ export function UnitsPageEnhanced() {
   };
 
   const handleDeleteUnit = async (unit: Unit) => {
-    if (!await confirm(`Delete unit: "${unit.name}"?`)) return;
+    if (!await confirm({ title: 'Confirm', message: `Delete unit: "${unit.name}"?` })) return;
 
     try {
       await db.deleteUnit(unit.id);
@@ -120,7 +120,7 @@ export function UnitsPageEnhanced() {
       ? `Assign all unassigned prompts in "${unit.name}" to this paper?`
       : `Assign all prompts in "${unit.name}" to this paper?`;
 
-    if (!await confirm(message)) return;
+    if (!await confirm({ title: 'Confirm', message })) return;
 
     try {
       setBulkAssigning(true);

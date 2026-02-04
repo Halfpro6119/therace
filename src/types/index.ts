@@ -39,6 +39,9 @@ export interface QuizSettings {
 }
 export type PromptType = 'short' | 'mcq' | 'fill' | 'match' | 'label';
 
+/** User answer shape by question type: short/mcq → string, fill → string[], match/label → Record<string, string> */
+export type UserAnswer = string | string[] | Record<string, string>;
+
 export interface Quiz {
   id: string;
   subjectId: string;
@@ -65,7 +68,8 @@ export interface Prompt {
   type: PromptType;
   question: string;
   answers: string[];
-  marks?: number;              // NEW: marks/points worth for this question
+  marks?: number;              // marks/points worth for this question (default 1)
+  timeAllowanceSec?: number;   // recommended time in seconds; sum = total quiz time
   paperId?: string;
   tier?: TierLevel;           // NEW: tier assignment (higher, foundation, or null)
   calculatorAllowed?: boolean;
@@ -74,8 +78,17 @@ export interface Prompt {
   meta?: {
     calculatorAllowed?: boolean;
     drawingRecommended?: boolean;
+    diagram?: {
+      mode?: 'auto' | 'template' | 'asset';
+      templateId?: string;
+      placement?: 'above' | 'inline' | 'below' | 'side';
+      caption?: string;
+      alt?: string;
+      params?: Record<string, any>;
+    };
     [key: string]: any;
   };
+  /** Primary field for storing diagram metadata. Falls back to meta.diagram for backward compatibility. */
   diagram_metadata?: {
     mode?: 'auto' | 'template' | 'asset';
     templateId?: string;

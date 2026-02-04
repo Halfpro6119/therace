@@ -13,7 +13,7 @@
 import { useEffect, useState } from 'react';
 import { db, supabase } from '../db/client';
 import { Subject, Paper, Quiz, Prompt } from '../types';
-import { Plus, Sync, Edit2, Trash2, Eye, BookOpen, AlertCircle, CheckCircle } from 'lucide-react';
+import { Plus, RefreshCw, Edit2, Trash2, Eye, BookOpen, AlertCircle, CheckCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 
@@ -216,7 +216,7 @@ export function PaperQuizBuilderPage() {
           disabled={syncing || !selectedSubject}
           className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center gap-2"
         >
-          <Sync size={18} className={syncing ? 'animate-spin' : ''} />
+          <RefreshCw size={18} className={syncing ? 'animate-spin' : ''} />
           {syncing ? 'Syncing...' : 'Sync All Papers'}
         </button>
       </div>

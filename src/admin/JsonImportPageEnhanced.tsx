@@ -27,7 +27,7 @@ import {
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { db, supabase } from '../db/client';
-import { Subject, Paper } from '../types';
+import { Subject, Paper, PromptType } from '../types';
 
 type Step = 'input' | 'preview' | 'importing' | 'complete';
 
@@ -48,7 +48,7 @@ interface ImportResult {
 }
 
 export function JsonImportPageEnhanced() {
-  const { showToast } = useToast();
+  const { success, error: showError, info } = useToast();
   const { confirm } = useConfirm();
   
   const [step, setStep] = useState<Step>('input');
@@ -103,7 +103,7 @@ export function JsonImportPageEnhanced() {
       const normalized = parseQuestionsJson(inputText);
       
       if (normalized.length === 0) {
-        showToast('info', 'No valid questions detected in JSON');
+        info('No valid questions detected in JSON');
         return;
       }
       
@@ -128,12 +128,9 @@ export function JsonImportPageEnhanced() {
       setPaperStats(stats);
       
       setStep('preview');
-      showToast('success', `Detected ${previews.length} question${previews.length !== 1 ? 's' : ''}`);
+      success(`Detected ${previews.length} question${previews.length !== 1 ? 's' : ''}`);
     } catch (error) {
-      showToast(
-        'error',
-        `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      showError(`Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -164,19 +161,59 @@ export function JsonImportPageEnhanced() {
               selectedDefaultPaper || null
             );
 
-            await db.createPrompt({
-              subjectId: selectedSubject,
-              unitId: preview.normalized.unitId,
-              topicId: preview.normalized.topicId,
-              type: preview.normalized.type,
-              question: preview.normalized.prompt,
-              answers: preview.normalized.answersAccepted,
-              hint: preview.normalized.hint,
-              explanation: preview.normalized.explanation,
-              paperId: paperAssignment.paperId,
-              calculatorAllowed: preview.normalized.calculatorAllowed,
-              meta: preview.normalized.meta,
-            });
+            // Prepare meta - diagrams will be stored separately in diagram_metadata
+            // Include diagram in meta temporarily so importPrompt can extract it
+            const metaWithDiagram = preview.normalized.diagram 
+              ? { ...(preview.normalized.meta || {}), diagram: preview.normalized.diagram }
+              : preview.normalized.meta;
+
+            // If unit/topic names are provided instead of IDs, use importPrompt to resolve them
+            if (preview.normalized.unitName || preview.normalized.topicName) {
+              const subject = subjects.find(s => s.id === selectedSubject);
+              await db.importPrompt({
+                subjectName: preview.normalized.subjectName || subject?.name || 'Maths',
+                examBoard: preview.normalized.examBoard || subject?.examBoard || 'Edexcel',
+                unitName: preview.normalized.unitName || '',
+                topicName: preview.normalized.topicName || '',
+                type: (preview.normalized.type as PromptType) ?? 'short',
+                question: preview.normalized.prompt,
+                answers: preview.normalized.answersAccepted,
+                hint: preview.normalized.hint,
+                explanation: preview.normalized.explanation ?? preview.normalized.fullSolution ?? undefined,
+                paperId: paperAssignment.paperId ?? undefined,
+                paperNumber: paperAssignment.paperNumber ?? undefined,
+                tier: preview.normalized.tier ?? null,
+                marks: preview.normalized.marks,
+                timeAllowanceSec: preview.normalized.timeAllowanceSec,
+                meta: metaWithDiagram,
+              });
+            } else {
+              // Use IDs directly - extract diagram for separate storage
+              const meta = preview.normalized.meta || {};
+              const diagramMetadata = preview.normalized.diagram;
+              const metaWithoutDiagram = { ...meta };
+              if ((metaWithoutDiagram as any).diagram) {
+                delete (metaWithoutDiagram as any).diagram;
+              }
+
+              await db.createPrompt({
+                subjectId: selectedSubject,
+                unitId: preview.normalized.unitId ?? '',
+                topicId: preview.normalized.topicId ?? '',
+                type: (preview.normalized.type as PromptType) ?? 'short',
+                question: preview.normalized.prompt,
+                answers: preview.normalized.answersAccepted,
+                hint: preview.normalized.hint,
+                explanation: preview.normalized.explanation ?? preview.normalized.fullSolution ?? undefined,
+                paperId: paperAssignment.paperId ?? undefined,
+                calculatorAllowed: preview.normalized.calculatorAllowed,
+                tier: preview.normalized.tier ?? null,
+                marks: preview.normalized.marks,
+                timeAllowanceSec: preview.normalized.timeAllowanceSec,
+                meta: Object.keys(metaWithoutDiagram).length > 0 ? metaWithoutDiagram : undefined,
+                diagram_metadata: diagramMetadata,
+              } as any);
+            }
 
             result.imported++;
           } catch (error) {
@@ -196,9 +233,9 @@ export function JsonImportPageEnhanced() {
 
       setImportResult(result);
       setStep('complete');
-      showToast('success', `Imported ${result.imported} question${result.imported !== 1 ? 's' : ''}`);
+      success(`Imported ${result.imported} question${result.imported !== 1 ? 's' : ''}`);
     } catch (error) {
-      showToast('error', `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showError(`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setStep('preview');
     } finally {
       setImporting(false);

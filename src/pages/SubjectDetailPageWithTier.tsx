@@ -37,7 +37,7 @@ export function SubjectDetailPageWithTier() {
         db.getTopics(subjectId)
       ]);
 
-      setSubject(subjectData);
+      setSubject(subjectData ?? null);
       setUnits(unitsData);
       setTopics(topicsData);
 
@@ -95,11 +95,11 @@ export function SubjectDetailPageWithTier() {
   };
 
   if (loading) {
-    return <div className="p-6 text-center text-gray-500">Loading subject...</div>;
+    return <div className="p-6 text-center" style={{ color: 'rgb(var(--text-secondary))' }}>Loading subject...</div>;
   }
 
   if (!subject) {
-    return <div className="p-6 text-center text-gray-500">Subject not found</div>;
+    return <div className="p-6 text-center" style={{ color: 'rgb(var(--text-secondary))' }}>Subject not found</div>;
   }
 
   return (
@@ -160,7 +160,7 @@ export function SubjectDetailPageWithTier() {
                   <h2 className="font-semibold text-gray-900 dark:text-white">
                     {unit.name}
                   </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                     {unitTopics.length} topic{unitTopics.length !== 1 ? 's' : ''}
                   </p>
                 </div>

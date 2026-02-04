@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { db } from '../db/client';
 import { Subject } from '../types';
 import { Plus, Edit2, Trash2, BookOpen } from 'lucide-react';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 export function SubjectsPage() {
+  const { confirm } = useConfirm();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -70,9 +72,8 @@ export function SubjectsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this subject? This will also delete all associated units, topics, prompts, and quizzes.' })) {
-      return;
-    }
+    const ok = await confirm({ title: 'Confirm', message: 'Are you sure you want to delete this subject? This will also delete all associated units, topics, prompts, and quizzes.' });
+    if (!ok) return;
     try {
       await db.deleteSubject(id);
       loadSubjects();

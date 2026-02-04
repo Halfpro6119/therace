@@ -21,6 +21,8 @@ interface QuizNavigationProps {
   canGoBack: boolean;
   hasAnswered: boolean;
   showSubmitButton: boolean;
+  /** When true, Submit is disabled (e.g. empty answer). */
+  submitDisabled?: boolean;
 }
 
 export function QuizNavigation({
@@ -34,6 +36,7 @@ export function QuizNavigation({
   canGoBack,
   hasAnswered,
   showSubmitButton,
+  submitDisabled = false,
 }: QuizNavigationProps) {
   const isLastQuestion = currentIndex === totalQuestions - 1;
 
@@ -72,9 +75,9 @@ export function QuizNavigation({
         {showSubmitButton && (
           <button
             onClick={onSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitDisabled}
             className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-            title="Submit your answer"
+            title={submitDisabled ? 'Provide an answer to submit' : 'Submit your answer'}
           >
             {isSubmitting ? 'Checking...' : 'Submit Answer'}
           </button>

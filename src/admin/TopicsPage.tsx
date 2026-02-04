@@ -234,7 +234,7 @@ export function TopicsPage() {
                 </label>
                 <textarea
                   value={editingTopic.description || ''}
-                  onChange={(e) => setEditingTopic({ ...editingTopic, description: e.target.value || undefined })}
+                  onChange={(e) => setEditingTopic({ ...editingTopic, description: e.target.value || '' })}
                   rows={3}
                   className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 />

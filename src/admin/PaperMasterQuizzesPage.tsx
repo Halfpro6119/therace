@@ -12,7 +12,7 @@
 import { useEffect, useState } from 'react';
 import { db, supabase } from '../db/client';
 import { Subject, Paper, Quiz } from '../types';
-import { Plus, Sync, Toggle2, Edit2, Trash2, BookOpen, AlertCircle } from 'lucide-react';
+import { Plus, RefreshCw, ToggleLeft, Edit2, Trash2, BookOpen, AlertCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 
@@ -177,7 +177,7 @@ export function PaperMasterQuizzesPage() {
           disabled={syncing || !selectedSubject}
           className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center gap-2"
         >
-          <Sync size={18} className={syncing ? 'animate-spin' : ''} />
+          <RefreshCw size={18} className={syncing ? 'animate-spin' : ''} />
           {syncing ? 'Syncing...' : 'Create/Sync Paper Master Quizzes'}
         </button>
       </div>
@@ -209,7 +209,7 @@ export function PaperMasterQuizzesPage() {
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                 }`}
               >
-                <Toggle2 size={18} />
+                <ToggleLeft size={18} />
               </button>
             </div>
 

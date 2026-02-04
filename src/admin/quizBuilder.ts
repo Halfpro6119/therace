@@ -12,14 +12,25 @@ export interface QuizTemplate {
   grade9TargetSec: number;
 }
 
-export function calculateTimeLimits(promptCount: number): { timeLimit: number; grade9Target: number } {
-  const baseTimePerPrompt = 30;
-  const grade9TimePerPrompt = 15;
+const DEFAULT_TIME_PER_PROMPT_SEC = 30;
+const GRADE9_TIME_PER_PROMPT_SEC = 15;
 
+export function calculateTimeLimits(promptCount: number): { timeLimit: number; grade9Target: number } {
   return {
-    timeLimit: promptCount * baseTimePerPrompt,
-    grade9Target: promptCount * grade9TimePerPrompt,
+    timeLimit: promptCount * DEFAULT_TIME_PER_PROMPT_SEC,
+    grade9Target: promptCount * GRADE9_TIME_PER_PROMPT_SEC,
   };
+}
+
+/** Compute quiz time from per-question time allowances; falls back to defaults if none set */
+export function calculateTimeLimitsFromPrompts(prompts: Prompt[]): { timeLimit: number; grade9Target: number } {
+  const anyHaveAllowance = prompts.some(p => p.timeAllowanceSec != null && p.timeAllowanceSec > 0);
+  if (!anyHaveAllowance) {
+    return calculateTimeLimits(prompts.length);
+  }
+  const timeLimit = prompts.reduce((s, p) => s + (p.timeAllowanceSec ?? DEFAULT_TIME_PER_PROMPT_SEC), 0);
+  const grade9Target = Math.round(timeLimit * (GRADE9_TIME_PER_PROMPT_SEC / DEFAULT_TIME_PER_PROMPT_SEC));
+  return { timeLimit, grade9Target };
 }
 
 export interface QuizProgress {
@@ -54,7 +65,7 @@ export async function createTopicQuizzes(
       });
     }
 
-    const { timeLimit, grade9Target } = calculateTimeLimits(prompts.length);
+    const { timeLimit, grade9Target } = calculateTimeLimitsFromPrompts(prompts);
 
     const quiz = await db.createQuiz({
       subjectId,
@@ -107,7 +118,7 @@ export async function createUnitQuizzes(
       });
     }
 
-    const { timeLimit, grade9Target } = calculateTimeLimits(allPrompts.length);
+    const { timeLimit, grade9Target } = calculateTimeLimitsFromPrompts(allPrompts);
 
     const quiz = await db.createQuiz({
       subjectId,
@@ -151,7 +162,7 @@ export async function createPaperQuizzes(
       });
     }
 
-    const { timeLimit, grade9Target } = calculateTimeLimits(prompts.length);
+    const { timeLimit, grade9Target } = calculateTimeLimitsFromPrompts(prompts);
 
     const quiz = await db.upsertPaperMasterQuiz(
       subjectId,
@@ -236,7 +247,7 @@ export async function createFullGCSEQuiz(
     });
   }
 
-  const { timeLimit, grade9Target } = calculateTimeLimits(allPrompts.length);
+  const { timeLimit, grade9Target } = calculateTimeLimitsFromPrompts(allPrompts);
 
   const quiz = await db.createQuiz({
     subjectId,

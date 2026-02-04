@@ -46,7 +46,10 @@ export function QuizPlayerPageWithTier() {
 
         case 'paper':
           if (selectedPaper && selectedSubject) {
-            loadedPrompts = await getPromptsWithPaperAndTierFilter(selectedSubject, parseInt(selectedPaper), tierFilter);
+            const paperNum = parseInt(selectedPaper, 10);
+            if ([1, 2, 3].includes(paperNum)) {
+              loadedPrompts = await getPromptsWithPaperAndTierFilter(selectedSubject, paperNum as 1 | 2 | 3, tierFilter);
+            }
           }
           break;
 

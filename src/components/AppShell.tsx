@@ -48,7 +48,7 @@ export function AppShell({ children }: AppShellProps) {
         className="fixed top-0 left-0 right-0 h-16 z-40 glass border-b"
         style={{ borderColor: 'rgb(var(--border))' }}
       >
-        <div className="h-full px-4 lg:pl-72 flex items-center justify-between max-w-[2000px] mx-auto">
+        <div className="h-full px-4 lg:pl-64 flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold text-gradient tracking-tight">
               Grade9 Sprint
@@ -136,16 +136,16 @@ export function AppShell({ children }: AppShellProps) {
       </aside>
 
       <main className="pt-16 lg:pl-64 min-h-screen">
-        <div className="p-4 md:p-6 lg:p-8 max-w-[2000px] mx-auto">
+        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>
 
       <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass border-t pb-safe"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass border-t pb-[env(safe-area-inset-bottom,0)]"
         style={{ borderColor: 'rgb(var(--border))' }}
       >
-        <div className="h-16 grid grid-cols-5 gap-1 px-2">
+        <div className="h-16 min-h-[4rem] grid grid-cols-5 gap-1 px-2 py-2 flex items-center">
           {navItems.map(item => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -155,20 +155,20 @@ export function AppShell({ children }: AppShellProps) {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 whileTap={{ scale: 0.95 }}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg transition-all"
+                className="flex flex-col items-center justify-center gap-0.5 rounded-lg transition-all py-1"
                 style={{
                   color: active ? 'rgb(var(--accent))' : 'rgb(var(--text-secondary))'
                 }}
               >
                 <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-                <span className="text-xs font-semibold">{item.label}</span>
+                <span className={`text-[11px] sm:text-xs font-semibold ${active ? 'font-bold' : ''}`}>{item.label}</span>
               </motion.button>
             );
           })}
         </div>
       </nav>
 
-      <div className="lg:hidden h-16" />
+      <div className="lg:hidden h-16 min-h-[4rem] pb-[env(safe-area-inset-bottom,0)]" />
     </div>
   );
 }

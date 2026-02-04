@@ -16,7 +16,7 @@ export function DiagramParamsEditor({ metadata, onChange }: DiagramParamsEditorP
   const [caption, setCaption] = useState(metadata?.caption || '');
   const [alt, setAlt] = useState(metadata?.alt || '');
   const [params, setParams] = useState<DiagramParams>(metadata?.params || {});
-  // Removed unused: customJson, setCustomJson
+  const [customJson, setCustomJson] = useState<string>('');
   const [customJsonError, setCustomJsonError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [templates] = useState(getAllTemplates());

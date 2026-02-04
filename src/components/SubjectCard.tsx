@@ -66,6 +66,11 @@ export function SubjectCard({ subject, readinessPercent, masteredCount, totalQui
           </div>
 
           <div className="pt-4 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+            {totalQuizzes > 12 && (
+              <p className="text-xs mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Showing 12 of {totalQuizzes} quizzes
+              </p>
+            )}
             <div className="flex gap-1.5">
               {[...Array(Math.min(totalQuizzes, 12))].map((_, i) => (
                 <div

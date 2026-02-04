@@ -70,7 +70,7 @@ export function DiagramsPage() {
       ? `This diagram is used by ${usageCount} prompt${usageCount > 1 ? 's' : ''}. Delete anyway?`
       : `Delete "${diagram.title}"?`;
 
-    const confirmed = await confirm(message);
+    const confirmed = await confirm({ title: 'Confirm', message });
     if (!confirmed) return;
 
     const { error } = await supabase.from('diagrams').delete().eq('id', diagram.id);

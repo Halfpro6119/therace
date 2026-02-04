@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, Suspense } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Lock, Home, BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, Shield, LogOut, List, Activity, Image, Layout } from 'lucide-react';
 
@@ -164,7 +164,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         <main className="ml-64 flex-1 p-8">
-          {children || <Outlet />}
+          {children || (
+            <Suspense fallback={<div className="flex items-center justify-center p-12"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-500" /></div>}>
+              <Outlet />
+            </Suspense>
+          )}
         </main>
       </div>
     </div>

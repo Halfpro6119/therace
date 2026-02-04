@@ -122,6 +122,12 @@ function validateLabel(q: NormalizedQuestion): ValidationOutput {
   return out
 }
 
+/** Maths types that normalize to short; validate as short if they appear on NormalizedQuestion. */
+const MATH_TYPES_AS_SHORT = new Set([
+  'numeric', 'multiNumeric', 'expression', 'tableFill', 'orderSteps',
+  'graphPlot', 'graphRead', 'geometryConstruct', 'proofShort', 'dragMatch',
+])
+
 export function validateNormalizedQuestion(q: NormalizedQuestion): ValidationOutput {
   switch (q.type) {
     case 'short':
@@ -135,6 +141,7 @@ export function validateNormalizedQuestion(q: NormalizedQuestion): ValidationOut
     case 'label':
       return validateLabel(q)
     default:
+      if (MATH_TYPES_AS_SHORT.has(q.type as string)) return validateShort(q)
       return { errors: ['Unknown question type'], warnings: [] }
   }
 }

@@ -1,12 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
-import { Subject, Unit, Topic, Quiz, Prompt, Playlist, PlaylistItem, UserSavedQuiz } from '../types';
+import { Subject, Unit, Topic, Quiz, Prompt, PromptType, Playlist, PlaylistItem, UserSavedQuiz } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-const mapSubject = (row: any): Subject => ({
+/** Supabase row shape for subjects (snake_case). */
+interface SubjectsRow {
+  id: string;
+  name: string;
+  exam_board: string;
+  description: string;
+  icon: string;
+  theme_color: string;
+}
+
+const mapSubject = (row: SubjectsRow): Subject => ({
   id: row.id,
   name: row.name,
   examBoard: row.exam_board,
@@ -34,7 +44,6 @@ const mapTopic = (row: any): Topic => ({
 
 const mapPrompt = (row: any): Prompt => ({
   paperId: row.paper_id,
-  // Tier separation (nullable; NULL => "All tiers")
   tier: row.tier,
   calculatorAllowed: row.calculator_allowed,
   diagram_metadata: row.diagram_metadata,
@@ -45,6 +54,8 @@ const mapPrompt = (row: any): Prompt => ({
   type: row.type,
   question: row.question,
   answers: row.answers,
+  marks: row.marks ?? row.meta?.marks ?? undefined,
+  timeAllowanceSec: row.time_allowance_sec ?? row.meta?.timeAllowanceSec ?? undefined,
   hint: row.hint,
   explanation: row.explanation,
   meta: row.meta,
@@ -60,7 +71,9 @@ const mapQuiz = (row: any): Quiz => ({
   description: row.description,
   timeLimitSec: row.time_limit_sec,
   grade9TargetSec: row.grade9_target_sec,
-  promptIds: row.prompt_ids,
+  promptIds: row.prompt_ids ?? [],
+  paperId: row.paper_id,
+  quizType: row.quiz_type,
 });
 
 const mapPlaylist = (row: any): Playlist => ({
@@ -141,6 +154,26 @@ export const db = {
       .from('topics')
       .select('*')
       .eq('unit_id', unitId)
+      .order('order_index');
+
+    if (error) throw error;
+    return (data || []).map(mapTopic);
+  },
+
+  getAllUnits: async (): Promise<Unit[]> => {
+    const { data, error } = await supabase
+      .from('units')
+      .select('*')
+      .order('order_index');
+
+    if (error) throw error;
+    return (data || []).map(mapUnit);
+  },
+
+  getAllTopics: async (): Promise<Topic[]> => {
+    const { data, error } = await supabase
+      .from('topics')
+      .select('*')
       .order('order_index');
 
     if (error) throw error;
@@ -309,25 +342,34 @@ export const db = {
   },
 
   createPrompt: async (prompt: Omit<Prompt, 'id'>): Promise<Prompt> => {
+    const insertData: any = {
+      subject_id: prompt.subjectId,
+      unit_id: prompt.unitId,
+      topic_id: prompt.topicId,
+      paper_id: prompt.paperId ?? null,
+      tier: (prompt as any).tier ?? null,
+      calculator_allowed: prompt.calculatorAllowed ?? null,
+      type: prompt.type,
+      question: prompt.question,
+      answers: prompt.answers,
+      marks: prompt.marks ?? null,
+      time_allowance_sec: prompt.timeAllowanceSec ?? null,
+      hint: prompt.hint,
+      explanation: prompt.explanation,
+      meta: prompt.meta,
+    };
+
+    // Store diagram_metadata separately if provided
+    if ((prompt as any).diagram_metadata) {
+      insertData.diagram_metadata = (prompt as any).diagram_metadata;
+    } else if (prompt.meta?.diagram) {
+      // Extract diagram from meta if present
+      insertData.diagram_metadata = prompt.meta.diagram;
+    }
+
     const { data, error } = await supabase
       .from('prompts')
-      .insert({
-        subject_id: prompt.subjectId,
-        unit_id: prompt.unitId,
-        topic_id: prompt.topicId,
-        // Paper assignment (nullable)
-        paper_id: prompt.paperId ?? null,
-        // Tier assignment (nullable)
-        tier: (prompt as any).tier ?? null,
-        // Calculator override (nullable)
-        calculator_allowed: prompt.calculatorAllowed ?? null,
-        type: prompt.type,
-        question: prompt.question,
-        answers: prompt.answers,
-        hint: prompt.hint,
-        explanation: prompt.explanation,
-        meta: prompt.meta,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -335,10 +377,97 @@ export const db = {
     return mapPrompt(data);
   },
 
+  /** Resolve subject/unit/topic by name and create a prompt (for JSON import with tier). */
+  importPrompt: async (row: {
+    subjectName: string;
+    examBoard?: string;
+    unitName: string;
+    topicName: string;
+    type?: string;
+    question: string;
+    answers: string[];
+    hint?: string;
+    explanation?: string;
+    tier?: 'higher' | 'foundation' | null;
+    paperId?: string | null;
+    paperNumber?: number;
+    marks?: number;
+    timeAllowanceSec?: number;
+    meta?: Record<string, unknown>;
+  }): Promise<Prompt> => {
+    const allSubjects = await db.getSubjects();
+    let subject = allSubjects.find(
+      s => s.name === row.subjectName && (row.examBoard ? s.examBoard === row.examBoard : true)
+    );
+    if (!subject) {
+      subject = await db.createSubject({
+        name: row.subjectName,
+        examBoard: row.examBoard || 'GCSE',
+        description: '',
+        icon: 'book',
+        themeColor: '#6366f1',
+      });
+    }
+    const units = await db.getUnits(subject.id);
+    let unit = units.find(u => u.name === row.unitName);
+    if (!unit) {
+      unit = await db.createUnit({
+        subjectId: subject.id,
+        name: row.unitName,
+        orderIndex: units.length,
+        description: '',
+      });
+    }
+    const topics = await db.getTopicsByUnit(unit.id);
+    let topic = topics.find(t => t.name === row.topicName);
+    if (!topic) {
+      topic = await db.createTopic({
+        subjectId: subject.id,
+        unitId: unit.id,
+        name: row.topicName,
+        orderIndex: topics.length,
+        description: '',
+      });
+    }
+    let paperId: string | undefined;
+    if (row.paperId) paperId = row.paperId;
+    else if (row.paperNumber && [1, 2, 3].includes(row.paperNumber)) {
+      const papers = await db.listPapersBySubject(subject.id);
+      const paper = papers.find(p => p.paperNumber === row.paperNumber);
+      if (paper) paperId = paper.id;
+    }
+    // Extract diagram from meta if present, store in diagram_metadata
+    const meta = row.meta || {};
+    const diagramMetadata = (meta as any).diagram;
+    const metaWithoutDiagram = { ...meta };
+    if ((metaWithoutDiagram as any).diagram) {
+      delete (metaWithoutDiagram as any).diagram;
+    }
+
+    return db.createPrompt({
+      subjectId: subject.id,
+      unitId: unit.id,
+      topicId: topic.id,
+      type: (row.type as PromptType) || 'short',
+      question: row.question,
+      answers: row.answers,
+      hint: row.hint,
+      explanation: row.explanation,
+      paperId,
+      tier: row.tier ?? null,
+      marks: row.marks,
+      timeAllowanceSec: row.timeAllowanceSec,
+      meta: Object.keys(metaWithoutDiagram).length > 0 ? metaWithoutDiagram : undefined,
+      diagram_metadata: diagramMetadata,
+    } as any);
+  },
+
   updatePrompt: async (id: string, updates: Partial<Prompt>): Promise<void> => {
     const dbUpdates: any = {};
     if (updates.question) dbUpdates.question = updates.question;
     if (updates.answers) dbUpdates.answers = updates.answers;
+    if (updates.marks !== undefined) dbUpdates.marks = updates.marks ?? null;
+    if (updates.timeAllowanceSec !== undefined) dbUpdates.time_allowance_sec = updates.timeAllowanceSec ?? null;
     if (updates.hint !== undefined) dbUpdates.hint = updates.hint;
     if (updates.explanation !== undefined) dbUpdates.explanation = updates.explanation;
     if (updates.type) dbUpdates.type = updates.type;
@@ -350,6 +479,11 @@ export const db = {
     // Tier assignment (nullable)
     if ((updates as any).tier !== undefined) dbUpdates.tier = (updates as any).tier;
     if (updates.calculatorAllowed !== undefined) dbUpdates.calculator_allowed = updates.calculatorAllowed;
+
+    // Diagram metadata (nullable)
+    if ((updates as any).diagram_metadata !== undefined) {
+      dbUpdates.diagram_metadata = (updates as any).diagram_metadata;
+    }
 
     const { error } = await supabase
       .from('prompts')

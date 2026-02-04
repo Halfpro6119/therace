@@ -37,7 +37,7 @@ interface ImportResult {
 }
 
 export function DiagramMetadataImporter() {
-  const { showToast } = useToast();
+  const { success, error: showError, info } = useToast();
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -50,7 +50,7 @@ export function DiagramMetadataImporter() {
       if (error) throw error;
       setSubjects(data || []);
     } catch (error) {
-      showToast('error', 'Failed to load subjects');
+      showError('Failed to load subjects');
     }
   };
 
@@ -65,15 +65,15 @@ export function DiagramMetadataImporter() {
       } else if (file.name.endsWith('.csv')) {
         data = parseCSV(text);
       } else {
-        showToast('error', 'Unsupported file format. Use JSON or CSV.');
+        showError('Unsupported file format. Use JSON or CSV.');
         return;
       }
 
       setImportData(data);
       await loadSubjects();
-      showToast('success', `Loaded ${data.length} rows`);
+      success(`Loaded ${data.length} rows`);
     } catch (error) {
-      showToast('error', 'Error parsing file');
+      showError('Error parsing file');
     } finally {
       setLoading(false);
     }
@@ -88,11 +88,13 @@ export function DiagramMetadataImporter() {
 
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim());
-      const row: ImportRow = {};
+      const row: Record<string, unknown> = { title: '' };
 
       headers.forEach((header, index) => {
         const value = values[index];
-        if (value) {
+        if (header === 'title') {
+          row.title = value ?? '';
+        } else if (value) {
           if (header === 'tags') {
             row.tags = value;
           } else if (header === 'params') {
@@ -108,7 +110,7 @@ export function DiagramMetadataImporter() {
       });
 
       if (row.title) {
-        rows.push(row);
+        rows.push(row as unknown as ImportRow);
       }
     }
 
@@ -117,7 +119,7 @@ export function DiagramMetadataImporter() {
 
   const handleImport = async () => {
     if (importData.length === 0) {
-      showToast('error', 'No data to import');
+      showError('No data to import');
       return;
     }
 
@@ -148,12 +150,13 @@ export function DiagramMetadataImporter() {
         results
       });
 
-      showToast(
-        `Import complete: ${successful} successful, ${failed} failed`,
-        failed === 0 ? 'success' : 'warning'
-      );
+      if (failed === 0) {
+        success(`Import complete: ${successful} successful, ${failed} failed`);
+      } else {
+        info(`Import complete: ${successful} successful, ${failed} failed`);
+      }
     } catch (error) {
-      showToast('error', 'Import failed');
+      showError('Import failed');
     } finally {
       setImporting(false);
     }

@@ -77,15 +77,14 @@ src/
 
 ### Environment Variables
 
-Create `.env.local` with:
+Create `.env.local` from `.env.example` and set:
 
-```bash
-# Supabase Configuration
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key_here
-```
+| Variable | Description |
+|----------|-------------|
+| `VITE_SUPABASE_URL` | Supabase project URL (e.g. `https://your-ref.supabase.co`) |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous (public) API key |
 
-See `.env.example` for all available options.
+See `.env.example` for a template. Do not commit real keys.
 
 ## 📚 Context API Reference
 
@@ -189,7 +188,7 @@ Backend functionality is handled through:
 npm run typecheck
 ```
 
-Verify TypeScript compilation (currently has ~150 errors to fix).
+TypeScript strict mode is enabled; the app typechecks successfully.
 
 ### Development Server
 
@@ -207,33 +206,14 @@ npm run build
 
 Creates optimized production build.
 
-## 📝 Known Issues
+## 📊 Data Flow (Quiz → Submit → Persistence)
 
-### TypeScript Errors
+- **Load quiz**: `QuizPlayerPage` calls `db.getQuiz(quizId)` and, for paper/subject master quizzes, `db.getPromptsForPaperMasterQuiz` / `db.getPromptsForSubjectMasterQuiz` to load prompts.
+- **Per-question submit**: User submits an answer → `submitAnswer()` in `src/utils/submitAnswerPipeline.ts` runs: validate response, grade via `gradeFromRenderer`, update prompt-level mastery in localStorage, return result. **No per-question rows are written to Supabase** (the DB `attempts` table is quiz-level only).
+- **Quiz completion**: When the quiz ends, `QuizPlayerPage.endQuiz()` builds one `Attempt` (correct/missed prompt IDs, time, accuracy) and saves it with `storage.saveAttempt(attempt)` (localStorage). Results are viewed at `/results/:attemptId`.
+- **Sounds**: Toggle is persisted in localStorage (`grade9_sounds_enabled`) and restored on load.
 
-The project currently has **~150 TypeScript errors** that need to be fixed:
-
-1. **Toast Context Errors** (~40 errors)
-   - Toast messages passed as strings instead of using context methods
-   - Fix: Use `success()`, `error()`, `info()` methods instead of `showToast()`
-
-2. **Confirm Context Errors** (~10 errors)
-   - `confirm()` called with string instead of `ConfirmOptions` object
-   - Fix: Pass proper `ConfirmOptions` object with title and message
-
-3. **Unused Imports** (~30 errors)
-   - Remove unused imports or use them in code
-
-4. **Type Mismatches** (~15 errors)
-   - Update type definitions or fix code to match expected types
-
-5. **Missing Properties** (~20 errors)
-   - Update type definitions to include all required properties
-
-6. **Function Signature Mismatches** (~10 errors)
-   - Check function signatures and update calls accordingly
-
-See `ERRORS_AND_FIXES.md` and `DEVELOPMENT_STATUS.md` for detailed analysis and fix instructions.
+See `src/utils/submitAnswerPipeline.ts` and `src/utils/storage.ts` for implementation details.
 
 ## 🚀 Deployment
 
@@ -258,8 +238,8 @@ The app can be deployed to any platform that supports Node.js:
 
 ## 📚 Documentation
 
-- **Error Analysis**: See `ERRORS_AND_FIXES.md`
-- **Development Status**: See `DEVELOPMENT_STATUS.md`
+- **Page variants**: See `src/PAGE_VARIANTS.md` for canonical pages in use.
+- **Development Status**: See `DEVELOPMENT_STATUS.md` (if present).
 - **Supabase Docs**: https://supabase.com/docs
 - **React Docs**: https://react.dev
 - **Vite Docs**: https://vitejs.dev
@@ -279,7 +259,7 @@ This project is licensed under the MIT License - see LICENSE file for details.
 ## 📞 Support
 
 For issues or questions:
-1. Check the documentation files (ERRORS_AND_FIXES.md, DEVELOPMENT_STATUS.md)
+1. Check the documentation files (README, DEVELOPMENT_STATUS.md)
 2. Review the error messages in the console (F12)
 3. Check the GitHub repository for recent changes
 4. Consult the documentation links above
@@ -295,7 +275,7 @@ Grade9 Sprint is a student revision platform designed to help students prepare f
 
 ---
 
-**Last Updated**: February 1, 2026
-**Status**: Development in Progress
+**Last Updated**: February 2026
+**Status**: Active development; typecheck passing
 **Dev Server**: Running on port 5173
 **Public URL**: https://revision-app-4.lindy.site

@@ -24,8 +24,8 @@ import {
 } from './jsonNormalizer';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
-import { db } from '../db/client';
-import { supabase } from '../db/client';
+import { db, supabase } from '../db/client';
+import { Subject, Paper } from '../types';
 
 type Step = 'input' | 'preview' | 'importing' | 'complete';
 
@@ -233,11 +233,35 @@ export function JsonImportPage() {
         try {
           const normalized = preview.normalized;
           
+          // Get the original type from the normalized question (jsonNormalizer preserves it)
+          const originalType = normalized.type;
+          
+          // Types that normalize to 'short' for rendering (per normalizeQuestion.ts)
+          const TYPES_NORMALIZE_TO_SHORT = new Set([
+            'numeric', 'multinumeric', 'expression', 'tablefill', 'ordersteps',
+            'graphplot', 'graphread', 'geometryconstruct', 'proofshort', 'dragmatch',
+            'matrixinput', 'vectordiagram', 'functionmachine'
+          ]);
+          
+          // Determine the type to store in database
+          // If the type normalizes to 'short', store 'short' but preserve originalType in meta
+          const shouldNormalize = originalType && TYPES_NORMALIZE_TO_SHORT.has(originalType.toLowerCase());
+          const dbType = shouldNormalize ? 'short' : (originalType || 'short');
+          
           // Build metadata object for prompts.meta field
+          // Merge existing meta from the normalized question, preserving questionData and other fields
+          const existingMeta = normalized.meta && typeof normalized.meta === 'object' ? normalized.meta : {};
           const meta: any = {
+            ...existingMeta,
             calculatorAllowed: normalized.calculatorAllowed,
             drawingRecommended: normalized.drawingRecommended,
           };
+
+          // Preserve original type in meta if it's different from the DB type
+          // This allows future handlers to identify the original question type
+          if (originalType && originalType !== dbType) {
+            meta.originalType = originalType;
+          }
 
           // Build diagram metadata object
           let diagramMetadata: any = null;
@@ -260,7 +284,7 @@ export function JsonImportPage() {
             subject_id: importSubject.id,
             unit_id: importUnit.id,
             topic_id: importTopic.id,
-            type: 'short',
+            type: dbType,
             question: normalized.prompt,
             answers: normalized.answersAccepted,
             hint: normalized.hint,

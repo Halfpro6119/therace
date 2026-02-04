@@ -163,8 +163,8 @@ export function CsvImportPageWithTier() {
             }
           };
 
-          // Import prompt
-          await db.createPrompt(prompt);
+          // Import prompt (resolves subject/unit/topic by name)
+          await db.importPrompt(prompt);
           results.successful++;
         } catch (error: any) {
           results.failed++;

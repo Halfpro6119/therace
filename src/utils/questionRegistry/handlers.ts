@@ -124,6 +124,34 @@ export const shortAnswerHandler: QuestionTypeHandler = {
 };
 
 // ============================================================================
+// NUMERIC HANDLER (Maths: single number with tolerance; delegates to short)
+// ============================================================================
+
+export const numericHandler: QuestionTypeHandler = {
+  type: 'numeric',
+  displayName: 'Numeric',
+  description: 'Single number answer with optional rounding tolerance',
+  icon: '🔢',
+
+  validate: (data: QuestionData) => shortAnswerHandler.validate(data),
+  getRequiredFields: () => [],
+  getOptionalFields: () => ['numericTolerance', 'caseSensitive', 'trim'],
+
+  validateAnswer: (prompt: Prompt, userAnswer: QuestionAnswer): ValidationResult => {
+    return shortAnswerHandler.validateAnswer(prompt, userAnswer);
+  },
+
+  normalize: (data: any): ShortQuestionData | null => {
+    const base = shortAnswerHandler.normalize(data);
+    if (!base) return null;
+    return {
+      ...base,
+      numericTolerance: data.numericTolerance ?? 0.01,
+    };
+  },
+};
+
+// ============================================================================
 // MCQ HANDLER
 // ============================================================================
 
@@ -487,6 +515,7 @@ export const labelHandler: QuestionTypeHandler = {
 
 export const allHandlers = [
   shortAnswerHandler,
+  numericHandler,
   mcqHandler,
   fillHandler,
   matchHandler,

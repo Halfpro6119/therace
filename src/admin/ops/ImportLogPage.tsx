@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FileText, Download, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { useConfirm } from '../../contexts/ConfirmContext';
 
 export interface ImportRun {
   id: string;
@@ -19,6 +20,7 @@ export interface ImportRun {
 const STORAGE_KEY = 'contentops_import_log';
 
 export function ImportLogPage() {
+  const { confirm } = useConfirm();
   const [runs, setRuns] = useState<ImportRun[]>([]);
   const [selectedRun, setSelectedRun] = useState<ImportRun | null>(null);
 
@@ -55,8 +57,9 @@ export function ImportLogPage() {
     URL.revokeObjectURL(url);
   };
 
-  const clearLog = () => {
-    if (confirm({ title: 'Confirm', message: 'Clear all import logs?' })) {
+  const clearLog = async () => {
+    const ok = await confirm({ title: 'Confirm', message: 'Clear all import logs?' });
+    if (ok) {
       localStorage.removeItem(STORAGE_KEY);
       setRuns([]);
       setSelectedRun(null);

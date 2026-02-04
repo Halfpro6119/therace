@@ -32,7 +32,7 @@ interface MetadataUIState {
 }
 
 export function DiagramMetadataManager() {
-  const { showToast } = useToast();
+  const { success, error: showError, info } = useToast();
   // const { confirm } = useConfirm();
   const [state, setState] = useState<MetadataUIState>({
     diagrams: [],
@@ -80,7 +80,7 @@ export function DiagramMetadataManager() {
       }));
     } catch (error) {
       console.error('Error loading data:', error);
-      showToast('error', 'Failed to load diagrams');
+      showError('Failed to load diagrams');
       setState(prev => ({ ...prev, loading: false }));
     }
   };
@@ -104,17 +104,17 @@ export function DiagramMetadataManager() {
     try {
       const result = await saveDiagramMetadata(state.selectedDiagramId, state.editingMetadata);
       if (result.success) {
-        showToast('success', 'Metadata saved successfully');
+        success('Metadata saved successfully');
         setState(prev => ({
           ...prev,
           selectedDiagramId: null,
           editingMetadata: null
         }));
       } else {
-        showToast('error', result.error || 'Failed to save metadata');
+        showError(result.error || 'Failed to save metadata');
       }
     } catch (error) {
-      showToast('error', 'Error saving metadata');
+      showError('Error saving metadata');
     }
   };
 
@@ -134,12 +134,12 @@ export function DiagramMetadataManager() {
 
       const result = await createDiagramFromMetadata(spec);
       if (result.success) {
-        showToast('success', 'Diagram created from metadata');
+        success('Diagram created from metadata');
       } else {
-        showToast(result.errors.join(', '), 'error');
+        showError(result.errors.join(', '));
       }
     } catch (error) {
-      showToast('error', 'Error creating diagram');
+      showError('Error creating diagram');
     }
   };
 
@@ -154,9 +154,9 @@ export function DiagramMetadataManager() {
       a.download = `diagram-metadata-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('success', 'Metadata exported successfully');
+      success('Metadata exported successfully');
     } catch (error) {
-      showToast('error', 'Error exporting metadata');
+      showError('Error exporting metadata');
     }
   };
 
@@ -165,13 +165,14 @@ export function DiagramMetadataManager() {
       const text = await file.text();
       const metadata = JSON.parse(text);
       const result = await importDiagramMetadata(metadata);
-      showToast(
-        `Imported ${result.success} diagrams, ${result.failed} failed`,
-        result.failed === 0 ? 'success' : 'warning'
-      );
+      if (result.failed === 0) {
+        success(`Imported ${result.success} diagrams, ${result.failed} failed`);
+      } else {
+        info(`Imported ${result.success} diagrams, ${result.failed} failed`);
+      }
       loadData();
     } catch (error) {
-      showToast('error', 'Error importing metadata');
+      showError('Error importing metadata');
     }
   };
 

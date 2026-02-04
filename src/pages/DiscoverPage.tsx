@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp } from 'lucide-react';
+import { Sparkles, TrendingUp, BookOpen } from 'lucide-react';
 import { db } from '../db/client';
 import { storage } from '../utils/storage';
 import { PlaylistCard } from '../components/PlaylistCard';
 import { QuizRow } from '../components/QuizRow';
-import { Quiz, Playlist, MasteryLevel } from '../types';
+import { SkeletonCard, SkeletonSubjectCard } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Quiz, Playlist } from '../types';
 
 export function DiscoverPage() {
   const navigate = useNavigate();
@@ -112,8 +114,17 @@ export function DiscoverPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
-        <div style={{ color: 'rgb(var(--text-secondary))' }}>Loading discovery...</div>
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="h-10 w-48 rounded-lg animate-pulse" style={{ background: 'rgb(var(--surface-2))' }} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SkeletonSubjectCard />
+          <SkeletonSubjectCard />
+        </div>
       </div>
     );
   }
@@ -229,17 +240,15 @@ export function DiscoverPage() {
       </motion.div>
 
       {unseenQuizzes.length === 0 && weakSpotQuizzes.length === 0 && inProgressQuizzes.length === 0 && (
-        <div className="card p-12 text-center">
-          <p className="text-lg" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Start taking quizzes to get personalized recommendations
-          </p>
-          <button
-            onClick={() => navigate('/subjects')}
-            className="btn-primary mt-4"
-          >
-            Browse Subjects
-          </button>
-        </div>
+        <EmptyState
+          icon={Sparkles}
+          title="No recommendations yet"
+          description="Start taking quizzes to get personalized recommendations."
+          action={{
+            label: 'Browse Subjects',
+            onClick: () => navigate('/subjects')
+          }}
+        />
       )}
     </div>
   );

@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { HomePage } from './pages/HomePage';
@@ -13,35 +14,51 @@ import { DiscoverPage } from './pages/DiscoverPage';
 import { PlaylistDetailPage } from './pages/PlaylistDetailPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { AdminLayout } from './admin/AdminLayout';
-import { AdminDashboard } from './admin/AdminDashboard';
-import { ImportPage } from './admin/ImportPage';
-import { SubjectsPage as AdminSubjectsPage } from './admin/SubjectsPage';
-import { UnitsPageWithTier } from './admin/UnitsPageWithTier';
-import { TopicsPageWithTier } from './admin/TopicsPageWithTier';
-import { PapersPage } from './admin/PapersPage';
-import { PromptsPageWithTier } from './admin/PromptsPageWithTier';
-import { DiagramsPage } from './admin/DiagramsPage';
-import { DiagramEditor } from './admin/DiagramEditor';
-import { DiagramTemplatesPage } from './admin/DiagramTemplatesPage';
-import { DiagramTemplateEditor } from './admin/DiagramTemplateEditor';
-import { DiagramTemplateDetailPage } from './admin/DiagramTemplateDetailPage';
-import { QuizzesPage } from './admin/QuizzesPage';
-import { PlaylistsPage } from './admin/PlaylistsPage';
-import { ToolsPage } from './admin/ToolsPage';
-import { AuditPage } from './admin/AuditPage';
-import { ContentOpsHome } from './admin/ContentOpsHome';
-import { SubjectOpsDetail } from './admin/ops/SubjectOpsDetail';
-import { ImportLogPage } from './admin/ops/ImportLogPage';
-import { CoveragePage } from './admin/CoveragePage';
-import { DiagramMetadataManager } from './admin/DiagramMetadataManager';
-import { DiagramMetadataImporter } from './admin/DiagramMetadataImporter';
-import { JsonImportPageWithTier } from './admin/JsonImportPageWithTier';
-import { CsvImportPageWithTier } from './admin/CsvImportPageWithTier';
+
+// Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const ImportPage = lazy(() => import('./admin/ImportPage').then(m => ({ default: m.ImportPage })));
+const AdminSubjectsPage = lazy(() => import('./admin/SubjectsPage').then(m => ({ default: m.SubjectsPage })));
+const UnitsPageEnhanced = lazy(() => import('./admin/UnitsPageEnhanced').then(m => ({ default: m.UnitsPageEnhanced })));
+const TopicsPageEnhanced = lazy(() => import('./admin/TopicsPageEnhanced').then(m => ({ default: m.TopicsPageEnhanced })));
+const PapersPageEnhanced = lazy(() => import('./admin/PapersPageEnhanced').then(m => ({ default: m.PapersPageEnhanced })));
+const PromptsPageEnhanced = lazy(() => import('./admin/PromptsPageEnhanced').then(m => ({ default: m.PromptsPageEnhanced })));
+const DiagramsPage = lazy(() => import('./admin/DiagramsPage').then(m => ({ default: m.DiagramsPage })));
+const DiagramEditor = lazy(() => import('./admin/DiagramEditor').then(m => ({ default: m.DiagramEditor })));
+const DiagramTemplatesPage = lazy(() => import('./admin/DiagramTemplatesPage').then(m => ({ default: m.DiagramTemplatesPage })));
+const DiagramTemplateEditor = lazy(() => import('./admin/DiagramTemplateEditor').then(m => ({ default: m.DiagramTemplateEditor })));
+const DiagramTemplateDetailPage = lazy(() => import('./admin/DiagramTemplateDetailPage').then(m => ({ default: m.DiagramTemplateDetailPage })));
+const QuizzesPage = lazy(() => import('./admin/QuizzesPage').then(m => ({ default: m.QuizzesPage })));
+const PlaylistsPage = lazy(() => import('./admin/PlaylistsPage').then(m => ({ default: m.PlaylistsPage })));
+const ToolsPage = lazy(() => import('./admin/ToolsPage').then(m => ({ default: m.ToolsPage })));
+const AuditPage = lazy(() => import('./admin/AuditPage').then(m => ({ default: m.AuditPage })));
+const ContentOpsHome = lazy(() => import('./admin/ContentOpsHome').then(m => ({ default: m.ContentOpsHome })));
+const SubjectOpsDetail = lazy(() => import('./admin/ops/SubjectOpsDetail').then(m => ({ default: m.SubjectOpsDetail })));
+const ImportLogPage = lazy(() => import('./admin/ops/ImportLogPage').then(m => ({ default: m.ImportLogPage })));
+const CoveragePage = lazy(() => import('./admin/CoveragePage').then(m => ({ default: m.CoveragePage })));
+const DiagramMetadataManager = lazy(() => import('./admin/DiagramMetadataManager').then(m => ({ default: m.DiagramMetadataManager })));
+const DiagramMetadataImporter = lazy(() => import('./admin/DiagramMetadataImporter').then(m => ({ default: m.DiagramMetadataImporter })));
+const JsonImportPageEnhanced = lazy(() => import('./admin/JsonImportPageEnhanced').then(m => ({ default: m.JsonImportPageEnhanced })));
+const CsvImportPageWithTier = lazy(() => import('./admin/CsvImportPageWithTier').then(m => ({ default: m.CsvImportPageWithTier })));
+const DeleteGoldQuestionsPage = lazy(() => import('./admin/DeleteGoldQuestionsPage').then(m => ({ default: m.DeleteGoldQuestionsPage })));
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
 import { CommandPalette } from './components/CommandPalette';
+import { initializeQuestionRegistry } from './utils/questionRegistry';
+
+function AdminRouteFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-500" />
+    </div>
+  );
+}
 
 function App() {
+  useEffect(() => {
+    initializeQuestionRegistry();
+  }, []);
+
   return (
     <ToastProvider>
       <ConfirmProvider>
@@ -53,10 +70,10 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="subjects" element={<AdminSubjectsPage />} />
-          <Route path="units" element={<UnitsPageWithTier />} />
-          <Route path="topics" element={<TopicsPageWithTier />} />
-          <Route path="papers" element={<PapersPage />} />
-          <Route path="prompts" element={<PromptsPageWithTier />} />
+          <Route path="units" element={<UnitsPageEnhanced />} />
+          <Route path="topics" element={<TopicsPageEnhanced />} />
+          <Route path="papers" element={<PapersPageEnhanced />} />
+          <Route path="prompts" element={<PromptsPageEnhanced />} />
           <Route path="diagrams" element={<DiagramsPage />} />
           <Route path="diagram-templates" element={<DiagramTemplatesPage />} />
           <Route path="quizzes" element={<QuizzesPage />} />
@@ -64,8 +81,9 @@ function App() {
           <Route path="coverage" element={<CoveragePage />} />
           <Route path="diagram-metadata" element={<DiagramMetadataManager />} />
           <Route path="diagram-import" element={<DiagramMetadataImporter />} />
-          <Route path="json-import" element={<JsonImportPageWithTier />} />
+          <Route path="json-import" element={<JsonImportPageEnhanced />} />
           <Route path="csv-import" element={<CsvImportPageWithTier />} />
+          <Route path="delete-gold-questions" element={<DeleteGoldQuestionsPage />} />
           <Route path="ops" element={<ContentOpsHome />} />
           <Route path="ops/subjects/:subjectId" element={<SubjectOpsDetail />} />
           <Route path="ops/import-log" element={<ImportLogPage />} />
@@ -74,9 +92,9 @@ function App() {
           <Route path="audit" element={<AuditPage />} />
         </Route>
 
-        <Route path="/admin/diagrams/:diagramId" element={<DiagramEditor />} />
-        <Route path="/admin/diagram-templates/:templateId" element={<DiagramTemplateEditor />} />
-        <Route path="/admin/diagram-templates/view/:id" element={<DiagramTemplateDetailPage />} />
+        <Route path="/admin/diagrams/:diagramId" element={<Suspense fallback={<AdminRouteFallback />}><DiagramEditor /></Suspense>} />
+        <Route path="/admin/diagram-templates/:templateId" element={<Suspense fallback={<AdminRouteFallback />}><DiagramTemplateEditor /></Suspense>} />
+        <Route path="/admin/diagram-templates/view/:id" element={<Suspense fallback={<AdminRouteFallback />}><DiagramTemplateDetailPage /></Suspense>} />
 
         <Route
           path="*"

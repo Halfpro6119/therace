@@ -3,6 +3,7 @@ import { Database, Plus, RefreshCw, Eye, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { db } from '../db/client';
 import { Quiz, Subject, Unit, Topic } from '../types';
+import { useConfirm } from '../contexts/ConfirmContext';
 import {
   validateQuizCoverage,
   validateQuizCoverageWithDetails,
@@ -18,6 +19,7 @@ interface QuizWithValidation {
 }
 
 export function QuizzesPage() {
+  const { confirm } = useConfirm();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -131,7 +133,8 @@ export function QuizzesPage() {
   };
 
   const deleteQuiz = async (quizId: string) => {
-    if (!confirm({ title: 'Confirm', message: 'Are you sure you want to delete this quiz?' })) return;
+    const ok = await confirm({ title: 'Confirm', message: 'Are you sure you want to delete this quiz?' });
+    if (!ok) return;
 
     try {
       await db.deleteQuiz(quizId);

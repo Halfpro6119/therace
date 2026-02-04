@@ -1,5 +1,5 @@
 import { extractTierFromAnyRow } from './tierImport';
-import { Subject, Unit, Topic } from '../types';
+import { Subject, Unit, Topic, Prompt } from '../types';
 import { db } from '../db/client';
 
 export interface ImportPromptRow {
@@ -26,6 +26,9 @@ export interface ImportPromptRow {
   paperNumber?: number;
   // Tier assignment (optional)
   tier?: "higher" | "foundation" | null;
+  // Marks and time allowance (optional)
+  marks?: number;
+  timeAllowanceSec?: number;
 }
 
 
@@ -88,6 +91,18 @@ export function parseCSV(csvText: string): ImportPromptRow[] {
         const v = (row.paper_number || row.papernumber || '').trim();
         const n = parseInt(v, 10);
         return !isNaN(n) ? n : undefined;
+      })(),
+      marks: (() => {
+        const v = row.marks ?? row.mark;
+        if (v === undefined || v === null || v === '') return undefined;
+        const n = parseInt(String(v), 10);
+        return !isNaN(n) && n > 0 ? n : undefined;
+      })(),
+      timeAllowanceSec: (() => {
+        const v = row.timeallowancesec ?? row.time_allowance_sec ?? row.timeallowance ?? row.time_allowance;
+        if (v === undefined || v === null || v === '') return undefined;
+        const n = parseInt(String(v), 10);
+        return !isNaN(n) && n > 0 ? n : undefined;
       })(),
     });
   }
@@ -343,24 +358,24 @@ export async function importPrompts(
       subjects.map(s => db.getPromptsBySubject(s.id))
     ).then(arrays => arrays.flat());
 
-    const existingHashMap = new Map(
-      existingPrompts.map(p => {
-        const subject = subjects.find(s => s.id === p.subjectId);
-        const unit = allUnits.find(u => u.id === p.unitId);
-        const topic = allTopics.find(t => t.id === p.topicId);
-        if (!subject || !unit || !topic) return ['', null];
-        const hash = generatePromptHash({
-          subject: subject.name,
-          examBoard: subject.examBoard,
-          unit: unit.name,
-          topic: topic.name,
-          type: p.type,
-          question: p.question,
-          answers: p.answers,
-        });
-        return [hash, p];
-      }).filter(([hash]) => hash !== '')
-    );
+    const entries: [string, Prompt][] = [];
+    for (const p of existingPrompts) {
+      const subject = subjects.find(s => s.id === p.subjectId);
+      const unit = allUnits.find(u => u.id === p.unitId);
+      const topic = allTopics.find(t => t.id === p.topicId);
+      if (!subject || !unit || !topic) continue;
+      const hash = generatePromptHash({
+        subject: subject.name,
+        examBoard: subject.examBoard,
+        unit: unit.name,
+        topic: topic.name,
+        type: p.type,
+        question: p.question,
+        answers: p.answers,
+      });
+      if (hash) entries.push([hash, p]);
+    }
+    const existingHashMap = new Map(entries);
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -496,19 +511,19 @@ export async function importPrompts(
 
             if (metaOverwriteMode || (row.diagramMode && row.diagramTemplateId)) {
               if (row.diagramMode === 'custom' && row.diagramCustomJson) {
-          meta.diagram = {
-            mode: 'custom',
-            placement: row.diagramPlacement || 'above',
-            caption: row.diagramCaption,
-            alt: row.diagramAlt
-          };
+                mergedMeta.diagram = {
+                  mode: 'custom',
+                  placement: row.diagramPlacement || 'above',
+                  caption: row.diagramCaption,
+                  alt: row.diagramAlt
+                };
 
-          try {
-            meta.diagram.custom = JSON.parse(row.diagramCustomJson);
-          } catch (e) {
-            console.warn('Failed to parse diagramCustomJson:', e);
-          }
-        } else if (row.diagramMode && row.diagramTemplateId) {
+                try {
+                  mergedMeta.diagram.custom = JSON.parse(row.diagramCustomJson);
+                } catch (e) {
+                  console.warn('Failed to parse diagramCustomJson:', e);
+                }
+              } else if (row.diagramMode && row.diagramTemplateId) {
                 mergedMeta.diagram = {
                   mode: row.diagramMode,
                   templateId: row.diagramTemplateId,
@@ -539,8 +554,10 @@ export async function importPrompts(
               hint: row.hint,
               explanation: row.explanation,
               meta: Object.keys(mergedMeta).length > 0 ? mergedMeta : undefined,
-              paperId: resolvedPaperId,
+              paperId: resolvedPaperId ?? undefined,
               tier: (row as any).tier ?? null,
+              marks: (row as any).marks,
+              timeAllowanceSec: (row as any).timeAllowanceSec,
             });
 
             result.updated++;
@@ -571,11 +588,13 @@ export async function importPrompts(
           type: row.type,
           question: row.question,
           answers: row.answers,
-          hint: row.hint,
-          explanation: row.explanation,
+          hint: row.hint ?? undefined,
+          explanation: row.explanation ?? undefined,
           meta: Object.keys(meta).length > 0 ? meta : undefined,
-          paperId: resolvedPaperId,
+          paperId: resolvedPaperId ?? undefined,
           tier: (row as any).tier ?? null,
+          marks: (row as any).marks,
+          timeAllowanceSec: (row as any).timeAllowanceSec,
         });
 
         result.imported++;
@@ -743,6 +762,18 @@ export function parseImportJsonPrompts(inputText: string): ImportPromptRow[] {
         if (v === undefined || v === null || v === '') return undefined;
         const n = parseInt(String(v), 10);
         return !isNaN(n) ? n : undefined;
+      })(),
+      marks: (() => {
+        const v = raw.marks ?? raw.mark;
+        if (v === undefined || v === null || v === '') return undefined;
+        const n = parseInt(String(v), 10);
+        return !isNaN(n) && n > 0 ? n : undefined;
+      })(),
+      timeAllowanceSec: (() => {
+        const v = raw.timeAllowanceSec ?? raw.time_allowance_sec ?? raw.timeAllowance ?? raw.time_allowance;
+        if (v === undefined || v === null || v === '') return undefined;
+        const n = parseInt(String(v), 10);
+        return !isNaN(n) && n > 0 ? n : undefined;
       })(),
     };
 

@@ -18,8 +18,19 @@ export interface NormalizedQuestion {
   fullSolution: string;
   hint: string;
   marks: number;
+  timeAllowanceSec?: number;
   calculatorAllowed: boolean;
   drawingRecommended: boolean;
+  unitId?: string;
+  topicId?: string;
+  unitName?: string;
+  topicName?: string;
+  subjectName?: string;
+  examBoard?: string;
+  type?: string;
+  explanation?: string;
+  tier?: 'higher' | 'foundation' | null;
+  meta?: Record<string, unknown>;
   diagram?: {
     mode: 'auto' | 'template' | 'asset';
     templateId?: string;
@@ -33,6 +44,7 @@ export interface NormalizedQuestion {
 export interface ValidationResult {
   errors: string[];
   warnings: string[];
+  isValid: boolean;
 }
 
 /**
@@ -116,6 +128,13 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
   // Extract marks
   const marks = extractNumber(raw.marks || raw.mark || 1, 1);
 
+  // Extract time allowance (seconds per question)
+  const timeAllowanceSec = extractNumber(
+    raw.timeAllowanceSec ?? raw.time_allowance_sec ?? raw.timeAllowance ?? raw.time_allowance ?? undefined,
+    0
+  );
+  const hasTimeAllowance = timeAllowanceSec > 0;
+
   // Extract calculator allowed
   const calculatorAllowed = extractBoolean(raw.calculatorAllowed || raw.calculator_allowed);
 
@@ -126,14 +145,43 @@ export function normalizeQuestion(raw: any): NormalizedQuestion {
   const diagram = normalizeDiagram(raw);
   
 
+  const type = typeof raw.type === 'string' ? raw.type.toLowerCase() : undefined;
+  const unitId = typeof raw.unitId === 'string' ? raw.unitId : raw.unit_id;
+  const topicId = typeof raw.topicId === 'string' ? raw.topicId : raw.topic_id;
+  const unitName = typeof raw.unit === 'string' ? raw.unit : undefined;
+  const topicName = typeof raw.topic === 'string' ? raw.topic : undefined;
+  const subjectName = typeof raw.subject === 'string' ? raw.subject : undefined;
+  const examBoard = typeof raw.examBoard === 'string' ? raw.examBoard : (typeof raw.examboard === 'string' ? raw.examboard : undefined);
+  const explanation = fullSolution || (typeof raw.explanation === 'string' ? raw.explanation : undefined);
+  const meta = raw.meta && typeof raw.meta === 'object' ? raw.meta as Record<string, unknown> : undefined;
+  
+  // Extract tier (higher, foundation, or null)
+  let tier: 'higher' | 'foundation' | null = null;
+  if (raw.tier === 'higher' || raw.tier === 'foundation') {
+    tier = raw.tier;
+  } else if (raw.tier === null || raw.tier === undefined) {
+    tier = null;
+  }
+
   return {
     prompt,
     answersAccepted,
     fullSolution,
     hint,
     marks,
+    ...(hasTimeAllowance && { timeAllowanceSec }),
     calculatorAllowed,
     drawingRecommended,
+    ...(unitId && { unitId }),
+    ...(topicId && { topicId }),
+    ...(unitName && { unitName }),
+    ...(topicName && { topicName }),
+    ...(subjectName && { subjectName }),
+    ...(examBoard && { examBoard }),
+    ...(type && { type }),
+    ...(explanation && { explanation }),
+    ...(tier !== undefined && { tier }),
+    ...(meta && { meta }),
     ...(diagram && { diagram }),
   };
 }
@@ -274,7 +322,7 @@ export function validateQuestion(normalized: NormalizedQuestion): ValidationResu
     }
   }
 
-  return { errors, warnings };
+  return { errors, warnings, isValid: errors.length === 0 };
 }
 
 /**

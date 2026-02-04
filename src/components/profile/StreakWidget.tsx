@@ -137,7 +137,7 @@ export function StreakWidget({ streak, attempts }: StreakWidgetProps) {
                     background: active
                       ? 'var(--gradient-primary)'
                       : 'rgb(var(--surface))',
-                    ringColor: today ? 'rgb(var(--accent))' : 'transparent',
+                    boxShadow: today ? '0 0 0 2px rgb(var(--accent))' : undefined,
                   }}
                   title={day.toLocaleDateString()}
                 />

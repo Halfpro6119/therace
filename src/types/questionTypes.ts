@@ -9,7 +9,26 @@
 // BASE TYPES
 // ============================================================================
 
-export type QuestionType = 'short' | 'mcq' | 'fill' | 'match' | 'label';
+/** Core types + Maths-specific types (numeric, multiNumeric, expression, etc.). New maths types may normalize to short until dedicated handlers exist. */
+export type QuestionType =
+  | 'short'
+  | 'mcq'
+  | 'fill'
+  | 'match'
+  | 'label'
+  | 'numeric'
+  | 'multiNumeric'
+  | 'expression'
+  | 'tableFill'
+  | 'orderSteps'
+  | 'graphPlot'
+  | 'graphRead'
+  | 'geometryConstruct'
+  | 'proofShort'
+  | 'dragMatch'
+  | 'matrixInput'
+  | 'vectorDiagram'
+  | 'functionMachine';
 
 /**
  * Type-specific metadata stored in prompt.meta.questionData

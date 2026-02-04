@@ -18,12 +18,14 @@ export async function getUnitPapers(unitId: string): Promise<Paper[]> {
     .eq('unit_id', unitId);
 
   if (error) throw error;
-  return (data || []).map(row => ({
+  type Row = { papers: { id: string; subject_id: string; paper_number: number; name: string; calculator_allowed_default?: boolean; created_at: string } };
+  const rows = (data || []) as unknown as Row[];
+  return rows.map(row => ({
     id: row.papers.id,
     subjectId: row.papers.subject_id,
-    paperNumber: row.papers.paper_number,
+    paperNumber: (row.papers.paper_number as 1 | 2 | 3) || 1,
     name: row.papers.name,
-    calculatorAllowedDefault: row.papers.calculator_allowed_default,
+    calculatorAllowedDefault: row.papers.calculator_allowed_default ?? false,
     createdAt: row.papers.created_at,
   }));
 }
@@ -38,12 +40,14 @@ export async function getTopicPapers(topicId: string): Promise<Paper[]> {
     .eq('topic_id', topicId);
 
   if (error) throw error;
-  return (data || []).map(row => ({
+  type Row = { papers: { id: string; subject_id: string; paper_number: number; name: string; calculator_allowed_default?: boolean; created_at: string } };
+  const rows = (data || []) as unknown as Row[];
+  return rows.map(row => ({
     id: row.papers.id,
     subjectId: row.papers.subject_id,
-    paperNumber: row.papers.paper_number,
+    paperNumber: (row.papers.paper_number as 1 | 2 | 3) || 1,
     name: row.papers.name,
-    calculatorAllowedDefault: row.papers.calculator_allowed_default,
+    calculatorAllowedDefault: row.papers.calculator_allowed_default ?? false,
     createdAt: row.papers.created_at,
   }));
 }
@@ -177,7 +181,9 @@ export async function getPaperUnits(paperId: string): Promise<Unit[]> {
     .eq('paper_id', paperId);
 
   if (error) throw error;
-  return (data || []).map(row => ({
+  type UnitRow = { units: { id: string; subject_id: string; name: string; order_index: number; description: string } };
+  const rows = (data || []) as unknown as UnitRow[];
+  return rows.map(row => ({
     id: row.units.id,
     subjectId: row.units.subject_id,
     name: row.units.name,
@@ -196,7 +202,9 @@ export async function getPaperTopics(paperId: string): Promise<Topic[]> {
     .eq('paper_id', paperId);
 
   if (error) throw error;
-  return (data || []).map(row => ({
+  type TopicRow = { topics: { id: string; subject_id: string; unit_id: string; name: string; order_index: number; description: string } };
+  const rows = (data || []) as unknown as TopicRow[];
+  return rows.map(row => ({
     id: row.topics.id,
     subjectId: row.topics.subject_id,
     unitId: row.topics.unit_id,

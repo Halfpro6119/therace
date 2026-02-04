@@ -3,8 +3,9 @@ import { storage } from '../utils/storage';
 import { useNavigate } from 'react-router-dom';
 
 interface HeatmapGridProps {
-  topics: Topic[];
-  quizzes: Quiz[];
+  topics?: Topic[];
+  quizzes?: Quiz[];
+  subjectId?: string;
 }
 
 const masteryColors: Record<MasteryLevel, string> = {
@@ -15,7 +16,7 @@ const masteryColors: Record<MasteryLevel, string> = {
   4: 'bg-purple-400 dark:bg-purple-900 hover:bg-purple-500 dark:hover:bg-purple-800',
 };
 
-export function HeatmapGrid({ topics, quizzes }: HeatmapGridProps) {
+export function HeatmapGrid({ topics = [], quizzes = [] }: HeatmapGridProps) {
   const navigate = useNavigate();
 
   const getTopicMastery = (topicId: string): MasteryLevel => {

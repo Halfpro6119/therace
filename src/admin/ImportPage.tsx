@@ -153,7 +153,7 @@ const [progress, setProgress] = useState<ImportProgressState>({
         createdTopics: [],
         importedPrompts: 0,
         skippedPrompts: 0,
-      }, defaultPaperNumber);
+      });
 
       const result = await importPrompts(rows, skipDuplicates, enableCalculators, metaOverwriteMode, (importProgress: ImportProgress) => {
         setProgress(prev => ({
@@ -187,7 +187,7 @@ const [progress, setProgress] = useState<ImportProgressState>({
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            }, defaultPaperNumber);
+            });
           }
           if (quizTypes.unit) {
             setProgress(prev => ({ ...prev, phase: 'unit-quizzes', currentItem: `Creating unit quizzes for ${subject.name}...` }));
@@ -199,7 +199,7 @@ const [progress, setProgress] = useState<ImportProgressState>({
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            }, defaultPaperNumber);
+            });
           }
           if (quizTypes.full) {
             setProgress(prev => ({ ...prev, phase: 'full-quizzes', currentItem: `Creating full quiz for ${subject.name}...` }));
@@ -211,7 +211,7 @@ const [progress, setProgress] = useState<ImportProgressState>({
                 quizzesProcessed: quizProgress.processed,
                 quizzesTotal: quizProgress.total,
               }));
-            }, defaultPaperNumber);
+            });
           }
         }
       }
@@ -221,15 +221,15 @@ const [progress, setProgress] = useState<ImportProgressState>({
         rowsIn: rows.length,
         imported: result.imported,
         skippedDuplicates: result.skipped,
-        createdSubjects: result.createdSubjects || 0,
-        createdUnits: result.createdUnits || 0,
-        createdTopics: result.createdTopics || 0,
+        createdSubjects: Array.isArray(result.createdSubjects) ? result.createdSubjects.length : 0,
+        createdUnits: Array.isArray(result.createdUnits) ? result.createdUnits.length : 0,
+        createdTopics: Array.isArray(result.createdTopics) ? result.createdTopics.length : 0,
         errorsCount: errors.length,
         errors: errors.map(e => ({ row: e.row, message: e.message })),
-        duplicates: Array.from(duplicates.entries()).flatMap(([question, rows]) =>
-          rows.map(row => ({ row, question }))
+        duplicates: Array.from(duplicates.entries()).flatMap(([question, rowList]) =>
+          (rowList as number[]).map(row => ({ row, question }))
         ),
-      }, defaultPaperNumber);
+      });
 
       setImportResult(result);
       setStep('complete');

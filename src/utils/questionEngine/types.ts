@@ -7,7 +7,26 @@
  * - It must be safe against malformed data (never crash).
  */
 
-export type QuestionType = 'short' | 'mcq' | 'fill' | 'match' | 'label'
+/** Core + Maths-specific. numeric/multiNumeric/expression/etc. may normalize to short in pipeline. */
+export type QuestionType =
+  | 'short'
+  | 'mcq'
+  | 'fill'
+  | 'match'
+  | 'label'
+  | 'numeric'
+  | 'multiNumeric'
+  | 'expression'
+  | 'tableFill'
+  | 'orderSteps'
+  | 'graphPlot'
+  | 'graphRead'
+  | 'geometryConstruct'
+  | 'proofShort'
+  | 'dragMatch'
+  | 'matrixInput'
+  | 'vectorDiagram'
+  | 'functionMachine'
 
 export interface NormalizedQuestion {
   id: string
@@ -48,6 +67,19 @@ export type UserResponse =
   | { type: 'fill'; blanks: string[] }
   | { type: 'match'; mapping: Record<string, string> } // leftId -> rightId
   | { type: 'label'; placements: Record<string, string> } // targetId -> labelId
+  | { type: 'numeric'; text: string } // same as short; use numericTolerance in questionData
+  | { type: 'multiNumeric'; values: string[] } // one string per field (e.g. "3", "-4")
+  | { type: 'expression'; text: string }
+  | { type: 'tableFill'; cells: string[][] }
+  | { type: 'orderSteps'; order: string[] } // step ids in order
+  | { type: 'graphPlot'; value: unknown } // coordinates or equation
+  | { type: 'graphRead'; text: string }
+  | { type: 'geometryConstruct'; value: unknown }
+  | { type: 'proofShort'; text: string }
+  | { type: 'dragMatch'; mapping: Record<string, string> }
+  | { type: 'matrixInput'; matrix: number[][] } // 2D array of matrix entries
+  | { type: 'vectorDiagram'; vectors: Array<{ x: number; y: number }> } // vector coordinates
+  | { type: 'functionMachine'; text: string } // function expression or composition result
 
 export interface GradeResult {
   isCorrect: boolean

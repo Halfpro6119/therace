@@ -15,7 +15,7 @@ export function PlaylistCard({ playlist, quizCount, estimatedMinutes, onClick, v
 
   const getGradient = () => {
     if (playlist.coverStyle === 'minimal') {
-      return 'var(--gradient-muted)';
+      return 'var(--gradient-subtle)';
     }
     return 'var(--gradient-primary)';
   };

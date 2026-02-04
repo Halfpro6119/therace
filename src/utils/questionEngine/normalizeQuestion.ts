@@ -22,9 +22,17 @@ import {
   countBlanksInQuestion,
 } from './utils'
 
+const MATH_TYPES_NORMALIZE_TO_SHORT = new Set([
+  'numeric', 'multinumeric', 'expression', 'tablefill', 'ordersteps',
+  'graphplot', 'graphread', 'geometryconstruct', 'proofshort', 'dragmatch',
+  'matrixinput', 'vectordiagram', 'functionmachine'
+])
+
 function safeType(v: unknown): QuestionType {
   const t = safeString(v, 'short').toLowerCase()
   if (t === 'mcq' || t === 'fill' || t === 'match' || t === 'label' || t === 'short') return t
+  // Maths-specific types: normalize to short for rendering/grading until dedicated handlers exist
+  if (MATH_TYPES_NORMALIZE_TO_SHORT.has(t)) return 'short'
   return 'short'
 }
 
@@ -98,6 +106,12 @@ function legacyToQuestionData(type: QuestionType, raw: any, existingQuestionData
   if (type === 'label') {
     // Standardize label bank naming
     if (!Array.isArray(qd.labelBank) && Array.isArray(qd.labels)) qd.labelBank = qd.labels
+  }
+
+  // When raw type is 'numeric', ensure numericTolerance for short-style grading
+  const rawType = safeString(raw?.type).toLowerCase()
+  if (rawType === 'numeric' && qd.numericTolerance === undefined) {
+    qd.numericTolerance = 0.01
   }
 
   return qd

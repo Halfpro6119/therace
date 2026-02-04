@@ -156,14 +156,15 @@ export function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 tracking-tight">
               Sprint to Grade 9
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-6 md:mb-8">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8">
               Master topics through speed + accuracy.
             </p>
           </motion.div>
 
+          <div className="flex flex-wrap items-center gap-3">
           <motion.button
             onClick={() => navigate('/quiz/daily-challenge-1')}
             whileHover={{ scale: 1.02 }}
@@ -177,10 +178,23 @@ export function HomePage() {
             <Zap size={24} />
             <span>Start Today's Sprint</span>
           </motion.button>
+          <motion.button
+            onClick={() => navigate('/subjects')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
+            className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 bg-white/20 text-white text-sm sm:text-base font-semibold rounded-xl border-2 border-white/40 hover:bg-white/30 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+          >
+            <BookOpen size={20} />
+            <span>Explore subjects</span>
+          </motion.button>
+          </div>
         </div>
 
-        <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/10 rounded-full -mr-32 sm:-mr-48 -mt-32 sm:-mt-48" />
-        <div className="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-white/10 rounded-full -ml-24 sm:-ml-32 -mb-24 sm:-mb-32" />
+        <div className="absolute top-0 right-0 w-48 sm:w-64 md:w-80 lg:w-96 h-48 sm:h-64 md:h-80 lg:h-96 max-w-[min(40vw,28rem)] max-h-[min(40vw,28rem)] bg-white/10 rounded-full -mr-24 sm:-mr-32 md:-mr-40 -mt-24 sm:-mt-32 md:-mt-40" />
+        <div className="absolute bottom-0 left-0 w-36 sm:w-48 md:w-56 h-36 sm:h-48 md:h-56 max-w-[min(35vw,22rem)] max-h-[min(35vw,22rem)] bg-white/10 rounded-full -ml-20 sm:-ml-24 md:-ml-28 -mb-20 sm:-mb-24 md:-mb-28" />
       </motion.section>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -317,7 +331,7 @@ export function HomePage() {
           </h2>
           <button
             onClick={() => navigate('/subjects')}
-            className="btn-ghost text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+            className="btn-ghost text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))] rounded-lg"
           >
             View All
           </button>

@@ -7,9 +7,11 @@ import { storage } from '../utils/storage';
 
 interface QuizTileProps {
   quiz: Quiz;
+  onClick?: () => void;
+  paperFilter?: unknown;
 }
 
-export function QuizTile({ quiz }: QuizTileProps) {
+export function QuizTile({ quiz, onClick, paperFilter: _paperFilter }: QuizTileProps) {
   const navigate = useNavigate();
   const masteryState = storage.getMasteryState(quiz.id);
   const masteryLevel: MasteryLevel = masteryState?.masteryLevel ?? 0;
@@ -62,9 +64,14 @@ export function QuizTile({ quiz }: QuizTileProps) {
     }
   };
 
+  const handleClick = () => {
+    if (onClick) onClick();
+    else navigate(`/quiz/${quiz.id}`);
+  };
+
   return (
     <motion.div
-      onClick={() => navigate(`/quiz/${quiz.id}`)}
+      onClick={handleClick}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       className="card-hover group relative"
