@@ -1,12 +1,47 @@
-import { useState, useEffect, ReactNode, Suspense } from 'react';
+import { Component, useState, useEffect, ReactNode, Suspense } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Lock, Home, BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, Shield, LogOut, List, Activity, Image, Layout } from 'lucide-react';
+import { Lock, Home, BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, Shield, LogOut, List, Activity, Image, Layout, ListOrdered, AlertCircle } from 'lucide-react';
 
 const ADMIN_PASSCODE = 'admin123';
 const PASSCODE_KEY = 'grade9_admin_auth';
 
 interface AdminLayoutProps {
   children?: ReactNode;
+}
+
+class AdminOutletErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  state = { hasError: false, error: null as Error | null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError && this.state.error) {
+      return (
+        <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6">
+          <div className="flex items-center gap-2 text-red-800 dark:text-red-200 font-semibold mb-2">
+            <AlertCircle size={20} />
+            Something went wrong
+          </div>
+          <p className="text-sm text-red-700 dark:text-red-300 font-mono mb-4">
+            {this.state.error.message}
+          </p>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
@@ -96,6 +131,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { path: '/admin', icon: Home, label: 'Dashboard' },
     { path: '/admin/subjects', icon: BookOpen, label: 'Subjects' },
+    { path: '/admin/scope', icon: ListOrdered, label: 'GCSE Scope' },
     { path: '/admin/units', icon: Layers, label: 'Units' },
     { path: '/admin/topics', icon: Tag, label: 'Topics' },
     { path: '/admin/papers', icon: FileText, label: 'Papers' },
@@ -165,9 +201,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         <main className="ml-64 flex-1 p-8">
           {children || (
-            <Suspense fallback={<div className="flex items-center justify-center p-12"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-500" /></div>}>
-              <Outlet />
-            </Suspense>
+            <AdminOutletErrorBoundary>
+              <Suspense fallback={<div className="flex items-center justify-center p-12"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-500" /></div>}>
+                <Outlet />
+              </Suspense>
+            </AdminOutletErrorBoundary>
           )}
         </main>
       </div>

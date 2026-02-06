@@ -33,6 +33,7 @@ export function PapersPageEnhanced() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [editingPaper, setEditingPaper] = useState<PaperWithRelations | null>(null);
+  const [creatingPaper, setCreatingPaper] = useState<{ paperNumber: 1 | 2 | 3; name: string; calculatorAllowedDefault: boolean } | null>(null);
   const [expandedPaperId, setExpandedPaperId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -125,6 +126,45 @@ export function PapersPageEnhanced() {
     }
   };
 
+  const handleCreatePaper = () => {
+    setCreatingPaper({
+      paperNumber: 1,
+      name: '',
+      calculatorAllowedDefault: false,
+    });
+  };
+
+  const handleSaveNewPaper = async () => {
+    if (!creatingPaper || !selectedSubject) return;
+    if (!creatingPaper.name.trim()) {
+      showToast('error', 'Paper name is required');
+      return;
+    }
+
+    try {
+      const existing = await db.getPaperByNumber(selectedSubject, creatingPaper.paperNumber);
+      if (existing) {
+        showToast('error', `Paper ${creatingPaper.paperNumber} already exists for this subject`);
+        return;
+      }
+
+      await db.createPaper({
+        subjectId: selectedSubject,
+        paperNumber: creatingPaper.paperNumber,
+        name: creatingPaper.name.trim(),
+        calculatorAllowedDefault: creatingPaper.calculatorAllowedDefault,
+      });
+      showToast('success', 'Paper created successfully');
+      setCreatingPaper(null);
+      if (selectedSubject) {
+        await loadPapersForSubject(selectedSubject);
+      }
+    } catch (error) {
+      console.error('Failed to create paper:', error);
+      showToast('error', 'Failed to create paper');
+    }
+  };
+
   const handleDeletePaper = async (paper: Paper) => {
     if (!await confirm({ title: 'Confirm', message: `Delete paper: "${paper.name}"?` })) return;
 
@@ -181,21 +221,32 @@ export function PapersPageEnhanced() {
         <p className="text-gray-600 dark:text-gray-400">Manage papers and view relationships</p>
       </div>
 
-      {/* Subject Selection */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Subject
-        </label>
-        <select
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
-          className="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-        >
-          <option value="">Select a subject...</option>
-          {subjects.map(s => (
-            <option key={s.id} value={s.id}>{s.name}</option>
-          ))}
-        </select>
+      {/* Subject Selection + Add Paper */}
+      <div className="mb-6 flex flex-wrap items-end gap-4">
+        <div className="flex-1 min-w-0 md:min-w-[16rem]">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Subject
+          </label>
+          <select
+            value={selectedSubject}
+            onChange={(e) => setSelectedSubject(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="">Select a subject...</option>
+            {subjects.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+        </div>
+        {selectedSubject && (
+          <button
+            onClick={handleCreatePaper}
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition"
+          >
+            <Plus size={18} />
+            Add paper
+          </button>
+        )}
       </div>
 
       {/* Papers Grid */}
@@ -393,6 +444,68 @@ export function PapersPageEnhanced() {
                 className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
               >
                 Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Paper Modal */}
+      {creatingPaper && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Add paper</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Paper number
+                </label>
+                <select
+                  value={creatingPaper.paperNumber}
+                  onChange={(e) => setCreatingPaper({ ...creatingPaper, paperNumber: parseInt(e.target.value) as 1 | 2 | 3 })}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value={1}>Paper 1</option>
+                  <option value={2}>Paper 2</option>
+                  <option value={3}>Paper 3</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={creatingPaper.name}
+                  onChange={(e) => setCreatingPaper({ ...creatingPaper, name: e.target.value })}
+                  placeholder="e.g. Written Exam - Foundation Tier"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={creatingPaper.calculatorAllowedDefault}
+                  onChange={(e) => setCreatingPaper({ ...creatingPaper, calculatorAllowedDefault: e.target.checked })}
+                  className="rounded"
+                />
+                <span className="text-sm text-gray-600 dark:text-gray-400">Calculator allowed by default</span>
+              </label>
+            </div>
+
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={() => setCreatingPaper(null)}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveNewPaper}
+                className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium"
+              >
+                Add paper
               </button>
             </div>
           </div>

@@ -83,6 +83,89 @@ export function FeedbackBlock({ show, gradeResult, explanation }: { show: boolea
 }
 
 // ---------------------------
+// Numeric (single number; optional unit, tolerance note)
+// ---------------------------
+
+export function NumericQuestion({ q, value, onChange, disabled, onSubmit, inputRefCallback }: QuestionComponentProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const qd = q.meta?.questionData || {}
+  const units = typeof qd.units === 'string' ? qd.units : ''
+  const tolerance = typeof qd.tolerance === 'number' ? qd.tolerance : typeof qd.numericTolerance === 'number' ? qd.numericTolerance : undefined
+
+  useEffect(() => {
+    if (!disabled) inputRef.current?.focus()
+  }, [disabled, q.id])
+
+  const setRef = useCallback(
+    (el: HTMLInputElement | null) => {
+      ;(inputRef as { current: HTMLInputElement | null }).current = el
+      inputRefCallback?.(el ?? null)
+    },
+    [inputRefCallback]
+  )
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          ref={setRef}
+          type="text"
+          inputMode="decimal"
+          className="quiz-input"
+          value={typeof value === 'string' ? value : ''}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') onSubmit() }}
+          placeholder="Enter a number..."
+          autoComplete="off"
+          disabled={disabled}
+          aria-label="Numeric answer"
+        />
+        {units ? <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{units}</span> : null}
+      </div>
+      {tolerance != null && tolerance > 0 && (
+        <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>±{tolerance} accepted</p>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------
+// Multi-numeric (multiple labeled inputs; partial marks)
+// ---------------------------
+
+export function MultiNumericQuestion({ q, value, onChange, disabled, onSubmit }: QuestionComponentProps) {
+  const qd = q.meta?.questionData || {}
+  const fields = Array.isArray(qd.fields) ? qd.fields : []
+  const arr: string[] = Array.isArray(value) ? value : fields.map(() => '')
+
+  return (
+    <div className="space-y-3" aria-label="Multi-numeric inputs">
+      {fields.map((f: { label?: string; answer?: number }, i: number) => (
+        <div key={i}>
+          <label className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+            {f?.label || `Value ${i + 1}`}
+          </label>
+          <input
+            type="text"
+            inputMode="decimal"
+            className="input w-full"
+            value={arr[i] ?? ''}
+            onChange={(e) => {
+              const next = [...arr]
+              next[i] = e.target.value
+              onChange(next)
+            }}
+            onKeyDown={(e) => { if (e.key === 'Enter') onSubmit() }}
+            disabled={disabled}
+            aria-label={f?.label || `Field ${i + 1}`}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ---------------------------
 // Short
 // ---------------------------
 

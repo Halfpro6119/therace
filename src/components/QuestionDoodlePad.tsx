@@ -30,7 +30,8 @@ const GRID_LIGHT = 'rgba(0,0,0,0.06)';
 const GRID_DARK = 'rgba(255,255,255,0.06)';
 
 export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, className = '' }: QuestionDoodlePadProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const paperCanvasRef = useRef<HTMLCanvasElement>(null);
+  const strokesCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState<Tool>('pen');
   const [penSize, setPenSize] = useState(DEFAULT_PEN_SIZE);
@@ -73,35 +74,42 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
     [getCssBg, getGridColor]
   );
 
-  // Init canvas size and load saved image
+  // Init: size both canvases, draw paper on background only, load saved strokes on top layer
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const paperCanvas = paperCanvasRef.current;
+    const strokesCanvas = strokesCanvasRef.current;
+    if (!paperCanvas || !strokesCanvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const container = canvas.parentElement;
+    const container = paperCanvas.parentElement;
     if (!container) return;
 
     const dpr = window.devicePixelRatio || 1;
     const w = container.clientWidth;
     const h = height;
 
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-    ctx.scale(dpr, dpr);
+    [paperCanvas, strokesCanvas].forEach((canvas) => {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+    });
 
-    drawPaperBackground(ctx, w, h);
+    const paperCtx = paperCanvas.getContext('2d');
+    const strokesCtx = strokesCanvas.getContext('2d');
+    if (!paperCtx || !strokesCtx) return;
 
+    paperCtx.scale(dpr, dpr);
+    strokesCtx.scale(dpr, dpr);
+
+    drawPaperBackground(paperCtx, w, h);
+
+    // Strokes layer stays transparent; load saved strokes image if any
     const saved = localStorage.getItem(storageKey);
     if (saved) {
       try {
         const img = new Image();
         img.onload = () => {
-          ctx.drawImage(img, 0, 0, w, h);
+          strokesCtx.drawImage(img, 0, 0, w, h);
         };
         img.src = saved;
       } catch {
@@ -111,10 +119,10 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
   }, [sessionId, height, storageKey, drawPaperBackground]);
 
   const saveToStorage = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const strokesCanvas = strokesCanvasRef.current;
+    if (!strokesCanvas) return;
     try {
-      const data = canvas.toDataURL('image/png');
+      const data = strokesCanvas.toDataURL('image/png');
       localStorage.setItem(storageKey, data);
     } catch {
       // ignore quota etc.
@@ -122,20 +130,19 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
   }, [storageKey]);
 
   const clearCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const strokesCanvas = strokesCanvasRef.current;
+    const ctx = strokesCanvas?.getContext('2d');
+    if (!strokesCanvas || !ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.width / dpr;
-    const h = canvas.height / dpr;
+    const w = strokesCanvas.width / dpr;
+    const h = strokesCanvas.height / dpr;
     ctx.clearRect(0, 0, w, h);
-    drawPaperBackground(ctx, w, h);
     saveToStorage();
-  }, [drawPaperBackground, saveToStorage]);
+  }, [saveToStorage]);
 
   const getCoords = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
+    const canvas = strokesCanvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     let clientX: number;
@@ -154,7 +161,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
+    const canvas = strokesCanvasRef.current;
     const ctx = canvas?.getContext('2d');
     const coords = getCoords(e);
     if (!canvas || !ctx || !coords) return;
@@ -168,7 +175,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing && e.type !== 'mousedown' && e.type !== 'touchstart') return;
 
-    const canvas = canvasRef.current;
+    const canvas = strokesCanvasRef.current;
     const ctx = canvas?.getContext('2d');
     const coords = getCoords(e);
     if (!canvas || !ctx || !coords) return;
@@ -277,8 +284,16 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
         className="relative overflow-hidden"
         style={{ height: `${height}px`, background: 'rgb(var(--surface))' }}
       >
+        {/* Paper layer – never touched by eraser */}
         <canvas
-          ref={canvasRef}
+          ref={paperCanvasRef}
+          className="absolute inset-0 block w-full h-full pointer-events-none"
+          style={{ width: '100%', height: '100%' }}
+          aria-hidden
+        />
+        {/* Strokes layer – pen and eraser only affect this */}
+        <canvas
+          ref={strokesCanvasRef}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
@@ -286,7 +301,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
           onTouchStart={startDrawing}
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
-          className="cursor-crosshair touch-none block w-full h-full"
+          className="absolute inset-0 block w-full h-full cursor-crosshair touch-none"
           style={{ width: '100%', height: '100%' }}
         />
       </div>

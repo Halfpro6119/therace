@@ -3,6 +3,13 @@ import { getTemplate } from './registry';
 import { validateDiagramParams, mergeWithDefaults } from './validator';
 
 export { getTemplate, getAllTemplates, getTemplatesByCategory } from './registry';
+export {
+  getTemplateIdForDiagramType,
+  isSupportedDiagramType,
+  SUPPORTED_DIAGRAM_TYPES,
+  DIAGRAM_TYPE_TO_TEMPLATE_ID,
+} from '../diagramTypeSpec';
+export type { DiagramTypeId } from '../diagramTypeSpec';
 export { validateDiagramParams, mergeWithDefaults } from './validator';
 
 export function renderDiagram(metadata: DiagramMetadata): DiagramRenderResult {

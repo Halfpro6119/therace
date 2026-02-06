@@ -37,7 +37,28 @@ export interface QuizSettings {
   timeTarget?: number;
   [key: string]: any;
 }
-export type PromptType = 'short' | 'mcq' | 'fill' | 'match' | 'label';
+/** Question form types (see questionTypeSpec.ts for full list). */
+export type PromptType =
+  | 'short'
+  | 'mcq'
+  | 'fill'
+  | 'match'
+  | 'label'
+  | 'numeric'
+  | 'numericWithTolerance'
+  | 'multiNumeric'
+  | 'expression'
+  | 'tableFill'
+  | 'orderSteps'
+  | 'graphPlot'
+  | 'graphRead'
+  | 'inequalityPlot'
+  | 'proofShort'
+  | 'geometryConstruct'
+  | 'dragMatch'
+  | 'matrixInput'
+  | 'vectorDiagram'
+  | 'functionMachine';
 
 /** User answer shape by question type: short/mcq → string, fill → string[], match/label → Record<string, string> */
 export type UserAnswer = string | string[] | Record<string, string>;
@@ -363,7 +384,8 @@ export interface DiagramValidationResult {
 export interface Paper {
   id: string;
   subjectId: string;
-  paperNumber: 1 | 2 | 3;
+  /** 1–3 typical; 4 for languages; 5–6 for Combined Science */
+  paperNumber: number;
   name: string;
   calculatorAllowedDefault: boolean;
   createdAt: string;

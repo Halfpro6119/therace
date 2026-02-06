@@ -4,6 +4,7 @@ import { db } from '../db/client';
 import { Subject, Unit, Topic, TierFilter } from '../types';
 import { countTopicPromptsByTier, countUnitPromptsByTier } from '../admin/tierFilterService';
 import { getTierLabel, getTierColor, getTierBadge } from '../admin/tierNormalizer';
+import { getGcseScopeForSubject, getTierOptionsForSubject } from '../config/gcseScope';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 /**
@@ -76,11 +77,48 @@ export function SubjectDetailPageWithTier() {
   const handleStartQuiz = async (topic: Topic) => {
     try {
       // Get existing quizzes for this topic
-      const quizzes = await db.getQuizzesByTopic(topic.id);
+      let quizzes = await db.getQuizzesByTopic(topic.id);
       
+      // If no quiz exists, create one on-the-fly
       if (quizzes.length === 0) {
-        alert('No quiz available for this topic');
-        return;
+        const prompts = await db.getPromptsByTopic(topic.id);
+        
+        if (prompts.length === 0) {
+          alert('No questions available for this topic');
+          return;
+        }
+
+        // Filter prompts by tier if tier filter is set
+        let filteredPrompts = prompts;
+        if (tierFilter === 'higher') {
+          filteredPrompts = prompts.filter(p => p.tier === 'higher');
+        } else if (tierFilter === 'foundation') {
+          filteredPrompts = prompts.filter(p => p.tier === 'foundation');
+        }
+
+        if (filteredPrompts.length === 0) {
+          alert(`No ${tierFilter === 'all' ? '' : tierFilter + ' '}questions available for this topic`);
+          return;
+        }
+
+        // Calculate time limits (60 seconds per question default)
+        const timeLimitSec = filteredPrompts.length * 60;
+        const grade9TargetSec = filteredPrompts.length * 45;
+
+        // Create quiz
+        const quiz = await db.createQuiz({
+          subjectId: topic.subjectId,
+          scopeType: 'topic',
+          topicId: topic.id,
+          unitId: topic.unitId,
+          title: `${topic.name} Quick Fire`,
+          description: `Master ${topic.name} with rapid recall questions`,
+          timeLimitSec,
+          grade9TargetSec,
+          promptIds: filteredPrompts.map(p => p.id),
+        });
+
+        quizzes = [quiz];
       }
       
       // Use the first quiz
@@ -114,27 +152,35 @@ export function SubjectDetailPageWithTier() {
         </p>
       </div>
 
-      {/* Tier Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          Filter by Tier
-        </label>
-        <div className="flex gap-3">
-          {(['all', 'higher', 'foundation'] as TierFilter[]).map(tier => (
-            <button
-              key={tier}
-              onClick={() => setTierFilter(tier)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                tierFilter === tier
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              {tier === 'all' ? 'All Tiers' : getTierLabel(tier === 'higher' ? 'higher' : 'foundation')}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Tier Filter – only for subjects that have tiers in GCSE scope */}
+      {(() => {
+        const scope = getGcseScopeForSubject(subject.name);
+        const tierOptions = scope ? getTierOptionsForSubject(scope) : [];
+        if (tierOptions.length === 0) return null;
+        const filterOptions: TierFilter[] = ['all', ...tierOptions];
+        return (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Filter by Tier
+            </label>
+            <div className="flex gap-3">
+              {filterOptions.map(tier => (
+                <button
+                  key={tier}
+                  onClick={() => setTierFilter(tier)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    tierFilter === tier
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {tier === 'all' ? 'All Tiers' : getTierLabel(tier === 'higher' ? 'higher' : 'foundation')}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Units and Topics */}
       <div className="space-y-4">

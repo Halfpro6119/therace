@@ -16,7 +16,7 @@ import { useMemo } from 'react'
 import type { Prompt } from '../types'
 import { normalizeQuestion, grade, type NormalizedQuestion, type GradeResult, type UserResponse } from '../utils/questionEngine'
 import { validateNormalizedQuestion } from '../utils/questionEngine'
-import { MarksBadge, FeedbackBlock, ShortQuestion, MCQQuestion, FillQuestion, MatchQuestion, LabelQuestion } from './questions/QuestionTypes'
+import { MarksBadge, FeedbackBlock, ShortQuestion, NumericQuestion, MultiNumericQuestion, MCQQuestion, FillQuestion, MatchQuestion, LabelQuestion } from './questions/QuestionTypes'
 
 export interface QuestionRendererProps {
   prompt: Prompt
@@ -37,14 +37,44 @@ function toUserResponse(q: NormalizedQuestion, value: any): UserResponse {
   switch (q.type) {
     case 'short':
       return { type: 'short', text: typeof value === 'string' ? value : '' }
+    case 'numeric':
+      return { type: 'numeric', text: typeof value === 'string' ? value : '' }
+    case 'numericWithTolerance':
+      return { type: 'numericWithTolerance', text: typeof value === 'string' ? value : '' }
+    case 'multiNumeric':
+      return { type: 'multiNumeric', values: Array.isArray(value) ? value : [] }
     case 'mcq':
       return { type: 'mcq', selectedKey: typeof value === 'string' ? value : '' }
     case 'fill':
       return { type: 'fill', blanks: Array.isArray(value) ? value : [] }
     case 'match':
       return { type: 'match', mapping: value && typeof value === 'object' ? value : {} }
+    case 'dragMatch':
+      return { type: 'dragMatch', mapping: value && typeof value === 'object' ? value : {} }
     case 'label':
       return { type: 'label', placements: value && typeof value === 'object' ? value : {} }
+    case 'expression':
+    case 'graphRead':
+    case 'proofShort':
+      return { type: q.type, text: typeof value === 'string' ? value : '' }
+    case 'orderSteps':
+      return { type: 'orderSteps', order: Array.isArray(value) ? value : (typeof value === 'string' ? value.split(',').map(s => s.trim()).filter(Boolean) : []) }
+    case 'tableFill': {
+      if (Array.isArray(value)) return { type: 'tableFill', cells: value }
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value)
+          return { type: 'tableFill', cells: Array.isArray(parsed) ? parsed : [] }
+        } catch { return { type: 'tableFill', cells: [] } }
+      }
+      return { type: 'tableFill', cells: [] }
+    }
+    case 'graphPlot':
+    case 'inequalityPlot':
+    case 'geometryConstruct': {
+      const v = typeof value === 'string' && (value.startsWith('[') || value.startsWith('{')) ? (() => { try { return JSON.parse(value) } catch { return value } })() : value
+      return { type: q.type, value: v }
+    }
     default:
       return { type: 'short', text: '' }
   }
@@ -71,6 +101,29 @@ export function isMinimallyAnswered(q: NormalizedQuestion, value: any): boolean 
       if (!value || typeof value !== 'object') return false
       return Object.values(value).some(v => typeof v === 'string' && v.trim().length > 0)
     }
+    case 'numeric':
+    case 'numericWithTolerance':
+      return typeof value === 'string' && value.trim().length > 0
+    case 'multiNumeric': {
+      if (!Array.isArray(value)) return false
+      return value.some((v: any) => typeof v === 'string' && v.trim().length > 0)
+    }
+    case 'expression':
+    case 'graphRead':
+    case 'proofShort':
+      return typeof value === 'string' && value.trim().length > 0
+    case 'dragMatch': {
+      if (!value || typeof value !== 'object') return false
+      return Object.values(value).some(v => typeof v === 'string' && v.trim().length > 0)
+    }
+    case 'orderSteps':
+      return Array.isArray(value) && value.length > 0
+    case 'tableFill':
+      return Array.isArray(value) && value.some((row: any) => Array.isArray(row) && row.some((c: any) => c != null && String(c).trim().length > 0))
+    case 'graphPlot':
+    case 'inequalityPlot':
+    case 'geometryConstruct':
+      return value != null
     default:
       return false
   }
@@ -105,6 +158,12 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
       {q.type === 'short' && (
         <ShortQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
+      {(q.type === 'numeric' || q.type === 'numericWithTolerance') && (
+        <NumericQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
+      )}
+      {q.type === 'multiNumeric' && (
+        <MultiNumericQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+      )}
       {q.type === 'mcq' && (
         <MCQQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
       )}
@@ -116,6 +175,25 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
       )}
       {q.type === 'label' && (
         <LabelQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+      )}
+      {q.type === 'dragMatch' && (
+        <MatchQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+      )}
+      {/* Text-based types: single input until dedicated UI */}
+      {(q.type === 'expression' || q.type === 'graphRead' || q.type === 'proofShort') && (
+        <ShortQuestion q={q} value={typeof value === 'string' ? value : ''} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
+      )}
+      {/* orderSteps: comma-separated list; stored as array, shown as string */}
+      {q.type === 'orderSteps' && (
+        <ShortQuestion q={q} value={Array.isArray(value) ? value.join(', ') : typeof value === 'string' ? value : ''} onChange={(v) => onChange(typeof v === 'string' ? v.split(',').map(s => s.trim()).filter(Boolean) : [])} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
+      )}
+      {/* tableFill / graphPlot / inequalityPlot / geometryConstruct: freeform text (or JSON) for now */}
+      {(q.type === 'tableFill' || q.type === 'graphPlot' || q.type === 'inequalityPlot' || q.type === 'geometryConstruct') && (
+        <ShortQuestion q={q} value={typeof value === 'string' ? value : value != null ? JSON.stringify(value) : ''} onChange={(v) => {
+        if (typeof v !== 'string') return
+        const parsed = (v.startsWith('[') || v.startsWith('{')) ? (() => { try { return JSON.parse(v) } catch { return v } })() : v
+        onChange(parsed)
+      }} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
 
       <FeedbackBlock show={showFeedback} gradeResult={gradeResult ? {

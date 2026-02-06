@@ -7,7 +7,7 @@
  * - It must be safe against malformed data (never crash).
  */
 
-/** Core + Maths-specific. numeric/multiNumeric/expression/etc. may normalize to short in pipeline. */
+/** All question types (see questionTypeSpec.ts). */
 export type QuestionType =
   | 'short'
   | 'mcq'
@@ -15,12 +15,14 @@ export type QuestionType =
   | 'match'
   | 'label'
   | 'numeric'
+  | 'numericWithTolerance'
   | 'multiNumeric'
   | 'expression'
   | 'tableFill'
   | 'orderSteps'
   | 'graphPlot'
   | 'graphRead'
+  | 'inequalityPlot'
   | 'geometryConstruct'
   | 'proofShort'
   | 'dragMatch'
@@ -67,13 +69,15 @@ export type UserResponse =
   | { type: 'fill'; blanks: string[] }
   | { type: 'match'; mapping: Record<string, string> } // leftId -> rightId
   | { type: 'label'; placements: Record<string, string> } // targetId -> labelId
-  | { type: 'numeric'; text: string } // same as short; use numericTolerance in questionData
+  | { type: 'numeric'; text: string }
+  | { type: 'numericWithTolerance'; text: string }
   | { type: 'multiNumeric'; values: string[] } // one string per field (e.g. "3", "-4")
   | { type: 'expression'; text: string }
   | { type: 'tableFill'; cells: string[][] }
   | { type: 'orderSteps'; order: string[] } // step ids in order
   | { type: 'graphPlot'; value: unknown } // coordinates or equation
   | { type: 'graphRead'; text: string }
+  | { type: 'inequalityPlot'; value: unknown } // interval
   | { type: 'geometryConstruct'; value: unknown }
   | { type: 'proofShort'; text: string }
   | { type: 'dragMatch'; mapping: Record<string, string> }

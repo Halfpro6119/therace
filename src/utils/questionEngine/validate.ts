@@ -20,7 +20,17 @@ function baseValidation(q: NormalizedQuestion): ValidationOutput {
   const warnings: string[] = []
 
   if (safeTrim(q.question).length < 5) errors.push('Question text must be at least 5 characters.')
-  if (!Array.isArray(q.answersAccepted) || q.answersAccepted.length < 1) errors.push('At least one accepted answer is required.')
+  
+  // Allow empty answers for diagram-dependent or open-ended question types
+  // Paper 3 questions are problem-solving and may not have predefined answers
+  const canHaveEmptyAnswers = [
+    'graphPlot', 'graphRead', 'tableFill', 'inequalityPlot', 'geometryConstruct', 
+    'proofShort', 'short', 'expression', 'numeric', 'multiNumeric'
+  ].includes(q.type)
+  if (!canHaveEmptyAnswers && (!Array.isArray(q.answersAccepted) || q.answersAccepted.length < 1 || q.answersAccepted.every(a => !safeTrim(a)))) {
+    errors.push('At least one accepted answer is required.')
+  }
+  
   if (!Number.isFinite(q.marks) || q.marks < 1) errors.push('Marks must be at least 1.')
 
   return { errors, warnings }

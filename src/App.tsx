@@ -36,6 +36,7 @@ const ContentOpsHome = lazy(() => import('./admin/ContentOpsHome').then(m => ({ 
 const SubjectOpsDetail = lazy(() => import('./admin/ops/SubjectOpsDetail').then(m => ({ default: m.SubjectOpsDetail })));
 const ImportLogPage = lazy(() => import('./admin/ops/ImportLogPage').then(m => ({ default: m.ImportLogPage })));
 const CoveragePage = lazy(() => import('./admin/CoveragePage').then(m => ({ default: m.CoveragePage })));
+const GcseScopePage = lazy(() => import('./admin/GcseScopePage').then(m => ({ default: m.GcseScopePage })));
 const DiagramMetadataManager = lazy(() => import('./admin/DiagramMetadataManager').then(m => ({ default: m.DiagramMetadataManager })));
 const DiagramMetadataImporter = lazy(() => import('./admin/DiagramMetadataImporter').then(m => ({ default: m.DiagramMetadataImporter })));
 const JsonImportPageEnhanced = lazy(() => import('./admin/JsonImportPageEnhanced').then(m => ({ default: m.JsonImportPageEnhanced })));
@@ -79,6 +80,7 @@ function App() {
           <Route path="quizzes" element={<QuizzesPage />} />
           <Route path="playlists" element={<PlaylistsPage />} />
           <Route path="coverage" element={<CoveragePage />} />
+          <Route path="scope" element={<GcseScopePage />} />
           <Route path="diagram-metadata" element={<DiagramMetadataManager />} />
           <Route path="diagram-import" element={<DiagramMetadataImporter />} />
           <Route path="json-import" element={<JsonImportPageEnhanced />} />

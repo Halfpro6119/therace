@@ -152,6 +152,31 @@ export const numericHandler: QuestionTypeHandler = {
 };
 
 // ============================================================================
+// NUMERIC WITH TOLERANCE (spec type 2 — same as numeric, tolerance expected)
+// ============================================================================
+
+export const numericWithToleranceHandler: QuestionTypeHandler = {
+  type: 'numericWithTolerance',
+  displayName: 'Numeric (with tolerance)',
+  description: 'Numerical answer with rounding/measurement tolerance',
+  icon: '🔢',
+
+  validate: (data: QuestionData) => numericHandler.validate(data),
+  getRequiredFields: () => [],
+  getOptionalFields: () => ['tolerance', 'numericTolerance', 'units', 'rounding', 'roundingValue'],
+
+  validateAnswer: (prompt: Prompt, userAnswer: QuestionAnswer): ValidationResult => {
+    return numericHandler.validateAnswer(prompt, userAnswer);
+  },
+
+  normalize: (data: any) => {
+    const base = numericHandler.normalize(data);
+    if (!base) return null;
+    return { ...base, tolerance: data.tolerance ?? data.numericTolerance ?? 0.1 };
+  },
+};
+
+// ============================================================================
 // MCQ HANDLER
 // ============================================================================
 
@@ -516,6 +541,7 @@ export const labelHandler: QuestionTypeHandler = {
 export const allHandlers = [
   shortAnswerHandler,
   numericHandler,
+  numericWithToleranceHandler,
   mcqHandler,
   fillHandler,
   matchHandler,

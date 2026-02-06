@@ -9,7 +9,7 @@
 // BASE TYPES
 // ============================================================================
 
-/** Core types + Maths-specific types (numeric, multiNumeric, expression, etc.). New maths types may normalize to short until dedicated handlers exist. */
+/** Core types + full spec types (see questionTypeSpec.ts). Extensible: add new type here when adding a new GCSE form. */
 export type QuestionType =
   | 'short'
   | 'mcq'
@@ -17,12 +17,14 @@ export type QuestionType =
   | 'match'
   | 'label'
   | 'numeric'
+  | 'numericWithTolerance'
   | 'multiNumeric'
   | 'expression'
   | 'tableFill'
   | 'orderSteps'
   | 'graphPlot'
   | 'graphRead'
+  | 'inequalityPlot'
   | 'geometryConstruct'
   | 'proofShort'
   | 'dragMatch'
@@ -32,14 +34,36 @@ export type QuestionType =
 
 /**
  * Type-specific metadata stored in prompt.meta.questionData
- * Each type has its own schema for flexibility and future expansion
+ * Each type has its own schema (see also questionTypeSpec.ts for full spec).
  */
-export type QuestionData = 
+export type QuestionData =
   | ShortQuestionData
   | MCQQuestionData
   | FillQuestionData
   | MatchQuestionData
-  | LabelQuestionData;
+  | LabelQuestionData
+  | NumericQuestionData
+  | MultiNumericQuestionData;
+
+// ---- Numeric (spec 1 & 2) ----
+export interface NumericQuestionData {
+  answer?: number;
+  tolerance?: number;
+  units?: string;
+  rounding?: 'none' | 'dp' | 'sf';
+  roundingValue?: number;
+  numericTolerance?: number; // alias for tolerance
+}
+
+// ---- Multi-numeric (spec 3) ----
+export interface MultiNumericField {
+  label: string;
+  answer: number;
+  tolerance?: number;
+}
+export interface MultiNumericQuestionData {
+  fields: MultiNumericField[];
+}
 
 // ============================================================================
 // SHORT ANSWER TYPE

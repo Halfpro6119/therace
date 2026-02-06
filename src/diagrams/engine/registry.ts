@@ -1,4 +1,5 @@
 import type { DiagramEngineTemplate } from '../../types';
+import { DIAGRAM_TYPE_TO_TEMPLATE_ID } from '../diagramTypeSpec';
 import { angleInSemicircle } from '../templates/angleInSemicircle';
 import { fzcAngles } from '../templates/fzcAngles';
 import { rightTriangle } from '../templates/rightTriangle';
@@ -28,11 +29,21 @@ import { quadraticLinear } from '../templates/quadraticLinear';
 import { treeDiagram } from '../templates/treeDiagram';
 import { boxplotComparison } from '../templates/boxplotComparison';
 import { cuboid } from '../templates/cuboid';
+import { triangle } from '../templates/triangle';
+import { vectorDiagram } from '../templates/vectorDiagram';
 
 const templates = new Map<string, DiagramEngineTemplate>();
 
 function registerTemplate(template: DiagramEngineTemplate) {
   templates.set(template.templateId, template);
+}
+
+/** Register canonical diagram type id so getTemplate('coordinateGrid') etc. resolve. */
+function registerCanonicalAliases() {
+  for (const [typeId, templateId] of Object.entries(DIAGRAM_TYPE_TO_TEMPLATE_ID)) {
+    const template = templates.get(templateId);
+    if (template) templates.set(typeId, template);
+  }
 }
 
 registerTemplate(angleInSemicircle);
@@ -72,6 +83,10 @@ registerTemplate(quadraticLinear);
 registerTemplate(treeDiagram);
 registerTemplate(boxplotComparison);
 registerTemplate(cuboid);
+registerTemplate(triangle);
+registerTemplate(vectorDiagram);
+
+registerCanonicalAliases();
 
 export function getTemplate(templateId: string): DiagramEngineTemplate | undefined {
   return templates.get(templateId);

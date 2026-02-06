@@ -9,6 +9,7 @@ import { questionRegistry } from './registry';
 import {
   shortAnswerHandler,
   numericHandler,
+  numericWithToleranceHandler,
   mcqHandler,
   fillHandler,
   matchHandler,
@@ -41,6 +42,7 @@ export type { QuestionTypeHandler } from './registry';
 export {
   shortAnswerHandler,
   numericHandler,
+  numericWithToleranceHandler,
   mcqHandler,
   fillHandler,
   matchHandler,

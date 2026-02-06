@@ -6,7 +6,7 @@
 export interface Paper {
   id: string;
   subjectId: string;
-  paperNumber: 1 | 2 | 3;
+  paperNumber: number;
   name: string;
   calculatorAllowedDefault: boolean;
   createdAt: string;
@@ -75,7 +75,7 @@ export interface UnitCoverage {
  */
 export interface PaperCoverage {
   paperId: string;
-  paperNumber: 1 | 2 | 3;
+  paperNumber: number;
   paperName: string;
   unitsCount: number;
   unitsCoveredCount: number;
@@ -97,7 +97,7 @@ export interface MissingQuestionType {
   topicId: string;
   topicName: string;
   paperId?: string;
-  paperNumber?: 1 | 2 | 3;
+  paperNumber?: number;
   currentPromptsCount: number;
   requiredPromptsCount: number;
   deficit: number;
