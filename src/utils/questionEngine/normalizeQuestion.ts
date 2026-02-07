@@ -20,6 +20,7 @@ import {
   toStringArray,
   uniq,
   countBlanksInQuestion,
+  parseNumericOrNull,
 } from './utils'
 
 /** Types that keep their identity for rendering/grading (SUPPORTED_QUESTION_TYPES + short, mcq). */
@@ -133,19 +134,26 @@ function legacyToQuestionData(type: QuestionType, raw: any, existingQuestionData
     if (!Array.isArray(qd.fields) || qd.fields.length === 0) {
       const answers = toStringArray(raw?.answers)
       if (answers.length > 0) {
-        // Check if first answer is comma-separated
+        // Check if first answer is comma-separated (e.g. "Solve x² + 5x + 6 = 0" → "-2,-3")
         const firstAnswer = answers[0]
         if (firstAnswer.includes(',')) {
           const parts = firstAnswer.split(',').map(s => safeTrim(s))
-          qd.fields = parts.map((_, i) => ({
-            label: `Value ${i + 1}`,
-            answer: parseFloat(parts[i]) || 0,
-          }))
+          qd.fields = parts.map((part, i) => {
+            const num = parseNumericOrNull(part) ?? 0
+            // Default tolerance for decimals (e.g. 2 dp answers) so -0.33 accepts -0.333
+            const tolerance = part.includes('.') ? 0.01 : 0
+            return {
+              label: parts.length > 1 ? `Answer ${i + 1}` : `Value ${i + 1}`,
+              answer: num,
+              tolerance,
+            }
+          })
         } else {
           // Single value, but multiNumeric type - create single field
+          const num = parseNumericOrNull(firstAnswer) ?? 0
           qd.fields = [{
             label: 'Value',
-            answer: parseFloat(firstAnswer) || 0,
+            answer: num,
           }]
         }
       } else {
@@ -194,7 +202,7 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
       }
     }
 
-    const marks = safeInt(raw?.marks ?? raw?.meta?.marks ?? 1, 1, 1)
+    let marks = safeInt(raw?.marks ?? raw?.meta?.marks ?? 1, 1, 1)
 
     const explanation = safeTrim(raw?.explanation)
     const hint = safeTrim(raw?.hint)
@@ -208,6 +216,16 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
 
     const meta = normalizeMeta(raw?.meta)
     const questionData = legacyToQuestionData(type, raw, meta.questionData)
+
+    // Multiple correct answers (e.g. Solve x² + 5x + 6 = 0 → -2, -3): award at least 1 mark per answer
+    if (type === 'multiNumeric' && Array.isArray(questionData.fields) && questionData.fields.length > 1) {
+      marks = Math.max(marks, questionData.fields.length)
+    }
+    // graphRead with comma-separated numeric answers (e.g. Solve x² = 4 graphically → 2, -2): same rule
+    if (type === 'graphRead' && answersAccepted.length > 0 && safeTrim(answersAccepted[0]).includes(',')) {
+      const numParts = safeTrim(answersAccepted[0]).split(',').map(s => safeTrim(s)).filter(Boolean).length
+      if (numParts > 1) marks = Math.max(marks, numParts)
+    }
 
     return {
       id,

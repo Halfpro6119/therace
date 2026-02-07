@@ -130,37 +130,40 @@ export function NumericQuestion({ q, value, onChange, disabled, onSubmit, inputR
 }
 
 // ---------------------------
-// Multi-numeric (multiple labeled inputs; partial marks)
+// Multi-numeric (multiple labeled inputs; 1 mark per correct answer, e.g. Solve x² + 5x + 6 = 0)
 // ---------------------------
 
 export function MultiNumericQuestion({ q, value, onChange, disabled, onSubmit }: QuestionComponentProps) {
   const qd = q.meta?.questionData || {}
   const fields = Array.isArray(qd.fields) ? qd.fields : []
   const arr: string[] = Array.isArray(value) ? value : fields.map(() => '')
+  const twoColumns = fields.length === 2
 
   return (
     <div className="space-y-3" aria-label="Multi-numeric inputs">
-      {fields.map((f: { label?: string; answer?: number }, i: number) => (
-        <div key={i}>
-          <label className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {f?.label || `Value ${i + 1}`}
-          </label>
-          <input
-            type="text"
-            inputMode="decimal"
-            className="input w-full"
-            value={arr[i] ?? ''}
-            onChange={(e) => {
-              const next = [...arr]
-              next[i] = e.target.value
-              onChange(next)
-            }}
-            onKeyDown={(e) => { if (e.key === 'Enter') onSubmit() }}
-            disabled={disabled}
-            aria-label={f?.label || `Field ${i + 1}`}
-          />
-        </div>
-      ))}
+      <div className={twoColumns ? 'grid grid-cols-2 gap-4' : undefined}>
+        {fields.map((f: { label?: string; answer?: number; tolerance?: number }, i: number) => (
+          <div key={i}>
+            <label className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+              {f?.label || `Value ${i + 1}`}
+            </label>
+            <input
+              type="text"
+              inputMode="decimal"
+              className="input w-full"
+              value={arr[i] ?? ''}
+              onChange={(e) => {
+                const next = [...arr]
+                next[i] = e.target.value
+                onChange(next)
+              }}
+              onKeyDown={(e) => { if (e.key === 'Enter') onSubmit() }}
+              disabled={disabled}
+              aria-label={f?.label || `Field ${i + 1}`}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

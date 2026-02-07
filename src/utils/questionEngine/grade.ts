@@ -699,6 +699,55 @@ function gradeAsShort(q: NormalizedQuestion, text: string): GradeResult {
   return gradeShort(q, { type: 'short', text })
 }
 
+/** Grade graphRead when the answer is comma-separated numerics (e.g. Solve x² = 4 graphically → 2, -2). Award 1 mark per correct value. */
+function gradeGraphReadMulti(q: NormalizedQuestion, text: string): GradeResult {
+  const maxMarks = q.marks
+  const raw = safeTrim(text)
+  if (!raw) {
+    return {
+      isCorrect: false,
+      marksAwarded: 0,
+      maxMarks,
+      feedback: { summary: 'No answer given.', correctAnswer: q.answersAccepted[0] || '', mistakeTags: ['empty'] },
+      normalizedUserAnswer: { text: '' },
+    }
+  }
+  const firstAnswer = q.answersAccepted[0] || ''
+  const expectedStrs = firstAnswer.split(',').map(s => safeTrim(s)).filter(Boolean)
+  const expectedNums = expectedStrs
+    .map(s => parseNumberOrNull(s) ?? fractionToNumberOrNull(s))
+    .filter((n): n is number => n !== null)
+  if (expectedNums.length === 0) return gradeAsShort(q, text)
+
+  const userNumbers = extractNumbersFromText(raw)
+  const tolerance = 0.01
+  const used = new Set<number>()
+  let correctCount = 0
+  for (const exp of expectedNums) {
+    for (let j = 0; j < userNumbers.length; j++) {
+      if (used.has(j)) continue
+      if (Math.abs(userNumbers[j] - exp) <= tolerance) {
+        used.add(j)
+        correctCount++
+        break
+      }
+    }
+  }
+  const marksAwarded = correctCount
+  const isCorrect = correctCount === expectedNums.length
+  return {
+    isCorrect,
+    marksAwarded,
+    maxMarks,
+    feedback: {
+      summary: isCorrect ? `Correct (+${maxMarks}/${maxMarks}).` : `Partially correct (+${marksAwarded}/${maxMarks}).`,
+      correctAnswer: firstAnswer,
+      mistakeTags: isCorrect ? [] : ['partial'],
+    },
+    normalizedUserAnswer: { text: raw },
+  }
+}
+
 // ----------------
 // inequalityPlot: interval on number line
 // ----------------
@@ -944,9 +993,14 @@ export function grade(question: NormalizedQuestion, response: UserResponse): Gra
       case 'label':
         return gradeLabel(question, response as any)
       case 'expression':
-      case 'graphRead':
       case 'proofShort':
         return gradeAsShort(question, (response as any).text ?? '')
+      case 'graphRead': {
+        const text = (response as any).text ?? ''
+        const firstAccepted = question.answersAccepted[0] || ''
+        if (safeTrim(firstAccepted).includes(',')) return gradeGraphReadMulti(question, text)
+        return gradeAsShort(question, text)
+      }
       case 'orderSteps':
         return gradeOrderSteps(question, response as any)
       case 'tableFill':

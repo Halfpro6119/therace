@@ -58,6 +58,20 @@ export function uniq(arr: string[]): string[] {
   return Array.from(new Set(arr))
 }
 
+/** Parse a string as a number (integer, decimal, or fraction e.g. "1/3"). */
+export function parseNumericOrNull(v: string): number | null {
+  const s = safeTrim(v)
+  const n = Number(s.replace(/,/g, ''))
+  if (Number.isFinite(n)) return n
+  const frac = s.match(/^(-?\d+)\s*\/\s*(-?\d+)$/)
+  if (frac) {
+    const num = Number(frac[1])
+    const den = Number(frac[2])
+    if (Number.isFinite(num) && Number.isFinite(den) && den !== 0) return num / den
+  }
+  return null
+}
+
 export function countBlanksInQuestion(text: string): number {
   // Accept "____" sequences and "_____" etc
   const matches = text.match(/_{3,}/g)
