@@ -13,7 +13,8 @@ export const angleInSemicircle: DiagramEngineTemplate = {
       O: { default: 'O', maxLen: 3 }
     },
     positions: {
-      C: { default: { x: 0.5, y: 0.2 }, normalized: true }
+      // x = 0.25 places C at 90° (top of circle) so angle ACB = 90°; 0.5 would put C on A (diameter)
+      C: { default: { x: 0.25, y: 0.2 }, normalized: true }
     },
     visibility: {
       showCenter: { default: true },
@@ -33,7 +34,7 @@ export const angleInSemicircle: DiagramEngineTemplate = {
     const labelC = params.labels?.C || 'C';
     const labelO = params.labels?.O || 'O';
 
-    const posC = params.positions?.C || { x: 0.5, y: 0.2 };
+    const posC = params.positions?.C || { x: 0.25, y: 0.2 };
     const cAngle = posC.x * 2 * Math.PI;
     const cx = centerX + radius * Math.cos(cAngle);
     const cy = centerY - radius * Math.sin(cAngle);

@@ -17,7 +17,8 @@ export const bearings: DiagramEngineTemplate = {
     visibility: {
       showBearingLabel: { default: true },
       showNorthArrows: { default: true },
-      showDistance: { default: false }
+      showDistance: { default: false },
+      showDegreeGrid: { default: false }
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
@@ -33,6 +34,7 @@ export const bearings: DiagramEngineTemplate = {
     const showBearingLabel = params.visibility?.showBearingLabel !== false;
     const showNorthArrows = params.visibility?.showNorthArrows !== false;
     const showDistance = params.visibility?.showDistance === true;
+    const showDegreeGrid = params.visibility?.showDegreeGrid === true;
 
     const ax = 250;
     const ay = 350;
@@ -57,6 +59,19 @@ export const bearings: DiagramEngineTemplate = {
   </style>
 
   <g id="grp:main">
+    ${showDegreeGrid ? (() => {
+      const radius = 120;
+      const lines = Array.from({ length: 36 }, (_, i) => {
+        const deg = i * 10;
+        const rad = (deg * Math.PI) / 180;
+        const x2 = ax + radius * Math.sin(rad);
+        const y2 = ay - radius * Math.cos(rad);
+        return `<line x1="${ax}" y1="${ay}" x2="${x2}" y2="${y2}" stroke="#475569" stroke-width="0.5" opacity="0.4"/>`;
+      }).join('\n    ');
+      const circles = [40, 80, 120].map(r => `<circle cx="${ax}" cy="${ay}" r="${r}" fill="none" stroke="#475569" stroke-width="0.5" opacity="0.4"/>`).join('\n    ');
+      return `<g id="grp:degreeGrid" opacity="0.5">${circles}${lines}</g>`;
+    })() : ''}
+
     <line id="ln:AB" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" class="diagram-line"/>
 
     ${showNorthArrows ? `

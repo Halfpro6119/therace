@@ -146,13 +146,29 @@ export async function seedGoldenQuestionsForSubject(
     const meta: Record<string, unknown> = {
       goldenId: q.id,
     };
+    if (q.questionData && typeof q.questionData === 'object' && Object.keys(q.questionData).length > 0) {
+      meta.questionData = q.questionData;
+    }
 
     let diagram_metadata: Record<string, unknown> | undefined;
     const diagramType = q.diagram ?? 'none';
     if (diagramType !== 'none') {
+      const promptLower = q.prompt.toLowerCase();
+      // Special case: angle-in-a-semicircle questions need the theorem diagram (A, B, C, O)
+      const isAngleInSemicircle =
+        diagramType === 'circle' &&
+        (promptLower.includes('angle abc') || promptLower.includes('angle aoc') || promptLower.includes('semicircle') || promptLower.includes('points on the circumference'));
+      // Special case: tangent-radius theorem (H2-62)
+      const isTangentRadius =
+        diagramType === 'circle' &&
+        (promptLower.includes('tangent') || promptLower.includes('tangent-radius'));
       // Special case: box plot comparison questions should use comparison template
       let templateId: string | undefined;
-      if (diagramType === 'boxPlot' && (q.prompt.toLowerCase().includes('compare') || q.prompt.toLowerCase().includes('comparison'))) {
+      if (isAngleInSemicircle) {
+        templateId = 'math.circle_theorems.angle_in_semicircle.v1';
+      } else if (isTangentRadius) {
+        templateId = 'math.circle_theorems.tangent_radius.v1';
+      } else if (diagramType === 'boxPlot' && (promptLower.includes('compare') || promptLower.includes('comparison'))) {
         templateId = 'math.statistics.boxplot_comparison.v1';
       } else {
         // First try the golden mapping (short names)
@@ -172,10 +188,37 @@ export async function seedGoldenQuestionsForSubject(
       }
       
       if (templateId) {
+        let params: Record<string, unknown> = {};
+        // Question-specific diagram params (H2 Paper 2 per HIGHER_PAPER2_DIAGRAM_SPEC.md)
+        if (q.id === 'H2-35' || q.id === 'H2-38') {
+          // Pre-plotted quadratic y = x² − 6x + 5 (turning point, roots)
+          params = {
+            values: { a: 1, b: -6, c: 5, xMin: -2, xMax: 8, yMin: -8, yMax: 8 },
+            visibility: {
+              highlightTurningPoint: true,
+              highlightRoots: true,
+              showGrid: true,
+            },
+          };
+        } else if (q.id === 'H2-73') {
+          // Cumulative frequency curve — show median line hint
+          params = {
+            visibility: { showMedianLine: true, showGrid: true },
+          };
+        }
+        // Per-prompt stored answers: merge diagramParams for dynamic diagrams/data
+        if (q.diagramParams && typeof q.diagramParams === 'object') {
+          const dp = q.diagramParams as Record<string, unknown>;
+          if (dp.templateId && typeof dp.templateId === 'string') {
+            templateId = dp.templateId;
+          }
+          const { templateId: _t, ...rest } = dp;
+          params = { ...params, ...rest };
+        }
         diagram_metadata = {
           mode: 'auto',
           templateId,
-          params: {},
+          params,
           placement: 'above', // Place diagrams above the question text for better visibility
         };
       }

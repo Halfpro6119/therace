@@ -42,6 +42,24 @@ const mapTopic = (row: any): Topic => ({
   description: row.description,
 });
 
+/** Normalize answers from DB (jsonb) to string[] so grading always receives an array. */
+function normalizePromptAnswers(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map((x) => (typeof x === 'string' ? x.trim() : String(x ?? ''))).filter(Boolean);
+  if (typeof v === 'string') {
+    const t = v.trim();
+    if (t.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(v);
+        if (Array.isArray(parsed)) return normalizePromptAnswers(parsed);
+      } catch {
+        // fall through
+      }
+    }
+    return t ? [t] : [];
+  }
+  return [];
+}
+
 const mapPrompt = (row: any): Prompt => ({
   paperId: row.paper_id,
   tier: row.tier,
@@ -53,7 +71,7 @@ const mapPrompt = (row: any): Prompt => ({
   topicId: row.topic_id,
   type: row.type,
   question: row.question,
-  answers: row.answers,
+  answers: normalizePromptAnswers(row.answers),
   marks: row.marks ?? row.meta?.marks ?? undefined,
   timeAllowanceSec: row.time_allowance_sec ?? row.meta?.timeAllowanceSec ?? undefined,
   hint: row.hint,
@@ -74,6 +92,8 @@ const mapQuiz = (row: any): Quiz => ({
   promptIds: row.prompt_ids ?? [],
   paperId: row.paper_id,
   quizType: row.quiz_type,
+  isActive: row.is_active,
+  settings: row.settings,
 });
 
 const mapPlaylist = (row: any): Playlist => ({
@@ -254,6 +274,20 @@ export const db = {
 
     if (error) throw error;
     return (data || []).map(mapPrompt);
+  },
+
+  /**
+   * Get prompts whose meta.goldenId is in the given list (e.g. golden question IDs like F1-01, H1-01).
+   * Used for golden topic/unit quiz building.
+   */
+  getPromptsByGoldenIds: async (subjectId: string, goldenIds: string[]): Promise<Prompt[]> => {
+    if (goldenIds.length === 0) return [];
+    const allPrompts = await db.getPromptsBySubject(subjectId);
+    const goldenSet = new Set(goldenIds);
+    return allPrompts.filter((p) => {
+      const gid = (p.meta as Record<string, unknown> | undefined)?.goldenId as string | undefined;
+      return gid && goldenSet.has(gid);
+    });
   },
 
   getPromptsByTopic: async (topicId: string): Promise<Prompt[]> => {
@@ -532,9 +566,10 @@ export const db = {
     const dbUpdates: any = {};
     if (updates.title) dbUpdates.title = updates.title;
     if (updates.description) dbUpdates.description = updates.description;
-    if (updates.timeLimitSec) dbUpdates.time_limit_sec = updates.timeLimitSec;
-    if (updates.grade9TargetSec) dbUpdates.grade9_target_sec = updates.grade9TargetSec;
+    if (updates.timeLimitSec !== undefined) dbUpdates.time_limit_sec = updates.timeLimitSec;
+    if (updates.grade9TargetSec !== undefined) dbUpdates.grade9_target_sec = updates.grade9TargetSec;
     if (updates.promptIds) dbUpdates.prompt_ids = updates.promptIds;
+    if (updates.settings !== undefined) dbUpdates.settings = updates.settings;
 
     const { error } = await supabase
       .from('quizzes')

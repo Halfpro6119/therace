@@ -32,9 +32,22 @@ export function safeInt(v: unknown, fallback: number, min?: number, max?: number
 }
 
 export function toStringArray(v: unknown): string[] {
-  if (Array.isArray(v)) return v.map(x => safeTrim(x)).filter(Boolean)
+  if (Array.isArray(v)) {
+    return v.map(x => (x != null && typeof x === 'object' ? JSON.stringify(x) : safeTrim(x))).filter(Boolean)
+  }
   if (typeof v === 'string') {
-    // Support legacy comma-separated or pipe-separated formats
+    const trimmed = v.trim()
+    // If DB/client returned a stringified JSON array, parse it first
+    if ((trimmed.startsWith('[') || trimmed.startsWith('{')) && trimmed.length > 1) {
+      try {
+        const parsed = JSON.parse(v)
+        if (Array.isArray(parsed)) return toStringArray(parsed)
+        if (parsed != null && typeof parsed === 'object') return [trimmed]
+      } catch {
+        // fall through to comma/pipe split
+      }
+    }
+    // Support legacy comma-separated or pipe-delimited formats
     const parts = v.includes('|') ? v.split('|') : v.split(',')
     return parts.map(p => p.trim()).filter(Boolean)
   }

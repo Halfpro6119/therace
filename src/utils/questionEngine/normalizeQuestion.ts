@@ -175,7 +175,7 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
     const type = safeType(raw?.type)
 
     const question = safeTrim(raw?.question)
-    let answersAccepted = uniq(toStringArray(raw?.answers))
+    let answersAccepted = uniq(toStringArray(raw?.answers ?? raw?.answer))
     // Filter out empty strings for diagram-dependent types that can work without answers
     // Paper 3 questions are problem-solving and may not have predefined answers
     const canHaveEmptyAnswers = [
@@ -241,7 +241,7 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
       tier: raw?.tier ?? null,
       type: 'short',
       question: safeTrim(raw?.question),
-      answersAccepted: toStringArray(raw?.answers),
+      answersAccepted: toStringArray(raw?.answers ?? raw?.answer),
       marks: 1,
       explanation: safeTrim(raw?.explanation),
       hint: safeTrim(raw?.hint),

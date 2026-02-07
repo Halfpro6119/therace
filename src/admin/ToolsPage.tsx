@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { db } from '../db/client';
 import { createTopicQuizzes, createUnitQuizzes, createPaperQuizzes, createSinglePaperQuiz, createFullGCSEQuiz } from './quizBuilder';
 import { seedDiagramTemplates } from './seedDiagramTemplates';
-import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen } from 'lucide-react';
+import { syncGoldenTopicUnitQuizzes } from './goldenTopicUnitQuizBuilder';
+import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen, BookMarked } from 'lucide-react';
 import { Subject, Paper } from '../types';
 
 export function ToolsPage() {
@@ -158,6 +159,45 @@ export function ToolsPage() {
     }
   };
 
+  const handleSyncGoldenTopicUnitQuizzes = async () => {
+    if (!selectedSubjectId) {
+      setResult('Error: Please select a subject');
+      return;
+    }
+    const subject = subjects.find(s => s.id === selectedSubjectId);
+    if (subject?.name !== 'Maths') {
+      setResult('Error: Golden topic/unit quizzes only apply to Maths. Select Maths and run again.');
+      return;
+    }
+
+    setLoading(true);
+    setResult('');
+
+    try {
+      const syncResult = await syncGoldenTopicUnitQuizzes(selectedSubjectId, (p) => {
+        setResult(`${p.phase}: ${p.currentItem} (${p.processed + 1}/${p.total})`);
+      });
+      const created = syncResult.topicsCreated + syncResult.unitsCreated;
+      const updated = syncResult.topicsUpdated + syncResult.unitsUpdated;
+      const parts = [];
+      if (created > 0) parts.push(`${created} created`);
+      if (updated > 0) parts.push(`${updated} updated`);
+      setResult(
+        parts.length > 0
+          ? `Success: ${parts.join(', ')}. Topics: ${syncResult.topicsCreated} created, ${syncResult.topicsUpdated} updated. Units: ${syncResult.unitsCreated} created, ${syncResult.unitsUpdated} updated.` +
+            (syncResult.errors.length > 0 ? ` Errors: ${syncResult.errors.join('; ')}` : '')
+          : syncResult.errors.length > 0
+            ? `Errors: ${syncResult.errors.join('; ')}`
+            : 'No changes. Ensure golden questions are seeded (Import → Seed Golden Questions).'
+      );
+    } catch (error) {
+      console.error(error);
+      setResult(`Error: ${formatError(error)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tools = [
     {
       id: 'topic-quizzes',
@@ -207,6 +247,14 @@ export function ToolsPage() {
       icon: Layout,
       color: 'from-cyan-500 to-blue-500',
       action: handleSeedDiagramTemplates,
+    },
+    {
+      id: 'golden-topic-unit',
+      title: 'Sync Golden Topic & Unit Quizzes (Maths)',
+      description: 'Create/update topic and unit quizzes from GOLDEN_MATHS_QUESTION_LIST spec. Maths only. Run after seeding golden questions.',
+      icon: BookMarked,
+      color: 'from-amber-500 to-orange-500',
+      action: handleSyncGoldenTopicUnitQuizzes,
     },
   ];
 

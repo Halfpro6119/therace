@@ -73,7 +73,7 @@ export type UserResponse =
   | { type: 'numericWithTolerance'; text: string }
   | { type: 'multiNumeric'; values: string[] } // one string per field (e.g. "3", "-4")
   | { type: 'expression'; text: string }
-  | { type: 'tableFill'; cells: string[][] }
+  | { type: 'tableFill'; cells: Record<string, string>[] }
   | { type: 'orderSteps'; order: string[] } // step ids in order
   | { type: 'graphPlot'; value: unknown } // coordinates or equation
   | { type: 'graphRead'; text: string }

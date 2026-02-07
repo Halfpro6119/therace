@@ -11,9 +11,13 @@ export const circleTangentRadius: DiagramEngineTemplate = {
       A: { default: 'A', maxLen: 3 },
       T: { default: 'T', maxLen: 3 }
     },
+    values: {
+      angleAtCentre: { default: 65, type: 'number', min: 1, max: 179 }
+    },
     visibility: {
       showRightAngle: { default: true },
-      showCenter: { default: true }
+      showCenter: { default: true },
+      showAngleAtCentre: { default: true }
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
@@ -27,37 +31,58 @@ export const circleTangentRadius: DiagramEngineTemplate = {
     const labelA = params.labels?.A || 'A';
     const labelT = params.labels?.T || 'T';
 
+    const angleAtCentre = Number(params.values?.angleAtCentre) || 65;
+    const angleRad = (angleAtCentre * Math.PI) / 180;
     const showRightAngle = params.visibility?.showRightAngle !== false;
     const showCenter = params.visibility?.showCenter !== false;
+    const showAngleAtCentre = params.visibility?.showAngleAtCentre !== false;
 
     const ax = centerX + radius;
     const ay = centerY;
+    const bx = centerX + radius * Math.cos(angleRad);
+    const by = centerY - radius * Math.sin(angleRad);
+
+    const arcRadius = 28;
+    const arcPath = angleAtCentre <= 180
+      ? `M ${centerX + arcRadius} ${centerY} A ${arcRadius} ${arcRadius} 0 0 0 ${centerX + arcRadius * Math.cos(angleRad)} ${centerY - arcRadius * Math.sin(angleRad)}`
+      : `M ${centerX + arcRadius} ${centerY} A ${arcRadius} ${arcRadius} 0 0 1 ${centerX + arcRadius * Math.cos(angleRad)} ${centerY - arcRadius * Math.sin(angleRad)}`;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
     .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
     .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
     .diagram-tangent { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-chord { stroke: #a78bfa; stroke-width: 2; fill: none; }
     .diagram-point { fill: #cbd5e1; }
     .diagram-point-highlight { fill: #60a5fa; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
     .diagram-angle-mark { stroke: #f87171; stroke-width: 2; fill: none; }
+    .diagram-arc { stroke: #f87171; stroke-width: 1.5; fill: none; }
   </style>
 
   <g id="grp:main">
     <circle id="ln:circle" cx="${centerX}" cy="${centerY}" r="${radius}" class="diagram-circle"/>
     <line id="ln:radius" x1="${centerX}" y1="${centerY}" x2="${ax}" y2="${ay}" class="diagram-line"/>
+    <line id="ln:radius2" x1="${centerX}" y1="${centerY}" x2="${bx}" y2="${by}" class="diagram-line"/>
+    <line id="ln:chord" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" class="diagram-chord"/>
     <line id="ln:tangent" x1="${ax}" y1="${ay - 100}" x2="${ax}" y2="${ay + 100}" class="diagram-tangent"/>
 
     ${showCenter ? `<circle id="pt:O" cx="${centerX}" cy="${centerY}" r="5" class="diagram-point"/>` : ''}
     <circle id="pt:A" cx="${ax}" cy="${ay}" r="5" class="diagram-point-highlight"/>
+    <circle id="pt:B" cx="${bx}" cy="${by}" r="5" class="diagram-point"/>
     <circle id="pt:T" cx="${ax}" cy="${ay + 80}" r="5" class="diagram-point"/>
 
     ${showCenter ? `<text id="txt:O" x="${centerX - 20}" y="${centerY + 5}" class="diagram-text">${labelO}</text>` : ''}
     <text id="txt:A" x="${ax + 15}" y="${ay}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${bx + 10}" y="${by - 10}" class="diagram-text">B</text>
     <text id="txt:T" x="${ax + 15}" y="${ay + 85}" class="diagram-text">${labelT}</text>
 
     ${showRightAngle ? `<rect id="mk:rightAngle" x="${ax - 15}" y="${ay - 15}" width="15" height="15" class="diagram-angle-mark"/>` : ''}
+    ${showAngleAtCentre && angleAtCentre > 0 ? `
+    <path id="arc:centre" d="${arcPath}" class="diagram-arc"/>
+    <text id="txt:angleAtCentre" x="${centerX + 38}" y="${centerY - 22}" class="diagram-text-angle">${angleAtCentre}°</text>
+    ` : ''}
   </g>
 </svg>`;
 

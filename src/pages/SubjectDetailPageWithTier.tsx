@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../db/client';
-import { Subject, Unit, Topic, TierFilter } from '../types';
-import { countTopicPromptsByTier, countUnitPromptsByTier } from '../admin/tierFilterService';
-import { getTierLabel, getTierColor, getTierBadge } from '../admin/tierNormalizer';
+import { Subject, Unit, Topic, Quiz, TierFilter } from '../types';
+import { countTopicPromptsByTier } from '../admin/tierFilterService';
+import { getTierLabel, getTierColor } from '../admin/tierNormalizer';
 import { getGcseScopeForSubject, getTierOptionsForSubject } from '../config/gcseScope';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookMarked, Play } from 'lucide-react';
 
 /**
  * Enhanced SubjectDetailPage with Tier System support
@@ -18,8 +18,10 @@ export function SubjectDetailPageWithTier() {
   const [subject, setSubject] = useState<Subject | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [topicUnitQuizzes, setTopicUnitQuizzes] = useState<Quiz[]>([]);
   const [tierFilter, setTierFilter] = useState<TierFilter>('all');
   const [expandedUnit, setExpandedUnit] = useState<string | null>(null);
+  const [expandedTopicUnitQuizzes, setExpandedTopicUnitQuizzes] = useState(false);
   const [tierDistributions, setTierDistributions] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
 
@@ -32,15 +34,19 @@ export function SubjectDetailPageWithTier() {
 
     try {
       setLoading(true);
-      const [subjectData, unitsData, topicsData] = await Promise.all([
+      const [subjectData, unitsData, topicsData, quizzesData] = await Promise.all([
         db.getSubject(subjectId),
         db.getUnits(subjectId),
-        db.getTopics(subjectId)
+        db.getTopics(subjectId),
+        db.getQuizzesBySubject(subjectId),
       ]);
 
       setSubject(subjectData ?? null);
       setUnits(unitsData);
       setTopics(topicsData);
+      setTopicUnitQuizzes(
+        quizzesData.filter(q => q.scopeType === 'topic' || q.scopeType === 'unit')
+      );
 
       const distributions: Record<string, any> = {};
       for (const topic of topicsData) {
@@ -132,6 +138,10 @@ export function SubjectDetailPageWithTier() {
     }
   };
 
+  const handleStartTopicUnitQuiz = (quiz: Quiz) => {
+    navigate(`/quiz/${quiz.id}?tier=${tierFilter}`);
+  };
+
   if (loading) {
     return <div className="p-6 text-center" style={{ color: 'rgb(var(--text-secondary))' }}>Loading subject...</div>;
   }
@@ -151,6 +161,47 @@ export function SubjectDetailPageWithTier() {
           {subject.description}
         </p>
       </div>
+
+      {/* Topic & Unit Quizzes (golden curriculum spec) */}
+      {topicUnitQuizzes.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+          <button
+            onClick={() => setExpandedTopicUnitQuizzes(!expandedTopicUnitQuizzes)}
+            className="w-full flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+          >
+            {expandedTopicUnitQuizzes ? (
+              <ChevronUp className="w-5 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <ChevronDown className="w-5 text-gray-600 dark:text-gray-400" />
+            )}
+            <BookMarked className="w-5 text-amber-500" />
+            <div className="flex-1 text-left">
+              <h2 className="font-semibold text-gray-900 dark:text-white">
+                Topic & Unit Quizzes
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {topicUnitQuizzes.length} curriculum-aligned quiz{topicUnitQuizzes.length !== 1 ? 'zes' : ''}
+              </p>
+            </div>
+          </button>
+          {expandedTopicUnitQuizzes && (
+            <div className="p-4 pt-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {topicUnitQuizzes.map(quiz => (
+                <button
+                  key={quiz.id}
+                  onClick={() => handleStartTopicUnitQuiz(quiz)}
+                  className="flex items-center justify-between gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg border border-gray-200 dark:border-gray-600 text-left transition-colors"
+                >
+                  <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {quiz.title}
+                  </span>
+                  <Play size={16} className="flex-shrink-0 text-amber-600 dark:text-amber-400" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Tier Filter – only for subjects that have tiers in GCSE scope */}
       {(() => {

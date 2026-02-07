@@ -135,7 +135,7 @@ function validateLabel(q: NormalizedQuestion): ValidationOutput {
 /** Maths types that normalize to short; validate as short if they appear on NormalizedQuestion. */
 const MATH_TYPES_AS_SHORT = new Set([
   'numeric', 'multiNumeric', 'expression', 'tableFill', 'orderSteps',
-  'graphPlot', 'graphRead', 'geometryConstruct', 'proofShort', 'dragMatch',
+  'graphPlot', 'graphRead', 'geometryConstruct', 'proofShort',
 ])
 
 export function validateNormalizedQuestion(q: NormalizedQuestion): ValidationOutput {
@@ -147,6 +147,8 @@ export function validateNormalizedQuestion(q: NormalizedQuestion): ValidationOut
     case 'fill':
       return validateFill(q)
     case 'match':
+      return validateMatch(q)
+    case 'dragMatch':
       return validateMatch(q)
     case 'label':
       return validateLabel(q)

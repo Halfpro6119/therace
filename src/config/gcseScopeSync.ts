@@ -67,7 +67,12 @@ export async function syncGcseScopeToDb(): Promise<SyncResult> {
         result.papersCreated++;
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof (err as { message?: string })?.message === 'string'
+            ? (err as { message: string }).message
+            : String(err);
       result.errors.push(`${def.name}: ${message}`);
     }
   }

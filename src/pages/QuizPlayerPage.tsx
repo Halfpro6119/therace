@@ -22,6 +22,7 @@ import { ComboTracker } from '../components/ComboTracker';
 import { MathsToolkit } from '../components/toolkit/MathsToolkit';
 import { CalculatorModal } from '../components/CalculatorModal';
 import { DiagramRenderer } from '../components/DiagramRenderer';
+import { BearingsDiagramWithProtractor, isBearingsDiagram } from '../components/BearingsDiagramWithProtractor';
 import { storage, calculateMasteryLevel } from '../utils/storage';
 import { soundSystem } from '../utils/sounds';
 import { useConfirm } from '../contexts/ConfirmContext';
@@ -49,12 +50,20 @@ function formatTime(seconds: number): string {
 }
 
 const DEFAULT_TIME_PER_QUESTION_SEC = 30;
+const MIN_QUIZ_TIME_SEC = 60;
 
-/** Total quiz time = sum of per-question time allowances; falls back to quiz.timeLimitSec if none set */
-function computeTotalQuizTimeSec(prompts: Prompt[], fallbackSec: number): number {
+/** Total quiz time = sum of per-question time allowances; falls back to quiz.timeLimitSec if none set.
+ *  If the result would be 0 or invalid (e.g. quiz has timeLimitSec 0), uses a minimum so the quiz doesn't timeout immediately. */
+function computeTotalQuizTimeSec(prompts: Prompt[], fallbackSec: number | undefined): number {
   const anyHaveAllowance = prompts.some(p => p.timeAllowanceSec != null && p.timeAllowanceSec > 0);
-  if (!anyHaveAllowance) return fallbackSec;
-  return prompts.reduce((s, p) => s + (p.timeAllowanceSec ?? DEFAULT_TIME_PER_QUESTION_SEC), 0);
+  let total =
+    anyHaveAllowance
+      ? prompts.reduce((s, p) => s + (p.timeAllowanceSec ?? DEFAULT_TIME_PER_QUESTION_SEC), 0)
+      : (fallbackSec ?? 0);
+  if (total <= 0 && prompts.length > 0) {
+    total = Math.max(MIN_QUIZ_TIME_SEC, prompts.length * DEFAULT_TIME_PER_QUESTION_SEC);
+  }
+  return total;
 }
 
 // ============================================================================
@@ -328,6 +337,43 @@ export function QuizPlayerPage() {
     }
   };
 
+  /** Advance to next question; safe to call from timeouts (uses functional update + always latest ref). */
+  const advanceToNextQuestionRef = useRef<() => void>(() => {});
+  advanceToNextQuestionRef.current = () => {
+    setCurrentPromptIndex((prev) => {
+      if (prev < quizPrompts.length - 1) return prev + 1;
+      endQuiz();
+      return prev;
+    });
+    setCurrentInput('');
+    setShowFeedback(false);
+    setFeedbackMessage('');
+  };
+
+  const handleGiveUp = () => {
+    if (!currentPrompt || showFeedback) return;
+    const correctDisplay = Array.isArray(currentPrompt.answers)
+      ? currentPrompt.answers.join(', ')
+      : (currentPrompt.answers?.[0] ?? '');
+    const maxMarks = currentPrompt.marks ?? 1;
+    setGradeResult({
+      isCorrect: false,
+      marksAwarded: 0,
+      maxMarks,
+      feedback: {
+        correctAnswer: correctDisplay,
+        summary: 'You gave up',
+      },
+    });
+    setExplanation(currentPrompt.explanation ?? '');
+    setShowFeedback(true);
+    setAnsweredPrompts(prev => new Set([...prev, currentPrompt.id]));
+    setMissedPrompts(prev => new Set([...prev, currentPrompt.id]));
+    setCombo(0);
+    setFeedbackAnimation('wrong');
+    setTimeout(() => setFeedbackAnimation(null), 600);
+  };
+
   /**
    * FIXED: New submit handler using centralized pipeline
    * WITH AUTO-ADVANCE: Automatically moves to next question when correct
@@ -392,11 +438,12 @@ export function QuizPlayerPage() {
         setTimeout(() => setFeedbackAnimation(null), 600);
 
         // ================================================================
-        // AUTO-ADVANCE: Wait 1.5 seconds then move to next question
+        // AUTO-ADVANCE: Show correct feedback briefly then move to next question
+        // (use ref so timeout always runs latest advance logic, no stale closure)
         // ================================================================
         setTimeout(() => {
-          handleNext();
-        }, 1500);
+          advanceToNextQuestionRef.current();
+        }, 1000);
       } else {
         setMissedPrompts(prev => new Set([...prev, currentPrompt.id]));
         setCombo(0);
@@ -737,56 +784,52 @@ export function QuizPlayerPage() {
                 )}
 
                 {isMathsSubject && (
-                  <div className="relative flex items-center gap-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setToolkitOpenWithTab('keyboard');
-                        setToolkitOpen(true);
-                      }}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      style={{ color: 'rgb(var(--text))' }}
-                      title="Maths Keyboard (powers, roots, symbols)"
-                    >
-                      <Keyboard size={20} />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setToolkitOpen(!toolkitOpen)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        toolkitOpen
-                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                          : calculatorAllowed
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-400 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                          : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                      }`}
-                      style={{ color: (toolkitOpen || calculatorAllowed) ? undefined : 'rgb(var(--text))' }}
-                      title={calculatorAllowed ? "Maths Toolkit (Calculator Available)" : "Maths Toolkit"}
-                    >
-                      <Wrench size={20} />
-                    </motion.button>
-                    {calculatorAllowed && !toolkitOpen && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800"
-                      />
-                    )}
-                  </div>
-                )}
-
-                <div className="relative">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowSettings(!showSettings)}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    style={{ color: 'rgb(var(--text))' }}
+                    onClick={() => {
+                      if (toolkitOpen) {
+                        setToolkitOpen(false);
+                      } else {
+                        setToolkitOpenWithTab('keyboard');
+                        setToolkitOpen(true);
+                      }
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      toolkitOpen
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                    style={{ color: toolkitOpen ? undefined : 'rgb(var(--text))' }}
+                    title="Maths Keyboard (powers, roots, symbols)"
                   >
-                    <Settings size={20} />
+                    <Keyboard size={20} />
                   </motion.button>
+                )}
+
+                <div className="flex items-center gap-1">
+                  {currentPrompt && !showFeedback && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleGiveUp}
+                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors text-orange-600 dark:text-orange-400 text-sm font-medium"
+                      title="Give up and see the answer"
+                    >
+                      <Flag size={18} />
+                      <span className="hidden sm:inline">Give up</span>
+                    </motion.button>
+                  )}
+                  <div className="relative">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowSettings(!showSettings)}
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      style={{ color: 'rgb(var(--text))' }}
+                    >
+                      <Settings size={20} />
+                    </motion.button>
 
                   <AnimatePresence>
                     {showSettings && (
@@ -849,6 +892,7 @@ export function QuizPlayerPage() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
                 </div>
               </div>
             </div>
@@ -935,7 +979,16 @@ export function QuizPlayerPage() {
                   )}
 
                   {diagramMetadata && (!diagramMetadata.placement || diagramMetadata.placement === 'above') && (
-                    <DiagramRenderer metadata={diagramMetadata} />
+                    isBearingsDiagram(diagramMetadata) && (currentPrompt?.type === 'numeric' || currentPrompt?.type === 'numericWithTolerance') ? (
+                      <BearingsDiagramWithProtractor
+                        metadata={diagramMetadata}
+                        value={typeof currentInput === 'string' ? currentInput : ''}
+                        onChange={(deg) => setCurrentInput(String(deg))}
+                        disabled={isSubmitting}
+                      />
+                    ) : (
+                      <DiagramRenderer metadata={diagramMetadata} />
+                    )
                   )}
 
                   <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
@@ -943,7 +996,16 @@ export function QuizPlayerPage() {
                   </h3>
 
                   {diagramMetadata && diagramMetadata.placement === 'below' && (
-                    <DiagramRenderer metadata={diagramMetadata} />
+                    isBearingsDiagram(diagramMetadata) && (currentPrompt?.type === 'numeric' || currentPrompt?.type === 'numericWithTolerance') ? (
+                      <BearingsDiagramWithProtractor
+                        metadata={diagramMetadata}
+                        value={typeof currentInput === 'string' ? currentInput : ''}
+                        onChange={(deg) => setCurrentInput(String(deg))}
+                        disabled={isSubmitting}
+                      />
+                    ) : (
+                      <DiagramRenderer metadata={diagramMetadata} />
+                    )
                   )}
                 </div>
 

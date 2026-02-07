@@ -16,7 +16,9 @@ import { useMemo } from 'react'
 import type { Prompt } from '../types'
 import { normalizeQuestion, grade, type NormalizedQuestion, type GradeResult, type UserResponse } from '../utils/questionEngine'
 import { validateNormalizedQuestion } from '../utils/questionEngine'
-import { MarksBadge, FeedbackBlock, ShortQuestion, NumericQuestion, MultiNumericQuestion, MCQQuestion, FillQuestion, MatchQuestion, LabelQuestion } from './questions/QuestionTypes'
+import { MarksBadge, FeedbackBlock, ShortQuestion, NumericQuestion, MultiNumericQuestion, MCQQuestion, FillQuestion, MatchQuestion, DragMatchQuestion, LabelQuestion, TableFillQuestion } from './questions/QuestionTypes'
+import { CoordinateGridInput } from './questions/CoordinateGridInput'
+import { InequalityNumberLineInput } from './questions/InequalityNumberLineInput'
 
 export interface QuestionRendererProps {
   prompt: Prompt
@@ -28,6 +30,23 @@ export interface QuestionRendererProps {
   onSubmit: () => void
   /** Called with the answer input element when it mounts/unmounts (for toolkit/calculator insert) */
   inputRefCallback?: (el: HTMLInputElement | null) => void
+}
+
+function parsePointsFromJson(value: string): { points: unknown[] } {
+  try {
+    const p = JSON.parse(value)
+    return Array.isArray(p?.points) ? p : { points: [] }
+  } catch (_) {
+    return { points: [] }
+  }
+}
+
+function parseJsonSafe(value: string): unknown {
+  try {
+    return JSON.parse(value)
+  } catch (_) {
+    return value
+  }
 }
 
 /**
@@ -65,14 +84,21 @@ function toUserResponse(q: NormalizedQuestion, value: any): UserResponse {
         try {
           const parsed = JSON.parse(value)
           return { type: 'tableFill', cells: Array.isArray(parsed) ? parsed : [] }
-        } catch { return { type: 'tableFill', cells: [] } }
+        } catch (_) { return { type: 'tableFill', cells: [] } }
       }
       return { type: 'tableFill', cells: [] }
     }
     case 'graphPlot':
-    case 'inequalityPlot':
     case 'geometryConstruct': {
-      const v = typeof value === 'string' && (value.startsWith('[') || value.startsWith('{')) ? (() => { try { return JSON.parse(value) } catch { return value } })() : value
+      const v = value && typeof value === 'object' && Array.isArray((value as any).points)
+        ? { points: (value as any).points }
+        : typeof value === 'string' && (value.startsWith('[') || value.startsWith('{'))
+          ? parsePointsFromJson(value)
+          : { points: [] }
+      return { type: q.type, value: v }
+    }
+    case 'inequalityPlot': {
+      const v = typeof value === 'string' && (value.startsWith('[') || value.startsWith('{')) ? parseJsonSafe(value) : value
       return { type: q.type, value: v }
     }
     default:
@@ -119,11 +145,17 @@ export function isMinimallyAnswered(q: NormalizedQuestion, value: any): boolean 
     case 'orderSteps':
       return Array.isArray(value) && value.length > 0
     case 'tableFill':
-      return Array.isArray(value) && value.some((row: any) => Array.isArray(row) && row.some((c: any) => c != null && String(c).trim().length > 0))
+      return Array.isArray(value) && value.some((row: any) => row && typeof row === 'object' && Object.values(row).some((c: any) => c != null && String(c).trim().length > 0))
     case 'graphPlot':
-    case 'inequalityPlot':
     case 'geometryConstruct':
-      return value != null
+      return value != null && Array.isArray((value as any)?.points) && (value as any).points.length > 0
+    case 'inequalityPlot':
+      return (
+        value != null &&
+        typeof value === 'object' &&
+        typeof (value as any).left === 'number' &&
+        typeof (value as any).right === 'number'
+      )
     default:
       return false
   }
@@ -177,7 +209,7 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
         <LabelQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
       )}
       {q.type === 'dragMatch' && (
-        <MatchQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+        <DragMatchQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
       )}
       {/* Text-based types: single input until dedicated UI */}
       {(q.type === 'expression' || q.type === 'graphRead' || q.type === 'proofShort') && (
@@ -187,13 +219,34 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
       {q.type === 'orderSteps' && (
         <ShortQuestion q={q} value={Array.isArray(value) ? value.join(', ') : typeof value === 'string' ? value : ''} onChange={(v) => onChange(typeof v === 'string' ? v.split(',').map(s => s.trim()).filter(Boolean) : [])} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
-      {/* tableFill / graphPlot / inequalityPlot / geometryConstruct: freeform text (or JSON) for now */}
-      {(q.type === 'tableFill' || q.type === 'graphPlot' || q.type === 'inequalityPlot' || q.type === 'geometryConstruct') && (
-        <ShortQuestion q={q} value={typeof value === 'string' ? value : value != null ? JSON.stringify(value) : ''} onChange={(v) => {
-        if (typeof v !== 'string') return
-        const parsed = (v.startsWith('[') || v.startsWith('{')) ? (() => { try { return JSON.parse(v) } catch { return v } })() : v
-        onChange(parsed)
-      }} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
+      {/* graphPlot / geometryConstruct: dedicated coordinate grid */}
+      {(q.type === 'graphPlot' || q.type === 'geometryConstruct') && (
+        <CoordinateGridInput
+          q={q}
+          value={value && typeof value === 'object' && Array.isArray((value as any).points) ? (value as any) : undefined}
+          onChange={onChange}
+          disabled={disabled}
+          mode={q.type}
+        />
+      )}
+      {/* tableFill: grid UI when meta.questionData.rows is present */}
+      {q.type === 'tableFill' && (
+        <TableFillQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={gradeResult} onSubmit={onSubmit} />
+      )}
+      {/* inequalityPlot: number-line UI with shaded interval */}
+      {q.type === 'inequalityPlot' && (
+        <InequalityNumberLineInput
+          q={q}
+          value={
+            value && typeof value === 'object' && typeof (value as any).left === 'number' && typeof (value as any).right === 'number'
+              ? (value as { left: number; right: number; leftClosed?: boolean; rightClosed?: boolean })
+              : undefined
+          }
+          onChange={onChange}
+          disabled={disabled}
+          showFeedback={showFeedback}
+          gradeResult={gradeResult ? { isCorrect: gradeResult.isCorrect, correctAnswer: gradeResult.feedback.correctAnswer } : undefined}
+        />
       )}
 
       <FeedbackBlock show={showFeedback} gradeResult={gradeResult ? {

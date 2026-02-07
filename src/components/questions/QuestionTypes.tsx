@@ -9,8 +9,8 @@
  *   - badge, badge-accent, badge-success, badge-warning
  */
 
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { CheckCircle, XCircle } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { CheckCircle, XCircle, GripVertical, X } from 'lucide-react'
 import type { NormalizedQuestion, UserResponse } from '../../utils/questionEngine'
 import { safeTrim } from '../../utils/questionEngine'
 
@@ -325,6 +325,301 @@ export function MatchQuestion({ q, value, onChange, disabled }: QuestionComponen
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// ---------------------------
+// TableFill (grid of cells; meta.questionData.rows defines columns and expected values)
+// ---------------------------
+
+/** Row for grading: record of column key -> string value. */
+export type TableFillRow = Record<string, string>
+
+function defaultColumnLabel(key: string): string {
+  return key.charAt(0).toUpperCase() + key.slice(1)
+}
+
+export function TableFillQuestion({ q, value, onChange, disabled }: QuestionComponentProps) {
+  const expectedRows = Array.isArray(q.meta?.questionData?.rows) ? q.meta.questionData.rows : []
+  const columnLabels: Record<string, string> =
+    (q.meta?.questionData?.columnLabels as Record<string, string>) || {}
+
+  const columns =
+    expectedRows.length > 0 && typeof expectedRows[0] === 'object'
+      ? (Object.keys(expectedRows[0] as object) as string[])
+      : []
+
+  const cells: TableFillRow[] = Array.isArray(value) ? value : []
+  const rows: TableFillRow[] = expectedRows.length
+    ? expectedRows.map((row: any, i: number) => {
+        const expected = row && typeof row === 'object' ? row : {}
+        const userRow = cells[i] && typeof cells[i] === 'object' ? cells[i] : {}
+        const out: TableFillRow = {}
+        for (const key of Object.keys(expected)) {
+          out[key] = userRow[key] != null ? String(userRow[key]) : ''
+        }
+        return out
+      })
+    : []
+
+  const setCell = (rowIndex: number, key: string, val: string) => {
+    const next = rows.map((r, i) => (i === rowIndex ? { ...r, [key]: val } : { ...r }))
+    onChange(next)
+  }
+
+  if (columns.length === 0) {
+    return (
+      <div className="card p-4">
+        <div className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          No table structure defined. Add meta.questionData.rows to enable the grid.
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2" aria-label="Table fill grid">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse" style={{ border: '1px solid rgb(var(--border))' }}>
+          <thead>
+            <tr>
+              {columns.map((key) => (
+                <th
+                  key={key}
+                  className="p-2 text-left text-sm font-semibold"
+                  style={{
+                    color: 'rgb(var(--text))',
+                    borderBottom: '1px solid rgb(var(--border))',
+                    backgroundColor: 'rgb(var(--surface))',
+                  }}
+                >
+                  {columnLabels[key] ?? defaultColumnLabel(key)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((key) => (
+                  <td
+                    key={key}
+                    className="p-1"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <input
+                      type="text"
+                      className="input w-full min-w-0"
+                      value={row[key] ?? ''}
+                      onChange={(e) => setCell(rowIndex, key, e.target.value)}
+                      disabled={disabled}
+                      aria-label={`${columnLabels[key] ?? key} row ${rowIndex + 1}`}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------
+// DragMatch (drag-and-drop match, same data model as Match)
+// ---------------------------
+
+const DRAG_TYPE_LEFT = 'application/x-dragmatch-left'
+
+export function DragMatchQuestion({ q, value, onChange, disabled }: QuestionComponentProps) {
+  const leftItems = Array.isArray(q.meta.questionData?.leftItems) ? q.meta.questionData.leftItems : []
+  const rightItems = Array.isArray(q.meta.questionData?.rightItems) ? q.meta.questionData.rightItems : []
+  const mapping: Record<string, string> = value && typeof value === 'object' ? value : {}
+  const [dragOverRightId, setDragOverRightId] = useState<string | null>(null)
+  const [draggingLeftId, setDraggingLeftId] = useState<string | null>(null)
+
+  // Reverse lookup: rightId -> leftId (who is placed in this slot)
+  const rightToLeft = useMemo(() => {
+    const r2l: Record<string, string> = {}
+    for (const [lid, rid] of Object.entries(mapping)) {
+      if (rid) r2l[rid] = lid
+    }
+    return r2l
+  }, [mapping])
+
+  const leftIdToText = useMemo(() => {
+    const out: Record<string, string> = {}
+    for (const l of leftItems) {
+      const id = safeTrim((l as any)?.id)
+      const text = safeTrim((l as any)?.text)
+      if (id) out[id] = text ?? ''
+    }
+    return out
+  }, [leftItems])
+
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, leftId: string) => {
+      if (disabled) return
+      e.dataTransfer.setData(DRAG_TYPE_LEFT, leftId)
+      e.dataTransfer.effectAllowed = 'move'
+      setDraggingLeftId(leftId)
+    },
+    [disabled]
+  )
+
+  const handleDragEnd = useCallback(() => {
+    setDraggingLeftId(null)
+    setDragOverRightId(null)
+  }, [])
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent, rightId: string) => {
+      e.preventDefault()
+      if (e.dataTransfer.types.includes(DRAG_TYPE_LEFT)) {
+        e.dataTransfer.dropEffect = 'move'
+        setDragOverRightId(rightId)
+      }
+    },
+    []
+  )
+
+  const handleDragLeave = useCallback(() => {
+    setDragOverRightId(null)
+  }, [])
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent, rightId: string) => {
+      e.preventDefault()
+      setDragOverRightId(null)
+      setDraggingLeftId(null)
+      if (disabled) return
+      const leftId = e.dataTransfer.getData(DRAG_TYPE_LEFT)
+      if (!leftId) return
+      onChange({ ...mapping, [leftId]: rightId })
+    },
+    [disabled, mapping, onChange]
+  )
+
+  const clearSlot = useCallback(
+    (rightId: string) => {
+      if (disabled) return
+      const leftId = rightToLeft[rightId]
+      if (!leftId) return
+      const next = { ...mapping }
+      delete next[leftId]
+      onChange(next)
+    },
+    [disabled, mapping, onChange, rightToLeft]
+  )
+
+  if (leftItems.length === 0 || rightItems.length === 0) {
+    return (
+      <div className="card p-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+        No match items configured. Add leftItems and rightItems in question data.
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4" aria-label="Drag to match">
+      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+        Drag each item from the left to the correct match on the right.
+      </p>
+      <div className="flex flex-wrap gap-6 sm:flex-nowrap sm:gap-8">
+        {/* Left column: draggable items */}
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="text-xs font-medium uppercase tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
+            Items
+          </div>
+          {leftItems.map((l: any) => {
+            const lid = safeTrim(l?.id)
+            const ltext = safeTrim(l?.text)
+            if (!lid || !ltext) return null
+            const isDragging = draggingLeftId === lid
+            return (
+              <div
+                key={lid}
+                draggable={!disabled}
+                onDragStart={(e) => handleDragStart(e, lid)}
+                onDragEnd={handleDragEnd}
+                className={`card flex cursor-grab items-center gap-2 border-2 p-3 transition-shadow active:cursor-grabbing ${
+                  isDragging ? 'opacity-60' : ''
+                } ${disabled ? 'cursor-default opacity-80' : 'hover:shadow-md'}`}
+                style={{
+                  borderColor: isDragging ? 'rgb(var(--accent))' : 'transparent',
+                  color: 'rgb(var(--text))',
+                }}
+                role="button"
+                tabIndex={disabled ? -1 : 0}
+                onKeyDown={(e) => {
+                  if (disabled) return
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    e.currentTarget.focus()
+                    // Keyboard users can't drag easily; focus is enough for a11y
+                  }
+                }}
+                aria-label={`Drag ${ltext} to match`}
+              >
+                <GripVertical size={16} style={{ color: 'rgb(var(--text-secondary))' }} aria-hidden />
+                <span className="font-medium">{ltext}</span>
+              </div>
+            )
+          })}
+        </div>
+        {/* Right column: drop targets */}
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="text-xs font-medium uppercase tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
+            Match to
+          </div>
+          {rightItems.map((r: any) => {
+            const rid = safeTrim(r?.id)
+            const rtext = safeTrim(r?.text)
+            if (!rid || !rtext) return null
+            const placedLeftId = rightToLeft[rid]
+            const placedText = placedLeftId ? leftIdToText[placedLeftId] : null
+            const isDropTarget = dragOverRightId === rid
+            return (
+              <div
+                key={rid}
+                onDragOver={(e) => handleDragOver(e, rid)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, rid)}
+                className={`card flex min-h-[48px] items-center justify-between gap-2 border-2 p-3 transition-colors ${
+                  isDropTarget ? 'border-accent bg-accent/10' : ''
+                }`}
+                style={{
+                  borderColor: isDropTarget ? 'rgb(var(--accent))' : 'transparent',
+                  color: 'rgb(var(--text))',
+                }}
+                role="region"
+                aria-label={`Match for ${rtext}${placedText ? `: ${placedText}` : ': drop here'}`}
+              >
+                <div className="flex flex-1 items-center gap-2">
+                  <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    {rtext}
+                  </span>
+                  <span className="font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                    {placedText ?? '—'}
+                  </span>
+                </div>
+                {placedText && !disabled && (
+                  <button
+                    type="button"
+                    onClick={() => clearSlot(rid)}
+                    className="btn-icon rounded p-1"
+                    aria-label={`Clear match for ${rtext}`}
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }

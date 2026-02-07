@@ -20,7 +20,9 @@ export const scatterPlot: DiagramEngineTemplate = {
     visibility: {
       showGrid: { default: true },
       showPoints: { default: true },
-      highlightOutlier: { default: true }
+      highlightOutlier: { default: true },
+      showNumbers: { default: true },
+      showLineOfBestFit: { default: false }
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
@@ -47,6 +49,8 @@ export const scatterPlot: DiagramEngineTemplate = {
     const showGrid = params.visibility?.showGrid !== false;
     const showPoints = params.visibility?.showPoints !== false;
     const highlightOutlier = params.visibility?.highlightOutlier !== false;
+    const showNumbers = params.visibility?.showNumbers !== false;
+    const showLineOfBestFit = params.visibility?.showLineOfBestFit === true;
 
     const chartWidth = width - 2 * padding;
     const chartHeight = height - 2 * padding;
@@ -57,29 +61,63 @@ export const scatterPlot: DiagramEngineTemplate = {
     const convertX = (x: number) => padding + (x - xMin) * scaleX;
     const convertY = (y: number) => height - padding - (y - yMin) * scaleY;
 
-    // Detect outlier (point furthest from trend line)
+    // Least-squares line of best fit (used for outlier detection and optional line drawing)
+    let slope = 0;
+    let intercept = 0;
     let outlierIndex = -1;
-    if (highlightOutlier && points.length > 2) {
-      // Simple outlier detection: find point with largest residual from simple linear trend
+    if (points.length > 1) {
       const n = points.length;
       const sumX = points.reduce((s, p) => s + p.x, 0);
       const sumY = points.reduce((s, p) => s + p.y, 0);
       const sumXY = points.reduce((s, p) => s + p.x * p.y, 0);
       const sumXX = points.reduce((s, p) => s + p.x * p.x, 0);
-      
-      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-      const intercept = (sumY - slope * sumX) / n;
-      
-      let maxResidual = 0;
-      points.forEach((p, i) => {
-        const predicted = slope * p.x + intercept;
-        const residual = Math.abs(p.y - predicted);
-        if (residual > maxResidual) {
-          maxResidual = residual;
-          outlierIndex = i;
-        }
-      });
+      const denom = n * sumXX - sumX * sumX;
+      if (Math.abs(denom) > 1e-10) {
+        slope = (n * sumXY - sumX * sumY) / denom;
+        intercept = (sumY - slope * sumX) / n;
+      }
+      if (highlightOutlier && points.length > 2) {
+        let maxResidual = 0;
+        points.forEach((p, i) => {
+          const predicted = slope * p.x + intercept;
+          const residual = Math.abs(p.y - predicted);
+          if (residual > maxResidual) {
+            maxResidual = residual;
+            outlierIndex = i;
+          }
+        });
+      }
     }
+
+    // Line of best fit: draw from (xMin, predicted) to (xMax, predicted)
+    const lineOfBestFitMarkup =
+      showLineOfBestFit && points.length > 1
+        ? (() => {
+            const y1 = slope * xMin + intercept;
+            const y2 = slope * xMax + intercept;
+            return `<line id="ln:lobf" x1="${convertX(xMin)}" y1="${convertY(y1)}" x2="${convertX(xMax)}" y2="${convertY(y2)}" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 4"/>`;
+          })()
+        : '';
+
+    // Axis numbers: tick marks and labels at integer steps (step 1 for range ≤ 16, else 2 or 5)
+    const xRange = xMax - xMin;
+    const yRange = yMax - yMin;
+    const xStep = xRange <= 16 ? 1 : xRange <= 30 ? 2 : 5;
+    const yStep = yRange <= 16 ? 1 : yRange <= 30 ? 2 : 5;
+    const axisNumbersMarkup = showNumbers
+      ? `
+    ${Array.from({ length: Math.floor(xRange / xStep) + 1 }, (_, i) => {
+        const xVal = xMin + i * xStep;
+        const x = convertX(xVal);
+        return `<text x="${x}" y="${height - padding + 20}" class="diagram-text-small" text-anchor="middle">${xVal}</text>`;
+      }).join('\n')}
+    ${Array.from({ length: Math.floor(yRange / yStep) + 1 }, (_, i) => {
+        const yVal = yMin + i * yStep;
+        const y = convertY(yVal);
+        return `<text x="${padding - 8}" y="${y + 4}" class="diagram-text-small" text-anchor="end">${yVal}</text>`;
+      }).join('\n')}
+    `
+      : '';
 
     const gridMarkup = showGrid ? `
     <g id="grp:grid" opacity="0.2">
@@ -122,6 +160,8 @@ export const scatterPlot: DiagramEngineTemplate = {
     <text id="txt:xAxisLabel" x="${width - padding + 15}" y="${height - padding + 5}" class="diagram-text">${xAxisLabel}</text>
     <text id="txt:yAxisLabel" x="${padding - 5}" y="${padding - 10}" class="diagram-text">${yAxisLabel}</text>
 
+    ${axisNumbersMarkup}
+    ${lineOfBestFitMarkup}
     ${pointsMarkup}
   </g>
 </svg>`;

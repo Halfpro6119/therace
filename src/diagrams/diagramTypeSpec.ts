@@ -18,6 +18,8 @@ export const DIAGRAM_TYPE_HISTOGRAM = 'histogram';
 export const DIAGRAM_TYPE_BOX_PLOT = 'boxPlot';
 export const DIAGRAM_TYPE_BEARING_DIAGRAM = 'bearingDiagram';
 export const DIAGRAM_TYPE_VECTOR_DIAGRAM = 'vectorDiagram';
+export const DIAGRAM_TYPE_PRE_PLOTTED_GRAPH = 'prePlottedGraph';
+export const DIAGRAM_TYPE_CUMULATIVE_FREQUENCY = 'cumulativeFrequency';
 
 /** Canonical diagram type ids the engine supports. */
 export type DiagramTypeId =
@@ -32,7 +34,9 @@ export type DiagramTypeId =
   | typeof DIAGRAM_TYPE_HISTOGRAM
   | typeof DIAGRAM_TYPE_BOX_PLOT
   | typeof DIAGRAM_TYPE_BEARING_DIAGRAM
-  | typeof DIAGRAM_TYPE_VECTOR_DIAGRAM;
+  | typeof DIAGRAM_TYPE_VECTOR_DIAGRAM
+  | typeof DIAGRAM_TYPE_PRE_PLOTTED_GRAPH
+  | typeof DIAGRAM_TYPE_CUMULATIVE_FREQUENCY;
 
 /** Map from canonical diagram type to templateId in the engine registry. */
 export const DIAGRAM_TYPE_TO_TEMPLATE_ID: Record<DiagramTypeId, string> = {
@@ -48,6 +52,8 @@ export const DIAGRAM_TYPE_TO_TEMPLATE_ID: Record<DiagramTypeId, string> = {
   [DIAGRAM_TYPE_BOX_PLOT]: 'math.statistics.boxplot.v1',
   [DIAGRAM_TYPE_BEARING_DIAGRAM]: 'math.bearings.north_arrow.v1',
   [DIAGRAM_TYPE_VECTOR_DIAGRAM]: 'math.vectors.diagram.v1',
+  [DIAGRAM_TYPE_PRE_PLOTTED_GRAPH]: 'math.graphs.pre_plotted.v1',
+  [DIAGRAM_TYPE_CUMULATIVE_FREQUENCY]: 'math.statistics.cumulative_frequency.v1',
 };
 
 /** All supported diagram type ids in order. */
@@ -64,6 +70,8 @@ export const SUPPORTED_DIAGRAM_TYPES: DiagramTypeId[] = [
   DIAGRAM_TYPE_BOX_PLOT,
   DIAGRAM_TYPE_BEARING_DIAGRAM,
   DIAGRAM_TYPE_VECTOR_DIAGRAM,
+  DIAGRAM_TYPE_PRE_PLOTTED_GRAPH,
+  DIAGRAM_TYPE_CUMULATIVE_FREQUENCY,
 ];
 
 export function getTemplateIdForDiagramType(typeId: DiagramTypeId): string {

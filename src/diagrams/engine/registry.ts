@@ -31,6 +31,8 @@ import { boxplotComparison } from '../templates/boxplotComparison';
 import { cuboid } from '../templates/cuboid';
 import { triangle } from '../templates/triangle';
 import { vectorDiagram } from '../templates/vectorDiagram';
+import { prePlottedGraph } from '../templates/prePlottedGraph';
+import { cumulativeFrequency } from '../templates/cumulativeFrequency';
 
 const templates = new Map<string, DiagramEngineTemplate>();
 
@@ -85,6 +87,8 @@ registerTemplate(boxplotComparison);
 registerTemplate(cuboid);
 registerTemplate(triangle);
 registerTemplate(vectorDiagram);
+registerTemplate(prePlottedGraph);
+registerTemplate(cumulativeFrequency);
 
 registerCanonicalAliases();
 

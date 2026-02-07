@@ -25,6 +25,13 @@ function emptyIsZero(text: string): boolean {
   return safeTrim(text).length === 0
 }
 
+/** One row of a mark scheme: award marks if the answer contains any of the keywords or any of the key numbers. */
+export interface MarkSchemeCriterion {
+  keywords?: string[]
+  keyNumbers?: (string | number)[]
+  marks: number
+}
+
 function getShortConfig(q: NormalizedQuestion) {
   const qd = q.meta.questionData || {}
   return {
@@ -49,6 +56,117 @@ function fractionToNumberOrNull(v: string): number | null {
   return num / den
 }
 
+/** Parse a key number from config (string like "3/8" or "5/12", or number). */
+function keyNumberToValue(k: string | number): number | null {
+  if (typeof k === 'number' && Number.isFinite(k)) return k
+  const s = safeTrim(String(k))
+  const n = parseNumberOrNull(s) ?? fractionToNumberOrNull(s)
+  return n
+}
+
+/** Extract numeric values from text (decimals and fractions like 3/8). */
+function extractNumbersFromText(text: string): number[] {
+  const out: number[] = []
+  const t = safeTrim(text)
+  // Fractions: 3/8, 5/12, -1/2
+  const fracRegex = /(-?\d+)\s*\/\s*(-?\d+)/g
+  let m: RegExpExecArray | null
+  while ((m = fracRegex.exec(t)) !== null) {
+    const num = Number(m[1])
+    const den = Number(m[2])
+    if (Number.isFinite(num) && Number.isFinite(den) && den !== 0) out.push(num / den)
+  }
+  // Decimals and integers (avoid matching digits that are part of fractions)
+  const numberRegex = /(?<!\d)-?\d+\.?\d*(?!\s*\/)/g
+  while ((m = numberRegex.exec(t)) !== null) {
+    const n = parseFloat(m[0])
+    if (Number.isFinite(n)) out.push(n)
+  }
+  return out
+}
+
+const MARK_SCHEME_NUMERIC_TOLERANCE = 0.001
+
+/** Grade short/proofShort using mark scheme: sum marks for each criterion matched by keywords or key numbers. */
+function gradeShortWithMarkScheme(
+  q: NormalizedQuestion,
+  raw: string,
+  maxMarks: number,
+  caseSensitive: boolean
+): GradeResult {
+  const qd = q.meta.questionData || {}
+  const scheme = Array.isArray(qd.markScheme) ? (qd.markScheme as MarkSchemeCriterion[]) : []
+  if (scheme.length === 0) {
+    return {
+      isCorrect: false,
+      marksAwarded: 0,
+      maxMarks,
+      feedback: {
+        summary: 'Mark scheme not configured.',
+        correctAnswer: q.answersAccepted[0] || '',
+        mistakeTags: ['invalid'],
+      },
+      normalizedUserAnswer: { text: raw },
+    }
+  }
+
+  const normText = caseSensitive ? safeTrim(raw) : safeLower(raw)
+  const userNumbers = extractNumbersFromText(raw)
+  let totalMarks = 0
+
+  for (const row of scheme) {
+    const marks = typeof row.marks === 'number' && row.marks >= 0 ? row.marks : 0
+    if (marks === 0) continue
+
+    let matched = false
+    if (Array.isArray(row.keywords) && row.keywords.length > 0) {
+      for (const kw of row.keywords) {
+        const k = caseSensitive ? safeTrim(String(kw)) : safeLower(String(kw))
+        if (k && normText.includes(k)) {
+          matched = true
+          break
+        }
+      }
+    }
+    if (!matched && Array.isArray(row.keyNumbers) && row.keyNumbers.length > 0) {
+      const expectedValues = row.keyNumbers
+        .map(k => keyNumberToValue(k))
+        .filter((n): n is number => n !== null)
+      for (const ev of expectedValues) {
+        for (const un of userNumbers) {
+          if (Math.abs(un - ev) <= MARK_SCHEME_NUMERIC_TOLERANCE) {
+            matched = true
+            break
+          }
+        }
+        if (matched) break
+      }
+    }
+    if (matched) totalMarks += marks
+  }
+
+  const marksAwarded = Math.min(totalMarks, maxMarks)
+  const isCorrect = marksAwarded >= maxMarks
+  const correctAnswer = q.answersAccepted[0] || '(see mark scheme)'
+
+  return {
+    isCorrect,
+    marksAwarded,
+    maxMarks,
+    feedback: {
+      summary:
+        marksAwarded >= maxMarks
+          ? `Correct (+${marksAwarded}/${maxMarks}).`
+          : marksAwarded > 0
+            ? `Partially correct (+${marksAwarded}/${maxMarks}).`
+            : `No key points matched (0/${maxMarks}).`,
+      correctAnswer,
+      mistakeTags: isCorrect ? [] : marksAwarded > 0 ? ['partial'] : ['mismatch'],
+    },
+    normalizedUserAnswer: { text: raw },
+  }
+}
+
 function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'short' }>): GradeResult {
   const cfg = getShortConfig(q)
   const maxMarks = q.marks
@@ -66,6 +184,13 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
       },
       normalizedUserAnswer: { text: '' },
     }
+  }
+
+  // Mark scheme: award marks by keywords/key numbers (for proofShort and open-ended short)
+  const qd = q.meta.questionData || {}
+  const scheme = Array.isArray(qd.markScheme) ? qd.markScheme : []
+  if (scheme.length > 0) {
+    return gradeShortWithMarkScheme(q, raw, maxMarks, cfg.caseSensitive)
   }
 
   const accepted = q.answersAccepted
@@ -574,6 +699,230 @@ function gradeAsShort(q: NormalizedQuestion, text: string): GradeResult {
   return gradeShort(q, { type: 'short', text })
 }
 
+// ----------------
+// inequalityPlot: interval on number line
+// ----------------
+
+export interface InequalityInterval {
+  left: number
+  right: number
+  leftClosed: boolean
+  rightClosed: boolean
+}
+
+const NUMERIC_TOLERANCE = 0.01
+
+/** Parse interval string e.g. "0≤x≤4", "0<=x<=4", "0 \\le x \\le 4", "x < 5", "-2 ≤ x ≤ 3". */
+export function parseIntervalFromString(s: string): InequalityInterval | null {
+  const raw = safeTrim(s)
+  if (!raw) return null
+  // Normalize: replace \le, \ge, \lt, \gt with single-char or two-char
+  const t = raw
+    .replace(/\\le\b/g, '≤')
+    .replace(/\\ge\b/g, '≥')
+    .replace(/\\lt\b/g, '<')
+    .replace(/\\gt\b/g, '>')
+    .replace(/\s+/g, ' ')
+  // Double-bounded: a ≤ x ≤ b or a <= x <= b (and strict variants)
+  const doubleMatch = t.match(
+    /^(-?[\d.]+)\s*(≤|≥|>=|<=|>|<)\s*x\s*(≤|≥|>=|<=|>|<)\s*(-?[\d.]+)$/i
+  )
+  if (doubleMatch) {
+    const a = parseFloat(doubleMatch[1])
+    const b = parseFloat(doubleMatch[4])
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+    const leftOp = doubleMatch[2]
+    const rightOp = doubleMatch[3]
+    const leftClosed = leftOp === '≤' || leftOp === '<=' || leftOp === '≥' || leftOp === '>='
+    const rightClosed = rightOp === '≤' || rightOp === '<=' || rightOp === '≥' || rightOp === '>='
+    return {
+      left: Math.min(a, b),
+      right: Math.max(a, b),
+      leftClosed,
+      rightClosed,
+    }
+  }
+  // Alternative: a ≤ x ≤ b with \le
+  const altMatch = t.match(/^(-?[\d.]+)\s*≤\s*x\s*≤\s*(-?[\d.]+)$/)
+  if (altMatch) {
+    const a = parseFloat(altMatch[1])
+    const b = parseFloat(altMatch[2])
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+    return {
+      left: Math.min(a, b),
+      right: Math.max(a, b),
+      leftClosed: true,
+      rightClosed: true,
+    }
+  }
+  return null
+}
+
+function intervalsEqual(a: InequalityInterval, b: InequalityInterval): boolean {
+  return (
+    Math.abs(a.left - b.left) <= NUMERIC_TOLERANCE &&
+    Math.abs(a.right - b.right) <= NUMERIC_TOLERANCE &&
+    a.leftClosed === b.leftClosed &&
+    a.rightClosed === b.rightClosed
+  )
+}
+
+function gradeInequalityPlot(
+  question: NormalizedQuestion,
+  response: { type: 'inequalityPlot'; value: unknown }
+): GradeResult {
+  const maxMarks = question.marks || 1
+  const raw = response.value
+
+  let userInterval: InequalityInterval | null = null
+  if (raw && typeof raw === 'object' && typeof (raw as any).left === 'number' && typeof (raw as any).right === 'number') {
+    const r = raw as any
+    userInterval = {
+      left: Number(r.left),
+      right: Number(r.right),
+      leftClosed: r.leftClosed !== false,
+      rightClosed: r.rightClosed !== false,
+    }
+    if (userInterval.left > userInterval.right) {
+      const L = userInterval.left
+      userInterval.left = userInterval.right
+      userInterval.right = L
+    }
+  } else if (typeof raw === 'string' && raw.trim()) {
+    userInterval = parseIntervalFromString(raw)
+  }
+
+  if (!userInterval) {
+    return {
+      isCorrect: false,
+      marksAwarded: 0,
+      maxMarks,
+      feedback: {
+        summary: 'No interval given.',
+        correctAnswer: question.answersAccepted[0] || '',
+        mistakeTags: ['empty'],
+      },
+      normalizedUserAnswer: response.value,
+    }
+  }
+
+  const accepted = question.answersAccepted || []
+  for (const ans of accepted) {
+    const acceptedInterval = parseIntervalFromString(ans)
+    if (acceptedInterval && intervalsEqual(userInterval, acceptedInterval)) {
+      return {
+        isCorrect: true,
+        marksAwarded: maxMarks,
+        maxMarks,
+        feedback: {
+          summary: `Correct (+${maxMarks}/${maxMarks}).`,
+          correctAnswer: ans,
+          mistakeTags: [],
+        },
+        normalizedUserAnswer: { type: 'inequalityPlot', value: userInterval },
+      }
+    }
+  }
+  return {
+    isCorrect: false,
+    marksAwarded: 0,
+    maxMarks,
+    feedback: {
+      summary: 'Incorrect interval.',
+      correctAnswer: question.answersAccepted[0] || '',
+      mistakeTags: ['mismatch'],
+    },
+    normalizedUserAnswer: { type: 'inequalityPlot', value: userInterval },
+  }
+}
+
+/** Expected point shape for graphPlot / geometryConstruct grading */
+interface ExpectedPoint {
+  x: number
+  y: number
+}
+
+function distance(p: ExpectedPoint, q: ExpectedPoint): number {
+  return Math.hypot(p.x - q.x, p.y - q.y)
+}
+
+/**
+ * Grade graphPlot or geometryConstruct by comparing submitted points to expected points with tolerance.
+ * questionData.expectedPoints: Array<{x, y}> (required for coordinate grading)
+ * questionData.coordinateTolerance: number (default 0.6, so half-unit grid snaps are accepted)
+ * For geometryConstruct, order of points matters (A', B', C'). For graphPlot, each expected point
+ * must have some user point within tolerance (order-independent).
+ */
+function gradeCoordinatePlot(
+  question: NormalizedQuestion,
+  response: { type: 'graphPlot' | 'geometryConstruct'; value: unknown }
+): GradeResult {
+  const maxMarks = question.marks || 1
+  const qd = question.meta?.questionData || {}
+  const expectedPoints = Array.isArray(qd.expectedPoints) ? qd.expectedPoints as ExpectedPoint[] : []
+  const tolerance = typeof qd.coordinateTolerance === 'number' && qd.coordinateTolerance >= 0 ? qd.coordinateTolerance : 0.6
+
+  const raw = response.value
+  const userPoints: ExpectedPoint[] =
+    raw && typeof raw === 'object' && Array.isArray((raw as any).points)
+      ? (raw as any).points.map((p: any) => ({
+          x: Number(p?.x) || 0,
+          y: Number(p?.y) || 0,
+        }))
+      : []
+
+  if (expectedPoints.length === 0) {
+    return {
+      isCorrect: false,
+      marksAwarded: 0,
+      maxMarks,
+      feedback: {
+        summary: 'Unable to grade (no expected points defined).',
+        correctAnswer: question.answersAccepted[0] || '',
+        mistakeTags: ['invalid'],
+      },
+      normalizedUserAnswer: { points: userPoints },
+    }
+  }
+
+  let matched = 0
+  const orderMatters = question.type === 'geometryConstruct'
+
+  if (orderMatters) {
+    for (let i = 0; i < expectedPoints.length && i < userPoints.length; i++) {
+      if (distance(expectedPoints[i], userPoints[i]) <= tolerance) matched++
+    }
+  } else {
+    const used = new Set<number>()
+    for (const exp of expectedPoints) {
+      for (let j = 0; j < userPoints.length; j++) {
+        if (used.has(j)) continue
+        if (distance(exp, userPoints[j]) <= tolerance) {
+          used.add(j)
+          matched++
+          break
+        }
+      }
+    }
+  }
+
+  const isCorrect = matched === expectedPoints.length
+  const perPoint = expectedPoints.length > 0 ? maxMarks / expectedPoints.length : 0
+  const marksAwarded = Math.max(0, Math.min(maxMarks, Math.round(matched * perPoint)))
+
+  return {
+    isCorrect,
+    marksAwarded,
+    maxMarks,
+    feedback: {
+      summary: isCorrect ? `Correct (+${maxMarks}/${maxMarks}).` : `Partially correct (+${marksAwarded}/${maxMarks}).`,
+      correctAnswer: question.answersAccepted[0] || expectedPoints.map((p) => `(${p.x}, ${p.y})`).join(', '),
+      mistakeTags: isCorrect ? [] : ['partial'],
+    },
+    normalizedUserAnswer: { points: userPoints },
+  }
+}
+
 export function grade(question: NormalizedQuestion, response: UserResponse): GradeResult {
   try {
     switch (question.type) {
@@ -603,12 +952,18 @@ export function grade(question: NormalizedQuestion, response: UserResponse): Gra
       case 'tableFill':
         return gradeTableFill(question, response as any)
       case 'graphPlot':
-      case 'inequalityPlot':
       case 'geometryConstruct': {
         const val = (response as any).value
+        const qd = question.meta?.questionData || {}
+        const hasExpectedPoints = Array.isArray(qd.expectedPoints) && qd.expectedPoints.length > 0
+        if (hasExpectedPoints && val && typeof val === 'object' && Array.isArray((val as any).points)) {
+          return gradeCoordinatePlot(question, { type: question.type, value: val })
+        }
         const text = typeof val === 'string' ? val : val != null ? JSON.stringify(val) : ''
         return gradeAsShort(question, text)
       }
+      case 'inequalityPlot':
+        return gradeInequalityPlot(question, response as { type: 'inequalityPlot'; value: unknown })
       default:
         return {
           isCorrect: false,

@@ -126,16 +126,24 @@ export function hasMinimalResponse(value: unknown, type: string): boolean {
 function validateMinimalResponse(value: unknown, type: string): boolean {
   switch (type) {
     case 'short':
-      return typeof value === 'string' && value.trim().length > 0
-
     case 'mcq':
+    case 'numeric':
+    case 'numericWithTolerance':
+    case 'expression':
+    case 'graphRead':
+    case 'proofShort':
       return typeof value === 'string' && value.trim().length > 0
 
     case 'fill':
       if (!Array.isArray(value)) return false
       return value.some((v: unknown) => typeof v === 'string' && (v as string).trim().length > 0)
 
+    case 'multiNumeric':
+      if (!Array.isArray(value)) return false
+      return value.some((v: unknown) => v !== '' && v !== null && v !== undefined && (typeof v === 'number' || (typeof v === 'string' && (v as string).trim().length > 0)))
+
     case 'match':
+    case 'dragMatch':
       if (!value || typeof value !== 'object') return false
       return Object.values(value).some((v: unknown) => typeof v === 'string' && (v as string).trim().length > 0)
 
@@ -143,8 +151,33 @@ function validateMinimalResponse(value: unknown, type: string): boolean {
       if (!value || typeof value !== 'object') return false
       return Object.values(value).some((v: unknown) => typeof v === 'string' && (v as string).trim().length > 0)
 
+    case 'orderSteps':
+      if (Array.isArray(value)) return value.length > 0
+      return typeof value === 'string' && value.trim().length > 0
+
+    case 'tableFill':
+      if (!Array.isArray(value)) return false
+      return value.some(
+        (row: unknown) =>
+          row &&
+          typeof row === 'object' &&
+          Object.values(row as Record<string, unknown>).some(
+            (v) => v != null && String(v).trim().length > 0
+          )
+      )
+    case 'graphPlot':
+    case 'geometryConstruct':
+      if (!value || typeof value !== 'object') return false
+      const points = (value as { points?: unknown[] }).points
+      return Array.isArray(points) && points.length > 0
+    case 'inequalityPlot':
+      return value != null
+
     default:
-      return false
+      // Unknown types (e.g. future question types): accept non-empty string or any non-null value
+      if (typeof value === 'string') return value.trim().length > 0
+      if (Array.isArray(value)) return value.length > 0
+      return value != null
   }
 }
 
@@ -180,6 +213,31 @@ function normalizeAnswerForDisplay(value: unknown, type: string): string {
           .join('; ')
       }
       return ''
+
+    case 'tableFill':
+      if (Array.isArray(value)) {
+        return value
+          .map((row: unknown) =>
+            row && typeof row === 'object'
+              ? Object.values(row as Record<string, unknown>)
+                  .map((v) => (v != null ? String(v).trim() : ''))
+                  .join(', ')
+              : ''
+          )
+          .filter(Boolean)
+          .join(' | ')
+      }
+      return ''
+
+    case 'graphPlot':
+    case 'geometryConstruct': {
+      if (value && typeof value === 'object' && Array.isArray((value as { points?: unknown[] }).points)) {
+        return ((value as { points: Array<{ x?: number; y?: number }> }).points)
+          .map((p) => `(${p.x ?? ''}, ${p.y ?? ''})`)
+          .join(', ')
+      }
+      return ''
+    }
 
     default:
       return ''
