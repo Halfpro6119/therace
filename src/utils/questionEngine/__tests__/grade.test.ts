@@ -27,6 +27,17 @@ describe('grade()', () => {
     expect(res.marksAwarded).toBe(3)
   })
 
+  it('short: interval with different variable letter accepted (e.g. x vs m)', () => {
+    const q = baseQ({
+      type: 'short',
+      answersAccepted: ['3.445≤m<3.455'],
+      marks: 1,
+    })
+    const res = grade(q, { type: 'short', text: '3.445 ≤ x < 3.455' })
+    expect(res.isCorrect).toBe(true)
+    expect(res.marksAwarded).toBe(1)
+  })
+
   it('mcq: correct key awards marks', () => {
     const q = baseQ({
       type: 'mcq',

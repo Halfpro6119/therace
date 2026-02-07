@@ -85,7 +85,7 @@ function extractNumbersFromText(text: string): number[] {
   return out
 }
 
-const MARK_SCHEME_NUMERIC_TOLERANCE = 0.001
+const MARK_SCHEME_NUMERIC_TOLERANCE = 0.3
 
 /** Grade short/proofShort using mark scheme: sum marks for each criterion matched by keywords or key numbers. */
 function gradeShortWithMarkScheme(
@@ -237,6 +237,27 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
             },
             normalizedUserAnswer: { text: raw },
           }
+        }
+      }
+    }
+  }
+
+  // Interval-equivalence: accept same bounds regardless of variable letter (e.g. 3.445≤x<3.455 vs 3.445≤m<3.455)
+  const userInterval = parseIntervalWithAnyVariable(raw)
+  if (userInterval) {
+    for (const a of accepted) {
+      const acceptedInterval = parseIntervalWithAnyVariable(a)
+      if (acceptedInterval && intervalsEqual(userInterval, acceptedInterval)) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: a,
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
         }
       }
     }
@@ -720,7 +741,7 @@ function gradeGraphReadMulti(q: NormalizedQuestion, text: string): GradeResult {
   if (expectedNums.length === 0) return gradeAsShort(q, text)
 
   const userNumbers = extractNumbersFromText(raw)
-  const tolerance = 0.01
+  const tolerance = 0.3
   const used = new Set<number>()
   let correctCount = 0
   for (const exp of expectedNums) {
@@ -759,7 +780,7 @@ export interface InequalityInterval {
   rightClosed: boolean
 }
 
-const NUMERIC_TOLERANCE = 0.01
+const NUMERIC_TOLERANCE = 0.3
 
 /** Parse interval string e.g. "0≤x≤4", "0<=x<=4", "0 \\le x \\le 4", "x < 5", "-2 ≤ x ≤ 3". */
 export function parseIntervalFromString(s: string): InequalityInterval | null {
@@ -793,6 +814,53 @@ export function parseIntervalFromString(s: string): InequalityInterval | null {
   }
   // Alternative: a ≤ x ≤ b with \le
   const altMatch = t.match(/^(-?[\d.]+)\s*≤\s*x\s*≤\s*(-?[\d.]+)$/)
+  if (altMatch) {
+    const a = parseFloat(altMatch[1])
+    const b = parseFloat(altMatch[2])
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+    return {
+      left: Math.min(a, b),
+      right: Math.max(a, b),
+      leftClosed: true,
+      rightClosed: true,
+    }
+  }
+  return null
+}
+
+/**
+ * Parse interval string with any single-letter variable (e.g. 3.445≤m<3.455, 3.445 ≤ x < 3.455).
+ * Used for short-answer grading so "3.445 ≤ x < 3.455" matches accepted "3.445≤m<3.455".
+ */
+function parseIntervalWithAnyVariable(s: string): InequalityInterval | null {
+  const raw = safeTrim(s)
+  if (!raw) return null
+  const t = raw
+    .replace(/\\le\b/g, '≤')
+    .replace(/\\ge\b/g, '≥')
+    .replace(/\\lt\b/g, '<')
+    .replace(/\\gt\b/g, '>')
+    .replace(/\s+/g, ' ')
+  // a ≤ var ≤ b or a < var < b etc. — variable is any single letter
+  const doubleMatch = t.match(
+    /^(-?[\d.]+)\s*(≤|≥|>=|<=|>|<)\s*[a-zA-Z]\s*(≤|≥|>=|<=|>|<)\s*(-?[\d.]+)$/i
+  )
+  if (doubleMatch) {
+    const a = parseFloat(doubleMatch[1])
+    const b = parseFloat(doubleMatch[4])
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+    const leftOp = doubleMatch[2]
+    const rightOp = doubleMatch[3]
+    const leftClosed = leftOp === '≤' || leftOp === '<=' || leftOp === '≥' || leftOp === '>='
+    const rightClosed = rightOp === '≤' || rightOp === '<=' || rightOp === '≥' || rightOp === '>='
+    return {
+      left: Math.min(a, b),
+      right: Math.max(a, b),
+      leftClosed,
+      rightClosed,
+    }
+  }
+  const altMatch = t.match(/^(-?[\d.]+)\s*≤\s*[a-zA-Z]\s*≤\s*(-?[\d.]+)$/i)
   if (altMatch) {
     const a = parseFloat(altMatch[1])
     const b = parseFloat(altMatch[2])
