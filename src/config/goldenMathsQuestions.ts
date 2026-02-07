@@ -290,6 +290,7 @@ const H2: GoldenMathsQuestion[] = [
   { id: 'H2-29', prompt: 'Find the nth term of 3, 8, 15, 24, …', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'n^2+2n' },
   { id: 'H2-30', prompt: 'Use iteration to solve x = √(10 + x) (1 dp)', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3.7' },
   { id: 'H2-31', prompt: 'Write the iteration formula for solving x³ + x − 4 = 0', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'x=∛(4-x)' },
+  { id: 'H2-32', prompt: 'Solve simultaneously: 2x + 3y = 12, x − y = 1', type: 'multiNumeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3,2' },
   { id: 'H2-33', prompt: 'Solve 4ˣ = 64', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3' },
   { id: 'H2-34', prompt: 'Find the inverse of f(x) = 5x − 3', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '(x+3)/5' },
   // Graphs & Functions (35–50)
