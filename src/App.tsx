@@ -13,6 +13,15 @@ import { LeaderboardPage } from './pages/LeaderboardPage';
 import { DiscoverPage } from './pages/DiscoverPage';
 import { PlaylistDetailPage } from './pages/PlaylistDetailPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { EnglishCampusHomePage } from './pages/english/EnglishCampusHomePage';
+import { EnglishLanguageDashboard } from './pages/english/EnglishLanguageDashboard';
+import { EnglishWritingWorkspacePage } from './pages/english/EnglishWritingWorkspacePage';
+import { EnglishLanguageResultPage } from './pages/english/EnglishLanguageResultPage';
+import { EnglishDraftsPage } from './pages/english/EnglishDraftsPage';
+import { EnglishCompareDraftsPage } from './pages/english/EnglishCompareDraftsPage';
+import { EnglishLiteraturePage } from './pages/english/EnglishLiteraturePage';
+import { EnglishLiteraturePlaceholder } from './pages/english/EnglishLiteraturePlaceholder';
+import { EnglishVocabLabPage } from './pages/english/EnglishVocabLabPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -109,6 +118,15 @@ function App() {
                 <Route path="/library" element={<LibraryPage />} />
                 <Route path="/subjects" element={<SubjectsPage />} />
                 <Route path="/subjects/:subjectId" element={<SubjectDetailPageWithTier />} />
+                <Route path="/english-campus" element={<EnglishCampusHomePage />} />
+                <Route path="/english-campus/language" element={<EnglishLanguageDashboard />} />
+                <Route path="/english-campus/language/task/:taskId" element={<EnglishWritingWorkspacePage />} />
+                <Route path="/english-campus/language/result" element={<EnglishLanguageResultPage />} />
+                <Route path="/english-campus/language/drafts" element={<EnglishDraftsPage />} />
+                <Route path="/english-campus/language/compare" element={<EnglishCompareDraftsPage />} />
+                <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
+                <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />
+                <Route path="/english-campus/vocab" element={<EnglishVocabLabPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />

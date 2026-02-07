@@ -1,4 +1,10 @@
 import { Attempt, MasteryState, StreakState, UserProfile } from '../types';
+import type {
+  EnglishWritingDraft,
+  EnglishWritingStreak,
+  EnglishTargets,
+  EnglishContinueState,
+} from '../types/englishCampus';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -8,6 +14,12 @@ const STORAGE_KEYS = {
   PROFILE: 'grade9sprint_profile',
   THEME: 'grade9sprint_theme',
   SAVED_QUIZZES: 'grade9sprint_saved_quizzes',
+  // English Campus
+  ENGLISH_DRAFTS: 'grade9sprint_english_drafts',
+  ENGLISH_WRITING_STREAK: 'grade9sprint_english_writing_streak',
+  ENGLISH_TARGETS: 'grade9sprint_english_targets',
+  ENGLISH_LAST_SCORE: 'grade9sprint_english_last_score',
+  ENGLISH_CONTINUE: 'grade9sprint_english_continue',
 };
 
 /**
@@ -197,6 +209,72 @@ export const storage = {
         localStorage.removeItem(key);
       }
     });
+  },
+
+  // —— English Campus ——
+  getEnglishDrafts: (): EnglishWritingDraft[] => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_DRAFTS);
+    return data ? JSON.parse(data) : [];
+  },
+  saveEnglishDraft: (draft: EnglishWritingDraft): void => {
+    const drafts = storage.getEnglishDrafts();
+    const idx = drafts.findIndex(d => d.id === draft.id);
+    if (idx >= 0) drafts[idx] = draft;
+    else drafts.push(draft);
+    drafts.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_DRAFTS, JSON.stringify(drafts));
+  },
+  getEnglishDraftById: (id: string): EnglishWritingDraft | undefined => {
+    return storage.getEnglishDrafts().find(d => d.id === id);
+  },
+
+  getEnglishWritingStreak: (): EnglishWritingStreak => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_WRITING_STREAK);
+    return data ? JSON.parse(data) : { currentStreakDays: 0, bestStreakDays: 0, lastActiveDate: '' };
+  },
+  updateEnglishWritingStreak: (): void => {
+    const streak = storage.getEnglishWritingStreak();
+    const today = new Date().toDateString();
+    const lastDate = streak.lastActiveDate ? new Date(streak.lastActiveDate).toDateString() : '';
+    if (lastDate === today) return;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+    if (lastDate === yesterdayStr) {
+      streak.currentStreakDays += 1;
+    } else if (lastDate !== today) {
+      streak.currentStreakDays = 1;
+    }
+    streak.lastActiveDate = today;
+    streak.bestStreakDays = Math.max(streak.bestStreakDays, streak.currentStreakDays);
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_WRITING_STREAK, JSON.stringify(streak));
+  },
+
+  getEnglishTargets: (): EnglishTargets => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_TARGETS);
+    return data ? JSON.parse(data) : { targets: [], updatedAt: '' };
+  },
+  setEnglishTargets: (targets: string[]): void => {
+    localStorage.setItem(
+      STORAGE_KEYS.ENGLISH_TARGETS,
+      JSON.stringify({ targets, updatedAt: new Date().toISOString() })
+    );
+  },
+
+  getEnglishLastScore: (): { bandLevel: string; marks?: number; maxMarks?: number } | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_LAST_SCORE);
+    return data ? JSON.parse(data) : null;
+  },
+  setEnglishLastScore: (score: { bandLevel: string; marks?: number; maxMarks?: number }): void => {
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_LAST_SCORE, JSON.stringify(score));
+  },
+
+  getEnglishContinue: (): EnglishContinueState | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_CONTINUE);
+    return data ? JSON.parse(data) : null;
+  },
+  setEnglishContinue: (state: EnglishContinueState): void => {
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_CONTINUE, JSON.stringify(state));
   },
 };
 
