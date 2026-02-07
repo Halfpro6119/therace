@@ -141,7 +141,7 @@ function legacyToQuestionData(type: QuestionType, raw: any, existingQuestionData
           qd.fields = parts.map((part, i) => {
             const num = parseNumericOrNull(part) ?? 0
             // Default tolerance for decimals (e.g. 2 dp answers) so -0.33 accepts -0.333
-            const tolerance = part.includes('.') ? 0.01 : 0
+            const tolerance = part.includes('.') ? 0.3 : 0
             return {
               label: parts.length > 1 ? `Answer ${i + 1}` : `Value ${i + 1}`,
               answer: num,
@@ -169,7 +169,7 @@ function legacyToQuestionData(type: QuestionType, raw: any, existingQuestionData
   // When raw type is 'numeric', ensure numericTolerance for short-style grading
   const rawType = safeString(raw?.type).toLowerCase()
   if (rawType === 'numeric' && qd.numericTolerance === undefined) {
-    qd.numericTolerance = 0.01
+    qd.numericTolerance = 0.3
   }
 
   return qd

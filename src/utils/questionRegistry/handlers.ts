@@ -146,7 +146,7 @@ export const numericHandler: QuestionTypeHandler = {
     if (!base) return null;
     return {
       ...base,
-      numericTolerance: data.numericTolerance ?? 0.01,
+      numericTolerance: data.numericTolerance ?? 0.3,
     };
   },
 };
@@ -172,7 +172,7 @@ export const numericWithToleranceHandler: QuestionTypeHandler = {
   normalize: (data: any) => {
     const base = numericHandler.normalize(data);
     if (!base) return null;
-    return { ...base, tolerance: data.tolerance ?? data.numericTolerance ?? 0.1 };
+    return { ...base, tolerance: data.tolerance ?? data.numericTolerance ?? 0.3 };
   },
 };
 
