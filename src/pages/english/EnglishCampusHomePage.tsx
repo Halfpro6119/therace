@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquare, BookOpen, BookMarked, Flame, Target, ChevronRight } from 'lucide-react';
+import { MessageSquare, BookOpen, BookMarked, Flame, Target, ChevronRight, ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 
 const PILLARS = [
@@ -48,6 +48,14 @@ export function EnglishCampusHomePage() {
           borderColor: 'transparent',
         }}
       >
+        <button
+          type="button"
+          onClick={() => navigate('/subjects')}
+          className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
+        >
+          <ChevronLeft size={18} />
+          Back to Subjects
+        </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">English Campus</h1>
         <p className="text-white/90 text-sm sm:text-base">
           Task → Plan → Write → Mark → Improve → Track Progress

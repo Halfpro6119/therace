@@ -22,6 +22,11 @@ import { EnglishCompareDraftsPage } from './pages/english/EnglishCompareDraftsPa
 import { EnglishLiteraturePage } from './pages/english/EnglishLiteraturePage';
 import { EnglishLiteraturePlaceholder } from './pages/english/EnglishLiteraturePlaceholder';
 import { EnglishVocabLabPage } from './pages/english/EnglishVocabLabPage';
+import { MathsMasteryHomePage } from './pages/maths/MathsMasteryHomePage';
+import { MathsHubPage } from './pages/maths/MathsHubPage';
+import { FurtherMathsPlaceholder } from './pages/maths/FurtherMathsPlaceholder';
+import { StatisticsPlaceholder } from './pages/maths/StatisticsPlaceholder';
+import { ScienceLabHomePage } from './pages/science/ScienceLabHomePage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -127,6 +132,11 @@ function App() {
                 <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
                 <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />
                 <Route path="/english-campus/vocab" element={<EnglishVocabLabPage />} />
+                <Route path="/maths-mastery" element={<MathsMasteryHomePage />} />
+                <Route path="/maths-mastery/maths" element={<MathsHubPage />} />
+                <Route path="/maths-mastery/further-maths" element={<FurtherMathsPlaceholder />} />
+                <Route path="/maths-mastery/statistics" element={<StatisticsPlaceholder />} />
+                <Route path="/science-lab" element={<ScienceLabHomePage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />

@@ -3,9 +3,44 @@ import { db } from '../db/client';
 import { SubjectCard } from '../components/SubjectCard';
 import { storage } from '../utils/storage';
 import { MasteryLevel, Subject, Quiz } from '../types';
-import { BookOpen } from 'lucide-react';
+import {
+  FEATURED_HUBS,
+  CHOSEN_SUBJECT_NAMES,
+  LANGUAGE_NAMES,
+} from '../config/subjectGroups';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, Calculator, FlaskConical, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
+
+const HUB_ICONS = {
+  BookOpen,
+  Calculator,
+  FlaskConical,
+};
+
+function findByNames(subjects: Subject[], names: string[]): Subject[] {
+  const map = new Map(subjects.map((s) => [s.name.toLowerCase(), s]));
+  return names
+    .map((n) => map.get(n.toLowerCase()))
+    .filter((s): s is Subject => s != null);
+}
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0 },
+};
 
 export function SubjectsPage() {
+  const navigate = useNavigate();
   const masteryStates = storage.getMasteryStates();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -50,61 +85,210 @@ export function SubjectsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
-      </div>
-    );
+    return <SkeletonSubjectsPage />;
   }
 
+  const chosenSubjects = findByNames(subjects, CHOSEN_SUBJECT_NAMES);
+  const languageSubjects = findByNames(subjects, LANGUAGE_NAMES);
+
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-3 bg-blue-500/10 rounded-xl">
-          <BookOpen size={32} className="text-blue-600 dark:text-blue-400" />
+    <motion.div
+      className="max-w-7xl mx-auto space-y-12"
+      initial="hidden"
+      animate="show"
+      variants={container}
+    >
+      {/* Page header */}
+      <motion.div
+        className="flex items-center gap-4"
+        variants={item}
+      >
+        <div
+          className="p-3 rounded-xl"
+          style={{ background: 'rgb(var(--accent) / 0.1)' }}
+        >
+          <BookOpen size={32} style={{ color: 'rgb(var(--accent))' }} />
         </div>
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+          <h1
+            className="text-3xl md:text-4xl font-bold tracking-tight"
+            style={{ color: 'rgb(var(--text))' }}
+          >
             Your Subjects
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p
+            className="mt-1 text-base"
+            style={{ color: 'rgb(var(--text-secondary))' }}
+          >
             Choose a subject to start practicing
           </p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {subjects.map(subject => {
-          const stats = getSubjectStats(subject.id);
+      {/* Top: 3 featured hub cards */}
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        variants={container}
+      >
+        {FEATURED_HUBS.map((hub) => {
+          const HubIcon = HUB_ICONS[hub.icon];
           return (
-            <SubjectCard
-              key={subject.id}
-              subject={subject}
-              {...stats}
-            />
+            <motion.div
+              key={hub.id}
+              variants={item}
+              className="rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+              style={{
+                background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                borderColor: `${hub.accentColor}30`,
+              }}
+            >
+              <div
+                className="flex items-center gap-3 mb-4 pb-3"
+                style={{ borderBottom: '1px solid rgb(var(--border))' }}
+              >
+                <div
+                  className="p-2.5 rounded-xl"
+                  style={{ background: `${hub.accentColor}15` }}
+                >
+                  <HubIcon size={24} style={{ color: hub.accentColor }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2
+                    className="text-lg font-bold"
+                    style={{ color: 'rgb(var(--text))' }}
+                  >
+                    {hub.title}
+                  </h2>
+                  <p
+                    className="text-sm"
+                    style={{ color: 'rgb(var(--text-secondary))' }}
+                  >
+                    {hub.subtitle}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate(hub.hubPath)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98]"
+                style={{
+                  background: hub.accentColor,
+                  boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                }}
+              >
+                <span>Enter hub</span>
+                <ArrowRight size={16} />
+              </button>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-          Quick Tips
-        </h2>
-        <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-          <li className="flex items-start gap-2">
-            <span className="text-blue-500 font-bold">•</span>
+      {/* Middle: Chosen subjects */}
+      {chosenSubjects.length > 0 && (
+        <motion.section variants={container}>
+          <motion.div
+            className="flex items-center gap-3 mb-4"
+            variants={item}
+          >
+            <BookMarked size={22} style={{ color: 'rgb(var(--accent))' }} />
+            <h2
+              className="text-xl font-bold"
+              style={{ color: 'rgb(var(--text))' }}
+            >
+              Chosen Subjects
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={container}
+          >
+            {chosenSubjects.map((subject) => {
+              const stats = getSubjectStats(subject.id);
+              return (
+                <motion.div key={subject.id} variants={item}>
+                  <SubjectCard subject={subject} {...stats} />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+      )}
+
+      {/* Bottom: Languages */}
+      {languageSubjects.length > 0 && (
+        <motion.section variants={container}>
+          <motion.div
+            className="flex items-center gap-3 mb-4"
+            variants={item}
+          >
+            <Languages size={22} style={{ color: 'rgb(var(--accent))' }} />
+            <h2
+              className="text-xl font-bold"
+              style={{ color: 'rgb(var(--text))' }}
+            >
+              Languages
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            variants={container}
+          >
+            {languageSubjects.map((subject) => {
+              const stats = getSubjectStats(subject.id);
+              return (
+                <motion.div key={subject.id} variants={item}>
+                  <SubjectCard subject={subject} {...stats} />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+      )}
+
+      {/* Quick Tips card */}
+      <motion.div
+        variants={item}
+        className="rounded-2xl p-6 border-l-4"
+        style={{
+          background: 'rgb(var(--surface))',
+          borderColor: 'rgb(var(--accent))',
+          borderLeftWidth: '4px',
+          borderTop: '1px solid rgb(var(--border))',
+          borderRight: '1px solid rgb(var(--border))',
+          borderBottom: '1px solid rgb(var(--border))',
+          boxShadow: 'var(--shadow-sm)',
+        }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="p-2 rounded-lg"
+            style={{ background: 'rgb(var(--accent) / 0.1)' }}
+          >
+            <Lightbulb size={20} style={{ color: 'rgb(var(--accent))' }} />
+          </div>
+          <h2
+            className="text-xl font-bold"
+            style={{ color: 'rgb(var(--text))' }}
+          >
+            Quick Tips
+          </h2>
+        </div>
+        <ul className="space-y-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+          <li className="flex items-start gap-3">
+            <span className="text-blue-500 font-bold shrink-0">•</span>
             <span>Start with topics you find challenging to build confidence</span>
           </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-500 font-bold">•</span>
+          <li className="flex items-start gap-3">
+            <span className="text-green-500 font-bold shrink-0">•</span>
             <span>Practice daily to maintain your streak and improve retention</span>
           </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-500 font-bold">•</span>
+          <li className="flex items-start gap-3">
+            <span className="text-purple-500 font-bold shrink-0">•</span>
             <span>Aim for Grade 9 Speed mastery to prove exam readiness</span>
           </li>
         </ul>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

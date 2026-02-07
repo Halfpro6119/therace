@@ -11,7 +11,7 @@ export function Skeleton({
   width,
   height
 }: SkeletonProps) {
-  const baseStyles = 'animate-pulse bg-gray-200';
+  const baseStyles = 'animate-pulse';
 
   const variantStyles = {
     text: 'h-4 rounded',
@@ -27,7 +27,7 @@ export function Skeleton({
   return (
     <div
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
-      style={style}
+      style={{ ...style, background: 'rgb(var(--surface-2))' }}
     />
   );
 }
@@ -66,7 +66,7 @@ export function SkeletonQuizTile() {
 
 export function SkeletonSubjectCard() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'rgb(var(--surface))', border: '1px solid rgb(var(--border))' }}>
       <Skeleton variant="rectangular" className="h-40 w-full" />
       <div className="p-6 space-y-3">
         <Skeleton variant="text" className="w-3/4 h-6" />
@@ -75,6 +75,46 @@ export function SkeletonSubjectCard() {
         <div className="flex gap-2 pt-2">
           <Skeleton variant="rectangular" className="h-10 flex-1" />
           <Skeleton variant="rectangular" className="h-10 w-10" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonSubjectsPage() {
+  return (
+    <div className="max-w-7xl mx-auto space-y-8">
+      <div className="flex items-center gap-3">
+        <Skeleton variant="rectangular" className="h-14 w-14 rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton variant="text" className="w-48 h-8" />
+          <Skeleton variant="text" className="w-64 h-4" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="rounded-2xl p-5 space-y-4"
+            style={{ background: 'rgb(var(--surface))', border: '2px solid rgb(var(--border))' }}
+          >
+            <div className="space-y-2">
+              <Skeleton variant="text" className="w-32 h-5" />
+              <Skeleton variant="text" className="w-full h-4" />
+            </div>
+            <div className="space-y-3">
+              <Skeleton variant="rectangular" className="h-20 w-full rounded-lg" />
+              <Skeleton variant="rectangular" className="h-16 w-full rounded-lg" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-4">
+        <Skeleton variant="text" className="w-36 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <SkeletonSubjectCard key={i} />
+          ))}
         </div>
       </div>
     </div>

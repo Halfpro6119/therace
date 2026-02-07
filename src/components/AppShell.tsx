@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Trophy, User, Sun, Moon, Zap, Compass, GraduationCap } from 'lucide-react';
+import { Home, BookOpen, Trophy, User, Sun, Moon, Zap, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { StreakFlame } from './StreakFlame';
 import { storage } from '../utils/storage';
@@ -33,7 +33,6 @@ export function AppShell({ children }: AppShellProps) {
     { icon: Home, label: 'Home', path: '/' },
     { icon: Compass, label: 'Discover', path: '/discover' },
     { icon: BookOpen, label: 'Subjects', path: '/subjects' },
-    { icon: GraduationCap, label: 'English Campus', path: '/english-campus' },
     { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
     { icon: User, label: 'Profile', path: '/profile' },
   ];
@@ -146,7 +145,7 @@ export function AppShell({ children }: AppShellProps) {
         className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass border-t pb-[env(safe-area-inset-bottom,0)]"
         style={{ borderColor: 'rgb(var(--border))' }}
       >
-        <div className="h-16 min-h-[4rem] grid grid-cols-6 gap-1 px-2 py-2 flex items-center">
+        <div className="h-16 min-h-[4rem] grid grid-cols-5 gap-1 px-2 py-2 flex items-center">
           {navItems.map(item => {
             const Icon = item.icon;
             const active = isActive(item.path);

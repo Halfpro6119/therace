@@ -290,8 +290,7 @@ const H2: GoldenMathsQuestion[] = [
   { id: 'H2-29', prompt: 'Find the nth term of 3, 8, 15, 24, …', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'n^2+2n' },
   { id: 'H2-30', prompt: 'Use iteration to solve x = √(10 + x) (1 dp)', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3.7' },
   { id: 'H2-31', prompt: 'Write the iteration formula for solving x³ + x − 4 = 0', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'x=∛(4-x)' },
-  { id: 'H2-32', prompt: 'Solve log₁₀(x) = 2.3', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '199.53' },
-  { id: 'H2-33', prompt: 'Solve 3ˣ = 45', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3.46' },
+  { id: 'H2-33', prompt: 'Solve 4ˣ = 64', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3' },
   { id: 'H2-34', prompt: 'Find the inverse of f(x) = 5x − 3', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '(x+3)/5' },
   // Graphs & Functions (35–50)
   { id: 'H2-35', prompt: 'Find the turning point of y = x² − 6x + 5', type: 'multiNumeric', paper: 2, tier: 'higher', calculator: true, diagram: 'prePlottedGraph', answers: '3,-4' },
@@ -300,7 +299,7 @@ const H2: GoldenMathsQuestion[] = [
   { id: 'H2-38', prompt: 'Solve x² − 6x + 5 = 0 using the graph', type: 'graphRead', paper: 2, tier: 'higher', calculator: true, diagram: 'prePlottedGraph', answers: '1,5' },
   { id: 'H2-39', prompt: 'Describe the transformation from y = x² to y = −x² + 4', type: 'short', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'reflection in x-axis, translation 4 up' },
   { id: 'H2-40', prompt: 'Find where y = 2x + 1 intersects the x-axis', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '-0.5' },
-  { id: 'H2-41', prompt: 'Find the gradient of the tangent to y = x² at x = 3', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '6' },
+  { id: 'H2-41', prompt: 'A line has gradient 3 and passes through (2, 7). Find its equation', type: 'expression', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'y=3x+1' },
   { id: 'H2-42', prompt: 'Solve x² = 5x − 4', type: 'multiNumeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '1,4' },
   { id: 'H2-43', prompt: 'Find the range of y = x² + 1', type: 'short', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: 'y≥1' },
   { id: 'H2-44', prompt: 'For f(x) = 2x − 1, find f⁻¹(5)', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '3' },

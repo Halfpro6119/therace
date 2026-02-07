@@ -498,20 +498,15 @@ export function QuizPlayerPage() {
         const subject = await db.getSubject(quizData.subjectId);
         setSubjectName(subject?.name ?? null);
 
-        // Master quizzes derive prompts from the paper/subject, not promptIds.
-        // Topic/unit quizzes must use promptIds (DB default quiz_type is subject_master, so prefer scopeType + promptIds).
+        // Resolve prompts: explicit promptIds always win; otherwise paper_master or subject_master.
         let promptsData: Prompt[];
-        if (quizData.quizType === 'paper_master' && quizData.paperId) {
-          promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
-        } else if (
-          (quizData.scopeType === 'topic' || quizData.scopeType === 'unit') &&
-          quizData.promptIds?.length
-        ) {
+        if (quizData.promptIds?.length) {
+          // Quiz has explicit prompt list (e.g. Maths hub full-paper or topic quiz) – use it.
           promptsData = await db.getPromptsByIds(quizData.promptIds);
+        } else if (quizData.quizType === 'paper_master' && quizData.paperId) {
+          promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
         } else if (quizData.quizType === 'subject_master') {
           promptsData = await db.getPromptsForSubjectMasterQuiz(quizData.subjectId);
-        } else if (quizData.promptIds?.length) {
-          promptsData = await db.getPromptsByIds(quizData.promptIds);
         } else {
           promptsData = [];
         }
