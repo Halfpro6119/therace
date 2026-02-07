@@ -149,8 +149,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex">
-        <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-screen fixed left-0 top-0">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <aside className="w-64 h-screen flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed left-0 top-0">
+          <div className="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Admin Panel
             </h1>
@@ -159,7 +159,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </p>
           </div>
 
-          <nav className="p-4 space-y-1">
+          <nav className="flex-1 min-h-0 overflow-y-auto p-4 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
@@ -181,7 +181,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             })}
           </nav>
 
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
             <button
               onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-3 w-full text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
