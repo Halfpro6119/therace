@@ -6,7 +6,7 @@ const SECTIONS = [
   {
     id: 'poetry',
     title: 'Seen Poetry (Anthology)',
-    description: 'Single poem & comparison – Ozymandias/London, Exposure. Grade 9 checklists, mark schemes, model answers',
+    description: 'P-S01 Ozymandias, P-S03 Kamikaze, P-C02 Exposure/Bayonet Charge, P-C03 Checking Out Me History/Kamikaze',
     path: '/english-campus/literature/poetry',
     icon: BookOpen,
     color: '#EC4899',
@@ -14,7 +14,7 @@ const SECTIONS = [
   {
     id: 'compare',
     title: 'Compare poems',
-    description: 'Compare how power/conflict/ideas are presented in two poems – full GuidePost tasks',
+    description: 'Full GuidePost: power, conflict, identity – both poems in every paragraph',
     path: '/english-campus/literature/poetry',
     icon: GitCompare,
     color: '#8B5CF6',
@@ -22,7 +22,7 @@ const SECTIONS = [
   {
     id: 'unseen',
     title: 'Unseen poetry',
-    description: 'Analysis (Q1) and comparison (Q2) – loneliness and methods. Grade 4–9 models',
+    description: 'UP-02 tension, UP-C02 imagery – Grade 4–9 models, examiner-faithful mark schemes',
     path: '/english-campus/literature/unseen',
     icon: Eye,
     color: '#0EA5E9',
@@ -30,7 +30,7 @@ const SECTIONS = [
   {
     id: 'texts',
     title: 'Set texts',
-    description: 'Macbeth (ambition, Lady Macbeth), ACC, J&H, Inspector Calls – extract & whole-text',
+    description: 'Macbeth, A Christmas Carol, Jekyll & Hyde, An Inspector Calls – 8 GuidePost tasks',
     path: '/english-campus/literature/texts',
     icon: Library,
     color: '#10B981',
@@ -38,7 +38,7 @@ const SECTIONS = [
   {
     id: 'quotation-lab',
     title: 'Quotation Lab',
-    description: 'Quote banks, drills (Explain · Upgrade · Best fit · Link two), micro-paragraph builder, progress',
+    description: 'Quote banks, drills (Explain · Upgrade · Best fit · Link two), micro-paragraph builder',
     path: '/english-campus/literature/quotation-lab',
     icon: Quote,
     color: '#F59E0B',
@@ -69,7 +69,15 @@ export function EnglishLiteraturePage() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 flex-wrap">
+        <button
+          type="button"
+          onClick={() => navigate('/english-campus/literature/poetry')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+          style={{ background: 'var(--gradient-primary)', color: 'white' }}
+        >
+          Start a task
+        </button>
         <button
           type="button"
           onClick={() => navigate('/english-campus/literature/drafts')}
@@ -116,7 +124,7 @@ export function EnglishLiteraturePage() {
       </div>
 
       <p className="text-sm text-center" style={{ color: 'rgb(var(--muted))' }}>
-        GuidePost content from docs/ENGLISH_LITERATURE_GUIDEPOST.md – examiner-faithful mark schemes & Grade 4–9 models.
+        GuidePost content: 14 tasks with examiner-faithful mark schemes, checklists & Grade 4–9 models (docs/ENGLISH_LITERATURE_GUIDEPOST.md).
       </p>
     </div>
   );

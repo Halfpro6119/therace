@@ -1,6 +1,8 @@
 # Full one-shot prompt: Generate all 14 Literature GuidePost packs
 
-Copy everything below the line into an LLM in one go. It will produce full packs (checklist, mark scheme, step-by-step method, model answers 4/6/8/9) for all 14 tasks that currently lack them.
+**Status: IMPLEMENTED.** All 14 packs are now in `src/config/englishLiteratureGuidePostData.ts` and surfaced in the app.
+
+Copy everything below the line into an LLM if you need to regenerate or extend packs. It will produce full packs (checklist, mark scheme, step-by-step method, model answers 4/6/8/9) for all 14 tasks.
 
 ---
 

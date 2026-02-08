@@ -122,6 +122,10 @@ export function EnglishCampusHomePage() {
               if (continueState.type === 'language' && continueState.taskId)
                 navigate(`/english-campus/language/task/${continueState.taskId}`);
               else if (continueState.type === 'language') navigate('/english-campus/language');
+              else if (continueState.type === 'literature' && continueState.taskId)
+                navigate(`/english-campus/literature/task/${continueState.taskId}`, {
+                  state: continueState.draftId ? { reopenDraftId: continueState.draftId } : undefined,
+                });
               else if (continueState.type === 'literature') navigate('/english-campus/literature');
               else navigate('/english-campus/vocab');
             }}

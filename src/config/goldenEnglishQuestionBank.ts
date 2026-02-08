@@ -246,14 +246,12 @@ export const LANGUAGE_PAPER_2_WRITING: GoldenEnglishWritingTask[] = [
 
 export const LITERATURE_POETRY_SEEN_SINGLE: EnglishLiteraturePoetrySeenSingle[] = [
   { id: 'P-S01', poem: 'Ozymandias', prompt: 'How does the poet present power in Ozymandias?', focus: 'power', markSchemeSummary: 'AO2: Analyse language, form, structure. AO1: Respond to theme.' },
-  { id: 'P-S02', poem: 'Exposure', prompt: 'How does the poet use imagery to present conflict in Exposure?', focus: 'imagery, conflict', markSchemeSummary: 'AO2: Analyse methods. AO1: Thematic understanding.' },
   { id: 'P-S03', poem: 'Kamikaze', prompt: 'How does the poet present memory in Kamikaze?', focus: 'memory', markSchemeSummary: 'AO2/AO1. Language and structure; memory and perspective.' },
 ];
 
 // ---------- POETRY — SEEN: Comparison ----------
 
 export const LITERATURE_POETRY_SEEN_COMPARISON: EnglishLiteraturePoetrySeenComparison[] = [
-  { id: 'P-C01', poemA: 'Ozymandias', poemB: 'London', prompt: 'Compare how power is presented in Ozymandias and London.', focus: 'power', markSchemeSummary: 'AO3: Compare ideas; AO2: Methods in both.' },
   { id: 'P-C02', poemA: 'Exposure', poemB: 'Bayonet Charge', prompt: 'Compare how conflict is presented in Exposure and Bayonet Charge.', focus: 'conflict', markSchemeSummary: 'AO3/AO2. Sustained comparison of writers’ ideas and methods.' },
   { id: 'P-C03', poemA: 'Checking Out Me History', poemB: 'Kamikaze', prompt: 'Compare how identity is explored in Checking Out Me History and Kamikaze.', focus: 'identity', markSchemeSummary: 'AO3/AO2. Identity and perspective across both poems.' },
 ];
@@ -261,17 +259,13 @@ export const LITERATURE_POETRY_SEEN_COMPARISON: EnglishLiteraturePoetrySeenCompa
 // ---------- UNSEEN POETRY ----------
 
 export const LITERATURE_UNSEEN_POETRY: EnglishLiteratureUnseenPoetry[] = [
-  { id: 'UP-01', type: 'analysis', prompt: 'Analyse how the poet presents emotions in this poem.', focus: 'emotions', markSchemeSummary: 'AO1/AO2. Response to poem; analyse language and structure.' },
   { id: 'UP-02', type: 'analysis', prompt: 'How does the poet use language and structure to create a sense of tension?', focus: 'language and structure, tension', markSchemeSummary: 'AO2. Methods and effects.' },
-  { id: 'UP-C01', type: 'comparison', prompt: 'Compare how the poets present similar feelings in the two poems.', focus: 'feelings', markSchemeSummary: 'AO3. Compare ideas and methods across both poems.' },
   { id: 'UP-C02', type: 'comparison', prompt: 'Compare how imagery is used in both poems.', focus: 'imagery', markSchemeSummary: 'AO3/AO2. Comparison of use of imagery.' },
 ];
 
 // ---------- LITERATURE TEXTS (Novels & Plays) ----------
 
 export const LITERATURE_TEXT_MACBETH: EnglishLiteratureTextTask[] = [
-  { id: 'M-01', text: 'Macbeth', prompt: 'How does Shakespeare present Macbeth as ambitious in this extract?', focus: 'Macbeth, ambition', scope: 'extract', markSchemeSummary: 'AO1/AO2. Extract focus; language and structure.' },
-  { id: 'M-02', text: 'Macbeth', prompt: 'How does Shakespeare present Lady Macbeth as powerful?', focus: 'Lady Macbeth, power', scope: 'whole', markSchemeSummary: 'AO1/AO2. Across the play.' },
   { id: 'M-03', text: 'Macbeth', prompt: 'How does Shakespeare present guilt in the play as a whole?', focus: 'guilt', scope: 'whole', markSchemeSummary: 'AO1/AO2/AO3. Thematic response; methods and context.' },
 ];
 
