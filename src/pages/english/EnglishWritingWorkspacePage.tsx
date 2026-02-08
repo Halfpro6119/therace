@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckSquare, FileText, BookOpen, PanelRightOpen, Highlighter } from 'lucide-react';
+import { ChevronLeft, CheckSquare, FileText, BookOpen, PanelRightOpen, Highlighter, ListOrdered } from 'lucide-react';
 import { getLanguageTaskById } from '../../config/englishLanguageTasks';
+import { getExaminerPackForTask } from '../../config/englishExaminerPackData';
 import { storage } from '../../utils/storage';
 import type { EnglishWritingDraft, EnglishChecklistItem } from '../../types/englishCampus';
 
@@ -15,6 +16,9 @@ const QUICK_CHECKLIST: EnglishChecklistItem[] = [
   { id: 'c7', label: 'Correct punctuation', ao: 'AO6' },
   { id: 'c8', label: 'Audience & purpose clear', ao: 'AO5' },
 ];
+
+const MODEL_GRADES = ['grade4', 'grade6', 'grade8', 'grade9'] as const;
+type ModelGradeKey = (typeof MODEL_GRADES)[number];
 
 function countWords(text: string): number {
   return text
@@ -44,9 +48,17 @@ export function EnglishWritingWorkspacePage() {
   const [checklistTicks, setChecklistTicks] = useState<Record<string, boolean>>({});
   const [draftId, setDraftId] = useState<string | null>(null);
   const [saveFeedback, setSaveFeedback] = useState(false);
+  const [modelGrade, setModelGrade] = useState<ModelGradeKey>('grade6');
+  const [showMethod, setShowMethod] = useState(true);
 
   const location = useLocation();
   const reopenDraftId = (location.state as { reopenDraftId?: string } | undefined)?.reopenDraftId;
+
+  const examinerPack = task ? getExaminerPackForTask(task.id) : undefined;
+  const checklist = useMemo(
+    () => examinerPack?.checklistItems ?? QUICK_CHECKLIST,
+    [examinerPack]
+  );
 
   useEffect(() => {
     if (!task) return;
@@ -56,13 +68,14 @@ export function EnglishWritingWorkspacePage() {
     if (existing) {
       setContent(existing.content);
       setDraftId(existing.id);
-      if (existing.checklistTicks) {
+      if (existing.checklistTicks && checklist.length) {
+        const validIds = new Set(checklist.map(c => c.id));
         const ticks: Record<string, boolean> = {};
-        existing.checklistTicks.forEach(id => (ticks[id] = true));
+        existing.checklistTicks.filter(id => validIds.has(id)).forEach(id => (ticks[id] = true));
         setChecklistTicks(ticks);
       }
     }
-  }, [task?.id, reopenDraftId]);
+  }, [task?.id, reopenDraftId, checklist.length]);
 
   useEffect(() => {
     const t = setInterval(() => setElapsedSec(Math.floor((Date.now() - startTime) / 1000)), 1000);
@@ -72,7 +85,7 @@ export function EnglishWritingWorkspacePage() {
   const wordCount = countWords(content);
   const paragraphCount = countParagraphs(content);
   const tickCount = Object.values(checklistTicks).filter(Boolean).length;
-  const coveragePct = Math.round((tickCount / QUICK_CHECKLIST.length) * 100);
+  const coveragePct = checklist.length ? Math.round((tickCount / checklist.length) * 100) : 0;
 
   /** Update current draft in place (used by auto-save and submit). */
   const saveDraft = useCallback(() => {
@@ -301,7 +314,7 @@ export function EnglishWritingWorkspacePage() {
         {/* Side panel: checklist / mark scheme / models */}
         {(showChecklist || showMarkScheme || showModels) && (
           <div
-            className="lg:w-80 rounded-xl border p-4 shrink-0"
+            className="lg:w-[22rem] max-h-[calc(100vh-12rem)] overflow-y-auto rounded-xl border p-4 shrink-0"
             style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
           >
             {showChecklist && (
@@ -311,14 +324,14 @@ export function EnglishWritingWorkspacePage() {
                   Top Band Coverage: {coveragePct}%
                 </h3>
                 <ul className="space-y-2">
-                  {QUICK_CHECKLIST.map(item => (
+                  {checklist.map(item => (
                     <li key={item.id} className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() =>
                           setChecklistTicks(prev => ({ ...prev, [item.id]: !prev[item.id] }))
                         }
-                        className="w-5 h-5 rounded border flex items-center justify-center text-sm"
+                        className="w-5 h-5 rounded border flex items-center justify-center text-sm shrink-0"
                         style={{
                           borderColor: 'rgb(var(--border))',
                           background: checklistTicks[item.id] ? 'rgb(var(--accent))' : 'transparent',
@@ -340,9 +353,27 @@ export function EnglishWritingWorkspacePage() {
                 <h3 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
                   Mark scheme
                 </h3>
-                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {task.markSchemeSummary}
+                <p className="text-sm whitespace-pre-line" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {examinerPack?.markSchemeDetail ?? task.markSchemeSummary}
                 </p>
+                {examinerPack?.stepByStepMethod && (
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowMethod(!showMethod)}
+                      className="flex items-center gap-2 text-sm font-semibold mb-2"
+                      style={{ color: 'rgb(var(--text))' }}
+                    >
+                      <ListOrdered size={16} />
+                      Step-by-step method {showMethod ? '▼' : '▶'}
+                    </button>
+                    {showMethod && (
+                      <p className="text-sm whitespace-pre-line" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        {examinerPack.stepByStepMethod}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             {showModels && (
@@ -350,9 +381,36 @@ export function EnglishWritingWorkspacePage() {
                 <h3 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
                   Model answers
                 </h3>
-                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  Grade 4, 6, 8 and 9 model answers for this task will appear here. Add them via the task bank in a future update.
-                </p>
+                {examinerPack?.modelAnswers ? (
+                  <>
+                    <div className="flex gap-1 mb-2 flex-wrap">
+                      {MODEL_GRADES.map(g => (
+                        <button
+                          key={g}
+                          type="button"
+                          onClick={() => setModelGrade(g)}
+                          className="px-2 py-1 rounded text-xs font-medium"
+                          style={{
+                            background: modelGrade === g ? 'rgb(var(--accent))' : 'rgb(var(--surface-2))',
+                            color: modelGrade === g ? 'white' : 'rgb(var(--text))',
+                          }}
+                        >
+                          Grade {g.replace('grade', '')}
+                        </button>
+                      ))}
+                    </div>
+                    <div
+                      className="text-sm whitespace-pre-line rounded border p-3 max-h-64 overflow-y-auto"
+                      style={{ color: 'rgb(var(--text-secondary))', borderColor: 'rgb(var(--border))' }}
+                    >
+                      {examinerPack.modelAnswers[modelGrade]}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    Grade 4, 6, 8 and 9 model answers for this task will appear here when available.
+                  </p>
+                )}
               </div>
             )}
           </div>

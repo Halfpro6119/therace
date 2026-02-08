@@ -107,6 +107,23 @@ export interface EnglishChecklistItem {
   ao?: string;
 }
 
+/** Examiner-pack content for a single Language writing task (from ENGLISH_EXAMINER_PACK_TASKS_1_2.md) */
+export interface EnglishExaminerPackTask {
+  /** Task-specific top-band checklist (used in workspace instead of generic when present). */
+  checklistItems: EnglishChecklistItem[];
+  /** Full mark scheme text (AO5/AO6, bands, what examiners reward). */
+  markSchemeDetail: string;
+  /** Step-by-step writing method (plan → write → upgrade). */
+  stepByStepMethod: string;
+  /** Model answers by grade (full-length, exam-realistic). */
+  modelAnswers: {
+    grade4: string;
+    grade6: string;
+    grade8: string;
+    grade9: string;
+  };
+}
+
 // ---- Golden Question Bank types (exam-realistic, LLM-implementable, expandable) ----
 
 /** Language Paper 1/2 Section A: short analysis / comparison reading tasks */
