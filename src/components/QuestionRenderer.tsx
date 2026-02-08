@@ -200,7 +200,7 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
         <MCQQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
       )}
       {q.type === 'fill' && (
-        <FillQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
+        <FillQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
       {q.type === 'match' && (
         <MatchQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
@@ -211,8 +211,20 @@ export function QuestionRenderer({ prompt, value, onChange, disabled, showFeedba
       {q.type === 'dragMatch' && (
         <DragMatchQuestion q={q} value={value} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} />
       )}
+      {/* graphRead with multiple answer fields: multi-input UI (e.g. Solve x² = 4 graphically → 2, -2) */}
+      {q.type === 'graphRead' && Array.isArray(q.meta?.questionData?.fields) && q.meta.questionData.fields.length > 1 && (
+        <MultiNumericQuestion
+          q={q}
+          value={typeof value === 'string' ? value.split(',').map(s => s.trim()) : []}
+          onChange={(arr) => onChange(Array.isArray(arr) ? arr.join(', ') : '')}
+          disabled={disabled}
+          showFeedback={showFeedback}
+          gradeResult={undefined}
+          onSubmit={onSubmit}
+        />
+      )}
       {/* Text-based types: single input until dedicated UI */}
-      {(q.type === 'expression' || q.type === 'graphRead' || q.type === 'proofShort') && (
+      {((q.type === 'expression' || q.type === 'proofShort') || (q.type === 'graphRead' && (!Array.isArray(q.meta?.questionData?.fields) || q.meta.questionData.fields.length <= 1))) && (
         <ShortQuestion q={q} value={typeof value === 'string' ? value : ''} onChange={onChange} disabled={disabled} showFeedback={showFeedback} gradeResult={undefined} onSubmit={onSubmit} inputRefCallback={inputRefCallback} />
       )}
       {/* orderSteps: comma-separated list; stored as array, shown as string */}

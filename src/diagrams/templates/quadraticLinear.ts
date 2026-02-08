@@ -21,6 +21,7 @@ export const quadraticLinear: DiagramEngineTemplate = {
     },
     visibility: {
       showGrid: { default: true },
+      showNumbers: { default: true },
       showQuadratic: { default: true },
       showLinear: { default: true },
       showIntersectionPoints: { default: true }
@@ -34,15 +35,24 @@ export const quadraticLinear: DiagramEngineTemplate = {
     const labelX = params.labels?.xLabel || 'x';
     const labelY = params.labels?.yLabel || 'y';
 
-    const quadraticCoeff = Number(params.values?.quadraticCoeff) || 1;
-    const linearGradient = Number(params.values?.linearGradient) || 2;
-    const linearIntercept = Number(params.values?.linearIntercept) || 3;
-    const xMin = Number(params.values?.xMin) || -5;
-    const xMax = Number(params.values?.xMax) || 5;
-    const yMin = Number(params.values?.yMin) || -2;
-    const yMax = Number(params.values?.yMax) || 10;
+    const quadraticCoeff = Number(params.values?.quadraticCoeff);
+    const linearGradient = Number(params.values?.linearGradient);
+    const linearIntercept = Number(params.values?.linearIntercept);
+    const rawXMin = Number(params.values?.xMin);
+    const rawXMax = Number(params.values?.xMax);
+    const rawYMin = Number(params.values?.yMin);
+    const rawYMax = Number(params.values?.yMax);
+
+    const quadraticCoeffFinal = Number.isFinite(quadraticCoeff) ? quadraticCoeff : 1;
+    const linearGradientFinal = Number.isFinite(linearGradient) ? linearGradient : 2;
+    const linearInterceptFinal = Number.isFinite(linearIntercept) ? linearIntercept : 3;
+    const xMin = Number.isFinite(rawXMin) ? rawXMin : -5;
+    const xMax = Number.isFinite(rawXMax) ? rawXMax : 5;
+    const yMin = Number.isFinite(rawYMin) ? rawYMin : -2;
+    const yMax = Number.isFinite(rawYMax) ? rawYMax : 10;
 
     const showGrid = params.visibility?.showGrid !== false;
+    const showNumbers = params.visibility?.showNumbers !== false;
     const showQuadratic = params.visibility?.showQuadratic !== false;
     const showLinear = params.visibility?.showLinear !== false;
     const showIntersectionPoints = params.visibility?.showIntersectionPoints !== false;
@@ -61,7 +71,7 @@ export const quadraticLinear: DiagramEngineTemplate = {
     const numPoints = 100;
     for (let i = 0; i <= numPoints; i++) {
       const x = xMin + (xMax - xMin) * (i / numPoints);
-      const y = quadraticCoeff * x * x;
+      const y = quadraticCoeffFinal * x * x;
       if (y >= yMin && y <= yMax) {
         quadraticPoints.push({ x, y });
       }
@@ -71,7 +81,7 @@ export const quadraticLinear: DiagramEngineTemplate = {
     const linearPoints: Array<{ x: number; y: number }> = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = xMin + (xMax - xMin) * (i / numPoints);
-      const y = linearGradient * x + linearIntercept;
+      const y = linearGradientFinal * x + linearInterceptFinal;
       if (y >= yMin && y <= yMax) {
         linearPoints.push({ x, y });
       }
@@ -82,15 +92,15 @@ export const quadraticLinear: DiagramEngineTemplate = {
     const intersectionPoints: Array<{ x: number; y: number }> = [];
     if (showIntersectionPoints) {
       // Solve: ax² = mx + c => ax² - mx - c = 0
-      const a = quadraticCoeff;
-      const b = -linearGradient;
-      const c = -linearIntercept;
+      const a = quadraticCoeffFinal;
+      const b = -linearGradientFinal;
+      const c = -linearInterceptFinal;
       const discriminant = b * b - 4 * a * c;
       if (discriminant >= 0) {
         const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
         const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-        const y1 = linearGradient * x1 + linearIntercept;
-        const y2 = linearGradient * x2 + linearIntercept;
+        const y1 = linearGradientFinal * x1 + linearInterceptFinal;
+        const y2 = linearGradientFinal * x2 + linearInterceptFinal;
         if (x1 >= xMin && x1 <= xMax && y1 >= yMin && y1 <= yMax) {
           intersectionPoints.push({ x: x1, y: y1 });
         }
@@ -126,6 +136,24 @@ export const quadraticLinear: DiagramEngineTemplate = {
         ).join('\n')
       : '';
 
+    // Axis unit labels (integer steps; step 2 if range > 10)
+    const xRange = xMax - xMin;
+    const yRange = yMax - yMin;
+    const xStep = xRange <= 10 ? 1 : xRange <= 20 ? 2 : 5;
+    const yStep = yRange <= 10 ? 1 : yRange <= 20 ? 2 : 5;
+    const numbersMarkup = showNumbers ? `
+    ${Array.from({ length: Math.floor(xRange / xStep) + 1 }, (_, i) => {
+      const xVal = xMin + i * xStep;
+      const x = convertX(xVal);
+      return xVal === 0 ? '' : `<text x="${x}" y="${axisY + 20}" class="diagram-text-small" text-anchor="middle">${xVal}</text>`;
+    }).filter(Boolean).join('\n')}
+    ${Array.from({ length: Math.floor(yRange / yStep) + 1 }, (_, i) => {
+      const yVal = yMin + i * yStep;
+      const y = convertY(yVal);
+      return yVal === 0 ? '' : `<text x="${(0 >= xMin && 0 <= xMax ? convertX(0) : centerX) - 12}" y="${y + 4}" class="diagram-text-small" text-anchor="end">${yVal}</text>`;
+    }).filter(Boolean).join('\n')}
+    ` : '';
+
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
@@ -149,6 +177,7 @@ export const quadraticLinear: DiagramEngineTemplate = {
     <text id="txt:xLabel" x="${width - padding + 15}" y="${axisY + 5}" class="diagram-text">${labelX}</text>
     <text id="txt:yLabel" x="${centerX + 5}" y="${padding - 10}" class="diagram-text">${labelY}</text>
     ${showOrigin ? `<text id="txt:origin" x="${convertX(0) - 15}" y="${axisY + 15}" class="diagram-text-small">0</text>` : ''}
+    ${numbersMarkup}
 
     ${showQuadratic && quadraticPath ? `<path id="path:quadratic" d="${quadraticPath}" class="diagram-quadratic"/>` : ''}
     ${showLinear && linearPath ? `<path id="path:linear" d="${linearPath}" class="diagram-linear"/>` : ''}

@@ -129,33 +129,70 @@ function legacyToQuestionData(type: QuestionType, raw: any, existingQuestionData
     if (!Array.isArray(qd.labelBank) && Array.isArray(qd.labels)) qd.labelBank = qd.labels
   }
 
-  if (type === 'multiNumeric') {
-    // If fields not provided, infer from comma-separated answers
+  if (type === 'graphRead') {
+    // When answers are comma-separated numerics (e.g. "Solve x² = 4 graphically" → "2,-2"),
+    // populate fields so UI can show multiple answer boxes. Only when raw answers is a
+    // string with comma (canonical multi-value format) — array alternatives (e.g. median
+    // question with ['35','36','37','median']) stay as single box.
     if (!Array.isArray(qd.fields) || qd.fields.length === 0) {
-      const answers = toStringArray(raw?.answers)
-      if (answers.length > 0) {
-        // Check if first answer is comma-separated (e.g. "Solve x² + 5x + 6 = 0" → "-2,-3")
-        const firstAnswer = answers[0]
-        if (firstAnswer.includes(',')) {
-          const parts = firstAnswer.split(',').map(s => safeTrim(s))
-          qd.fields = parts.map((part, i) => {
+      const rawAnswers = raw?.answers ?? raw?.answer
+      if (typeof rawAnswers === 'string' && rawAnswers.includes(',')) {
+        const parts = rawAnswers.split(',').map(s => safeTrim(s)).filter(Boolean)
+        const numericParts = parts.filter(p => parseNumericOrNull(p) !== null)
+        if (numericParts.length > 1) {
+          qd.fields = numericParts.map((part, i) => {
             const num = parseNumericOrNull(part) ?? 0
-            // Default tolerance for decimals (e.g. 2 dp answers) so -0.33 accepts -0.333
             const tolerance = part.includes('.') ? 0.3 : 0
             return {
-              label: parts.length > 1 ? `Answer ${i + 1}` : `Value ${i + 1}`,
+              label: `Answer ${i + 1}`,
               answer: num,
               tolerance,
             }
           })
-        } else {
-          // Single value, but multiNumeric type - create single field
-          const num = parseNumericOrNull(firstAnswer) ?? 0
-          qd.fields = [{
-            label: 'Value',
-            answer: num,
-          }]
         }
+      } else if (Array.isArray(rawAnswers) && rawAnswers.length > 1) {
+        // Array like ['2','5'] (DB stores as array) — all numeric → multi-box
+        const parts = rawAnswers.map((a: any) => safeTrim(String(a))).filter(Boolean)
+        const numericParts = parts.filter(p => parseNumericOrNull(p) !== null)
+        if (numericParts.length === parts.length && numericParts.length > 1) {
+          qd.fields = numericParts.map((part, i) => {
+            const num = parseNumericOrNull(part) ?? 0
+            const tolerance = part.includes('.') ? 0.3 : 0
+            return {
+              label: `Answer ${i + 1}`,
+              answer: num,
+              tolerance,
+            }
+          })
+        }
+      }
+    }
+  }
+
+  if (type === 'multiNumeric') {
+    // If fields not provided, infer from comma-separated answers or array of answers
+    if (!Array.isArray(qd.fields) || qd.fields.length === 0) {
+      const answers = toStringArray(raw?.answers ?? raw?.answer)
+      if (answers.length > 0) {
+        // Get parts: comma-separated first answer (e.g. "0,7") or array of answers (e.g. ["0","7"])
+        let parts: string[]
+        const firstAnswer = answers[0]
+        if (firstAnswer.includes(',')) {
+          parts = firstAnswer.split(',').map(s => safeTrim(s)).filter(Boolean)
+        } else if (answers.length > 1) {
+          parts = answers.map(s => safeTrim(s)).filter(Boolean)
+        } else {
+          parts = [firstAnswer]
+        }
+        qd.fields = parts.map((part, i) => {
+          const num = parseNumericOrNull(part) ?? 0
+          const tolerance = part.includes('.') ? 0.3 : 0
+          return {
+            label: parts.length > 1 ? `Answer ${i + 1}` : `Value ${i + 1}`,
+            answer: num,
+            tolerance,
+          }
+        })
       } else {
         // No answers, create default fields (e.g., x, y for coordinates)
         qd.fields = [
@@ -183,7 +220,17 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
     const type = safeType(raw?.type)
 
     const question = safeTrim(raw?.question)
-    let answersAccepted = uniq(toStringArray(raw?.answers ?? raw?.answer))
+    const rawAnswers = raw?.answers ?? raw?.answer
+    // For graphRead/multiNumeric with comma-separated string (e.g. "0,7"), preserve as single element
+    // so grading and correctAnswer display get "0,7" not ["0","7"]
+    let answersAccepted: string[]
+    if ((type === 'graphRead' || type === 'multiNumeric') && typeof rawAnswers === 'string' && rawAnswers.includes(',')) {
+      answersAccepted = [safeTrim(rawAnswers)]
+    } else if ((type === 'graphRead' || type === 'multiNumeric') && Array.isArray(rawAnswers) && rawAnswers.length === 1 && typeof rawAnswers[0] === 'string' && rawAnswers[0].includes(',')) {
+      answersAccepted = [safeTrim(rawAnswers[0])]
+    } else {
+      answersAccepted = uniq(toStringArray(rawAnswers))
+    }
     // Filter out empty strings for diagram-dependent types that can work without answers
     // Paper 3 questions are problem-solving and may not have predefined answers
     const canHaveEmptyAnswers = [
@@ -222,8 +269,13 @@ export function normalizeQuestion(raw: Prompt | any): NormalizedQuestion {
       marks = Math.max(marks, questionData.fields.length)
     }
     // graphRead with comma-separated numeric answers (e.g. Solve x² = 4 graphically → 2, -2): same rule
-    if (type === 'graphRead' && answersAccepted.length > 0 && safeTrim(answersAccepted[0]).includes(',')) {
-      const numParts = safeTrim(answersAccepted[0]).split(',').map(s => safeTrim(s)).filter(Boolean).length
+    if (type === 'graphRead') {
+      const graphReadFields = Array.isArray(questionData.fields) ? questionData.fields : []
+      const numParts = graphReadFields.length > 1
+        ? graphReadFields.length
+        : answersAccepted.length > 0 && safeTrim(answersAccepted[0]).includes(',')
+          ? safeTrim(answersAccepted[0]).split(',').map(s => safeTrim(s)).filter(Boolean).length
+          : 0
       if (numParts > 1) marks = Math.max(marks, numParts)
     }
 

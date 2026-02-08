@@ -252,9 +252,16 @@ export function MCQQuestion({ q, value, onChange, disabled }: QuestionComponentP
 // Fill
 // ---------------------------
 
-export function FillQuestion({ q, value, onChange, disabled }: QuestionComponentProps) {
+export function FillQuestion({ q, value, onChange, disabled, inputRefCallback }: QuestionComponentProps) {
   const blanks = Number(q.meta.questionData?.blanks || 1)
   const arr: string[] = Array.isArray(value) ? value : Array.from({ length: blanks }).map(() => '')
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([])
+
+  useEffect(() => {
+    return () => {
+      inputRefCallback?.(null)
+    }
+  }, [inputRefCallback])
 
   return (
     <div className="space-y-3" aria-label="Fill in the blanks inputs">
@@ -264,13 +271,15 @@ export function FillQuestion({ q, value, onChange, disabled }: QuestionComponent
             Blank {i + 1}
           </label>
           <input
-            className="input"
+            ref={el => { inputsRef.current[i] = el }}
+            className="input quiz-input"
             value={arr[i] || ''}
             onChange={(e) => {
               const next = [...arr]
               next[i] = e.target.value
               onChange(next)
             }}
+            onFocus={() => inputRefCallback?.(inputsRef.current[i] ?? null)}
             disabled={disabled}
             aria-label={`Blank ${i + 1}`}
           />

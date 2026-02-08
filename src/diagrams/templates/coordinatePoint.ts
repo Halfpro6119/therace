@@ -81,7 +81,7 @@ export const coordinatePoint: DiagramEngineTemplate = {
       return `<text x="${x}" y="${centerY + 25}" class="diagram-text-small" text-anchor="middle">${xVal}</text>`;
     }).join('\n')}
     ${Array.from({ length: yMax - yMin + 1 }, (_, i) => {
-      const yVal = yMin + i;
+      const yVal = yMax - i;
       if (yVal === 0) return '';
       const y = padding + i * gridSize;
       return `<text x="${centerX - 15}" y="${y + 5}" class="diagram-text-small" text-anchor="middle">${yVal}</text>`;

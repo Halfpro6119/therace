@@ -15,6 +15,7 @@ import type { GradeResult, NormalizedQuestion, UserResponse } from './types'
 import {
   mappingObjectToString,
   normalizeMappingString,
+  normalizeMathNotation,
   safeLower,
   safeString,
   safeTrim,
@@ -23,6 +24,18 @@ import {
 
 function emptyIsZero(text: string): boolean {
   return safeTrim(text).length === 0
+}
+
+/**
+ * For algebra-type answers (e.g. "make r the subject", "solve for x"), allow optional
+ * "variable=" prefix so "r=∛(3V/(4π))" is treated like "∛(3V/(4π))".
+ * Strips a leading single-letter variable followed by "=" and returns the rest; otherwise returns original.
+ */
+function stripSubjectPrefix(text: string): string {
+  const t = safeTrim(text)
+  const m = t.match(/^\s*[a-zA-Z]\s*=\s*(.+)$/s)
+  if (m && safeTrim(m[1]).length > 0) return safeTrim(m[1])
+  return t
 }
 
 /** One row of a mark scheme: award marks if the answer contains any of the keywords or any of the key numbers. */
@@ -86,6 +99,156 @@ function extractNumbersFromText(text: string): number[] {
 }
 
 const MARK_SCHEME_NUMERIC_TOLERANCE = 0.3
+
+/** Normalized direction keywords for transformation-style short answers (e.g. "translation 3 right"). */
+const DIRECTION_WORDS = ['right', 'left', 'up', 'down'] as const
+type DirectionWord = (typeof DIRECTION_WORDS)[number]
+
+/**
+ * Parse transformation-style answer into key units: numbers and directions.
+ * Used so "3 spaces right" gets credit when answer is "translation 3 right".
+ * Returns null if text doesn't look like a transformation (so we don't override other grading).
+ */
+function parseTransformationUnits(text: string): { numbers: number[]; directions: DirectionWord[] } | null {
+  const t = safeTrim(text)
+  if (!t) return null
+  const lower = safeLower(t)
+  const numbers = extractNumbersFromText(t)
+  const directions: DirectionWord[] = []
+  // Match "right", "left", "up", "down" as whole words or after "spaces"/"units" (e.g. "3 spaces right")
+  for (const d of DIRECTION_WORDS) {
+    const wordBoundary = new RegExp(`\\b${d}\\b`, 'i')
+    const afterSpaces = new RegExp(`(?:spaces|units|to the)\\s+${d}`, 'i')
+    if (wordBoundary.test(lower) || afterSpaces.test(lower)) directions.push(d)
+  }
+  // Only use for answers that have at least one number or one direction (transformation-like)
+  if (numbers.length === 0 && directions.length === 0) return null
+  return { numbers, directions }
+}
+
+/** True if user's units cover all accepted units (same numbers within tolerance, same directions). */
+function transformationUnitsMatch(
+  accepted: { numbers: number[]; directions: DirectionWord[] },
+  user: { numbers: number[]; directions: DirectionWord[] },
+  tolerance: number = MARK_SCHEME_NUMERIC_TOLERANCE
+): boolean {
+  const userDirSet = new Set(user.directions)
+  for (const d of accepted.directions) {
+    if (!userDirSet.has(d)) return false
+  }
+  const used = new Set<number>()
+  for (const an of accepted.numbers) {
+    let found = false
+    for (let j = 0; j < user.numbers.length; j++) {
+      if (used.has(j)) continue
+      if (Math.abs(user.numbers[j] - an) <= tolerance) {
+        used.add(j)
+        found = true
+        break
+      }
+    }
+    if (!found) return false
+  }
+  return true
+}
+
+/** Stopwords excluded when extracting content words for describe/explain key-units. */
+const CONTENT_STOPWORDS = new Set([
+  'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
+  'in', 'on', 'at', 'to', 'for', 'of', 'and', 'or', 'but', 'by', 'with', 'from', 'as', 'it', 'its', 'this', 'that',
+  'these', 'those', 'i', 'you', 'he', 'she', 'we', 'they', 'what', 'which', 'who', 'when', 'where', 'how',
+])
+
+/** Min length for a token to count as a content word (avoids single letters like x, y in algebra). */
+const MIN_CONTENT_WORD_LENGTH = 2
+
+/**
+ * Extract significant (content) words from text for key-units grading: lowercase, split on non-alphanumeric,
+ * drop stopwords and short tokens. Used so "it shows positive correlation" matches accepted "positive correlation".
+ */
+function extractContentWords(text: string): string[] {
+  const t = safeTrim(text)
+  if (!t) return []
+  const lower = safeLower(t)
+  const tokens = lower.split(/[\s,;:!?()\[\]{}]+/).filter(Boolean)
+  const out: string[] = []
+  const seen = new Set<string>()
+  for (const w of tokens) {
+    const clean = w.replace(/^\W+|\W+$/g, '')
+    if (clean.length < MIN_CONTENT_WORD_LENGTH) continue
+    if (CONTENT_STOPWORDS.has(clean)) continue
+    if (!seen.has(clean)) {
+      seen.add(clean)
+      out.push(clean)
+    }
+  }
+  return out
+}
+
+/** Key units parsed from a short/describe/explain answer: numbers, directions, and content words. */
+export interface KeyUnits {
+  numbers: number[]
+  directions: DirectionWord[]
+  contentWords: string[]
+}
+
+/**
+ * Parse any short/describe/explain answer into key units (numbers, directions, content words).
+ * Used for units-based grading across all such questions.
+ */
+function parseKeyUnits(text: string): KeyUnits {
+  const t = safeTrim(text)
+  const numbers = extractNumbersFromText(t)
+  const lower = safeLower(t)
+  const directions: DirectionWord[] = []
+  for (const d of DIRECTION_WORDS) {
+    const wordBoundary = new RegExp(`\\b${d}\\b`, 'i')
+    const afterSpaces = new RegExp(`(?:spaces|units|to the)\\s+${d}`, 'i')
+    if (wordBoundary.test(lower) || afterSpaces.test(lower)) directions.push(d)
+  }
+  const contentWords = extractContentWords(t)
+  return { numbers, directions, contentWords }
+}
+
+/** True if user's answer contains all key units from the accepted answer (numbers, directions, content words). */
+function keyUnitsMatch(
+  accepted: KeyUnits,
+  user: KeyUnits,
+  userRawText: string,
+  tolerance: number = MARK_SCHEME_NUMERIC_TOLERANCE
+): boolean {
+  const userLower = safeLower(userRawText)
+  for (const word of accepted.contentWords) {
+    if (!userLower.includes(word)) return false
+  }
+  const userDirSet = new Set(user.directions)
+  for (const d of accepted.directions) {
+    if (!userDirSet.has(d)) return false
+  }
+  const used = new Set<number>()
+  for (const an of accepted.numbers) {
+    let found = false
+    for (let j = 0; j < user.numbers.length; j++) {
+      if (used.has(j)) continue
+      if (Math.abs(user.numbers[j] - an) <= tolerance) {
+        used.add(j)
+        found = true
+        break
+      }
+    }
+    if (!found) return false
+  }
+  return true
+}
+
+/** True when we should try key-units grading for this accepted answer (has at least one unit). */
+function acceptedHasKeyUnits(units: KeyUnits): boolean {
+  return (
+    units.numbers.length > 0 ||
+    units.directions.length > 0 ||
+    units.contentWords.length > 0
+  )
+}
 
 /** Grade short/proofShort using mark scheme: sum marks for each criterion matched by keywords or key numbers. */
 function gradeShortWithMarkScheme(
@@ -186,6 +349,9 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
     }
   }
 
+  // For algebra-type answers (e.g. make x the subject, solve for x), allow optional "x=" prefix
+  const comparisonText = stripSubjectPrefix(raw)
+
   // Mark scheme: award marks by keywords/key numbers (for proofShort and open-ended short)
   const qd = q.meta.questionData || {}
   const scheme = Array.isArray(qd.markScheme) ? qd.markScheme : []
@@ -197,10 +363,11 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
 
   // Numeric tolerance
   if (cfg.numericTolerance !== undefined) {
-    const userN = parseNumberOrNull(raw) ?? fractionToNumberOrNull(raw)
+    const userN = parseNumberOrNull(comparisonText) ?? fractionToNumberOrNull(comparisonText)
     if (userN !== null) {
       for (const a of accepted) {
-        const an = parseNumberOrNull(a) ?? fractionToNumberOrNull(a)
+        const aStripped = stripSubjectPrefix(a)
+        const an = parseNumberOrNull(aStripped) ?? fractionToNumberOrNull(aStripped)
         if (an === null) continue
         if (Math.abs(userN - an) <= cfg.numericTolerance) {
           return {
@@ -221,10 +388,10 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
 
   // Equivalent fractions (optional)
   if (cfg.acceptEquivalentFractions) {
-    const userFrac = fractionToNumberOrNull(raw)
+    const userFrac = fractionToNumberOrNull(comparisonText)
     if (userFrac !== null) {
       for (const a of accepted) {
-        const afrac = fractionToNumberOrNull(a)
+        const afrac = fractionToNumberOrNull(stripSubjectPrefix(a))
         if (afrac !== null && userFrac === afrac) {
           return {
             isCorrect: true,
@@ -243,10 +410,10 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
   }
 
   // Interval-equivalence: accept same bounds regardless of variable letter (e.g. 3.445≤x<3.455 vs 3.445≤m<3.455)
-  const userInterval = parseIntervalWithAnyVariable(raw)
+  const userInterval = parseIntervalWithAnyVariable(comparisonText)
   if (userInterval) {
     for (const a of accepted) {
-      const acceptedInterval = parseIntervalWithAnyVariable(a)
+      const acceptedInterval = parseIntervalWithAnyVariable(stripSubjectPrefix(a))
       if (acceptedInterval && intervalsEqual(userInterval, acceptedInterval)) {
         return {
           isCorrect: true,
@@ -263,9 +430,106 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
     }
   }
 
-  // Text compare
-  const normUser = cfg.caseSensitive ? safeTrim(raw) : safeLower(raw)
-  const normAccepted = accepted.map(a => (cfg.caseSensitive ? safeTrim(a) : safeLower(a)))
+  // Order-independent product of factors (e.g. prime factorisation: 2²×5×3² same as 2²×3²×5)
+  const userFactors = parseProductOfFactors(comparisonText)
+  if (userFactors) {
+    for (const a of accepted) {
+      const acceptedFactors = parseProductOfFactors(stripSubjectPrefix(a))
+      if (acceptedFactors && productOfFactorsEqual(userFactors, acceptedFactors)) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: q.answersAccepted[0] || a,
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
+        }
+      }
+    }
+  }
+
+  // Order-independent product of algebraic factors (e.g. factorise: (x+5)(x+4) same as (x+4)(x+5))
+  const userAlgebraicFactors = extractParenthesisedFactors(comparisonText)
+  if (userAlgebraicFactors) {
+    for (const a of accepted) {
+      const acceptedAlgebraicFactors = extractParenthesisedFactors(stripSubjectPrefix(a))
+      if (
+        acceptedAlgebraicFactors &&
+        productOfAlgebraicFactorsEqual(userAlgebraicFactors, acceptedAlgebraicFactors)
+      ) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: q.answersAccepted[0] || a,
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
+        }
+      }
+    }
+  }
+
+  // Units-based grading for transformation/describe-style short answers: award marks when the user
+  // includes the same key units (numbers and directions) as the model answer, e.g. "3 spaces right"
+  // matches "translation 3 right" (both have 3 and right). Only trigger when the model answer
+  // contains a direction word (right/left/up/down) so we don't match coordinate-style answers.
+  if (accepted.length === 1 && maxMarks >= 1) {
+    const acceptedUnits = parseTransformationUnits(accepted[0])
+    if (acceptedUnits && acceptedUnits.directions.length > 0) {
+      const userUnits = parseTransformationUnits(raw)
+      if (
+        userUnits &&
+        transformationUnitsMatch(acceptedUnits, userUnits, MARK_SCHEME_NUMERIC_TOLERANCE)
+      ) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: q.answersAccepted[0] || '',
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
+        }
+      }
+    }
+  }
+
+  // General units-based grading for all short/describe/explain: if the user's answer contains all
+  // key units (numbers, directions, content words) from any one accepted answer, award full marks.
+  // Applies to single or multiple accepted answers (e.g. "positive" / "positive correlation").
+  if (maxMarks >= 1) {
+    const userUnits = parseKeyUnits(raw)
+    for (const a of accepted) {
+      const acceptedUnits = parseKeyUnits(stripSubjectPrefix(a))
+      if (!acceptedHasKeyUnits(acceptedUnits)) continue
+      if (keyUnitsMatch(acceptedUnits, userUnits, raw, MARK_SCHEME_NUMERIC_TOLERANCE)) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: q.answersAccepted[0] || '',
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
+        }
+      }
+    }
+  }
+
+  // Text compare (normalize math notation so e.g. * and × match); accept with or without variable= prefix
+  const mathNorm = (s: string) => normalizeMathNotation(cfg.caseSensitive ? safeTrim(s) : safeLower(s))
+  const normUser = mathNorm(comparisonText)
+  const normAccepted = accepted.map(a => mathNorm(stripSubjectPrefix(a)))
 
   const ok = normAccepted.includes(normUser)
 
@@ -337,13 +601,14 @@ function gradeFill(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'fill
     }
   }
 
-  // Determine marking scheme
+  // Determine marking scheme (normalize math notation so e.g. * and × match)
+  const norm = (a: string) => safeLower(normalizeMathNotation(a))
   const acceptedPerBlank: string[][] | null = Array.isArray(qd.acceptedPerBlank)
-    ? qd.acceptedPerBlank.map((arr: any) => toStringArray(arr).map(a => safeLower(a)))
+    ? qd.acceptedPerBlank.map((arr: any) => toStringArray(arr).map(a => norm(a)))
     : null
 
   const acceptedComposite: string[] | null = Array.isArray(qd.acceptedComposite)
-    ? toStringArray(qd.acceptedComposite).map(a => safeLower(a))
+    ? toStringArray(qd.acceptedComposite).map(a => norm(a))
     : null
 
   // Partial marks: by blank
@@ -351,7 +616,7 @@ function gradeFill(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'fill
   let correctCount = 0
 
   for (let i = 0; i < blanks; i++) {
-    const u = safeLower(userBlanks[i] || '')
+    const u = norm(userBlanks[i] || '')
     if (!u) continue
 
     if (acceptedPerBlank && Array.isArray(acceptedPerBlank[i])) {
@@ -366,7 +631,7 @@ function gradeFill(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'fill
     }
 
     // Final fallback: answersAccepted
-    const fallbackAccepted = q.answersAccepted.map(a => safeLower(a))
+    const fallbackAccepted = q.answersAccepted.map(a => norm(a))
     if (fallbackAccepted.includes(u)) correctCount += 1
   }
 
@@ -521,7 +786,9 @@ function gradeNumeric(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'n
       normalizedUserAnswer: { text: '' },
     }
   }
-  const userN = parseNumberOrNull(raw) ?? fractionToNumberOrNull(raw)
+  // Allow "x=7" etc. for algebra-type numeric questions (e.g. Solve 4x − 7 = 21)
+  const comparisonText = stripSubjectPrefix(raw)
+  const userN = parseNumberOrNull(comparisonText) ?? fractionToNumberOrNull(comparisonText)
   if (userN === null) {
     return {
       isCorrect: false,
@@ -537,7 +804,8 @@ function gradeNumeric(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'n
   }
   const accepted = q.answersAccepted
   for (const a of accepted) {
-    const an = parseNumberOrNull(a) ?? fractionToNumberOrNull(a)
+    const aStripped = stripSubjectPrefix(a)
+    const an = parseNumberOrNull(aStripped) ?? fractionToNumberOrNull(aStripped)
     if (an === null) continue
     if (Math.abs(userN - an) <= tolerance) {
       return {
@@ -586,19 +854,37 @@ function gradeMultiNumeric(q: NormalizedQuestion, r: Extract<UserResponse, { typ
     }
   }
 
-  const perFieldMax = maxMarks / fields.length
-  let correctCount = 0
+  // Order-independent matching: for quadratics etc., -3 in Answer 1 is correct even if Answer 1 slot expects -2
+  const expectedWithTol = fields.map((f: any) => {
+    const ans = typeof f?.answer === 'number' ? f.answer : parseNumberOrNull(String(f?.answer ?? ''))
+    const tol = typeof f?.tolerance === 'number' ? f.tolerance : 0
+    return ans !== null ? { expected: ans, tolerance: tol } : null
+  }).filter((x): x is { expected: number; tolerance: number } => x !== null)
 
-  for (let i = 0; i < fields.length; i++) {
-    const field = fields[i]
-    const expected = typeof field?.answer === 'number' ? field.answer : parseNumberOrNull(String(field?.answer ?? ''))
-    const tol = typeof field?.tolerance === 'number' ? field.tolerance : 0
-    const userRaw = userValues[i]
-    const userN = typeof userRaw === 'number' ? userRaw : (parseNumberOrNull(String(userRaw ?? '')) ?? fractionToNumberOrNull(String(userRaw ?? '')))
-    if (expected === null) continue
-    if (userN !== null && Math.abs(userN - expected) <= tol) correctCount += 1
+  // Allow "x=2" / "x=-2" etc. in algebra-type multi answers (e.g. Solve 2x² − 8 = 0)
+  const userNumbers = userValues
+    .map((v: any) => {
+      const s = String(v ?? '')
+      const stripped = stripSubjectPrefix(s)
+      return typeof v === 'number' ? v : (parseNumberOrNull(stripped) ?? fractionToNumberOrNull(stripped))
+    })
+    .filter((n): n is number => n !== null)
+
+  const used = new Set<number>()
+  let correctCount = 0
+  for (const userN of userNumbers) {
+    for (let j = 0; j < expectedWithTol.length; j++) {
+      if (used.has(j)) continue
+      const { expected, tolerance } = expectedWithTol[j]
+      if (Math.abs(userN - expected) <= tolerance) {
+        used.add(j)
+        correctCount += 1
+        break
+      }
+    }
   }
 
+  const perFieldMax = maxMarks / fields.length
   const marksAwarded = Math.max(0, Math.min(maxMarks, Math.round(correctCount * perFieldMax)))
   const isCorrect = correctCount === fields.length
 
@@ -610,7 +896,7 @@ function gradeMultiNumeric(q: NormalizedQuestion, r: Extract<UserResponse, { typ
       summary: isCorrect
         ? `Correct (+${maxMarks}/${maxMarks}).`
         : `Partially correct (+${marksAwarded}/${maxMarks}).`,
-      correctAnswer: q.answersAccepted[0] || fields.map((f: any) => f.answer).join(', '),
+      correctAnswer: fields.length > 1 ? fields.map((f: any) => String(f?.answer ?? '')).join(', ') : (q.answersAccepted[0] || ''),
       mistakeTags: isCorrect ? [] : ['partial'],
     },
     normalizedUserAnswer: { values: userValues },
@@ -725,19 +1011,29 @@ function gradeGraphReadMulti(q: NormalizedQuestion, text: string): GradeResult {
   const maxMarks = q.marks
   const raw = safeTrim(text)
   if (!raw) {
+    const correctAnswer = getGraphReadMultiCorrectAnswer(q)
     return {
       isCorrect: false,
       marksAwarded: 0,
       maxMarks,
-      feedback: { summary: 'No answer given.', correctAnswer: q.answersAccepted[0] || '', mistakeTags: ['empty'] },
+      feedback: { summary: 'No answer given.', correctAnswer, mistakeTags: ['empty'] },
       normalizedUserAnswer: { text: '' },
     }
   }
-  const firstAnswer = q.answersAccepted[0] || ''
-  const expectedStrs = firstAnswer.split(',').map(s => safeTrim(s)).filter(Boolean)
-  const expectedNums = expectedStrs
-    .map(s => parseNumberOrNull(s) ?? fractionToNumberOrNull(s))
-    .filter((n): n is number => n !== null)
+  const qd = q.meta?.questionData || {}
+  const fields = Array.isArray(qd.fields) ? qd.fields : []
+  let expectedNums: number[]
+  if (fields.length > 0) {
+    expectedNums = fields
+      .map((f: any) => (typeof f?.answer === 'number' ? f.answer : parseNumberOrNull(String(f?.answer ?? ''))))
+      .filter((n): n is number => n !== null)
+  } else {
+    const firstAnswer = q.answersAccepted[0] || ''
+    const expectedStrs = firstAnswer.split(',').map(s => safeTrim(s)).filter(Boolean)
+    expectedNums = expectedStrs
+      .map(s => parseNumberOrNull(s) ?? fractionToNumberOrNull(s))
+      .filter((n): n is number => n !== null)
+  }
   if (expectedNums.length === 0) return gradeAsShort(q, text)
 
   const userNumbers = extractNumbersFromText(raw)
@@ -756,17 +1052,30 @@ function gradeGraphReadMulti(q: NormalizedQuestion, text: string): GradeResult {
   }
   const marksAwarded = correctCount
   const isCorrect = correctCount === expectedNums.length
+  const correctAnswer = getGraphReadMultiCorrectAnswer(q, expectedNums)
   return {
     isCorrect,
     marksAwarded,
     maxMarks,
     feedback: {
       summary: isCorrect ? `Correct (+${maxMarks}/${maxMarks}).` : `Partially correct (+${marksAwarded}/${maxMarks}).`,
-      correctAnswer: firstAnswer,
+      correctAnswer,
       mistakeTags: isCorrect ? [] : ['partial'],
     },
     normalizedUserAnswer: { text: raw },
   }
+}
+
+function getGraphReadMultiCorrectAnswer(q: NormalizedQuestion, expectedNums?: number[]): string {
+  const qd = q.meta?.questionData || {}
+  const fields = Array.isArray(qd.fields) ? qd.fields : []
+  if (fields.length > 0) {
+    return fields.map((f: any) => String(f?.answer ?? '')).join(', ')
+  }
+  if (Array.isArray(expectedNums) && expectedNums.length > 0) {
+    return expectedNums.join(', ')
+  }
+  return q.answersAccepted[0] || ''
 }
 
 // ----------------
@@ -882,6 +1191,137 @@ function intervalsEqual(a: InequalityInterval, b: InequalityInterval): boolean {
     a.leftClosed === b.leftClosed &&
     a.rightClosed === b.rightClosed
   )
+}
+
+// ----------------
+// Order-independent product of factors (e.g. prime factorisation: 2²×3²×5 vs 2²×5×3²)
+// ----------------
+
+const SUPerscriptToDigit: Record<string, number> = {
+  '\u2070': 0, '\u00B9': 1, '\u00B2': 2, '\u00B3': 3, '\u2074': 4, '\u2075': 5,
+  '\u2076': 6, '\u2077': 7, '\u2078': 8, '\u2079': 9,
+}
+
+/** Parse one factor exponent from trailing part: ², ³, ^2, **2, etc. Default 1. */
+function parseFactorExponent(tail: string): number | null {
+  const t = safeTrim(tail)
+  if (!t) return 1
+  const sup = SUPerscriptToDigit[t]
+  if (sup !== undefined) return sup
+  const caret = t.match(/^\^(\d+)$/)
+  if (caret) return parseInt(caret[1], 10)
+  const star = t.match(/^\*\*(\d+)$/)
+  if (star) return parseInt(star[1], 10)
+  return null
+}
+
+/**
+ * Parse a product-of-factors string (e.g. "2²×3²×5", "2^2 x 5 x 3^2") into a canonical list of [base, exponent].
+ * Returns null if the string doesn't look like a product of numeric factors (so we fall back to text compare).
+ */
+function parseProductOfFactors(s: string): [number, number][] | null {
+  const raw = safeTrim(s)
+  if (!raw) return null
+  // Normalise multiplication signs to × and split
+  const normalized = raw
+    .replace(/\s*[xX]\s*/g, '×')
+    .replace(/\s*\*\s*/g, '×')
+  const parts = normalized.split(/[\s×]+/).map(p => safeTrim(p)).filter(Boolean)
+  if (parts.length < 2) return null
+  const factors: [number, number][] = []
+  for (const part of parts) {
+    const baseMatch = part.match(/^(\d+)(.*)$/s)
+    if (!baseMatch) return null
+    const base = parseInt(baseMatch[1], 10)
+    if (!Number.isFinite(base) || base < 2) return null
+    const exp = parseFactorExponent(baseMatch[2])
+    if (exp === null || exp < 0) return null
+    factors.push([base, exp])
+  }
+  // Canonical order: sort by base (so 2²×3²×5 is comparable regardless of input order)
+  factors.sort((a, b) => a[0] - b[0])
+  return factors
+}
+
+function productOfFactorsEqual(user: [number, number][], accepted: [number, number][]): boolean {
+  if (user.length !== accepted.length) return false
+  for (let i = 0; i < user.length; i++) {
+    if (user[i][0] !== accepted[i][0] || user[i][1] !== accepted[i][1]) return false
+  }
+  return true
+}
+
+// ----------------
+// Order-independent product of algebraic factors (e.g. factorise: (x+5)(x+4) same as (x+4)(x+5))
+// ----------------
+
+/**
+ * Extract top-level parenthesised factors from a product like "(x+4)(x+5)" or "(x+4)*(x+5)".
+ * Returns array of inner contents (e.g. ["x+4", "x+5"]) or null if not a product of at least two such factors.
+ */
+function extractParenthesisedFactors(s: string): string[] | null {
+  const raw = safeTrim(s)
+  if (!raw || raw.length < 4) return null
+  const normalized = raw.replace(/\s*\*\s*/g, '').replace(/\s+/g, ' ').trim()
+  const factors: string[] = []
+  let i = 0
+  const n = normalized.length
+  while (i < n) {
+    if (normalized[i] !== '(') return null
+    let depth = 1
+    const start = i
+    i++
+    while (i < n && depth > 0) {
+      if (normalized[i] === '(') depth++
+      else if (normalized[i] === ')') depth--
+      i++
+    }
+    if (depth !== 0) return null
+    factors.push(safeTrim(normalized.slice(start + 1, i - 1)))
+  }
+  if (factors.length < 2) return null
+  const reconstructed = factors.map(f => `(${f})`).join('')
+  if (reconstructed !== normalized) return null
+  return factors
+}
+
+/**
+ * Canonicalise one factor so (x+4) and (4+x) compare equal: sort additive terms (split by + or -).
+ */
+function canonicaliseAlgebraicFactor(f: string): string {
+  const t = safeTrim(f)
+  if (!t) return t
+  const terms: string[] = []
+  let i = 0
+  const n = t.length
+  while (i < n) {
+    let sign = ''
+    if (i === 0 && (t[i] === '+' || t[i] === '-')) {
+      sign = t[i]
+      i++
+    } else if (i > 0 && (t[i] === '+' || t[i] === '-')) {
+      sign = t[i]
+      i++
+    }
+    let term = ''
+    while (i < n && t[i] !== '+' && t[i] !== '-') {
+      term += t[i]
+      i++
+    }
+    if (term) terms.push(sign + safeTrim(term))
+  }
+  terms.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+  return terms.join('+').replace(/^\+\s*/, '').replace(/\+\-/g, '-')
+}
+
+function productOfAlgebraicFactorsEqual(userFactors: string[], acceptedFactors: string[]): boolean {
+  if (userFactors.length !== acceptedFactors.length) return false
+  const u = userFactors.map(canonicaliseAlgebraicFactor).sort()
+  const a = acceptedFactors.map(canonicaliseAlgebraicFactor).sort()
+  for (let i = 0; i < u.length; i++) {
+    if (u[i] !== a[i]) return false
+  }
+  return true
 }
 
 function gradeInequalityPlot(
@@ -1066,7 +1506,8 @@ export function grade(question: NormalizedQuestion, response: UserResponse): Gra
       case 'graphRead': {
         const text = (response as any).text ?? ''
         const firstAccepted = question.answersAccepted[0] || ''
-        if (safeTrim(firstAccepted).includes(',')) return gradeGraphReadMulti(question, text)
+        const fields = Array.isArray(question.meta?.questionData?.fields) ? question.meta.questionData.fields : []
+        if (safeTrim(firstAccepted).includes(',') || fields.length > 1) return gradeGraphReadMulti(question, text)
         return gradeAsShort(question, text)
       }
       case 'orderSteps':

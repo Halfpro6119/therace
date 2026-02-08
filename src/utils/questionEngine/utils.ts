@@ -15,6 +15,19 @@ export function safeLower(v: unknown, fallback = ''): string {
   return safeTrim(v, fallback).toLowerCase()
 }
 
+/**
+ * Normalize equivalent mathematical notation so comparisons are consistent.
+ * e.g. "*" and "·" (middle dot) → "×" (multiplication sign); "−" (Unicode minus) → "-".
+ */
+export function normalizeMathNotation(s: string): string {
+  return safeTrim(s)
+    .replace(/\*/g, '×')
+    .replace(/·/g, '×')
+    .replace(/\u2212/g, '-') // Unicode minus
+    .replace(/\u2013/g, '-') // en dash
+    .replace(/\u2014/g, '-') // em dash
+}
+
 export function safeBool(v: unknown, fallback = false): boolean {
   if (v === true || v === false) return v
   const s = safeLower(v)

@@ -59,6 +59,7 @@ const DeleteGoldQuestionsPage = lazy(() => import('./admin/DeleteGoldQuestionsPa
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
 import { CommandPalette } from './components/CommandPalette';
+import { ScrollToTop } from './components/ScrollToTop';
 import { initializeQuestionRegistry } from './utils/questionRegistry';
 
 function AdminRouteFallback() {
@@ -78,6 +79,7 @@ function App() {
     <ToastProvider>
       <ConfirmProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <CommandPalette />
       <Routes>
         <Route path="/quiz/:quizId" element={<QuizPlayerPage />} />
