@@ -22,6 +22,17 @@ import { EnglishCompareDraftsPage } from './pages/english/EnglishCompareDraftsPa
 import { EnglishDraftMarkingPage } from './pages/english/EnglishDraftMarkingPage';
 import { EnglishLiteraturePage } from './pages/english/EnglishLiteraturePage';
 import { EnglishLiteraturePlaceholder } from './pages/english/EnglishLiteraturePlaceholder';
+import { EnglishLiteratureWorkspacePage } from './pages/english/EnglishLiteratureWorkspacePage';
+import { EnglishLiteratureResultPage } from './pages/english/EnglishLiteratureResultPage';
+import { EnglishLiteratureDraftsPage } from './pages/english/EnglishLiteratureDraftsPage';
+import { EnglishLiteratureSeenPoetryPage } from './pages/english/EnglishLiteratureSeenPoetryPage';
+import { EnglishLiteratureUnseenPage } from './pages/english/EnglishLiteratureUnseenPage';
+import { EnglishLiteratureTextsPage } from './pages/english/EnglishLiteratureTextsPage';
+import { EnglishQuotationLabPage } from './pages/english/EnglishQuotationLabPage';
+import { EnglishQuotationLabQuoteLabPage } from './pages/english/EnglishQuotationLabQuoteLabPage';
+import { EnglishQuotationLabDrillsPage } from './pages/english/EnglishQuotationLabDrillsPage';
+import { EnglishQuotationLabMicroPage } from './pages/english/EnglishQuotationLabMicroPage';
+import { EnglishQuotationLabProgressPage } from './pages/english/EnglishQuotationLabProgressPage';
 import { EnglishVocabLabPage } from './pages/english/EnglishVocabLabPage';
 import { MathsMasteryHomePage } from './pages/maths/MathsMasteryHomePage';
 import { MathsHubPage } from './pages/maths/MathsHubPage';
@@ -134,6 +145,17 @@ function App() {
                 <Route path="/english-campus/language/draft/:draftId/marking" element={<EnglishDraftMarkingPage />} />
                 <Route path="/english-campus/language/compare" element={<EnglishCompareDraftsPage />} />
                 <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
+                <Route path="/english-campus/literature/task/:taskId" element={<EnglishLiteratureWorkspacePage />} />
+                <Route path="/english-campus/literature/result" element={<EnglishLiteratureResultPage />} />
+                <Route path="/english-campus/literature/drafts" element={<EnglishLiteratureDraftsPage />} />
+                <Route path="/english-campus/literature/poetry" element={<EnglishLiteratureSeenPoetryPage />} />
+                <Route path="/english-campus/literature/unseen" element={<EnglishLiteratureUnseenPage />} />
+                <Route path="/english-campus/literature/texts" element={<EnglishLiteratureTextsPage />} />
+                <Route path="/english-campus/literature/quotation-lab" element={<EnglishQuotationLabPage />} />
+                <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId" element={<EnglishQuotationLabQuoteLabPage />} />
+                <Route path="/english-campus/literature/quotation-lab/drills/:sourceId" element={<EnglishQuotationLabDrillsPage />} />
+                <Route path="/english-campus/literature/quotation-lab/micro/:sourceId" element={<EnglishQuotationLabMicroPage />} />
+                <Route path="/english-campus/literature/quotation-lab/progress/:sourceId" element={<EnglishQuotationLabProgressPage />} />
                 <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />
                 <Route path="/english-campus/vocab" element={<EnglishVocabLabPage />} />
                 <Route path="/maths-mastery" element={<MathsMasteryHomePage />} />

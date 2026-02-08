@@ -196,6 +196,38 @@ export interface EnglishLiteratureTextTask {
   markSchemeSummary?: string;
 }
 
+/** Unified literature task for workspace (from any pillar). */
+export type LiteratureTaskType =
+  | 'seen-comparison'
+  | 'seen-single'
+  | 'unseen-analysis'
+  | 'unseen-comparison'
+  | 'text';
+
+export interface LiteratureTaskInfo {
+  id: string;
+  title: string;
+  prompt: string;
+  timeRecommendationMins: number;
+  taskType: LiteratureTaskType;
+  /** For display: poem name(s) or text name */
+  subtitle?: string;
+}
+
+/** Literature draft (same loop as Language: Task → Plan → Write → Mark → Improve). */
+export interface EnglishLiteratureDraft {
+  id: string;
+  taskId: string;
+  taskTitle: string;
+  taskType: LiteratureTaskType;
+  content: string;
+  wordCount: number;
+  createdAt: string;
+  updatedAt: string;
+  result?: EnglishMarkResult;
+  checklistTicks?: string[];
+}
+
 /** Vocab Lab question types */
 export type VocabTaskType = 'spellFromDefinition' | 'meaningFromWord' | 'upgradeWord' | 'useInContext';
 
@@ -207,4 +239,103 @@ export interface EnglishVocabTask {
   stimulus: string;
   /** Expected answer(s) or hint for marking. */
   expectedAnswer?: string | string[];
+}
+
+// ---- Quotation Lab (Chunk 5: quote banks, drills, micro-paragraphs, progress) ----
+
+export type QuotationLabSourceId = 'Macbeth' | 'Ozymandias' | 'London' | 'Exposure';
+
+export interface QuotationLabQuote {
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quote: string;
+  /** e.g. ambition, guilt, power */
+  themes: string[];
+  /** e.g. metaphor, soliloquy, imagery */
+  method: string;
+  /** Core meaning in one line */
+  meaning: string;
+  /** Context hook for AO3 (e.g. Jacobean fear of ambition) */
+  contextHook: string;
+  /** Grade 9 deployment tip */
+  deploymentTip: string;
+  /** Optional: act/scene or stanza for plays/poems */
+  location?: string;
+}
+
+/** Drill: Explain This Quote — one sentence linking quote to theme; grading 4/6/8/9 */
+export interface QuotationDrillExplain {
+  type: 'explainQuote';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  themePrompt: string;
+  /** Grading logic: Grade 4 = basic meaning, 6 = meaning + theme, 8 = method + meaning, 9 = concept + judgement */
+  gradingNote: string;
+}
+
+/** Drill: Upgrade the Analysis — weak response to rewrite with method, precision, judgement */
+export interface QuotationDrillUpgrade {
+  type: 'upgradeAnalysis';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  weakResponse: string;
+  /** What to add: method, precision, judgement */
+  upgradeFocus: string;
+}
+
+/** Drill: Which Quote Fits Best? — question + 4 options; trains selectivity and AO1 */
+export interface QuotationDrillBestFit {
+  type: 'whichQuoteFitsBest';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  question: string;
+  quoteOptionIds: [string, string, string, string];
+  bestQuoteId: string;
+  whyBest: string;
+}
+
+/** Drill: Link Two Quotes — link one from early and one from late to show change (Grade 8–9) */
+export interface QuotationDrillLinkTwo {
+  type: 'linkTwoQuotes';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteIdA: string;
+  quoteIdB: string;
+  /** e.g. "Show change in Macbeth's ambition" */
+  linkPrompt: string;
+  /** Brief examiner-style note on what to reward */
+  rewardNote: string;
+}
+
+export type QuotationDrillItem =
+  | QuotationDrillExplain
+  | QuotationDrillUpgrade
+  | QuotationDrillBestFit
+  | QuotationDrillLinkTwo;
+
+/** Micro-paragraph builder: theme + one quote + one method → 4–5 sentences (argument, quote, AO2, AO3, judgement) */
+export interface QuotationMicroParagraphPrompt {
+  id: string;
+  sourceId: QuotationLabSourceId;
+  theme: string;
+  quoteId: string;
+  method: string;
+  /** Checklist: argument, embedded quote, AO2 analysis, AO3 context, judgement */
+  checklist: string[];
+}
+
+/** Per-source progress for Quotation Lab */
+export interface QuotationLabProgress {
+  sourceId: QuotationLabSourceId;
+  /** quoteId -> familiarity count or score (e.g. 0–3) */
+  quoteFamiliarity: Record<string, number>;
+  /** AO1/AO2/AO3 balance from recent drills (e.g. { AO1: 0.4, AO2: 0.4, AO3: 0.2 }) */
+  aoBalance: { AO1: number; AO2: number; AO3: number };
+  /** Suggested ceiling: what's holding them back (e.g. "AO3 underused") */
+  gradeCeilingIndicator?: string;
+  /** Themes with lower familiarity or accuracy */
+  weakThemes: string[];
+  lastUpdated: string;
 }

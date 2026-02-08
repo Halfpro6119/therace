@@ -4,6 +4,9 @@ import type {
   EnglishWritingStreak,
   EnglishTargets,
   EnglishContinueState,
+  EnglishLiteratureDraft,
+  QuotationLabProgress,
+  QuotationLabSourceId,
 } from '../types/englishCampus';
 
 const STORAGE_KEYS = {
@@ -20,6 +23,8 @@ const STORAGE_KEYS = {
   ENGLISH_TARGETS: 'grade9sprint_english_targets',
   ENGLISH_LAST_SCORE: 'grade9sprint_english_last_score',
   ENGLISH_CONTINUE: 'grade9sprint_english_continue',
+  ENGLISH_LITERATURE_DRAFTS: 'grade9sprint_english_literature_drafts',
+  ENGLISH_QUOTATION_LAB_PROGRESS: 'grade9sprint_english_quotation_lab_progress',
 };
 
 /**
@@ -275,6 +280,52 @@ export const storage = {
   },
   setEnglishContinue: (state: EnglishContinueState): void => {
     localStorage.setItem(STORAGE_KEYS.ENGLISH_CONTINUE, JSON.stringify(state));
+  },
+
+  // —— Literature drafts ——
+  getEnglishLiteratureDrafts: (): EnglishLiteratureDraft[] => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_LITERATURE_DRAFTS);
+    return data ? JSON.parse(data) : [];
+  },
+  saveEnglishLiteratureDraft: (draft: EnglishLiteratureDraft): void => {
+    const drafts = storage.getEnglishLiteratureDrafts();
+    const idx = drafts.findIndex(d => d.id === draft.id);
+    if (idx >= 0) drafts[idx] = draft;
+    else drafts.push(draft);
+    drafts.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_LITERATURE_DRAFTS, JSON.stringify(drafts));
+  },
+  getEnglishLiteratureDraftById: (id: string): EnglishLiteratureDraft | undefined => {
+    return storage.getEnglishLiteratureDrafts().find(d => d.id === id);
+  },
+
+  // —— Quotation Lab progress (per source) ——
+  getQuotationLabProgress: (): Record<QuotationLabSourceId, QuotationLabProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_QUOTATION_LAB_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getQuotationLabProgressBySource: (sourceId: QuotationLabSourceId): QuotationLabProgress | undefined => {
+    return storage.getQuotationLabProgress()[sourceId];
+  },
+  saveQuotationLabProgress: (progress: QuotationLabProgress): void => {
+    const all = storage.getQuotationLabProgress();
+    all[progress.sourceId] = progress;
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_QUOTATION_LAB_PROGRESS, JSON.stringify(all));
+  },
+
+  /** Increment familiarity for a quote (e.g. when viewed in Quote Lab or used in a drill). */
+  incrementQuotationFamiliarity: (sourceId: QuotationLabSourceId, quoteId: string): void => {
+    const existing = storage.getQuotationLabProgressBySource(sourceId);
+    const quoteFamiliarity = { ...(existing?.quoteFamiliarity ?? {}) };
+    quoteFamiliarity[quoteId] = Math.min(3, (quoteFamiliarity[quoteId] ?? 0) + 1);
+    const progress: QuotationLabProgress = {
+      sourceId,
+      quoteFamiliarity,
+      aoBalance: existing?.aoBalance ?? { AO1: 0.4, AO2: 0.4, AO3: 0.2 },
+      weakThemes: existing?.weakThemes ?? [],
+      lastUpdated: new Date().toISOString(),
+    };
+    storage.saveQuotationLabProgress(progress);
   },
 };
 

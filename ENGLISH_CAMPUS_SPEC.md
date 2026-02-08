@@ -115,6 +115,8 @@ Literature splits into **three lanes**.
 
 ### A) Seen Poetry (Anthology Diary)
 
+**Source:** Grade-9 task content, mark schemes, checklists, and model answers (Grades 4–9) are in `docs/ENGLISH_LITERATURE_GUIDEPOST.md` — Chunk 1 (comparison) and Chunk 2 (single poem).
+
 **Poetry Library**
 
 - Poems displayed like a journal/diary
@@ -138,6 +140,8 @@ Literature splits into **three lanes**.
 
 ### B) Unseen Poetry
 
+**Source:** Unseen Q1 (single poem) and Q2 (comparison) — mark schemes, checklists, methods, and Grade 4–9 models in `docs/ENGLISH_LITERATURE_GUIDEPOST.md` — Chunk 3.
+
 **Unseen Task Flow**
 
 1. Read poem
@@ -152,6 +156,8 @@ Literature splits into **three lanes**.
 - Mark scheme button + models
 
 ### C) Texts (Novels/Plays)
+
+**Source:** Macbeth (extract + whole text, ambition; Lady Macbeth character) — full GuidePost in `docs/ENGLISH_LITERATURE_GUIDEPOST.md` — Chunk 4. Extend with ACC, J&H, Inspector Calls using same structure.
 
 **Texts Library**
 

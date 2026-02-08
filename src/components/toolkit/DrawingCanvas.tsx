@@ -16,6 +16,7 @@ interface DrawState {
 
 export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const strokesRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState<Tool>('pen');
   const [color, setColor] = useState('#000000');
@@ -26,20 +27,36 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
 
   const storageKey = `drawing_${attemptId}`;
 
-  useEffect(() => {
+  const compositeToDisplay = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
+    const strokes = strokesRef.current;
+    if (!canvas || !strokes) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    const container = canvas.parentElement;
-    if (container) {
-      canvas.width = container.clientWidth;
-      canvas.height = Math.max(400, window.innerHeight * 0.5);
-    }
-
     drawGrid(ctx, canvas.width, canvas.height);
+    ctx.drawImage(strokes, 0, 0);
+  };
+
+  const ensureLayers = () => {
+    const canvas = canvasRef.current;
+    const container = canvas?.parentElement;
+    if (!canvas || !container) return false;
+    const w = container.clientWidth;
+    const h = Math.max(400, window.innerHeight * 0.5);
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      if (!strokesRef.current) strokesRef.current = document.createElement('canvas');
+      strokesRef.current.width = w;
+      strokesRef.current.height = h;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    if (!ensureLayers()) return;
+    const strokes = strokesRef.current;
+    if (!strokes) return;
 
     const saved = localStorage.getItem(storageKey);
     if (saved) {
@@ -47,26 +64,30 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
         const state: DrawState = JSON.parse(saved);
         const img = new Image();
         img.onload = () => {
-          ctx.drawImage(img, 0, 0);
+          const sCtx = strokes.getContext('2d');
+          if (sCtx) {
+            sCtx.clearRect(0, 0, strokes.width, strokes.height);
+            sCtx.drawImage(img, 0, 0);
+          }
           setHistory(state.history);
           setHistoryIndex(state.historyIndex);
+          compositeToDisplay();
         };
         img.src = state.imageData;
       } catch (error) {
         console.error('Failed to load drawing:', error);
+        compositeToDisplay();
       }
     } else {
+      const sCtx = strokes.getContext('2d');
+      if (sCtx) sCtx.clearRect(0, 0, strokes.width, strokes.height);
+      compositeToDisplay();
       saveState();
     }
   }, [attemptId]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    drawGrid(ctx, canvas.width, canvas.height);
+    if (ensureLayers()) compositeToDisplay();
   }, [gridType]);
 
   const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -106,10 +127,11 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
   };
 
   const saveState = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    compositeToDisplay();
+    const strokes = strokesRef.current;
+    if (!strokes) return;
 
-    const imageData = canvas.toDataURL();
+    const imageData = strokes.toDataURL('image/png');
     const newHistory = history.slice(0, historyIndex + 1);
     newHistory.push(imageData);
 
@@ -132,18 +154,20 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
   const undo = () => {
     if (historyIndex <= 0) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const strokes = strokesRef.current;
+    if (!strokes) return;
 
     const newIndex = historyIndex - 1;
     setHistoryIndex(newIndex);
 
     const img = new Image();
     img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawGrid(ctx, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      const sCtx = strokes.getContext('2d');
+      if (sCtx) {
+        sCtx.clearRect(0, 0, strokes.width, strokes.height);
+        sCtx.drawImage(img, 0, 0);
+      }
+      compositeToDisplay();
     };
     img.src = history[newIndex];
   };
@@ -151,38 +175,40 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
   const redo = () => {
     if (historyIndex >= history.length - 1) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const strokes = strokesRef.current;
+    if (!strokes) return;
 
     const newIndex = historyIndex + 1;
     setHistoryIndex(newIndex);
 
     const img = new Image();
     img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawGrid(ctx, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      const sCtx = strokes.getContext('2d');
+      if (sCtx) {
+        sCtx.clearRect(0, 0, strokes.width, strokes.height);
+        sCtx.drawImage(img, 0, 0);
+      }
+      compositeToDisplay();
     };
     img.src = history[newIndex];
   };
 
   const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const strokes = strokesRef.current;
+    if (!strokes) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid(ctx, canvas.width, canvas.height);
+    const sCtx = strokes.getContext('2d');
+    if (sCtx) sCtx.clearRect(0, 0, strokes.width, strokes.height);
+    compositeToDisplay();
     saveState();
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    ensureLayers();
+    const strokes = strokesRef.current;
+    const ctx = strokes?.getContext('2d');
+    if (!strokes || !ctx) return;
 
-    // Start a fresh path for the new stroke
     ctx.beginPath();
 
     setIsDrawing(true);
@@ -192,6 +218,7 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
   const stopDrawing = () => {
     if (isDrawing) {
       setIsDrawing(false);
+      compositeToDisplay();
       saveState();
     }
   };
@@ -200,8 +227,9 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
     if (!isDrawing && e.type !== 'mousedown' && e.type !== 'touchstart') return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const strokes = strokesRef.current;
+    const ctx = strokes?.getContext('2d');
+    if (!canvas || !strokes || !ctx) return;
 
     const rect = canvas.getBoundingClientRect();
     let clientX, clientY;
@@ -214,7 +242,6 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
       clientY = e.clientY;
     }
 
-    // Account for canvas scaling
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
@@ -227,22 +254,24 @@ export function DrawingCanvas({ attemptId }: DrawingCanvasProps) {
     if (tool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = size * 3;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+      ctx.globalAlpha = 1;
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.lineWidth = size;
       ctx.strokeStyle = color;
-
-      if (tool === 'highlighter') {
-        ctx.globalAlpha = 0.3;
-      } else {
-        ctx.globalAlpha = 1;
-      }
+      ctx.globalAlpha = tool === 'highlighter' ? 0.3 : 1;
     }
 
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+
+    compositeToDisplay();
   };
 
   return (

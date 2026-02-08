@@ -14,6 +14,8 @@ import type {
   EnglishLiteratureUnseenPoetry,
   EnglishLiteratureTextTask,
   EnglishVocabTask,
+  LiteratureTaskInfo,
+  LiteratureTaskType,
 } from '../types/englishCampus';
 
 // ---------------------------------------------------------------------------
@@ -352,4 +354,105 @@ export function getLiteratureTextTaskById(id: string): EnglishLiteratureTextTask
 
 export function getVocabTaskById(id: string): EnglishVocabTask | undefined {
   return VOCAB_TASKS.find(t => t.id === id);
+}
+
+// ---------------------------------------------------------------------------
+// LITERATURE TASK RESOLVER (unified for workspace)
+// ---------------------------------------------------------------------------
+
+const LIT_TIME_MINS = 45;
+
+function toLiteratureTaskInfo(
+  id: string,
+  title: string,
+  prompt: string,
+  taskType: LiteratureTaskType,
+  subtitle?: string
+): LiteratureTaskInfo {
+  return {
+    id,
+    title,
+    prompt,
+    timeRecommendationMins: LIT_TIME_MINS,
+    taskType,
+    subtitle,
+  };
+}
+
+/** Get a single literature task by id (any pillar). Returns unified LiteratureTaskInfo for workspace. */
+export function getLiteratureTaskById(id: string): LiteratureTaskInfo | undefined {
+  const seenSingle = LITERATURE_POETRY_SEEN_SINGLE.find(t => t.id === id);
+  if (seenSingle)
+    return toLiteratureTaskInfo(
+      seenSingle.id,
+      seenSingle.prompt,
+      seenSingle.prompt,
+      'seen-single',
+      seenSingle.poem
+    );
+
+  const seenComp = LITERATURE_POETRY_SEEN_COMPARISON.find(t => t.id === id);
+  if (seenComp)
+    return toLiteratureTaskInfo(
+      seenComp.id,
+      seenComp.prompt,
+      seenComp.prompt,
+      'seen-comparison',
+      `${seenComp.poemA} & ${seenComp.poemB}`
+    );
+
+  const unseen = LITERATURE_UNSEEN_POETRY.find(t => t.id === id);
+  if (unseen)
+    return toLiteratureTaskInfo(
+      unseen.id,
+      unseen.prompt,
+      unseen.prompt,
+      unseen.type === 'analysis' ? 'unseen-analysis' : 'unseen-comparison',
+      unseen.type === 'analysis' ? 'Unseen poem' : 'Unseen comparison'
+    );
+
+  for (const arr of Object.values(LITERATURE_TEXT_TASKS)) {
+    const textTask = arr.find(t => t.id === id);
+    if (textTask)
+      return toLiteratureTaskInfo(
+        textTask.id,
+        textTask.prompt,
+        textTask.prompt,
+        'text',
+        textTask.text
+      );
+  }
+  return undefined;
+}
+
+/** Seen poetry tasks (single + comparison) for Poetry Diary / Compare. */
+export function getSeenPoetryLiteratureTasks(): LiteratureTaskInfo[] {
+  const out: LiteratureTaskInfo[] = [];
+  for (const t of LITERATURE_POETRY_SEEN_SINGLE) {
+    const info = getLiteratureTaskById(t.id);
+    if (info) out.push(info);
+  }
+  for (const t of LITERATURE_POETRY_SEEN_COMPARISON) {
+    const info = getLiteratureTaskById(t.id);
+    if (info) out.push(info);
+  }
+  return out;
+}
+
+/** Unseen poetry tasks (analysis + comparison). */
+export function getUnseenPoetryLiteratureTasks(): LiteratureTaskInfo[] {
+  return LITERATURE_UNSEEN_POETRY.map(t => getLiteratureTaskById(t.id)).filter(
+    (x): x is LiteratureTaskInfo => x != null
+  );
+}
+
+/** All text tasks grouped by text code (Macbeth, etc.). */
+export function getTextLiteratureTasksByText(): Record<string, LiteratureTaskInfo[]> {
+  const record: Record<string, LiteratureTaskInfo[]> = {};
+  for (const [textCode, tasks] of Object.entries(LITERATURE_TEXT_TASKS)) {
+    record[textCode] = tasks
+      .map(t => getLiteratureTaskById(t.id))
+      .filter((x): x is LiteratureTaskInfo => x != null);
+  }
+  return record;
 }
