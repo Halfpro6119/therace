@@ -248,30 +248,78 @@ export type QuotationLabSourceId = 'Macbeth' | 'Ozymandias' | 'London' | 'Exposu
 export interface QuotationLabQuote {
   id: string;
   sourceId: QuotationLabSourceId;
+  /** The quoted text */
   quote: string;
   /** e.g. ambition, guilt, power */
   themes: string[];
-  /** e.g. metaphor, soliloquy, imagery */
+  /** e.g. metaphor, soliloquy, imagery — single method for display; use methods[] for full list */
   method: string;
+  /** Multiple methods (hyperbole, imagery, allusion, etc.) */
+  methods?: string[];
   /** Core meaning in one line */
   meaning: string;
+  /** Grade 9 insight: how to frame the quote at top level */
+  grade9Insight?: string;
   /** Context hook for AO3 (e.g. Jacobean fear of ambition) */
   contextHook: string;
-  /** Grade 9 deployment tip */
-  deploymentTip: string;
-  /** Optional: act/scene or stanza for plays/poems */
+  /** Grade 9 deployment tip (legacy; grade9Insight preferred) */
+  deploymentTip?: string;
+  /** Essay types this quote is best for: guilt essays, moral consequence, etc. */
+  bestUsedFor?: string[];
+  /** act/scene or stanza for plays/poems */
   location?: string;
 }
 
-/** Drill: Explain This Quote — one sentence linking quote to theme; grading 4/6/8/9 */
+/** Drill: Explain This Quote — one sentence linking quote to theme; max 20 words, must include judgement */
 export interface QuotationDrillExplain {
   type: 'explainQuote';
   id: string;
   sourceId: QuotationLabSourceId;
   quoteId: string;
   themePrompt: string;
+  /** Max words for the response */
+  maxWords?: number;
   /** Grading logic: Grade 4 = basic meaning, 6 = meaning + theme, 8 = method + meaning, 9 = concept + judgement */
   gradingNote: string;
+}
+
+/** Drill: Finish the Analysis — complete "This suggests... because..." to prevent vague endings */
+export interface QuotationDrillFinishAnalysis {
+  type: 'finishAnalysis';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  /** Starter: "This suggests Macbeth's guilt is overwhelming because…" */
+  starter: string;
+  /** Examiner note on what to reward */
+  rewardNote: string;
+}
+
+/** Drill: Which AO Is This? — label AO1/AO2/AO3 and explain why */
+export interface QuotationDrillWhichAO {
+  type: 'whichAO';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  /** Sample analysis to label */
+  sampleAnalysis: string;
+  /** Correct AO(s) and why */
+  correctAO: 'AO1' | 'AO2' | 'AO3';
+  whyCorrect: string;
+}
+
+/** Drill: Eliminate the Weak Quote — remove overlong/narrative/irrelevant; trains selectivity */
+export interface QuotationDrillEliminateWeak {
+  type: 'eliminateWeakQuote';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  /** Question focus */
+  question: string;
+  /** 4 quote IDs: 1 best, 3 weak (overlong/narrative/irrelevant) */
+  quoteOptionIds: [string, string, string, string];
+  /** ID of the quote to KEEP (the strongest) */
+  bestQuoteId: string;
+  whyOthersWeak: string;
 }
 
 /** Drill: Upgrade the Analysis — weak response to rewrite with method, precision, judgement */
@@ -311,9 +359,12 @@ export interface QuotationDrillLinkTwo {
 
 export type QuotationDrillItem =
   | QuotationDrillExplain
+  | QuotationDrillFinishAnalysis
   | QuotationDrillUpgrade
   | QuotationDrillBestFit
-  | QuotationDrillLinkTwo;
+  | QuotationDrillLinkTwo
+  | QuotationDrillWhichAO
+  | QuotationDrillEliminateWeak;
 
 /** Micro-paragraph builder: theme + one quote + one method → 4–5 sentences (argument, quote, AO2, AO3, judgement) */
 export interface QuotationMicroParagraphPrompt {
@@ -324,6 +375,19 @@ export interface QuotationMicroParagraphPrompt {
   method: string;
   /** Checklist: argument, embedded quote, AO2 analysis, AO3 context, judgement */
   checklist: string[];
+}
+
+/** Flexible Deployment: use one quote to argue TWO different ideas (Grade 9 behaviour) */
+export interface QuotationFlexibleDeploymentPrompt {
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  /** First angle to argue (e.g. "guilt as punishment") */
+  ideaA: string;
+  /** Second angle to argue (e.g. "guilt as loss of masculinity") */
+  ideaB: string;
+  /** Brief examiner note */
+  examinerNote: string;
 }
 
 /** Per-source progress for Quotation Lab */

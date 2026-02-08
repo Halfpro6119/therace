@@ -1,7 +1,8 @@
 /**
  * Literature GuidePost content — all 14 tasks
  * Examiner-faithful mark schemes, Grade 9 checklists, step-by-step methods, model answers (4/6/8/9).
- * Source: docs/ENGLISH_LITERATURE_GUIDEPOST.md
+ * Model answers: 45-minute exam-style responses with sustained argument, developed paragraphs, embedded quotations.
+ * Source: docs/ENGLISH_LITERATURE_GUIDEPOST.md, docs/LITERATURE_GUIDEPOST_MODEL_ANSWERS.md
  */
 
 import type { EnglishExaminerPackTask } from '../types/englishCampus';
@@ -44,26 +45,26 @@ Step 3 (5 min): Choose one quotation per idea.
 Step 4 (30 min): Write three analytical paragraphs plus introduction.
 Step 5 (5 min): Upgrade by tightening quotations and adding alternative interpretation.`,
   {
-    grade4: `Shelley presents power in Ozymandias as something that does not last. The ruler believes he is powerful, calling himself "king of kings", which shows his pride. However, the statue is broken, showing his power has faded.
+    grade4: `Power in Ozymandias is presented as something that does not last. The ruler Ozymandias believes he is very powerful, calling himself the "king of kings", which shows he thinks he is greater than all others. This makes him seem proud and arrogant.
 
-The desert around the statue shows how time has defeated him. Even though Ozymandias was once powerful, nothing remains of his rule.
+However, the statue is described as broken and ruined. This shows that even though Ozymandias once had power, it has been destroyed over time. The desert around the statue is empty, suggesting that nothing remains of his empire.
 
-Shelley shows that power can be temporary and meaningless.`,
-    grade6: `Shelley presents power as fragile and temporary. Ozymandias believes he is powerful, shown through the phrase "king of kings", which suggests dominance. However, the ruined statue shows this power has not lasted.
+The poet shows that power can fade and that time is stronger than people.`,
+    grade6: `In Ozymandias, Shelley presents power as temporary and unreliable. Ozymandias presents himself as extremely powerful, calling himself the "king of kings". This title suggests absolute authority and pride, showing that he believes his power will last forever.
 
-The image of the "colossal wreck" contrasts with Ozymandias' arrogance. This suggests that time is more powerful than human rulers.
+However, this belief is contradicted by the ruined statue. The description of the "colossal wreck" shows that his power has collapsed. The empty desert surrounding the statue emphasises how time has erased his achievements.
 
-Shelley criticises power that is based on pride rather than respect.`,
-    grade8: `Shelley presents power in Ozymandias as an illusion. Although Ozymandias claims absolute authority, the broken statue suggests that his power has been destroyed. The contrast between "king of kings" and "colossal wreck" highlights the gap between belief and reality.
+Shelley suggests that power based on pride and control does not last and will eventually be destroyed.`,
+    grade8: `Shelley presents power in Ozymandias as an illusion that is destroyed by time. Ozymandias' command to "look on my works" suggests confidence and arrogance, as he believes his power is unquestionable. The grand language reflects how rulers attempt to present themselves as permanent and superior.
 
-The sonnet form traditionally celebrates love, but Shelley subverts it to criticise political power. The vast desert emphasises how time erases human achievement.
+However, this idea is undermined by the ruined statue. The image of a "colossal wreck" creates a sharp contrast between Ozymandias' belief in his power and the reality of his downfall. The vast, empty desert surrounding the statue reinforces the idea that time and nature outlast human authority.
 
-As a Romantic poet, Shelley challenges tyrannical power and suggests that nature ultimately overpowers human ambition.`,
-    grade9: `Shelley presents power as both arrogant and ultimately meaningless. Ozymandias' command to "look on my works" suggests confidence in his authority, yet this is undercut by the image of a "colossal wreck". The juxtaposition exposes power as an illusion sustained by pride.
+As a Romantic poet, Shelley criticises tyrannical power and suggests that rulers who seek control and legacy will ultimately be forgotten.`,
+    grade9: `In Ozymandias, Shelley presents power as arrogant, self-deceiving and ultimately insignificant when measured against time. Ozymandias' declaration, "king of kings", reflects absolute confidence in his authority and suggests a desire to dominate both people and history. This language exposes power as performative — something proclaimed rather than earned.
 
-Structurally, the framed narrative distances Ozymandias from the reader, reinforcing how his power has faded into history. The surrounding desert symbolises time's dominance over political authority.
+However, Shelley systematically dismantles this illusion. The statue's "shattered visage" and the description of a "colossal wreck" undermine the ruler's claims, revealing the emptiness behind his authority. Structurally, the framed narrative distances the reader from Ozymandias, reinforcing how his power has faded into obscurity.
 
-From a Romantic perspective, Shelley criticises tyranny and celebrates the enduring power of nature. An alternative interpretation is that Ozymandias' power survives only as a warning, suggesting that even failed power leaves a legacy.`,
+Contextually, Shelley's Romantic beliefs emphasised the supremacy of nature over human ambition. Power is therefore presented not as enduring, but as something that collapses under its own arrogance. An alternative interpretation is that Ozymandias' power survives only as a warning, suggesting that failed authority still leaves a moral legacy.`,
   }
 );
 
@@ -96,26 +97,26 @@ Step 3 (5 min): Choose one quotation per idea.
 Step 4 (30 min): Write three analytical paragraphs plus introduction.
 Step 5 (5 min): Upgrade by adding alternative interpretation and tightening analysis.`,
   {
-    grade4: `In Kamikaze, memory is shown as something that affects how the pilot is treated. The family remembers what he did, and this changes how they behave towards him.
+    grade4: `In Kamikaze, memory is shown as something that affects how people are treated. The pilot is remembered for turning back from his mission, and this changes how his family behaves towards him.
 
-The children remember how he "came back", but they no longer talk to him. This shows memory can be painful.
+Although he returns alive, the family acts as if he is dead. This shows that memory can be painful and can lead to sadness.
 
-The poet shows memory as something that causes sadness.`,
-    grade6: `Garland presents memory as something that controls how the pilot is judged. Although he returns alive, the memory of his decision causes him to be treated as if he were dead.
+The poet presents memory as something that causes suffering.`,
+    grade6: `Garland presents memory as powerful and controlling in Kamikaze. The pilot's decision to turn back becomes the most important memory associated with him. This memory causes his family to reject him, treating him as if he no longer exists.
 
-The natural imagery shows positive memories of life, such as the fish and the sea. These memories contrast with the shame he later experiences.
+Positive memories of nature, such as the sea and fish, contrast with the negative memories created by his return. These memories show the conflict between personal experience and social judgement.
 
-Memory becomes a way of punishing the pilot.`,
-    grade8: `Garland presents memory as powerful and damaging. The pilot's memories of nature and childhood interrupt his mission, suggesting that memory reconnects him with life. Images of fish and the sea create a sense of beauty and belonging.
+Garland suggests that memory can shape identity and lead to punishment.`,
+    grade8: `In Kamikaze, Garland presents memory as both life-affirming and destructive. The pilot's memories of the natural world interrupt his mission, reconnecting him with beauty and life. These memories are vivid and sensory, suggesting their emotional importance.
 
-However, collective memory becomes cruel. The family remember his return as dishonour, and this shared memory leads to silence and rejection. Structurally, the shift in voice reflects emotional distance.
+However, the memory of his return becomes a source of shame. His family remember his survival as dishonour, and this collective memory leads to silence and rejection. Structurally, the shift from natural imagery to emotional distance reflects how memory changes meaning over time.
 
-Garland suggests memory can preserve humanity but also enforce shame.`,
-    grade9: `Garland presents memory as both life-affirming and destructive. The pilot's memories of nature interrupt his mission, suggesting that memory reconnects him with personal identity. The vivid natural imagery contrasts sharply with the rigid expectations of honour.
+Garland suggests that memory can preserve humanity but also enforce cruel social expectations.`,
+    grade9: `Garland presents memory in Kamikaze as a force that both saves and condemns. The pilot's memories of the sea and childhood interrupt his mission, suggesting that memory reconnects him with personal identity and moral instinct. The natural imagery contrasts sharply with the rigid ideology of honour.
 
-However, collective memory becomes a tool of punishment. The family's silence suggests that remembering his survival is worse than forgetting him entirely. Structurally, the fragmented narrative mirrors how memory is filtered and reshaped.
+However, memory also becomes a form of punishment. The family's silence shows that the pilot is remembered not as a survivor but as a failure. Structurally, the fragmented narrative reflects how memory is filtered and reshaped by perspective.
 
-Contextually, Japanese cultural attitudes to shame intensify this punishment. An alternative interpretation is that memory preserves moral integrity, even if society rejects it.`,
+Contextually, cultural expectations surrounding honour intensify this rejection. An alternative interpretation is that memory preserves moral truth, even if society chooses to punish those who act upon it.`,
   }
 );
 
@@ -148,22 +149,26 @@ Step 3 (5 min): Choose one quotation per poem per idea.
 Step 4 (30 min): Write three comparative paragraphs.
 Step 5 (5 min): Upgrade by sharpening comparison.`,
   {
-    grade4: `Both poems show conflict in war. In Exposure, the soldiers fight the cold, while in Bayonet Charge the soldier fights the enemy.
+    grade4: `Both Exposure and Bayonet Charge present conflict as frightening and unpleasant. In Exposure, the soldiers face conflict through the cold weather. The wind and snow make their situation dangerous, showing that nature is an enemy.
 
-In Exposure, the weather is dangerous. In Bayonet Charge, the soldier runs through gunfire. Both poems show war as frightening.
+In Bayonet Charge, conflict is shown through action. The soldier runs forward while bullets fly around him, creating fear and panic. This shows how dangerous war is.
 
-The poets show conflict as negative.`,
-    grade6: `Both poems present conflict as dangerous, but in different ways. In Exposure, conflict comes from the weather, shown through the cold winds. In Bayonet Charge, conflict is immediate and violent as the soldier runs forward.
+Both poems show that conflict causes suffering and fear for soldiers.`,
+    grade6: `Both poems present conflict as overwhelming, but in different ways. In Exposure, conflict is mainly against nature. The soldiers suffer from cold and exhaustion, suggesting that the environment is more powerful than the enemy.
 
-Exposure focuses on waiting, while Bayonet Charge focuses on movement. Both poets show war as unpleasant and frightening.`,
-    grade8: `Both poems present conflict as overwhelming, but through contrasting experiences. Exposure shows prolonged conflict against nature, where soldiers suffer through cold and waiting. Bayonet Charge presents sudden conflict through rapid movement and fear.
+In contrast, Bayonet Charge presents conflict as immediate and violent. The soldier is suddenly thrown into action, and the fast pace reflects panic and confusion. Unlike Exposure, there is no waiting.
 
-Structurally, Exposure is repetitive, reflecting endless suffering, while Bayonet Charge uses fast pace to show panic. Both poets criticise war by focusing on individual suffering.`,
-    grade9: `Both poems present conflict as destructive, but in contrasting forms. In Exposure, conflict is prolonged and impersonal, as soldiers battle the cold rather than an enemy. Nature becomes the dominant force, draining morale over time.
+Both poets show conflict as frightening and destructive, challenging romantic ideas about war.`,
+    grade8: `Both Exposure and Bayonet Charge present conflict as destructive, but they focus on different experiences of war. In Exposure, conflict is prolonged and impersonal. The soldiers battle the cold rather than an enemy, and the repeated suffering suggests hopelessness and endurance.
 
-In contrast, Bayonet Charge presents conflict as immediate and chaotic. The rapid pace mirrors panic, suggesting instinct replaces ideology. Contextually, Owen exposes the futility of trench warfare, while Hughes highlights the primal fear beneath patriotic language.
+In Bayonet Charge, conflict is sudden and chaotic. The rapid movement and violent imagery reflect the soldier's panic and instinctive fear. While Exposure focuses on waiting and mental exhaustion, Bayonet Charge captures the shock of immediate combat.
 
-Both poets ultimately strip war of glory, but Exposure emphasises endurance, while Bayonet Charge exposes instinctive terror.`,
+Together, the poems present conflict as dehumanising and traumatic, stripping war of any sense of glory.`,
+    grade9: `Both poems present conflict as destructive, but they explore different dimensions of wartime suffering. In Exposure, Owen presents conflict as prolonged and impersonal, with soldiers battling the cold rather than a visible enemy. Nature becomes the dominant force, slowly draining hope and morale, which suggests the futility of trench warfare.
+
+In contrast, Bayonet Charge presents conflict as immediate and instinctive. The soldier's sudden movement through the battlefield reflects panic rather than purpose, exposing the gap between patriotic ideals and lived experience. The rapid pace mirrors the collapse of rational thought under pressure.
+
+Contextually, Owen exposes the reality of trench warfare, while Hughes highlights the primal fear beneath heroic narratives. Both poets ultimately present conflict as stripping soldiers of control, but while Exposure emphasises endurance, Bayonet Charge exposes sudden terror.`,
   }
 );
 
@@ -196,18 +201,26 @@ Step 3 (5 min): Choose quotations.
 Step 4 (30 min): Write comparative paragraphs.
 Step 5 (5 min): Upgrade with judgement.`,
   {
-    grade4: `Both poems explore identity. In Checking Out Me History, the speaker wants to learn about his past. In Kamikaze, the pilot's identity changes after he returns.
+    grade4: `Both poems explore identity and how it is affected by society. In Checking Out Me History, the speaker wants to learn about his past and who he really is.
 
-Both show identity is affected by society.`,
-    grade6: `Both poems explore identity, but differently. Checking Out Me History shows identity being controlled through education, while Kamikaze shows identity being judged by society.
+In Kamikaze, the pilot's identity changes after he returns from his mission. His family treat him differently, which affects how he is seen.
 
-Both poets show identity as something shaped by others.`,
-    grade8: `Both poems explore identity as something shaped by power. Checking Out Me History shows the speaker reclaiming identity through learning. Kamikaze shows identity being destroyed through shame.
+Both poems show that identity can be controlled by others.`,
+    grade6: `Both poems explore identity as something shaped by outside forces. In Checking Out Me History, the speaker feels his identity has been hidden by the education system, which teaches him only part of history.
 
-Structurally, Agard's voice is assertive, while Garland's narrative is distant. Both highlight how identity is influenced by culture.`,
-    grade9: `Both poems explore identity as something imposed and contested. In Checking Out Me History, Agard challenges the erasure of cultural identity through education, reclaiming voice and history.
+In Kamikaze, the pilot's identity is judged by his community. Although he survives, he is remembered as a failure. Both poems show that identity is affected by social expectations.
 
-In contrast, Kamikaze shows identity being controlled by collective judgement. The pilot's identity shifts from hero to outcast. Contextually, both poets expose how institutions enforce identity, but Agard offers resistance, while Garland presents silence and loss.`,
+The poets suggest that identity is not always chosen freely.`,
+    grade8: `Both poems explore identity as something shaped by power and culture. In Checking Out Me History, Agard shows identity being controlled through education. The speaker challenges this by reclaiming his history and voice, which strengthens his sense of self.
+
+In contrast, Kamikaze presents identity as something imposed by society. The pilot's identity shifts from hero to outcast because of cultural expectations around honour. Structurally, Agard's confident voice contrasts with Garland's distant narration, reflecting resistance versus silence.
+
+Both poets show identity as deeply connected to social control.`,
+    grade9: `Both poems explore identity as something imposed and contested within systems of power. In Checking Out Me History, Agard exposes how institutional education erases cultural identity, limiting self-understanding. By reclaiming historical figures, the speaker actively reconstructs his identity and challenges authority.
+
+In Kamikaze, identity is shaped by collective judgement rather than personal truth. The pilot's survival redefines him as dishonourable, and silence becomes a tool of control. Structurally, Garland's detached narration reflects how identity is stripped away through social rejection.
+
+Contextually, both poets critique systems that define individuals by ideology. However, while Agard presents identity as reclaimable through resistance, Garland presents identity as fragile, shaped by memory and communal values rather than individual choice.`,
   }
 );
 
@@ -240,26 +253,26 @@ Step 3 (5 min): Select 3 quotations (early, middle, end).
 Step 4 (30 min): Write introduction + 3 analytical paragraphs.
 Step 5 (5 min): Upgrade by tightening focus and adding alternative reading.`,
   {
-    grade4: `The poet creates tension by using words that suggest danger and uncertainty. Some of the language makes the reader feel uneasy.
+    grade4: `The poet creates tension by using language that makes the situation feel uncertain. Some words suggest quietness and waiting, which makes the reader feel that something might happen.
 
-The structure also helps create tension. The poem builds slowly, which makes the reader wonder what will happen next.
+The structure also helps to create tension. Short lines make the poem feel sharp and uncomfortable, while longer sentences slow the pace. This makes the reader feel uneasy.
 
-Overall, tension is created through the poet's choices.`,
-    grade6: `The poet uses language to create tension by choosing words that suggest uncertainty. Descriptions of stillness and quiet make the reader expect something to happen.
+Overall, tension is created through the poet's language and the way the poem is organised.`,
+    grade6: `The poet creates tension by choosing language that suggests uncertainty and unease. Descriptions of stillness and silence create the feeling that something is about to happen, which keeps the reader alert.
 
-The structure of the poem also builds tension. Short lines increase pace, making the poem feel more urgent.
+Structurally, enjambment is used to carry ideas across lines, delaying meaning and increasing suspense. The pace of the poem changes, which reflects growing tension.
 
-The poet uses these methods to keep the reader engaged and uneasy.`,
-    grade8: `The poet creates tension through controlled language and structure. Words suggesting hesitation and restraint create a sense of anticipation, making the reader feel that something is about to change.
+Together, the poet's language and structure make the poem feel uncomfortable and tense.`,
+    grade8: `The poet uses both language and structure to gradually build tension. Language linked to restraint and hesitation creates anticipation, suggesting that action is being delayed. This makes the reader aware of what is not happening as much as what is.
 
-Structurally, enjambment causes lines to run on, delaying meaning and increasing suspense. As the poem progresses, tension builds through shifts in pace and tone.
+Structurally, enjambment disrupts natural pauses, forcing the reader forward without resolution. The poem's pacing shifts as tension increases, creating a sense of instability.
 
-The poet uses these methods to keep the reader alert and unsettled.`,
-    grade9: `The poet creates tension by carefully controlling both language and structure. Lexical choices associated with stillness and restraint suggest suppressed action, creating unease through what is left unsaid.
+By controlling when information is revealed, the poet sustains tension and keeps the reader uncertain throughout.`,
+    grade9: `The poet creates tension by carefully manipulating what is revealed and what is withheld. Language associated with stillness and control suggests suppressed action, creating unease through anticipation rather than explicit threat. This restraint forces the reader to imagine what might happen next.
 
-Structurally, enjambment disrupts natural pauses, forcing the reader forward and delaying resolution. This manipulation of pace mirrors the emotional uncertainty within the poem.
+Structurally, enjambment delays meaning and disrupts closure, preventing the reader from settling into a comfortable rhythm. Changes in pace reflect rising emotional pressure, while moments of pause intensify suspense.
 
-An alternative interpretation is that the tension is internal rather than external, reflecting psychological conflict rather than immediate threat. In both cases, the poet sustains tension by withholding clarity.`,
+An alternative interpretation is that the tension is internal rather than external, reflecting psychological conflict rather than immediate danger. In both readings, tension is sustained through uncertainty and controlled revelation.`,
   }
 );
 
@@ -292,18 +305,22 @@ Step 3 (5 min): Select one quotation per poem per idea.
 Step 4 (30 min): Write comparative paragraphs.
 Step 5 (5 min): Upgrade by sharpening evaluative language.`,
   {
-    grade4: `Both poems use imagery to help the reader imagine what is happening. In the first poem, imagery creates a clear picture.
+    grade4: `Both poems use imagery to help the reader imagine what is happening. In the first poem, imagery creates a clear picture of the setting.
 
-In the second poem, imagery also helps the reader understand the situation. Both poets use imagery to express ideas.`,
-    grade6: `Both poems use imagery to convey meaning, but in different ways. The first poem uses imagery to create atmosphere, while the second uses imagery to show emotion.
+In the second poem, imagery is also important and helps show how the speaker feels. Both poets use imagery to help communicate their ideas.`,
+    grade6: `Both poems use imagery to express ideas, but in different ways. In the first poem, imagery is used to describe the environment, helping the reader visualise the scene.
 
-The imagery in both poems helps the reader understand the poet's message.`,
-    grade8: `Both poets use imagery to develop meaning, but their purposes differ. In the first poem, imagery creates a sense of place and mood, shaping how the reader interprets events.
+In the second poem, imagery focuses more on feelings and emotions. Comparing the two shows that imagery can be used for different purposes.`,
+    grade8: `Both poets use imagery to shape meaning, but their focus differs. In the first poem, imagery establishes atmosphere and setting, grounding the poem in a physical place. This helps the reader understand the situation.
 
-In contrast, the second poem uses imagery to reflect inner feelings. Comparing the two highlights how imagery can be external or internal in focus.`,
-    grade9: `Both poems rely on imagery to convey meaning, yet they use it to different effects. In the first poem, imagery shapes the external world, influencing how events are perceived. In the second, imagery reflects internal emotion, blurring the line between setting and feeling.
+In contrast, the second poem uses imagery to reflect inner emotions rather than surroundings. The images suggest feelings rather than places, making the poem more psychological in tone.
 
-This contrast suggests that imagery can either ground meaning in physical experience or elevate it into psychological space. Overall, both poets demonstrate imagery as a central tool for shaping interpretation.`,
+Comparing the poems shows how imagery can either externalise experience or reveal internal states.`,
+    grade9: `Both poets rely on imagery as a central method for shaping meaning, yet they deploy it for different effects. In the first poem, imagery constructs the external world, influencing how the reader interprets events and tension through physical description.
+
+In the second poem, imagery functions symbolically, reflecting emotional or psychological states rather than literal setting. This contrast highlights how imagery can either anchor meaning in lived experience or elevate it into abstract reflection.
+
+The comparison shows that while imagery is fundamental in both poems, its purpose shifts depending on whether the poet prioritises environment or inner conflict.`,
   }
 );
 
@@ -336,18 +353,26 @@ Step 3 (5 min): Select quotes across acts.
 Step 4 (30 min): Write 3 analytical paragraphs + intro.
 Step 5 (5 min): Add alternative reading; tighten links.`,
   {
-    grade4: `Guilt is shown as something that troubles characters. Macbeth feels guilty after killing Duncan, shown when he cannot sleep. Lady Macbeth also becomes guilty later.
+    grade4: `Shakespeare presents guilt as something that affects characters' minds. After killing Duncan, Macbeth feels guilty and cannot sleep. This shows that his actions trouble him.
 
-This shows guilt affects people's minds. Shakespeare presents guilt as punishment.`,
-    grade6: `Shakespeare presents guilt as a powerful psychological force. Macbeth feels guilt immediately, shown through disturbed sleep and fear. Lady Macbeth initially hides guilt but later suffers.
+Lady Macbeth also feels guilty later in the play. She starts off strong but later becomes weak and upset. This shows guilt can change people.
 
-Guilt shows that wrongdoing has consequences. Shakespeare suggests guilt cannot be avoided.`,
-    grade8: `Guilt is presented as corrosive and inescapable. Macbeth's immediate disturbance shows guilt taking hold, while Lady Macbeth's repression later collapses. Imagery of blood suggests guilt cannot be washed away.
+Shakespeare shows that guilt is a punishment for bad actions.`,
+    grade6: `Shakespeare presents guilt as a powerful force that causes suffering. Macbeth feels guilt immediately after killing Duncan, shown by his fear and inability to sleep. His guilt makes him paranoid and uneasy.
 
-Structurally, guilt intensifies, mirroring moral decay. Shakespeare links guilt to disorder.`,
-    grade9: `Shakespeare presents guilt as an internal punishment that enforces moral order. Macbeth's early agitation reveals conscience at work, while Lady Macbeth's attempted suppression culminates in psychological collapse. Blood imagery recurs, symbolising indelible guilt.
+Lady Macbeth tries to ignore guilt at first, but it eventually overwhelms her. She becomes disturbed and unable to cope. This shows guilt cannot be avoided.
 
-Structurally, soliloquies chart guilt's evolution from fear to numbness. Contextually, guilt aligns with Jacobean beliefs about sin and divine justice. Alternatively, Macbeth's later numbness suggests guilt mutates into moral desensitisation rather than disappearance.`,
+Shakespeare suggests guilt is a natural response to wrongdoing.`,
+    grade8: `Shakespeare presents guilt as corrosive and inescapable. Macbeth's guilt appears immediately after Duncan's murder, disrupting his peace and sense of control. Imagery of blood suggests guilt cannot be washed away.
+
+In contrast, Lady Macbeth initially suppresses guilt, believing it can be ignored. However, her mental collapse later in the play shows that guilt resurfaces with greater force. Structurally, guilt intensifies as the play progresses, reflecting moral decay.
+
+Shakespeare links guilt to disorder, suggesting it is a consequence of disrupting the natural order.`,
+    grade9: `Shakespeare presents guilt as an internal punishment that enforces moral order. Macbeth's immediate disturbance after Duncan's murder reveals a functioning conscience, with guilt manifesting through fear, paranoia and hallucination. Blood imagery symbolises guilt as permanent and inescapable.
+
+Lady Macbeth's guilt develops differently. She initially represses conscience, equating guilt with weakness, but this suppression leads to psychological collapse. Structurally, Shakespeare contrasts Macbeth's early guilt with later emotional numbness, suggesting guilt mutates into moral desensitisation rather than disappearing.
+
+Contextually, guilt aligns with Jacobean beliefs about sin and divine justice. Alternatively, Shakespeare may suggest guilt is not enough to prevent tyranny, as Macbeth continues despite recognising his crimes.`,
   }
 );
 
@@ -378,18 +403,22 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write focused paragraphs.
 Step 5 (5 min): Tighten focus.`,
   {
-    grade4: `Dickens shows Scrooge as selfish by describing him as cold and uncaring. He does not help others and thinks only of money.
+    grade4: `Dickens presents Scrooge as selfish by showing that he only cares about money. He is described as cold and uncaring, which reflects his attitude towards others.
 
-This shows Scrooge is not kind. Dickens wants readers to dislike him.`,
-    grade6: `Dickens presents Scrooge as selfish through negative description. He is shown as cold and isolated, suggesting he cares more about money than people.
+He does not want to help people in need. This makes him seem unkind.
 
-The language makes readers view Scrooge negatively.`,
-    grade8: `In the extract, Dickens presents Scrooge as emotionally and socially selfish. Descriptions of coldness reflect his lack of compassion. Narrative voice exaggerates this to criticise him.
+Dickens wants readers to dislike Scrooge at this point.`,
+    grade6: `In the extract, Dickens presents Scrooge as selfish through negative description. Scrooge is shown as cold and isolated, suggesting he values money over people.
 
-Dickens uses this to expose moral failure in Victorian society.`,
-    grade9: `Dickens presents Scrooge's selfishness as corrosive. Cold imagery aligns emotional barrenness with social isolation. The narrator's critical tone encourages moral judgement.
+The narrator's tone encourages the reader to judge Scrooge. His selfishness is shown through his lack of empathy.
 
-Contextually, Dickens condemns selfishness amid Victorian poverty. Alternatively, exaggeration invites transformation, positioning selfishness as a flaw to be corrected.`,
+Dickens presents Scrooge as a moral failure.`,
+    grade8: `Dickens presents Scrooge's selfishness as both emotional and social. Cold imagery reflects his lack of compassion and isolation from others. The narrator exaggerates these qualities to emphasise moral emptiness.
+
+Scrooge's selfishness contrasts with the needs of those around him, exposing social injustice. Dickens uses this extract to criticise attitudes that prioritise wealth over humanity.`,
+    grade9: `Dickens presents Scrooge's selfishness as corrosive and socially damaging. Cold imagery reflects emotional barrenness, while the narrator's critical tone invites moral judgement. Scrooge's isolation suggests selfishness leads to disconnection from society.
+
+Contextually, Dickens condemns selfishness amid Victorian poverty. Alternatively, the exaggeration of Scrooge's flaws prepares the reader for transformation, framing selfishness as a curable moral failing rather than permanent evil.`,
   }
 );
 
@@ -416,10 +445,18 @@ Step 3 (5 min): Select quotes across novella.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add alternative reading.`,
   {
-    grade4: `Dickens shows redemption by changing Scrooge. He starts selfish but becomes kind.`,
-    grade6: `Redemption is shown through Scrooge's change after meeting the Spirits. He learns to care for others.`,
-    grade8: `Dickens presents redemption as moral awakening. The Spirits guide Scrooge through reflection and consequence, reshaping behaviour.`,
-    grade9: `Dickens frames redemption as active moral responsibility. Scrooge's transformation is earned through confrontation with past, present and future. Christian symbolism underpins this journey, suggesting redemption is available through compassion and action. Alternatively, the staged journey implies redemption requires external intervention.`,
+    grade4: `Dickens presents redemption by showing Scrooge change. He starts off selfish but becomes kind.
+
+This shows people can improve.`,
+    grade6: `Redemption is shown through Scrooge's journey. The Spirits help him see his mistakes, and he learns to care about others.
+
+Dickens shows redemption is possible.`,
+    grade8: `Dickens presents redemption as a moral journey. The Spirits guide Scrooge through reflection on past, present and future, forcing him to confront consequences.
+
+Redemption is shown as earned through understanding and change.`,
+    grade9: `Dickens presents redemption as active moral responsibility. Scrooge's transformation occurs through confrontation with suffering and consequence. The structured visits mirror spiritual rebirth, reinforcing Christian ideas of repentance.
+
+Contextually, Dickens suggests social reform begins with individual change. Alternatively, the reliance on supernatural intervention implies redemption requires guidance rather than self-realisation alone.`,
   }
 );
 
@@ -445,10 +482,16 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
-    grade4: `The Cratchits show kindness despite poverty. Dickens uses them to show family matters.`,
-    grade6: `Dickens uses the Cratchits to show generosity and warmth, contrasting Scrooge.`,
-    grade8: `The Cratchits embody moral wealth. Dickens contrasts material poverty with emotional richness to criticise society.`,
-    grade9: `Dickens uses the Cratchits as a moral counterpoint to capitalist selfishness. Their warmth under hardship exposes the failure of a society that neglects its vulnerable. Contextually, Dickens urges social responsibility. Alternatively, idealisation risks simplifying poverty, yet strengthens the moral message.`,
+    grade4: `The Cratchits show kindness despite being poor. They care for each other.
+
+Dickens uses them to show family is important.`,
+    grade6: `Dickens uses the Cratchits to show happiness does not depend on money. They contrast with Scrooge.
+
+This shows Dickens' message about generosity.`,
+    grade8: `The Cratchits represent moral wealth. Their warmth contrasts with Scrooge's isolation, highlighting emotional richness over material success.
+
+Dickens uses them to criticise social inequality.`,
+    grade9: `Dickens uses the Cratchits as a moral counterpoint to capitalist selfishness. Their generosity under hardship exposes the failure of a society that neglects its vulnerable. Contextually, Dickens urges social responsibility. Alternatively, their idealisation strengthens the emotional impact of his message.`,
   }
 );
 
@@ -481,18 +524,16 @@ Step 3 (5 min): Choose short quotations.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add alternative interpretation.`,
   {
-    grade4: `Stevenson presents Hyde as frightening through his violent actions. People are scared of him even without knowing why.
+    grade4: `Hyde is frightening because he is violent and strange. People are scared of him.
 
-This shows Hyde is dangerous.`,
-    grade6: `Hyde is frightening because of his violence and strange appearance. Stevenson suggests there is something wrong with him, which unsettles others.
+This shows he is dangerous.`,
+    grade6: `Hyde is frightening because of his behaviour and unclear appearance. People feel uneasy around him.
 
-This creates fear throughout the novel.`,
-    grade8: `Stevenson presents Hyde as frightening through ambiguity and violence. His physical description is unclear, suggesting moral corruption. Hyde's actions shock others, spreading fear.
+Stevenson makes Hyde seem evil.`,
+    grade8: `Stevenson presents Hyde as frightening through ambiguity and violence. His unclear appearance suggests moral corruption rather than physical deformity.
 
-Victorian readers would fear what Hyde represents.`,
-    grade9: `Stevenson presents Hyde as frightening not only through violence but through uncertainty. Descriptions of his appearance resist clarity, implying moral deformity rather than physical abnormality. This ambiguity unsettles both characters and readers.
-
-Contextually, Hyde reflects Victorian anxieties about degeneration and repressed desires. Alternatively, Hyde's fearfulness lies in recognition — he embodies impulses society refuses to acknowledge.`,
+This makes him unsettling.`,
+    grade9: `Hyde is frightening because he embodies moral degeneration. Stevenson's refusal to clearly describe him creates fear through uncertainty. Contextually, Hyde reflects Victorian fears of repression and hidden desire. Alternatively, Hyde is frightening because he represents impulses society refuses to acknowledge.`,
   }
 );
 
@@ -519,10 +560,16 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
-    grade4: `Stevenson shows duality by having Jekyll and Hyde as two sides of one person.`,
-    grade6: `Jekyll represents respectability, while Hyde represents evil. Stevenson shows that people have two sides.`,
-    grade8: `Duality is shown through Jekyll's attempt to separate good and evil. Hyde becomes stronger, showing imbalance.`,
-    grade9: `Stevenson explores duality as internal conflict. Jekyll's desire to separate morality from desire results in loss of control. Structurally, the delayed revelation mirrors repression. Contextually, this reflects Victorian anxiety about respectability. Alternatively, Stevenson suggests duality cannot be divided without consequence.`,
+    grade4: `Jekyll has two sides: good and bad.
+
+This shows people can be different.`,
+    grade6: `Stevenson shows duality by separating Jekyll and Hyde. Jekyll wants to hide his bad side.
+
+This causes problems.`,
+    grade8: `Jekyll's attempt to separate good and evil shows duality. Hyde becomes stronger, suggesting imbalance.
+
+This shows danger of repression.`,
+    grade9: `Stevenson explores duality as internal conflict. Jekyll's attempt to isolate morality leads to loss of control. Structurally, delayed revelation mirrors repression. Contextually, the novel reflects anxieties about respectability. Alternatively, Stevenson suggests duality cannot be divided without destruction.`,
   }
 );
 
@@ -549,9 +596,9 @@ Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
     grade4: `Priestley shows responsibility by making characters admit their actions.`,
-    grade6: `Responsibility is shown through the Inspector questioning characters. Younger characters accept responsibility more.`,
-    grade8: `Priestley presents responsibility as moral duty. The Inspector exposes how actions affect others.`,
-    grade9: `Priestley presents responsibility as collective moral duty. Through dramatic structure, characters confront consequences. Contextually, this supports socialist ideology. Alternatively, the cyclical ending suggests responsibility is repeatedly ignored.`,
+    grade6: `Responsibility is shown through the Inspector questioning characters. Younger characters accept it more.`,
+    grade8: `Responsibility is shown as moral duty. Priestley contrasts attitudes to show consequences.`,
+    grade9: `Priestley presents responsibility as collective duty. Dramatic structure exposes consequence. Contextually, this supports socialist ideology. Alternatively, cyclical structure suggests society resists responsibility.`,
   }
 );
 
@@ -578,9 +625,9 @@ Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
     grade4: `The Inspector teaches characters a lesson.`,
-    grade6: `The Inspector challenges the Birlings and teaches responsibility.`,
-    grade8: `The Inspector represents Priestley's views. His language forces reflection.`,
-    grade9: `Priestley uses the Inspector as a moral catalyst. His authority disrupts capitalist complacency. Dramatically, he controls pacing and revelation. Contextually, he embodies socialist ideals. Alternatively, his ambiguity suggests ideas transcend individual authority.`,
+    grade6: `The Inspector challenges characters to think differently.`,
+    grade8: `The Inspector represents Priestley's ideas. His authority forces reflection.`,
+    grade9: `The Inspector acts as a moral catalyst. His authority disrupts capitalist complacency. Contextually, he embodies socialist ideals. Alternatively, his ambiguity suggests ideas transcend individual authority.`,
   }
 );
 

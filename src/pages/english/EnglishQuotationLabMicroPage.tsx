@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, FileEdit, CheckCircle } from 'lucide-react';
+import { ChevronLeft, CheckCircle, AlertCircle, MessageSquare } from 'lucide-react';
 import type { QuotationLabSourceId } from '../../types/englishCampus';
 import {
   getMicroParagraphPromptsBySource,
@@ -9,6 +9,69 @@ import {
 } from '../../config/quotationLabData';
 
 const SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];
+
+/** Examiner-style auto-feedback for micro-paragraphs */
+function computeExaminerFeedback(
+  content: string,
+  quoteText: string,
+  method: string
+): { id: string; message: string; type: 'success' | 'warning' | 'error' }[] {
+  const feedback: { id: string; message: string; type: 'success' | 'warning' | 'error' }[] = [];
+  const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+
+  // 1. Word count (60–80 ideal)
+  if (wordCount === 0) return [];
+  if (wordCount < 40) {
+    feedback.push({ id: 'wc', message: 'Too short. Aim for 60–80 words.', type: 'warning' });
+  } else if (wordCount >= 60 && wordCount <= 90) {
+    feedback.push({ id: 'wc', message: 'Good length.', type: 'success' });
+  } else if (wordCount > 120) {
+    feedback.push({ id: 'wc', message: 'Too long. Keep it tight — 4–5 sentences.', type: 'warning' });
+  }
+
+  // 2. Quotation — is it embedded? (short phrase from quote)
+  const quoteWords = quoteText.replace(/[“”'""]/g, '').split(/\s+/).filter(Boolean);
+  const shortQuote = quoteWords.length > 4 ? quoteWords.slice(0, 4).join(' ') : quoteText;
+  const contentNorm = content.toLowerCase().replace(/[“”'""]/g, '');
+  const quoteNorm = shortQuote.toLowerCase();
+  const hasQuote = contentNorm.includes(quoteNorm) || quoteWords.some(w => w.length > 4 && contentNorm.includes(w.toLowerCase()));
+  if (!hasQuote && wordCount > 20) {
+    feedback.push({ id: 'quote', message: 'Embed a short quotation to support your argument.', type: 'error' });
+  } else if (hasQuote) {
+    feedback.push({ id: 'quote', message: 'Quote is embedded.', type: 'success' });
+  }
+
+  // 3. Method–purpose link (AO2)
+  const methodTerms = (method || '').toLowerCase().split(/[\s,;]+/).filter(w => w.length > 3);
+  const hasMethod = methodTerms.some(t => contentNorm.includes(t)) ||
+    contentNorm.includes('method') || contentNorm.includes('technique') ||
+    contentNorm.includes('effect') || contentNorm.includes('suggests') || contentNorm.includes('emphasises');
+  if (!hasMethod && wordCount > 30) {
+    feedback.push({ id: 'method', message: 'This analysis identifies method but lacks purpose. Link technique to effect.', type: 'warning' });
+  } else if (hasMethod) {
+    feedback.push({ id: 'method', message: 'AO2: method linked to purpose.', type: 'success' });
+  }
+
+  // 4. Conceptual depth / judgement
+  const judgementWords = ['suggests', 'reveals', 'emphasises', 'highlights', 'reinforces', 'undermines', 'exposes', 'criticises', 'shows'];
+  const hasJudgement = judgementWords.some(w => contentNorm.includes(w));
+  if (!hasJudgement && wordCount > 40) {
+    feedback.push({ id: 'judge', message: 'This is descriptive, not analytical. Add judgement.', type: 'warning' });
+  } else if (hasJudgement) {
+    feedback.push({ id: 'judge', message: 'Judgement present.', type: 'success' });
+  }
+
+  // 5. Context (AO3) — heuristic: Jacobean, Shakespeare, historical, context
+  const contextWords = ['jacobean', 'shakespeare', 'context', 'historical', 'belief', 'society', 'audience'];
+  const hasContext = contextWords.some(w => contentNorm.includes(w));
+  if (!hasContext && wordCount > 50) {
+    feedback.push({ id: 'context', message: 'Context is relevant but not integrated. Weave it in.', type: 'warning' });
+  } else if (hasContext) {
+    feedback.push({ id: 'context', message: 'AO3 context integrated.', type: 'success' });
+  }
+
+  return feedback;
+}
 
 export function EnglishQuotationLabMicroPage() {
   const navigate = useNavigate();
@@ -23,6 +86,12 @@ export function EnglishQuotationLabMicroPage() {
 
   const prompt = prompts.find(p => p.id === selectedId) ?? prompts[0];
   const quote = prompt ? getQuotationLabQuoteById(prompt.quoteId) : null;
+
+  const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+  const feedback = useMemo(
+    () => (quote && prompt ? computeExaminerFeedback(content, quote.quote, prompt.method) : []),
+    [content, quote, prompt]
+  );
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -105,9 +174,33 @@ export function EnglishQuotationLabMicroPage() {
                   style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
                 />
                 <p className="text-xs mt-1" style={{ color: 'rgb(var(--muted))' }}>
-                  {content.trim().split(/\s+/).filter(Boolean).length} words · Aim for 60–80 words
+                  {wordCount} words · Aim for 60–80 words
                 </p>
               </div>
+
+              {/* Examiner-style auto-feedback */}
+              {feedback.length > 0 && (
+                <div className="rounded-lg p-3 space-y-2 border" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
+                  <p className="text-xs font-semibold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+                    <MessageSquare size={14} />
+                    Examiner-style feedback
+                  </p>
+                  <ul className="space-y-1.5">
+                    {feedback.map(f => (
+                      <li key={f.id} className="flex items-start gap-2 text-sm">
+                        {f.type === 'success' ? (
+                          <CheckCircle size={14} style={{ color: '#10B981' }} className="flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <AlertCircle size={14} style={{ color: f.type === 'error' ? '#EF4444' : '#F59E0B' }} className="flex-shrink-0 mt-0.5" />
+                        )}
+                        <span style={{ color: f.type === 'success' ? 'rgb(var(--text-secondary))' : f.type === 'error' ? '#EF4444' : 'rgb(var(--text))' }}>
+                          {f.message}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </>

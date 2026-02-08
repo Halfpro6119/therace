@@ -8,10 +8,14 @@ import type {
   QuotationLabSourceId,
   QuotationDrillItem,
   QuotationDrillExplain,
+  QuotationDrillFinishAnalysis,
   QuotationDrillUpgrade,
   QuotationDrillBestFit,
   QuotationDrillLinkTwo,
+  QuotationDrillWhichAO,
+  QuotationDrillEliminateWeak,
   QuotationMicroParagraphPrompt,
+  QuotationFlexibleDeploymentPrompt,
 } from '../types/englishCampus';
 
 // ---------------------------------------------------------------------------
@@ -58,11 +62,14 @@ export const QUOTATION_LAB_QUOTES: QuotationLabQuote[] = [
     id: 'M-guilt-1',
     sourceId: 'Macbeth',
     quote: 'Will all great Neptune’s ocean wash this blood / Clean from my hand?',
-    themes: ['guilt', 'blood', 'conscience'],
+    themes: ['guilt', 'blood', 'conscience', 'violence'],
     method: 'Hyperbole; symbolism (blood = guilt)',
+    methods: ['hyperbole', 'imagery', 'mythological allusion'],
     meaning: 'Guilt is overwhelming and cannot be washed away; permanent stain.',
+    grade9Insight: 'Guilt is framed as cosmic and irreversible.',
     contextHook: 'Biblical/Jacobean idea of blood as guilt; divine judgement.',
     deploymentTip: 'Contrast with Lady Macbeth’s “little hand” — shows his conscience is stronger.',
+    bestUsedFor: ['guilt essays', 'moral consequence arguments', 'psychological collapse'],
     location: 'Act 2, Scene 2',
   },
   {
@@ -203,24 +210,79 @@ const DRILLS_EXPLAIN: QuotationDrillExplain[] = [
     id: 'DE-M-1',
     sourceId: 'Macbeth',
     quoteId: 'M-amb-1',
-    themePrompt: 'In one sentence, explain how this quote links to the theme of ambition.',
-    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement.',
+    themePrompt: 'Explain how this quote links to the theme of ambition.',
+    maxWords: 20,
+    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement. Max 20 words. Must include judgement.',
   },
   {
     type: 'explainQuote',
     id: 'DE-M-2',
     sourceId: 'Macbeth',
     quoteId: 'M-guilt-1',
-    themePrompt: 'In one sentence, explain how this quote links to the theme of guilt.',
-    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement.',
+    themePrompt: 'Explain how this quote links to the theme of guilt.',
+    maxWords: 20,
+    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement. Max 20 words. Must include judgement.',
   },
   {
     type: 'explainQuote',
     id: 'DE-M-3',
     sourceId: 'Macbeth',
     quoteId: 'M-pow-2',
-    themePrompt: 'In one sentence, explain how this quote links to the theme of power.',
-    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement.',
+    themePrompt: 'Explain how this quote links to the theme of power.',
+    maxWords: 20,
+    gradingNote: 'Grade 4: basic meaning. Grade 6: meaning + theme. Grade 8: method + meaning. Grade 9: concept + judgement. Max 20 words. Must include judgement.',
+  },
+];
+
+const DRILLS_FINISH_ANALYSIS: QuotationDrillFinishAnalysis[] = [
+  {
+    type: 'finishAnalysis',
+    id: 'DF-M-1',
+    sourceId: 'Macbeth',
+    quoteId: 'M-guilt-1',
+    starter: 'This suggests Macbeth\'s guilt is overwhelming because…',
+    rewardNote: 'Reward: method (hyperbole/symbolism), precision (why blood/Neptune), judgement (permanent/inescapable).',
+  },
+  {
+    type: 'finishAnalysis',
+    id: 'DF-M-2',
+    sourceId: 'Macbeth',
+    quoteId: 'M-amb-1',
+    starter: 'The metaphor of vaulting ambition suggests Macbeth\'s downfall is inevitable because…',
+    rewardNote: 'Reward: method (metaphor), purpose (self-destructive), judgement.',
+  },
+];
+
+const DRILLS_WHICH_AO: QuotationDrillWhichAO[] = [
+  {
+    type: 'whichAO',
+    id: 'DA-M-1',
+    sourceId: 'Macbeth',
+    quoteId: 'M-guilt-1',
+    sampleAnalysis: 'The hyperbole of Neptune\'s ocean emphasises that guilt is inescapable and cosmic in scale.',
+    correctAO: 'AO2',
+    whyCorrect: 'AO2 — focuses on method (hyperbole) and its effect (emphasis on inescapability).',
+  },
+  {
+    type: 'whichAO',
+    id: 'DA-M-2',
+    sourceId: 'Macbeth',
+    quoteId: 'M-amb-3',
+    sampleAnalysis: 'Macbeth wants to hide his ambition from the heavens, which reflects Jacobean beliefs about divine order.',
+    correctAO: 'AO3',
+    whyCorrect: 'AO3 — links the quote to contextual beliefs about divine order and sin.',
+  },
+];
+
+const DRILLS_ELIMINATE_WEAK: QuotationDrillEliminateWeak[] = [
+  {
+    type: 'eliminateWeakQuote',
+    id: 'DW-M-1',
+    sourceId: 'Macbeth',
+    question: 'How does Shakespeare present guilt in the play?',
+    quoteOptionIds: ['M-guilt-1', 'M-amb-1', 'M-lady-2', 'M-pow-1'],
+    bestQuoteId: 'M-guilt-1',
+    whyOthersWeak: 'M-guilt-1 directly addresses guilt with strong method (hyperbole). M-amb-1 is ambition. M-lady-2 is deception. M-pow-1 is evil/witches — not guilt.',
   },
 ];
 
@@ -295,9 +357,12 @@ const DRILLS_LINK_TWO: QuotationDrillLinkTwo[] = [
 
 export const QUOTATION_LAB_DRILLS: QuotationDrillItem[] = [
   ...DRILLS_EXPLAIN,
+  ...DRILLS_FINISH_ANALYSIS,
+  ...DRILLS_WHICH_AO,
   ...DRILLS_UPGRADE,
   ...DRILLS_BEST_FIT,
   ...DRILLS_LINK_TWO,
+  ...DRILLS_ELIMINATE_WEAK,
 ];
 
 // ---------------------------------------------------------------------------
@@ -350,6 +415,29 @@ export const QUOTATION_MICRO_PARAGRAPH_PROMPTS: QuotationMicroParagraphPrompt[] 
 ];
 
 // ---------------------------------------------------------------------------
+// FLEXIBLE DEPLOYMENT PROMPTS (Mode 4: argue TWO ideas with one quote)
+// ---------------------------------------------------------------------------
+
+export const QUOTATION_FLEXIBLE_DEPLOYMENT_PROMPTS: QuotationFlexibleDeploymentPrompt[] = [
+  {
+    id: 'FD-M-1',
+    sourceId: 'Macbeth',
+    quoteId: 'M-guilt-1',
+    ideaA: 'Guilt as cosmic punishment',
+    ideaB: 'Guilt as loss of masculinity (Lady Macbeth\'s "little hand" contrast)',
+    examinerNote: 'Grade 9: one quote, two conceptual angles. Shows flexibility and depth.',
+  },
+  {
+    id: 'FD-M-2',
+    sourceId: 'Macbeth',
+    quoteId: 'M-amb-1',
+    ideaA: 'Ambition as self-destructive force',
+    ideaB: 'Ambition as moral blindness',
+    examinerNote: 'Grade 9: deploy the metaphor for different arguments.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // HELPERS
 // ---------------------------------------------------------------------------
 
@@ -393,6 +481,10 @@ export function getQuotationLabDrillsBySource(sourceId: QuotationLabSourceId): Q
 
 export function getMicroParagraphPromptsBySource(sourceId: QuotationLabSourceId): QuotationMicroParagraphPrompt[] {
   return QUOTATION_MICRO_PARAGRAPH_PROMPTS.filter(p => p.sourceId === sourceId);
+}
+
+export function getFlexibleDeploymentPromptsBySource(sourceId: QuotationLabSourceId): QuotationFlexibleDeploymentPrompt[] {
+  return QUOTATION_FLEXIBLE_DEPLOYMENT_PROMPTS.filter(p => p.sourceId === sourceId);
 }
 
 export const QUOTATION_LAB_SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];

@@ -13,7 +13,7 @@ const MODES = [
   {
     id: 'quote-lab',
     title: 'Quote Lab',
-    description: 'Curated quote bank: meaning, method, context, deployment tips',
+    description: 'Understand quotes (3 panels) + Flexible Deployment (argue TWO ideas)',
     icon: Quote,
     path: 'quote-lab',
     color: '#F59E0B',
@@ -21,7 +21,7 @@ const MODES = [
   {
     id: 'drills',
     title: 'Drills',
-    description: 'Explain, Upgrade, Best fit, Link two — build speed and precision',
+    description: '5 drills: explain, finish analysis, select best, link two, which AO, eliminate weak',
     icon: FlaskConical,
     path: 'drills',
     color: '#8B5CF6',
@@ -37,7 +37,7 @@ const MODES = [
   {
     id: 'progress',
     title: 'Progress & mastery',
-    description: 'Quote familiarity, AO balance, grade ceiling, weak themes',
+    description: 'Heatmap, theme confidence, AO balance, examiner intelligence',
     icon: BarChart3,
     path: 'progress',
     color: '#10B981',
@@ -144,10 +144,10 @@ export function EnglishQuotationLabPage() {
           What you’ll do here
         </h2>
         <ul className="text-sm space-y-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Quote Lab</strong> — Learn each quote: theme, method, meaning, context, how to deploy it.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Drills</strong> — Explain this quote; upgrade weak analysis; which quote fits best; link two quotes to show change.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Micro-Paragraph Builder</strong> — Build 4–5 sentence paragraphs under timed conditions.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Progress</strong> — See quote familiarity, AO balance, and what’s holding you back.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Quote Lab</strong> — Understand each quote (meaning, method, context); Flexible Deployment: argue TWO ideas with one quote.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Drills</strong> — Explain in one sentence; finish the analysis; select best quote; link two quotes; which AO? eliminate weak quote.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Micro-Paragraph Builder</strong> — Build 4–5 sentence paragraphs with examiner-style auto-feedback.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Progress</strong> — Quote familiarity heatmap, theme confidence, AO balance, examiner intelligence.</li>
         </ul>
       </section>
     </div>

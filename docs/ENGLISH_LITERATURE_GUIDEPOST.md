@@ -4,6 +4,8 @@ Literature is structured exactly how top students are trained and how examiners 
 
 **Implementation:** Full pack content (checklist, mark scheme, step-by-step method, model answers Grade 4/6/8/9) lives in `src/config/englishLiteratureGuidePostData.ts` and is consumed by the Literature workspace.
 
+**Model answers:** Full 45-minute exam-style exemplars (Grades 4, 6, 8, 9) for all 14 tasks are documented in `docs/LITERATURE_GUIDEPOST_MODEL_ANSWERS.md`. These are examiner-faithful responses with sustained argument, developed paragraphs, embedded quotations, and clear progression.
+
 ---
 
 ## Overview
