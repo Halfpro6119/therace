@@ -6,9 +6,8 @@ import {
   getMicroParagraphPromptsBySource,
   getQuotationLabQuoteById,
   getQuotationLabSourceLabel,
+  QUOTATION_LAB_SOURCE_IDS,
 } from '../../config/quotationLabData';
-
-const SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];
 
 /** Examiner-style auto-feedback for micro-paragraphs */
 function computeExaminerFeedback(
@@ -76,7 +75,7 @@ function computeExaminerFeedback(
 export function EnglishQuotationLabMicroPage() {
   const navigate = useNavigate();
   const { sourceId } = useParams<{ sourceId: string }>();
-  const validSource = sourceId && SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
+  const validSource = sourceId && QUOTATION_LAB_SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
     ? (sourceId as QuotationLabSourceId)
     : 'Macbeth';
   const prompts = getMicroParagraphPromptsBySource(validSource);

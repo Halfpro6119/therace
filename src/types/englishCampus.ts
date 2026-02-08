@@ -326,7 +326,18 @@ export interface EnglishVocabTask {
 
 // ---- Quotation Lab (Chunk 5: quote banks, drills, micro-paragraphs, progress) ----
 
-export type QuotationLabSourceId = 'Macbeth' | 'Ozymandias' | 'London' | 'Exposure';
+/** Set texts (plays/novels) + Poetry cluster poems */
+export type QuotationLabSourceId =
+  | 'Macbeth'
+  | 'AChristmasCarol'
+  | 'JekyllHyde'
+  | 'AnInspectorCalls'
+  | 'Ozymandias'
+  | 'London'
+  | 'Exposure'
+  | 'CheckingOutMeHistory'
+  | 'Kamikaze'
+  | 'BayonetCharge';
 
 export interface QuotationLabQuote {
   id: string;

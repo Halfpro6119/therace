@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Library, BookOpen, Tag } from 'lucide-react';
+import { ChevronLeft, Library, BookOpen, Tag, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
+  QUOTATION_LAB_TEXT_SOURCE_IDS,
   QUOTATION_LAB_SOURCE_IDS,
   QUOTATION_LAB_THEME_IDS,
   CLUSTER_SOURCES,
@@ -46,7 +47,7 @@ export function EnglishQuotationLabPage() {
         </div>
       </div>
 
-      {/* By Text */}
+      {/* By Text — Macbeth, A Christmas Carol, Jekyll & Hyde, An Inspector Calls */}
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,41 +59,45 @@ export function EnglishQuotationLabPage() {
           By Text
         </h2>
         <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Choose a text or poem — each has a quote bank, drills, and micro-paragraph prompts.
+          Macbeth, A Christmas Carol, Jekyll & Hyde, An Inspector Calls — quote bank, drills, micro-paragraphs per text.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {QUOTATION_LAB_SOURCE_IDS.map(sourceId => {
+          {QUOTATION_LAB_TEXT_SOURCE_IDS.map(sourceId => {
             const label = getQuotationLabSourceLabel(sourceId);
             const quoteCount = getQuotationLabQuotesBySource(sourceId).length;
             const drillCount = getQuotationLabDrillsBySource(sourceId).length;
             const microCount = getMicroParagraphPromptsBySource(sourceId).length;
             const hasContent = quoteCount > 0;
             return (
-              <button
+              <div
                 key={sourceId}
-                type="button"
-                disabled={!hasContent}
-                onClick={() => {}}
-                className="rounded-xl border p-4 text-left hover:shadow-md transition disabled:opacity-50"
+                className="rounded-xl border p-4 text-left transition"
                 style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
               >
-                <div className="font-bold" style={{ color: 'rgb(var(--text))' }}>{label}</div>
-                <div className="text-xs mt-1 flex flex-wrap gap-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  <span>{quoteCount} quotes</span>
-                  <span>{drillCount} drills</span>
-                  <span>{microCount} micro-paragraphs</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${sourceId}`)}
+                  disabled={!hasContent}
+                  className="w-full text-left disabled:opacity-60"
+                >
+                  <div className="font-bold" style={{ color: 'rgb(var(--text))' }}>{label}</div>
+                  <div className="text-xs mt-1 flex flex-wrap gap-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    <span>{quoteCount} quotes</span>
+                    <span>{drillCount} drills</span>
+                    <span>{microCount} micro-paragraphs</span>
+                  </div>
+                  {!hasContent && (
+                    <p className="text-xs mt-2 italic" style={{ color: 'rgb(var(--muted))' }}>Coming soon</p>
+                  )}
+                </button>
                 {hasContent && (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2" onClick={e => e.stopPropagation()}>
                     {MODES.map(mode => (
                       <button
                         key={mode.id}
                         type="button"
-                        onClick={e => {
-                          e.stopPropagation();
-                          navigate(`/english-campus/literature/quotation-lab/${mode.path}/${sourceId}`);
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                        onClick={() => navigate(`/english-campus/literature/quotation-lab/${mode.path}/${sourceId}`)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-90"
                         style={{ background: `${mode.color}20`, color: mode.color }}
                       >
                         {mode.title}
@@ -100,7 +105,7 @@ export function EnglishQuotationLabPage() {
                     ))}
                   </div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
@@ -148,6 +153,42 @@ export function EnglishQuotationLabPage() {
                   })}
                 </div>
               </div>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      {/* Drills — Quote Selection, One-Sentence, Upgrade, Link Two, Eliminate Weak */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="rounded-xl border p-4"
+        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+      >
+        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <Zap size={20} />
+          Drills
+        </h2>
+        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Quote selection, one-sentence analysis, upgrade, link two quotes, eliminate the weak — pick a source.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {QUOTATION_LAB_SOURCE_IDS.map(sourceId => {
+            const label = getQuotationLabSourceLabel(sourceId);
+            const drillCount = getQuotationLabDrillsBySource(sourceId).length;
+            const hasDrills = drillCount > 0;
+            return (
+              <button
+                key={sourceId}
+                type="button"
+                disabled={!hasDrills}
+                onClick={() => navigate(`/english-campus/literature/quotation-lab/drills/${sourceId}`)}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50"
+                style={{ background: hasDrills ? 'rgba(139, 92, 246, 0.2)' : 'rgb(var(--surface-2))', color: hasDrills ? '#8B5CF6' : 'rgb(var(--muted))' }}
+              >
+                {label} ({drillCount})
+              </button>
             );
           })}
         </div>

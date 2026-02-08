@@ -5,10 +5,9 @@ import type { QuotationLabSourceId } from '../../types/englishCampus';
 import {
   getQuotationLabQuotesBySource,
   getQuotationLabSourceLabel,
+  QUOTATION_LAB_SOURCE_IDS,
 } from '../../config/quotationLabData';
 import { storage } from '../../utils/storage';
-
-const SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];
 
 function familiarityLevel(count: number): { label: string; color: string; pct: number } {
   if (count >= 3) return { label: 'Fluent', color: '#10B981', pct: 100 };
@@ -50,7 +49,7 @@ function getExaminerGradeCeiling(aoBalance: { AO1: number; AO2: number; AO3: num
 export function EnglishQuotationLabProgressPage() {
   const navigate = useNavigate();
   const { sourceId } = useParams<{ sourceId: string }>();
-  const validSource = sourceId && SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
+  const validSource = sourceId && QUOTATION_LAB_SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
     ? (sourceId as QuotationLabSourceId)
     : 'Macbeth';
   const quotes = getQuotationLabQuotesBySource(validSource);

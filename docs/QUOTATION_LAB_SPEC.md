@@ -171,3 +171,25 @@ A quote cannot be added unless:
 **This system:** trains judgement, builds flexibility, mirrors examiner thinking.
 
 Students stop asking "What quotes do I need?" and start thinking "Which quote fits best here?" — **that is Grade 9 behaviour.**
+
+---
+
+## 1️⃣4️⃣ Next Optional Extensions
+
+When ready:
+
+- **Language Quotation Lab** — Non-fiction rhetoric, selective quotation for Language Paper 1/2 Section A
+- **Automatic quote suggestions** — During writing, suggest relevant Quotation Lab quotes based on focus
+- **Timed "Quote Panic" drills** — Timed quote-selection under pressure
+- **Personalised quote pruning** — AI-suggested quote set based on weak themes and AO gaps
+
+---
+
+## ✅ Final Status
+
+You now have:
+
+- A complete Literature Quotation Lab spec
+- Drill logic (A–E: Selection, One-Sentence, Upgrade, Link Two, Eliminate Weak)
+- Data models (quote object, drill types, progress)
+- Integration with existing GuidePost packs (strategic quotes in exam mode)

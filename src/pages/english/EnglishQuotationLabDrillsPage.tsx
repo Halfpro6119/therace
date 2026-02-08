@@ -17,9 +17,8 @@ import {
   getQuotationLabDrillsBySource,
   getQuotationLabQuoteById,
   getQuotationLabSourceLabel,
+  QUOTATION_LAB_SOURCE_IDS,
 } from '../../config/quotationLabData';
-
-const SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];
 
 function isExplain(d: QuotationDrillItem): d is QuotationDrillExplain {
   return d.type === 'explainQuote';
@@ -56,7 +55,7 @@ const DRILL_TYPE_LABELS: Record<QuotationDrillItem['type'], string> = {
 export function EnglishQuotationLabDrillsPage() {
   const navigate = useNavigate();
   const { sourceId } = useParams<{ sourceId: string }>();
-  const validSource = sourceId && SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
+  const validSource = sourceId && QUOTATION_LAB_SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
     ? (sourceId as QuotationLabSourceId)
     : 'Macbeth';
   const drills = getQuotationLabDrillsBySource(validSource);

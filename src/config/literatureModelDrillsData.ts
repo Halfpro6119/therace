@@ -198,7 +198,16 @@ export const MODEL_DRILL_TASK_IDS: string[] = ['P-S01', 'P-S03', 'M-03'];
 /** Map Literature task IDs to Quotation Lab source IDs for cross-linking */
 export const TASK_TO_QUOTATION_LAB_SOURCE: Record<string, string> = {
   'P-S01': 'Ozymandias',
+  'P-C02': 'Exposure',
+  'P-C03': 'CheckingOutMeHistory',
   'M-03': 'Macbeth',
+  'ACC-01': 'AChristmasCarol',
+  'ACC-02': 'AChristmasCarol',
+  'ACC-03': 'AChristmasCarol',
+  'JH-01': 'JekyllHyde',
+  'JH-02': 'JekyllHyde',
+  'AIC-01': 'AnInspectorCalls',
+  'AIC-02': 'AnInspectorCalls',
 };
 
 export function getQuotationLabSourceForTask(taskId: string): string | undefined {
