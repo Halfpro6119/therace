@@ -1,4 +1,5 @@
 import type { DiagramEngineTemplate, DiagramParams, DiagramRenderResult } from '../../types';
+import { diagramStyleBlock } from '../designTokens';
 
 /**
  * Generic triangle: three vertices A, B, C with configurable positions or side lengths.
@@ -23,12 +24,15 @@ export const triangle: DiagramEngineTemplate = {
     },
     visibility: {
       showVertexLabels: { default: true },
-      showSideLengths: { default: true }
+      showSideLengths: { default: true },
+      showSideAB: { default: true },
+      showSideBC: { default: true },
+      showSideAC: { default: true }
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 500;
-    const height = 400;
+    const width = 620;
+    const height = 500;
 
     const labelA = params.labels?.A ?? 'A';
     const labelB = params.labels?.B ?? 'B';
@@ -41,11 +45,14 @@ export const triangle: DiagramEngineTemplate = {
 
     const showVertexLabels = params.visibility?.showVertexLabels !== false;
     const showSideLengths = params.visibility?.showSideLengths !== false;
+    const showSideAB = params.visibility?.showSideAB !== false;
+    const showSideBC = params.visibility?.showSideBC !== false;
+    const showSideAC = params.visibility?.showSideAC !== false;
 
     // Place A at origin, B along x-axis, C above such that distances match
-    const scale = 35;
-    const ax = 80;
-    const ay = height - 80;
+    const scale = 42;
+    const ax = 100;
+    const ay = height - 100;
     const bx = ax + c * scale;
     const by = ay;
 
@@ -57,13 +64,14 @@ export const triangle: DiagramEngineTemplate = {
     const midAB = { x: (ax + bx) / 2, y: (ay + by) / 2 };
     const midBC = { x: (bx + cx) / 2, y: (by + cy) / 2 };
     const midAC = { x: (ax + cx) / 2, y: (ay + cy) / 2 };
+    const sideOffset = 32;
+    const sideABStr = `${c} ${unit}`;
+    const sideBCStr = `${a} ${unit}`;
+    const sideACStr = `${b} ${unit}`;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-triangle { fill: none; stroke: #94a3b8; stroke-width: 2; }
-    .diagram-point { fill: #60a5fa; }
-    .diagram-text { font-family: sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-side { font-family: sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
+${diagramStyleBlock()}
   </style>
   <g id="grp:main">
     <polygon id="shape:triangle" points="${ax},${ay} ${bx},${by} ${cx},${cy}" class="diagram-triangle"/>
@@ -74,14 +82,16 @@ export const triangle: DiagramEngineTemplate = {
     <circle id="pt:A" cx="${ax}" cy="${ay}" r="5" class="diagram-point"/>
     <circle id="pt:B" cx="${bx}" cy="${by}" r="5" class="diagram-point"/>
     <circle id="pt:C" cx="${cx}" cy="${cy}" r="5" class="diagram-point"/>
-    <text id="txt:A" x="${ax - 18}" y="${ay + 5}" class="diagram-text">${labelA}</text>
-    <text id="txt:B" x="${bx + 8}" y="${by + 5}" class="diagram-text">${labelB}</text>
-    <text id="txt:C" x="${cx + 8}" y="${cy - 8}" class="diagram-text">${labelC}</text>
+    <text id="txt:A" x="${ax - 16}" y="${ay + 6}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${bx + 14}" y="${by + 6}" class="diagram-text">${labelB}</text>
+    <text id="txt:C" x="${cx + 14}" y="${cy - 8}" class="diagram-text">${labelC}</text>
     ` : ''}
-    ${showSideLengths ? `
-    <text id="txt:sideAB" x="${midAB.x}" y="${midAB.y + 22}" class="diagram-text-side">${c} ${unit}</text>
-    <text id="txt:sideBC" x="${midBC.x + 18}" y="${midBC.y}" class="diagram-text-side">${a} ${unit}</text>
-    <text id="txt:sideAC" x="${midAC.x - 18}" y="${midAC.y}" class="diagram-text-side">${b} ${unit}</text>
+    ${showSideLengths && showSideAB ? `
+    <text id="txt:sideAB" x="${midAB.x}" y="${midAB.y + sideOffset}" class="diagram-text-side">${sideABStr}</text>
+    ` : ''}${showSideLengths && showSideBC ? `
+    <text id="txt:sideBC" x="${midBC.x + sideOffset}" y="${midBC.y}" class="diagram-text-side">${sideBCStr}</text>
+    ` : ''}${showSideLengths && showSideAC ? `
+    <text id="txt:sideAC" x="${midAC.x - sideOffset}" y="${midAC.y}" class="diagram-text-side">${sideACStr}</text>
     ` : ''}
   </g>
 </svg>`;

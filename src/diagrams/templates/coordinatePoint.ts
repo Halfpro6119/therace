@@ -59,16 +59,16 @@ export const coordinatePoint: DiagramEngineTemplate = {
     <g id="grp:grid" opacity="0.2">
       ${Array.from({ length: xMax - xMin + 1 }, (_, i) => {
         const x = padding + i * gridSize;
-        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
       ${Array.from({ length: yMax - yMin + 1 }, (_, i) => {
         const y = padding + i * gridSize;
-        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
     </g>` : '';
 
     const pointMarkup = showPoint ? `
-    <circle id="pt:P" cx="${pointPixelX}" cy="${pointPixelY}" r="${highlightPoint ? 5 : 4}" fill="${highlightPoint ? '#60a5fa' : '#ef4444'}" stroke="${highlightPoint ? '#3b82f6' : '#dc2626'}" stroke-width="${highlightPoint ? 2 : 1}"/>
+    <circle id="pt:P" cx="${pointPixelX}" cy="${pointPixelY}" r="${highlightPoint ? 5 : 4}" fill="${highlightPoint ? '#64748b' : '#ef4444'}" stroke="${highlightPoint ? '#64748b' : '#dc2626'}" stroke-width="${highlightPoint ? 2 : 1}"/>
     <text id="txt:P" x="${pointPixelX + 12}" y="${pointPixelY - 8}" class="diagram-text-point">${pointLabel}</text>
     ` : '';
 
@@ -91,14 +91,14 @@ export const coordinatePoint: DiagramEngineTemplate = {
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-axis { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
-    .diagram-text-point { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #60a5fa; }
+    .diagram-text-point { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #e2e8f0; }
   </style>
 
   <g id="grp:main">

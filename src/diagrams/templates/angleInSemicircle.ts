@@ -87,14 +87,14 @@ export const angleInSemicircle: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-highlight { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-highlight { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-point { fill: #64748b; }
+    .diagram-point-highlight { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #f87171; }
-    .diagram-right-angle { stroke: #3b82f6; stroke-width: 1.5; fill: none; filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5)); }
+    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; fill: #94a3b8; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 500; fill: #dc2626; }
+    .diagram-right-angle { stroke: #64748b; stroke-width: 1.5; fill: none; }
   </style>
 
   <g id="grp:main">

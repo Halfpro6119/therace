@@ -194,6 +194,41 @@ describe('grade()', () => {
       expect(grade(q, { type: 'short', text: 'Paris' }).isCorrect).toBe(true)
       expect(grade(q, { type: 'short', text: 'paris' }).isCorrect).toBe(true)
     })
+
+    it('describe the transformation: accepts equivalent phrasings (e.g. scale factor -2 = flipped and doubled)', () => {
+      const q = baseQ({
+        type: 'short',
+        question: 'A shape is enlarged by scale factor −2. Describe the transformation',
+        answersAccepted: ['enlargement scale factor 2, centre (0,0), reflection'],
+        marks: 1,
+      })
+      expect(grade(q, { type: 'short', text: 'enlargement scale factor 2, centre (0,0), reflection' }).isCorrect).toBe(true)
+      expect(grade(q, { type: 'short', text: 'shape is flipped and doubled' }).isCorrect).toBe(true)
+      expect(grade(q, { type: 'short', text: 'reflection and enlargement scale factor 2' }).isCorrect).toBe(true)
+      expect(grade(q, { type: 'short', text: 'reflected and twice the size' }).isCorrect).toBe(true)
+    })
+
+    it('describe the transformation: awards partial marks for one of two ideas (reflection vs doubled)', () => {
+      const q = baseQ({
+        type: 'short',
+        question: 'A shape is enlarged by scale factor −2. Describe the transformation',
+        answersAccepted: ['enlargement scale factor 2, centre (0,0), reflection'],
+        marks: 1,
+      })
+      // Both ideas → full marks
+      expect(grade(q, { type: 'short', text: 'shape is flipped and doubled' }).marksAwarded).toBe(1)
+      expect(grade(q, { type: 'short', text: 'shape is flipped and doubled' }).isCorrect).toBe(true)
+      // Only reflection → 0.5
+      expect(grade(q, { type: 'short', text: 'just flipped' }).marksAwarded).toBe(0.5)
+      expect(grade(q, { type: 'short', text: 'just flipped' }).isCorrect).toBe(false)
+      expect(grade(q, { type: 'short', text: 'reflection' }).marksAwarded).toBe(0.5)
+      // Only scale factor 2 / doubled → 0.5
+      expect(grade(q, { type: 'short', text: 'just doubled' }).marksAwarded).toBe(0.5)
+      expect(grade(q, { type: 'short', text: 'twice the size' }).marksAwarded).toBe(0.5)
+      // Neither → 0
+      expect(grade(q, { type: 'short', text: 'translation' }).marksAwarded).toBe(0)
+      expect(grade(q, { type: 'short', text: 'something else' }).marksAwarded).toBe(0)
+    })
   })
 
   it('mcq: correct key awards marks', () => {
@@ -307,6 +342,18 @@ describe('grade()', () => {
     expect(grade(q, { type: 'numeric', text: 'x=7' }).isCorrect).toBe(true)
     expect(grade(q, { type: 'numeric', text: '7' }).isCorrect).toBe(true)
     expect(grade(q, { type: 'numeric', text: 'x = 7' }).isCorrect).toBe(true)
+  })
+
+  it('numeric: accepts symbolic answers when they match exactly (e.g. 49π for circle area)', () => {
+    const q = baseQ({
+      type: 'numeric',
+      question: 'Find the area of a circle with radius 7 cm',
+      answersAccepted: ['49π'],
+      marks: 1,
+      meta: { questionData: { tolerance: 0.3 }, diagram: undefined },
+    })
+    expect(grade(q, { type: 'numeric', text: '49π' }).isCorrect).toBe(true)
+    expect(grade(q, { type: 'numeric', text: '49π' }).feedback.summary).toContain('Correct')
   })
 
   it('numeric: accepts answer without x= when correct answer is stored as x= (e.g. axis of symmetry)', () => {

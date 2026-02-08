@@ -210,23 +210,130 @@ function parseKeyUnits(text: string): KeyUnits {
   return { numbers, directions, contentWords }
 }
 
+/**
+ * Synonyms for transformation-description content words so answers like "flipped and doubled"
+ * are accepted when the model answer is "enlargement scale factor 2, reflection".
+ */
+const TRANSFORMATION_WORD_SYNONYMS: Record<string, string[]> = {
+  reflection: ['reflection', 'reflect', 'reflected', 'flip', 'flipped'],
+  enlargement: ['enlargement', 'enlarge', 'enlarged', 'doubled', 'double', 'twice', 'scaled', 'scale'],
+  scale: ['scale', 'scaled', 'scaling', 'doubled', 'double', 'twice'],
+  factor: ['factor', 'doubled', 'double', 'twice'],
+  centre: ['centre', 'center', 'origin'],
+}
+
+/** Words that can satisfy scale factor 2 when the accepted answer expects 2 (e.g. enlargement scale factor 2). */
+const SCALE_FACTOR_TWO_WORDS = /\b(doubled|double|twice|two)\b/i
+
+/** True if accepted answer looks like a transformation description (enlargement/reflection/scale factor). */
+function isTransformationDescription(acceptedRaw: string): boolean {
+  const lower = safeLower(acceptedRaw)
+  return (
+    lower.includes('reflection') ||
+    lower.includes('enlargement') ||
+    lower.includes('scale factor') ||
+    (lower.includes('scale') && lower.includes('factor'))
+  )
+}
+
+/** True if user text matches an accepted content word (exact or transformation synonym). */
+function contentWordMatches(
+  acceptedWord: string,
+  userLower: string,
+  acceptedRaw: string
+): boolean {
+  if (userLower.includes(acceptedWord)) return true
+  const synonyms = TRANSFORMATION_WORD_SYNONYMS[acceptedWord]
+  if (synonyms) {
+    for (const syn of synonyms) {
+      if (userLower.includes(syn)) return true
+    }
+  }
+  return false
+}
+
+/** For transformation answers, centre is optional when reflection + enlargement are the main idea. */
+function isCentreOptional(accepted: KeyUnits, acceptedRaw: string): boolean {
+  if (!isTransformationDescription(acceptedRaw)) return false
+  const lower = safeLower(acceptedRaw)
+  const hasReflection = lower.includes('reflection') || lower.includes('reflected')
+  const hasEnlargement = lower.includes('enlargement') || lower.includes('scale factor')
+  return hasReflection && hasEnlargement
+}
+
+/** True when the accepted answer is the two-part type: reflection + enlargement scale factor 2 (e.g. scale factor −2). */
+function isTwoPartReflectionEnlargement(acceptedRaw: string): boolean {
+  const lower = safeLower(acceptedRaw)
+  const hasReflection = lower.includes('reflection') || lower.includes('reflected')
+  const hasScaleFactor2 =
+    lower.includes('scale factor 2') ||
+    (lower.includes('scale factor') && /\b2\b/.test(acceptedRaw)) ||
+    (extractNumbersFromText(acceptedRaw).some(n => Math.abs(n - 2) <= MARK_SCHEME_NUMERIC_TOLERANCE) &&
+      (lower.includes('enlargement') || lower.includes('scale')))
+  return hasReflection && hasScaleFactor2
+}
+
+/** Words that indicate reflection/flip (Idea 1). */
+const REFLECTION_INDICATORS = /\b(reflection|reflect|reflected|flip|flipped)\b/i
+/** Words/numbers that indicate scale factor 2 / doubled (Idea 2). */
+function hasScaleFactorTwo(userRaw: string): boolean {
+  const lower = safeLower(userRaw)
+  if (SCALE_FACTOR_TWO_WORDS.test(userRaw)) return true
+  const nums = extractNumbersFromText(userRaw)
+  return nums.some(n => Math.abs(n - 2) <= MARK_SCHEME_NUMERIC_TOLERANCE)
+}
+function hasReflection(userRaw: string): boolean {
+  return REFLECTION_INDICATORS.test(userRaw)
+}
+
+/**
+ * Score a two-part transformation (reflection + enlargement scale factor 2).
+ * Idea 1: shape is flipped/reflected. Idea 2: shape is doubled/twice the size.
+ * Returns marks: 0, half of maxMarks (one idea), or maxMarks (both).
+ */
+function scoreTwoPartTransformation(
+  userRaw: string,
+  _acceptedRaw: string,
+  maxMarks: number
+): { idea1: boolean; idea2: boolean; marksAwarded: number } {
+  const idea1 = hasReflection(userRaw)
+  const idea2 = hasScaleFactorTwo(userRaw)
+  const ideasCorrect = (idea1 ? 1 : 0) + (idea2 ? 1 : 0)
+  const marksAwarded = ideasCorrect === 0 ? 0 : (maxMarks * ideasCorrect) / 2
+  return { idea1, idea2, marksAwarded }
+}
+
 /** True if user's answer contains all key units from the accepted answer (numbers, directions, content words). */
 function keyUnitsMatch(
   accepted: KeyUnits,
   user: KeyUnits,
   userRawText: string,
-  tolerance: number = MARK_SCHEME_NUMERIC_TOLERANCE
+  tolerance: number = MARK_SCHEME_NUMERIC_TOLERANCE,
+  acceptedRawText?: string
 ): boolean {
   const userLower = safeLower(userRawText)
+  const acceptedRaw = acceptedRawText ?? ''
+  const transformationStyle = isTransformationDescription(acceptedRaw)
+  const centreOptional = transformationStyle && isCentreOptional(accepted, acceptedRaw)
+
   for (const word of accepted.contentWords) {
-    if (!userLower.includes(word)) return false
+    if (centreOptional && (word === 'centre' || word === 'center')) continue
+    if (transformationStyle) {
+      if (!contentWordMatches(word, userLower, acceptedRaw)) return false
+    } else {
+      if (!userLower.includes(word)) return false
+    }
   }
   const userDirSet = new Set(user.directions)
   for (const d of accepted.directions) {
     if (!userDirSet.has(d)) return false
   }
+  // When centre is optional (e.g. reflection + enlargement), don't require matching (0,0) coordinates
+  const numbersToMatch = centreOptional
+    ? accepted.numbers.filter(n => Math.abs(n) > tolerance)
+    : accepted.numbers
   const used = new Set<number>()
-  for (const an of accepted.numbers) {
+  for (const an of numbersToMatch) {
     let found = false
     for (let j = 0; j < user.numbers.length; j++) {
       if (used.has(j)) continue
@@ -235,6 +342,10 @@ function keyUnitsMatch(
         found = true
         break
       }
+    }
+    // For transformation descriptions, "doubled"/"twice" etc. can satisfy scale factor 2
+    if (!found && transformationStyle && Math.abs(an - 2) <= tolerance && SCALE_FACTOR_TWO_WORDS.test(userRawText)) {
+      found = true
     }
     if (!found) return false
   }
@@ -502,15 +613,43 @@ function gradeShort(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'sho
     }
   }
 
+  // Two-part transformation (reflection + enlargement scale factor 2): award partial marks for each idea.
+  // Idea 1: flipped/reflected. Idea 2: doubled/twice the size. Run before full key-units so partial is possible.
+  if (maxMarks >= 1 && accepted.length >= 1) {
+    const acceptedStripped = stripSubjectPrefix(accepted[0])
+    if (isTwoPartReflectionEnlargement(acceptedStripped)) {
+      const { idea1, idea2, marksAwarded } = scoreTwoPartTransformation(raw, acceptedStripped, maxMarks)
+      const isCorrect = marksAwarded >= maxMarks
+      const summary =
+        isCorrect
+          ? `Correct (+${marksAwarded}/${maxMarks}).`
+          : marksAwarded > 0
+            ? `Partially correct (+${marksAwarded}/${maxMarks}).`
+            : `Incorrect (0/${maxMarks}).`
+      return {
+        isCorrect,
+        marksAwarded,
+        maxMarks,
+        feedback: {
+          summary,
+          correctAnswer: q.answersAccepted[0] || '',
+          mistakeTags: isCorrect ? [] : marksAwarded > 0 ? ['partial'] : ['mismatch'],
+        },
+        normalizedUserAnswer: { text: raw },
+      }
+    }
+  }
+
   // General units-based grading for all short/describe/explain: if the user's answer contains all
   // key units (numbers, directions, content words) from any one accepted answer, award full marks.
   // Applies to single or multiple accepted answers (e.g. "positive" / "positive correlation").
   if (maxMarks >= 1) {
     const userUnits = parseKeyUnits(raw)
     for (const a of accepted) {
-      const acceptedUnits = parseKeyUnits(stripSubjectPrefix(a))
+      const acceptedStripped = stripSubjectPrefix(a)
+      const acceptedUnits = parseKeyUnits(acceptedStripped)
       if (!acceptedHasKeyUnits(acceptedUnits)) continue
-      if (keyUnitsMatch(acceptedUnits, userUnits, raw, MARK_SCHEME_NUMERIC_TOLERANCE)) {
+      if (keyUnitsMatch(acceptedUnits, userUnits, raw, MARK_SCHEME_NUMERIC_TOLERANCE, acceptedStripped)) {
         return {
           isCorrect: true,
           marksAwarded: maxMarks,
@@ -790,6 +929,26 @@ function gradeNumeric(q: NormalizedQuestion, r: Extract<UserResponse, { type: 'n
   const comparisonText = stripSubjectPrefix(raw)
   const userN = parseNumberOrNull(comparisonText) ?? fractionToNumberOrNull(comparisonText)
   if (userN === null) {
+    // Accept symbolic answers that match exactly (e.g. "49π" when correct answer is "49π")
+    const norm = (s: string) => normalizeMathNotation(safeLower(safeTrim(s)))
+    const normUser = norm(comparisonText)
+    const accepted = q.answersAccepted
+    for (const a of accepted) {
+      const normAccepted = norm(stripSubjectPrefix(a))
+      if (normUser === normAccepted) {
+        return {
+          isCorrect: true,
+          marksAwarded: maxMarks,
+          maxMarks,
+          feedback: {
+            summary: `Correct (+${maxMarks}/${maxMarks}).`,
+            correctAnswer: a,
+            mistakeTags: [],
+          },
+          normalizedUserAnswer: { text: raw },
+        }
+      }
+    }
     return {
       isCorrect: false,
       marksAwarded: 0,

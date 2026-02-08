@@ -28,6 +28,7 @@ export function GcseScopePage() {
   } | null>(null);
   const [seedResult, setSeedResult] = useState<{
     created: number;
+    updated: number;
     skipped: number;
     errors: string[];
   } | null>(null);
@@ -84,15 +85,20 @@ export function GcseScopePage() {
     try {
       const result = await seedGoldenQuestionsForSubject(selectedSubjectId, paperFilter);
       setSeedResult(result);
-      if (result.errors.length > 0 && result.created === 0 && result.skipped === 0) {
+      if (result.errors.length > 0 && result.created === 0 && result.updated === 0 && result.skipped === 0) {
         showToast('error', result.errors[0] ?? 'Seed failed');
       } else {
-        showToast('success', `Golden seed: ${result.created} created, ${result.skipped} skipped`);
+        const parts = [
+          result.created > 0 && `${result.created} created`,
+          result.updated > 0 && `${result.updated} updated`,
+          result.skipped > 0 && `${result.skipped} skipped`,
+        ].filter(Boolean);
+        showToast('success', `Golden seed: ${parts.join(', ')}`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       showToast('error', message);
-      setSeedResult({ created: 0, skipped: 0, errors: [message] });
+      setSeedResult({ created: 0, updated: 0, skipped: 0, errors: [message] });
     } finally {
       setSeeding(false);
     }
@@ -201,8 +207,15 @@ export function GcseScopePage() {
         </div>
         {seedResult && (
           <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
-            <span className="text-green-600 dark:text-green-400">{seedResult.created} created</span>
-            <span className="text-gray-500">{seedResult.skipped} skipped (already exist)</span>
+            {seedResult.created > 0 && (
+              <span className="text-green-600 dark:text-green-400">{seedResult.created} created</span>
+            )}
+            {seedResult.updated > 0 && (
+              <span className="text-blue-600 dark:text-blue-400">{seedResult.updated} updated</span>
+            )}
+            {seedResult.skipped > 0 && (
+              <span className="text-gray-500">{seedResult.skipped} skipped</span>
+            )}
             {seedResult.errors.length > 0 && (
               <span className="text-red-600 dark:text-red-400">{seedResult.errors.length} error(s)</span>
             )}

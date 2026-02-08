@@ -52,10 +52,10 @@ export const straightLineAngles: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-arc { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-arc { stroke: #dc2626; stroke-width: 1.5; fill: none; }
+    .diagram-point { fill: #64748b; }
+    .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
   </style>
 
   <g id="grp:main">

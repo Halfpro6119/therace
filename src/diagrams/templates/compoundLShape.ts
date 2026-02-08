@@ -27,9 +27,10 @@ export const compoundLShape: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 500;
-    const height = 400;
-    const scale = 20;
+    // Big shape, numbers only, clean placement
+    const width = 820;
+    const height = 640;
+    const scale = 36;
 
     const labelA = params.labels?.A || 'A';
     const labelB = params.labels?.B || 'B';
@@ -47,11 +48,11 @@ export const compoundLShape: DiagramEngineTemplate = {
     const showSideLengths = params.visibility?.showSideLengths !== false;
     const showVertexLabels = params.visibility?.showVertexLabels !== false;
 
-    const offsetX = 100;
-    const offsetY = 200;
+    const offsetX = 160;
+    const offsetY = 320;
 
     // L-shape coordinates (outer rectangle with inner cutout)
-    // A is top-left, going clockwise: A -> B -> C -> D -> E -> F -> A
+    // A top-left, clockwise: A -> B -> C -> D -> E -> F -> A
     const ax = offsetX;
     const ay = offsetY - height1 * scale;
     const bx = offsetX + width1 * scale;
@@ -65,13 +66,32 @@ export const compoundLShape: DiagramEngineTemplate = {
     const fx = offsetX;
     const fy = offsetY + (height2 - height1) * scale;
 
+    // Numbers only (no segment labels) — one value per side
+    const sideAB = `${width1} ${unit}`;
+    const sideBC = `${height1} ${unit}`;
+    const sideCD = `${width1 - width2} ${unit}`;
+    const sideDE = `${height2 - height1} ${unit}`;
+    const sideEF = `${width2} ${unit}`;
+    const sideFA = `${height2} ${unit}`;
+
+    const sideOffset = 44;
+    const vertexOffset = 30;
+    // CD horizontal: number above the segment
+    const sideCDx = (cx + dx) / 2;
+    const sideCDy = cy - 26;
+    // DE vertical: number to the right, centered on DE
+    const sideDEx = dx + sideOffset + 12;
+    const sideDEy = (dy + ey) / 2;
+
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-shape { fill: #1e40af; fill-opacity: 0.1; stroke: #60a5fa; stroke-width: 2; }
-    .diagram-point { fill: #cbd5e1; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-shape { fill: rgba(100, 116, 139, 0.08); stroke: #64748b; stroke-width: 2; }
+    .diagram-point { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: normal; fill: #94a3b8; text-anchor: middle; letter-spacing: 0.02em; }
+    .diagram-text-side-vert { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: normal; fill: #94a3b8; text-anchor: start; letter-spacing: 0.02em; }
+    .diagram-text-side-vert-left { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: normal; fill: #94a3b8; text-anchor: end; letter-spacing: 0.02em; }
   </style>
 
   <g id="grp:main">
@@ -85,21 +105,21 @@ export const compoundLShape: DiagramEngineTemplate = {
     <circle id="pt:E" cx="${ex}" cy="${ey}" r="4" class="diagram-point"/>
     <circle id="pt:F" cx="${fx}" cy="${fy}" r="4" class="diagram-point"/>
 
-    <text id="txt:A" x="${ax - 15}" y="${ay - 10}" class="diagram-text">${labelA}</text>
-    <text id="txt:B" x="${bx + 10}" y="${by - 10}" class="diagram-text">${labelB}</text>
-    <text id="txt:C" x="${cx + 10}" y="${cy + 5}" class="diagram-text">${labelC}</text>
-    <text id="txt:D" x="${dx + 10}" y="${dy + 5}" class="diagram-text">${labelD}</text>
-    <text id="txt:E" x="${ex + 10}" y="${ey + 20}" class="diagram-text">${labelE}</text>
-    <text id="txt:F" x="${fx - 15}" y="${fy + 20}" class="diagram-text">${labelF}</text>
+    <text id="txt:A" x="${ax - vertexOffset}" y="${ay - 14}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${bx + 16}" y="${by - 14}" class="diagram-text">${labelB}</text>
+    <text id="txt:C" x="${cx + 16}" y="${cy + 8}" class="diagram-text">${labelC}</text>
+    <text id="txt:D" x="${dx + 18}" y="${dy - 14}" class="diagram-text">${labelD}</text>
+    <text id="txt:E" x="${ex + 16}" y="${ey + 32}" class="diagram-text">${labelE}</text>
+    <text id="txt:F" x="${fx - vertexOffset}" y="${fy + 32}" class="diagram-text">${labelF}</text>
     ` : ''}
 
     ${showSideLengths ? `
-    <text id="txt:sideAB" x="${(ax + bx) / 2}" y="${ay - 15}" class="diagram-text-side">${width1} ${unit}</text>
-    <text id="txt:sideBC" x="${bx + 20}" y="${(by + cy) / 2}" class="diagram-text-side">${height1} ${unit}</text>
-    <text id="txt:sideCD" x="${(cx + dx) / 2}" y="${cy + 20}" class="diagram-text-side">${width1 - width2} ${unit}</text>
-    <text id="txt:sideDE" x="${dx + 20}" y="${(dy + ey) / 2}" class="diagram-text-side">${height2 - height1} ${unit}</text>
-    <text id="txt:sideEF" x="${(ex + fx) / 2}" y="${ey + 35}" class="diagram-text-side">${width2} ${unit}</text>
-    <text id="txt:sideFA" x="${fx - 20}" y="${(fy + ay) / 2}" class="diagram-text-side">${height2} ${unit}</text>
+    <text id="txt:sideAB" x="${(ax + bx) / 2}" y="${ay - sideOffset}" class="diagram-text-side">${sideAB}</text>
+    <text id="txt:sideBC" x="${bx + sideOffset}" y="${(by + cy) / 2}" class="diagram-text-side-vert">${sideBC}</text>
+    <text id="txt:sideCD" x="${sideCDx}" y="${sideCDy}" class="diagram-text-side">${sideCD}</text>
+    <text id="txt:sideDE" x="${sideDEx}" y="${sideDEy}" class="diagram-text-side-vert">${sideDE}</text>
+    <text id="txt:sideEF" x="${(ex + fx) / 2}" y="${ey + sideOffset + 18}" class="diagram-text-side">${sideEF}</text>
+    <text id="txt:sideFA" x="${fx - sideOffset}" y="${(fy + ay) / 2}" class="diagram-text-side-vert-left">${sideFA}</text>
     ` : ''}
   </g>
 </svg>`;

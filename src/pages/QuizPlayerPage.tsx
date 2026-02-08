@@ -49,11 +49,11 @@ function formatTime(seconds: number): string {
   return `${minutes}:${String(secs).padStart(2, '0')}`;
 }
 
-const DEFAULT_TIME_PER_QUESTION_SEC = 30;
-const MIN_QUIZ_TIME_SEC = 60;
+const DEFAULT_TIME_PER_QUESTION_SEC = 60;
+const MIN_QUIZ_TIME_SEC = 120;
 
 /** Total quiz time = sum of per-question time allowances; falls back to quiz.timeLimitSec if none set.
- *  If the result would be 0 or invalid (e.g. quiz has timeLimitSec 0), uses a minimum so the quiz doesn't timeout immediately. */
+ *  ALWAYS enforces a minimum so the quiz never times out in under a minute (avoids DB misconfig). */
 function computeTotalQuizTimeSec(prompts: Prompt[], fallbackSec: number | undefined): number {
   const anyHaveAllowance = prompts.some(p => p.timeAllowanceSec != null && p.timeAllowanceSec > 0);
   let total =
@@ -63,7 +63,11 @@ function computeTotalQuizTimeSec(prompts: Prompt[], fallbackSec: number | undefi
   if (total <= 0 && prompts.length > 0) {
     total = Math.max(MIN_QUIZ_TIME_SEC, prompts.length * DEFAULT_TIME_PER_QUESTION_SEC);
   }
-  return total;
+  // CRITICAL: Always enforce minimum - some quizzes have very low timeLimitSec in DB
+  const sensibleMin = prompts.length > 0
+    ? Math.max(MIN_QUIZ_TIME_SEC, prompts.length * DEFAULT_TIME_PER_QUESTION_SEC)
+    : MIN_QUIZ_TIME_SEC;
+  return Math.max(total, sensibleMin);
 }
 
 // ============================================================================
@@ -95,6 +99,9 @@ export function QuizPlayerPage() {
   });
   const [speedrunMode, setSpeedrunMode] = useState(() => {
     return localStorage.getItem('grade9_speedrun_mode') === 'true';
+  });
+  const [untimedMode, setUntimedMode] = useState(() => {
+    return localStorage.getItem('grade9_untimed_mode') === 'true';
   });
   const [soundsEnabled, setSoundsEnabled] = useState(soundSystem.isEnabled());
   const [showSettings, setShowSettings] = useState(false);
@@ -178,20 +185,23 @@ export function QuizPlayerPage() {
   }, [quizPrompts]);
 
   useEffect(() => {
-    if (!hasStarted || hasEnded) return;
+    if (!hasStarted || hasEnded || untimedMode) return;
 
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
-        if (prev <= 1) {
+        // Safeguard: only end when we've legitimately counted down to 1.
+        // If prev is 0 or less, time may never have been set (race condition) - don't timeout.
+        if (prev === 1) {
           endQuiz();
           return 0;
         }
+        if (prev <= 0) return 0; // Stuck at 0, avoid immediate timeout
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [hasStarted, hasEnded]);
+  }, [hasStarted, hasEnded, untimedMode]);
 
   useEffect(() => {
     if (hasStarted && !hasEnded) {
@@ -300,6 +310,12 @@ export function QuizPlayerPage() {
     const newValue = !speedrunMode;
     setSpeedrunMode(newValue);
     localStorage.setItem('grade9_speedrun_mode', newValue.toString());
+  };
+
+  const toggleUntimedMode = () => {
+    const newValue = !untimedMode;
+    setUntimedMode(newValue);
+    localStorage.setItem('grade9_untimed_mode', newValue.toString());
   };
 
   const toggleSounds = () => {
@@ -532,7 +548,10 @@ export function QuizPlayerPage() {
     }
   };
 
+  const endQuizCalledRef = useRef(false);
   const endQuiz = () => {
+    if (endQuizCalledRef.current) return;
+    endQuizCalledRef.current = true;
     setHasEnded(true);
 
     // IMPORTANT: React state updates (setSolvedPrompts) may not have flushed yet when we end the quiz.
@@ -624,10 +643,10 @@ export function QuizPlayerPage() {
               {isFixItMode ? 'Fix-It Drill' : quiz.title}
             </h1>
             <p className="text-lg mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
-              {quizPrompts.length} questions • {formatTime(timeRemaining)} time limit
+              {quizPrompts.length} questions • {untimedMode ? 'No time limit' : `${formatTime(timeRemaining)} time limit`}
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="card p-6">
                 <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Questions</p>
                 <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
@@ -637,7 +656,7 @@ export function QuizPlayerPage() {
               <div className="card p-6">
                 <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Time Limit</p>
                 <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
-                  {formatTime(timeRemaining)}
+                  {untimedMode ? '∞' : formatTime(timeRemaining)}
                 </p>
               </div>
               <div className="card p-6">
@@ -653,6 +672,23 @@ export function QuizPlayerPage() {
                 </p>
               </div>
             </div>
+
+            <label className="flex items-center gap-3 mb-6 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+              <div className={`w-10 h-5 rounded-full transition-colors flex-shrink-0 ${untimedMode ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                <motion.div
+                  className="w-4 h-4 bg-white rounded-full mt-0.5"
+                  animate={{ x: untimedMode ? 20 : 2 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              </div>
+              <span className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>No time limit (practice mode)</span>
+              <input
+                type="checkbox"
+                checked={untimedMode}
+                onChange={toggleUntimedMode}
+                className="sr-only"
+              />
+            </label>
 
             <div className="space-y-3">
               <motion.button
@@ -760,21 +796,28 @@ export function QuizPlayerPage() {
                       </div>
                     )}
 
-                    <motion.div
-                      animate={{
-                        scale: timeRemaining < 30 ? [1, 1.05, 1] : 1
-                      }}
-                      transition={{ repeat: timeRemaining < 30 ? Infinity : 0, duration: 1 }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-xl"
-                      style={{
-                        background: timeRemaining < 30 ? 'rgb(var(--danger) / 0.1)' : 'rgb(var(--accent) / 0.1)',
-                        color: timeRemaining < 30 ? 'rgb(var(--danger))' : 'rgb(var(--accent))',
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      <Clock size={20} />
-                      <span>{formatTime(timeRemaining)}</span>
-                    </motion.div>
+                    {untimedMode ? (
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-xl bg-gray-100 dark:bg-gray-800" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        <Clock size={20} />
+                        <span>No limit</span>
+                      </div>
+                    ) : (
+                      <motion.div
+                        animate={{
+                          scale: timeRemaining < 30 ? [1, 1.05, 1] : 1
+                        }}
+                        transition={{ repeat: timeRemaining < 30 ? Infinity : 0, duration: 1 }}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-xl"
+                        style={{
+                          background: timeRemaining < 30 ? 'rgb(var(--danger) / 0.1)' : 'rgb(var(--accent) / 0.1)',
+                          color: timeRemaining < 30 ? 'rgb(var(--danger))' : 'rgb(var(--accent))',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        <Clock size={20} />
+                        <span>{formatTime(timeRemaining)}</span>
+                      </motion.div>
+                    )}
                   </>
                 )}
 
@@ -863,6 +906,23 @@ export function QuizPlayerPage() {
                             <motion.div
                               className="w-4 h-4 bg-white rounded-full mt-0.5"
                               animate={{ x: speedrunMode ? 20 : 2 }}
+                              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                            />
+                          </div>
+                        </button>
+
+                        <button
+                          onClick={toggleUntimedMode}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Clock size={16} />
+                            <span className="text-sm font-medium">No time limit</span>
+                          </div>
+                          <div className={`w-10 h-5 rounded-full transition-colors ${untimedMode ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                            <motion.div
+                              className="w-4 h-4 bg-white rounded-full mt-0.5"
+                              animate={{ x: untimedMode ? 20 : 2 }}
                               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                             />
                           </div>

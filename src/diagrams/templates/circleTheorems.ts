@@ -49,16 +49,16 @@ export const circleTangentRadius: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-tangent { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-chord { stroke: #a78bfa; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-circle { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-tangent { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-chord { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-point { fill: #64748b; }
+    .diagram-point-highlight { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
-    .diagram-angle-mark { stroke: #f87171; stroke-width: 2; fill: none; }
-    .diagram-arc { stroke: #f87171; stroke-width: 1.5; fill: none; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 500; fill: #dc2626; }
+    .diagram-angle-mark { stroke: #dc2626; stroke-width: 1.5; fill: none; }
+    .diagram-arc { stroke: #dc2626; stroke-width: 1.5; fill: none; }
   </style>
 
   <g id="grp:main">
@@ -138,13 +138,13 @@ export const circleTwoTangents: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-tangent { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-circle { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-tangent { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-point { fill: #64748b; }
+    .diagram-point-highlight { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-equal-mark { stroke: #f87171; stroke-width: 2; }
+    .diagram-equal-mark { stroke: #64748b; stroke-width: 1.5; }
   </style>
 
   <g id="grp:main">
@@ -232,12 +232,12 @@ export const cyclicQuadrilateral: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-quad { fill: #1e40af; fill-opacity: 0.1; stroke: #60a5fa; stroke-width: 2; }
-    .diagram-point { fill: #cbd5e1; }
+    .diagram-circle { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-quad { fill: rgba(100, 116, 139, 0.08); stroke: #64748b; stroke-width: 2; }
+    .diagram-point { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 500; fill: #94a3b8; }
   </style>
 
   <g id="grp:main">

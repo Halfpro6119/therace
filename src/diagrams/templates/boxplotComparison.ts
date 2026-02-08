@@ -28,8 +28,8 @@ export const boxplotComparison: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 600;
-    const height = 300;
+    const width = 760;
+    const height = 380;
 
     const dataset1Label = params.labels?.dataset1Label || 'Group A';
     const dataset2Label = params.labels?.dataset2Label || 'Group B';
@@ -49,49 +49,53 @@ export const boxplotComparison: DiagramEngineTemplate = {
     const showLabels = params.visibility?.showLabels !== false;
     const showValues = params.visibility?.showValues !== false;
 
-    const padding = 50;
     const boxHeight = 60;
     const centerY = height / 2;
-    const plot1X = width / 3;
-    const plot2X = (2 * width) / 3;
-    const plotWidth = 150;
-    const scale = plotWidth / Math.max(d1Max - d1Min, d2Max - d2Min);
+    const plot1X = width * 0.35;
+    const plot2X = width * 0.65;
+    const plotWidth = 200;
+    const globalMin = Math.min(d1Min, d2Min);
+    const globalRange = Math.max(d1Max - d1Min, d2Max - d2Min, 1);
+    const scale = plotWidth / globalRange;
 
-    const drawBoxPlot = (x: number, min: number, q1: number, median: number, q3: number, max: number, color: string) => {
-      const minX = x - plotWidth / 2 + (min - Math.min(d1Min, d2Min)) * scale;
-      const q1X = x - plotWidth / 2 + (q1 - Math.min(d1Min, d2Min)) * scale;
-      const medianX = x - plotWidth / 2 + (median - Math.min(d1Min, d2Min)) * scale;
-      const q3X = x - plotWidth / 2 + (q3 - Math.min(d1Min, d2Min)) * scale;
-      const maxX = x - plotWidth / 2 + (max - Math.min(d1Min, d2Min)) * scale;
+    const toX = (plotCenterX: number, value: number) => plotCenterX - plotWidth / 2 + (value - globalMin) * scale;
+    const p1 = { minX: toX(plot1X, d1Min), q1X: toX(plot1X, d1Q1), medianX: toX(plot1X, d1Median), q3X: toX(plot1X, d1Q3), maxX: toX(plot1X, d1Max) };
+    const p2 = { minX: toX(plot2X, d2Min), q1X: toX(plot2X, d2Q1), medianX: toX(plot2X, d2Median), q3X: toX(plot2X, d2Q3), maxX: toX(plot2X, d2Max) };
 
-      return `
-      <line x1="${minX}" y1="${centerY}" x2="${q1X}" y2="${centerY}" stroke="${color}" stroke-width="2"/>
-      <line x1="${q3X}" y1="${centerY}" x2="${maxX}" y2="${centerY}" stroke="${color}" stroke-width="2"/>
-      <line x1="${minX}" y1="${centerY - boxHeight / 2}" x2="${minX}" y2="${centerY + boxHeight / 2}" stroke="${color}" stroke-width="2"/>
-      <line x1="${maxX}" y1="${centerY - boxHeight / 2}" x2="${maxX}" y2="${centerY + boxHeight / 2}" stroke="${color}" stroke-width="2"/>
-      <rect x="${q1X}" y="${centerY - boxHeight / 2}" width="${q3X - q1X}" height="${boxHeight}" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2"/>
-      <line x1="${medianX}" y1="${centerY - boxHeight / 2}" x2="${medianX}" y2="${centerY + boxHeight / 2}" stroke="#f87171" stroke-width="3"/>
-      `;
-    };
+    const drawBoxPlot = (minX: number, q1X: number, medianX: number, q3X: number, maxX: number, color: string) => `
+    <line x1="${minX}" y1="${centerY}" x2="${q1X}" y2="${centerY}" stroke="${color}" stroke-width="2"/>
+    <line x1="${q3X}" y1="${centerY}" x2="${maxX}" y2="${centerY}" stroke="${color}" stroke-width="2"/>
+    <line x1="${minX}" y1="${centerY - boxHeight / 2}" x2="${minX}" y2="${centerY + boxHeight / 2}" stroke="${color}" stroke-width="2"/>
+    <line x1="${maxX}" y1="${centerY - boxHeight / 2}" x2="${maxX}" y2="${centerY + boxHeight / 2}" stroke="${color}" stroke-width="2"/>
+    <rect x="${q1X}" y="${centerY - boxHeight / 2}" width="${Math.max(q3X - q1X, 2)}" height="${boxHeight}" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2"/>
+    <line x1="${medianX}" y1="${centerY - boxHeight / 2}" x2="${medianX}" y2="${centerY + boxHeight / 2}" stroke="#dc2626" stroke-width="2.5"/>`;
+
+    const minGap = 26;
+    const valueY = centerY + boxHeight / 2 + 32;
+    const showValueAt = (xs: number[], i: number) => (i === 0 || xs[i] - xs[i - 1] >= minGap) && (i === 4 || xs[i + 1] - xs[i] >= minGap);
+    const valuesMarkup = (xs: number[], vals: number[]) =>
+      [0, 1, 2, 3, 4].filter(i => showValueAt(xs, i)).map(i => `<text x="${xs[i]}" y="${valueY}" class="diagram-text-value">${vals[i]}</text>`).join('\n    ');
+    const xs1 = [p1.minX, p1.q1X, p1.medianX, p1.q3X, p1.maxX];
+    const xs2 = [p2.minX, p2.q1X, p2.medianX, p2.q3X, p2.maxX];
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #e2e8f0; text-anchor: middle; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
-    ${drawBoxPlot(plot1X, d1Min, d1Q1, d1Median, d1Q3, d1Max, '#60a5fa')}
-    ${drawBoxPlot(plot2X, d2Min, d2Q1, d2Median, d2Q3, d2Max, '#f87171')}
+    ${drawBoxPlot(p1.minX, p1.q1X, p1.medianX, p1.q3X, p1.maxX, '#64748b')}
+    ${drawBoxPlot(p2.minX, p2.q1X, p2.medianX, p2.q3X, p2.maxX, '#dc2626')}
 
     ${showLabels ? `
-    <text x="${plot1X}" y="${centerY + boxHeight / 2 + 30}" class="diagram-text">${dataset1Label}</text>
-    <text x="${plot2X}" y="${centerY + boxHeight / 2 + 30}" class="diagram-text">${dataset2Label}</text>
+    <text id="txt:label1" x="${plot1X}" y="${centerY + boxHeight / 2 + 56}" class="diagram-text">${dataset1Label}</text>
+    <text id="txt:label2" x="${plot2X}" y="${centerY + boxHeight / 2 + 56}" class="diagram-text">${dataset2Label}</text>
     ` : ''}
 
     ${showValues ? `
-    <text x="${plot1X}" y="${centerY - boxHeight / 2 - 10}" class="diagram-text-value">Min: ${d1Min}, Q₁: ${d1Q1}, Med: ${d1Median}, Q₃: ${d1Q3}, Max: ${d1Max}</text>
-    <text x="${plot2X}" y="${centerY - boxHeight / 2 - 10}" class="diagram-text-value">Min: ${d2Min}, Q₁: ${d2Q1}, Med: ${d2Median}, Q₃: ${d2Q3}, Max: ${d2Max}</text>
+    <g id="grp:values1">${valuesMarkup(xs1, [d1Min, d1Q1, d1Median, d1Q3, d1Max])}</g>
+    <g id="grp:values2">${valuesMarkup(xs2, [d2Min, d2Q1, d2Median, d2Q3, d2Max])}</g>
     ` : ''}
   </g>
 </svg>`;

@@ -81,17 +81,17 @@ export const circleBasic: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-circle { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-circle { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-circle-dimmed { stroke: #475569; stroke-width: 1.5; fill: none; stroke-dasharray: 4 2; }
-    .diagram-line { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-sector-fill { fill: rgba(59, 130, 246, 0.15); stroke: none; }
-    .diagram-sector-arc { stroke: #60a5fa; stroke-width: 2; fill: none; }
-    .diagram-tangent { stroke: #f59e0b; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-point-highlight { fill: #60a5fa; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-sector-fill { fill: rgba(100, 116, 139, 0.12); stroke: none; }
+    .diagram-sector-arc { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-tangent { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-point { fill: #64748b; }
+    .diagram-point-highlight { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-radius { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
-    .diagram-text-diameter { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
+    .diagram-text-radius { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; fill: #94a3b8; text-anchor: middle; }
+    .diagram-text-diameter { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; fill: #94a3b8; text-anchor: middle; }
     .diagram-text-sector-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #93c5fd; text-anchor: middle; dominant-baseline: middle; }
   </style>
 

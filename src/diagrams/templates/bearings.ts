@@ -46,16 +46,16 @@ export const bearings: DiagramEngineTemplate = {
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#60a5fa"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-north { stroke: #60a5fa; stroke-width: 2; }
-    .diagram-point { fill: #cbd5e1; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-north { stroke: #64748b; stroke-width: 2; }
+    .diagram-point { fill: #64748b; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
-    .diagram-text-north { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: bold; fill: #60a5fa; }
+    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 500; fill: #94a3b8; }
+    .diagram-text-north { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: bold; fill: #64748b; }
   </style>
 
   <g id="grp:main">

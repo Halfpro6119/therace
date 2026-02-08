@@ -137,8 +137,13 @@ export function BearingProtractorOverlay({
     <svg
       ref={svgRef}
       viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-      className="absolute inset-0 w-full h-full block"
-      style={{ pointerEvents: disabled ? 'none' : 'auto', touchAction: 'none' }}
+      className="absolute inset-0 w-full h-full block select-none"
+      style={{
+        pointerEvents: disabled ? 'none' : 'auto',
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+      }}
       preserveAspectRatio="xMidYMid meet"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -203,8 +208,8 @@ export function BearingProtractorOverlay({
         ))}
       </g>
 
-      {/* Degree labels (every 10°) */}
-      <g fill="rgb(226, 232, 240)" fontSize="11" textAnchor="middle" dominantBaseline="middle" fontFamily="system-ui, sans-serif">
+      {/* Degree labels (every 10°) - pointer-events: none so drag works over labels */}
+      <g fill="rgb(226, 232, 240)" fontSize="11" textAnchor="middle" dominantBaseline="middle" fontFamily="system-ui, sans-serif" style={{ pointerEvents: 'none' }}>
         {labels.map(({ deg, x, y }) => (
           <text key={deg} x={x} y={y}>
             {deg === 0 ? '0' : deg}
@@ -212,8 +217,8 @@ export function BearingProtractorOverlay({
         ))}
       </g>
 
-      {/* North indicator */}
-      <g fill="rgb(96, 165, 250)">
+      {/* North indicator - pointer-events: none so drag works */}
+      <g fill="rgb(96, 165, 250)" style={{ pointerEvents: 'none' }}>
         <text x={AX} y={AY - PROTRACTOR_RADIUS - 14} textAnchor="middle" fontSize="12" fontWeight="bold">
           N
         </text>
@@ -234,26 +239,28 @@ export function BearingProtractorOverlay({
       {/* Center dot */}
       <circle cx={AX} cy={AY} r="4" fill="rgb(96, 165, 250)" />
 
-      {/* Current angle label */}
-      <text
-        x={AX}
-        y={AY + PROTRACTOR_RADIUS + 24}
-        textAnchor="middle"
-        fill="rgb(226, 232, 240)"
-        fontSize="14"
-        fontWeight="bold"
-      >
-        {snappedAngle.toString().padStart(3, '0')}°
-      </text>
-      <text
-        x={AX}
-        y={AY + PROTRACTOR_RADIUS + 42}
-        textAnchor="middle"
-        fill="rgb(148, 163, 184)"
-        fontSize="11"
-      >
-        Drag protractor to measure
-      </text>
+      {/* Current angle label - pointer-events: none so drag works over the readout */}
+      <g style={{ pointerEvents: 'none' }}>
+        <text
+          x={AX}
+          y={AY + PROTRACTOR_RADIUS + 24}
+          textAnchor="middle"
+          fill="rgb(226, 232, 240)"
+          fontSize="14"
+          fontWeight="bold"
+        >
+          {snappedAngle.toString().padStart(3, '0')}°
+        </text>
+        <text
+          x={AX}
+          y={AY + PROTRACTOR_RADIUS + 42}
+          textAnchor="middle"
+          fill="rgb(148, 163, 184)"
+          fontSize="11"
+        >
+          Drag protractor to measure
+        </text>
+      </g>
     </svg>
   );
 }

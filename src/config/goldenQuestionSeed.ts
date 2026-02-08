@@ -1,9 +1,11 @@
 /**
- * Golden question seed — creates prompts from the hard-coded golden lists
+ * Golden question seed — creates or updates prompts from the hard-coded golden lists
  * (e.g. GOLDEN_MATHS_QUESTIONS) for a given subject and optional paper filter.
  *
  * Uses a "Golden questions" unit and "Golden" topic per subject; stores
- * meta.goldenId (e.g. F01) to avoid duplicate seeds.
+ * meta.goldenId (e.g. F01) to identify prompts. Existing prompts with the same
+ * goldenId and paper are updated when the golden config changes (prompt text,
+ * answers, diagramParams, etc.).
  */
 
 import { db } from '../db/client';
@@ -25,6 +27,7 @@ export type GoldenSeedPaperFilter = 1 | 2 | 3 | 'all';
 
 export interface GoldenSeedResult {
   created: number;
+  updated: number;
   skipped: number;
   errors: string[];
 }
@@ -38,7 +41,7 @@ export async function seedGoldenQuestionsForSubject(
   subjectIdOrName: string,
   paperFilter: GoldenSeedPaperFilter
 ): Promise<GoldenSeedResult> {
-  const result: GoldenSeedResult = { created: 0, skipped: 0, errors: [] };
+  const result: GoldenSeedResult = { created: 0, updated: 0, skipped: 0, errors: [] };
 
   const subjects = await db.getSubjects();
   const subject = subjects.find(
@@ -74,11 +77,13 @@ export async function seedGoldenQuestionsForSubject(
 
   let topics = await db.getTopicsByUnit(unit.id);
   const existingPrompts = await db.getPromptsBySubject(subject.id);
-  const existingKeys = new Set(
-    existingPrompts
-      .filter(p => (p.meta as any)?.goldenId && p.paperId)
-      .map(p => `${(p.meta as any).goldenId}:${p.paperId}`)
-  );
+  const existingPromptsByKey = new Map<string, (typeof existingPrompts)[0]>();
+  for (const p of existingPrompts) {
+    const goldenId = (p.meta as any)?.goldenId;
+    if (goldenId && p.paperId) {
+      existingPromptsByKey.set(`${goldenId}:${p.paperId}`, p);
+    }
+  }
 
   // Group questions by tier and paper to create separate topics
   const questionsByTopic = new Map<string, typeof filtered>();
@@ -121,10 +126,7 @@ export async function seedGoldenQuestionsForSubject(
     }
 
     const key = `${q.id}:${paper.id}`;
-    if (existingKeys.has(key)) {
-      result.skipped++;
-      continue;
-    }
+    const existingPrompt = existingPromptsByKey.get(key);
 
     const topicKey = `${q.tier}-paper-${q.paper}`;
     const topic = topicMap.get(topicKey);
@@ -225,25 +227,42 @@ export async function seedGoldenQuestionsForSubject(
     }
 
     try {
-      await db.createPrompt({
-        subjectId: subject.id,
-        unitId: unit.id,
-        topicId: topic.id,
-        paperId: paper.id,
-        tier: q.tier,
-        type: q.type,
-        question: q.prompt,
-        answers,
-        marks: q.marks ?? 1,
-        timeAllowanceSec: q.timeAllowanceSec ?? 60,
-        hint: q.hint ?? undefined,
-        explanation: q.explanation ?? undefined,
-        calculatorAllowed,
-        meta,
-        diagram_metadata,
-      } as any);
-      existingKeys.add(key);
-      result.created++;
+      if (existingPrompt) {
+        await db.updatePrompt(existingPrompt.id, {
+          topicId: topic.id,
+          tier: q.tier,
+          type: q.type,
+          question: q.prompt,
+          answers,
+          marks: q.marks ?? 1,
+          timeAllowanceSec: q.timeAllowanceSec ?? 60,
+          hint: q.hint ?? undefined,
+          explanation: q.explanation ?? undefined,
+          calculatorAllowed,
+          meta,
+          diagram_metadata,
+        } as any);
+        result.updated++;
+      } else {
+        await db.createPrompt({
+          subjectId: subject.id,
+          unitId: unit.id,
+          topicId: topic.id,
+          paperId: paper.id,
+          tier: q.tier,
+          type: q.type,
+          question: q.prompt,
+          answers,
+          marks: q.marks ?? 1,
+          timeAllowanceSec: q.timeAllowanceSec ?? 60,
+          hint: q.hint ?? undefined,
+          explanation: q.explanation ?? undefined,
+          calculatorAllowed,
+          meta,
+          diagram_metadata,
+        } as any);
+        result.created++;
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       result.errors.push(`${q.id}: ${message}`);

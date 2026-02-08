@@ -48,14 +48,14 @@ export const numberLine: DiagramEngineTemplate = {
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead-numline" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-arrow { stroke: #60a5fa; stroke-width: 3; fill: none; }
-    .diagram-circle-open { fill: none; stroke: #60a5fa; stroke-width: 3; }
-    .diagram-circle-filled { fill: #60a5fa; stroke: #3b82f6; stroke-width: 2; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-arrow { stroke: #64748b; stroke-width: 2.5; fill: none; }
+    .diagram-circle-open { fill: none; stroke: #64748b; stroke-width: 2; }
+    .diagram-circle-filled { fill: #64748b; stroke: #64748b; stroke-width: 2; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; text-anchor: middle; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
   </style>
@@ -67,7 +67,7 @@ export const numberLine: DiagramEngineTemplate = {
       const num = min + i;
       const x = lineX1 + (num - min) * scale;
       return `
-      <line x1="${x}" y1="${lineY - 8}" x2="${x}" y2="${lineY + 8}" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="${x}" y1="${lineY - 8}" x2="${x}" y2="${lineY + 8}" stroke="#64748b" stroke-width="2"/>
       <text x="${x}" y="${lineY + 30}" class="diagram-text-small">${num}</text>
       `;
     }).join('\n') : ''}

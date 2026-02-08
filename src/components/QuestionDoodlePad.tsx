@@ -44,6 +44,9 @@ const PAPER_LIGHT = '#faf9f6';
 const PAPER_DARK = 'rgb(39 39 42)';
 const GRID_LIGHT = 'rgba(0,0,0,0.06)';
 const GRID_DARK = 'rgba(255,255,255,0.06)';
+/** High-contrast ink so pen is clearly visible on the paper (canvas does not resolve CSS variables). */
+const INK_LIGHT = '#1e293b';
+const INK_DARK = '#f1f5f9';
 
 const MAX_HISTORY = 50;
 
@@ -136,6 +139,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
 
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    const inkColor = isDarkRef.current ? INK_DARK : INK_LIGHT;
     for (const s of visibleStrokes) {
       if (s.points.length < 2) continue;
       if (s.tool === 'eraser') {
@@ -144,7 +148,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
         ctx.lineWidth = s.size / zoom;
       } else {
         ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = 'rgb(var(--text))';
+        ctx.strokeStyle = inkColor;
         ctx.lineWidth = s.size / zoom;
       }
       ctx.beginPath();
@@ -155,7 +159,7 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
     ctx.globalCompositeOperation = 'source-over';
 
     if (currentStroke && currentStroke.points.length >= 2) {
-      ctx.strokeStyle = 'rgb(var(--text))';
+      ctx.strokeStyle = inkColor;
       ctx.lineWidth = currentStroke.size / zoom;
       if (currentStroke.tool === 'eraser') {
         ctx.globalCompositeOperation = 'destination-out';

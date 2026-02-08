@@ -1,4 +1,5 @@
 import type { DiagramEngineTemplate, DiagramParams, DiagramRenderResult } from '../../types';
+import { diagramStyleBlock } from '../designTokens';
 
 export const sineRuleTriangle: DiagramEngineTemplate = {
   templateId: 'math.trig.sine_rule_triangle.v1',
@@ -26,8 +27,8 @@ export const sineRuleTriangle: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 500;
-    const height = 400;
+    const width = 620;
+    const height = 500;
 
     const labelA = params.labels?.A || 'A';
     const labelB = params.labels?.B || 'B';
@@ -44,9 +45,9 @@ export const sineRuleTriangle: DiagramEngineTemplate = {
     const showAngles = params.visibility?.showAngles !== false;
     const showAngleArcs = params.visibility?.showAngleArcs !== false;
 
-    const scale = 20;
-    const ax = 100;
-    const ay = 300;
+    const scale = 26;
+    const ax = 120;
+    const ay = 380;
 
     // Place A at origin, side a extends horizontally to the right
     const bx = ax + sideA * scale;
@@ -64,12 +65,7 @@ export const sineRuleTriangle: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
-    .diagram-arc { stroke: #f87171; stroke-width: 1.5; fill: none; }
+${diagramStyleBlock()}
   </style>
 
   <g id="grp:main">

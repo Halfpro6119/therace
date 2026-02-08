@@ -509,6 +509,7 @@ export const db = {
 
     // Paper assignment + calculator override
     if (updates.paperId !== undefined) dbUpdates.paper_id = updates.paperId;
+    if (updates.topicId !== undefined) dbUpdates.topic_id = updates.topicId;
 
     // Tier assignment (nullable)
     if ((updates as any).tier !== undefined) dbUpdates.tier = (updates as any).tier;

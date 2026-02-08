@@ -113,14 +113,48 @@ export function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
-        <div style={{ color: 'rgb(var(--text-secondary))' }}>Loading results...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'rgb(var(--bg))' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p style={{ color: 'rgb(var(--text-secondary))' }}>Loading results...</p>
+        </div>
       </div>
     );
   }
 
-  if (!attempt) return <div>Attempt not found</div>;
-  if (!quiz || !subject) return <div>Quiz not found</div>;
+  if (!attempt) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: 'rgb(var(--bg))' }}>
+        <p className="text-lg font-medium mb-4" style={{ color: 'rgb(var(--text))' }}>Attempt not found</p>
+        <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
+          This attempt may have expired or failed to save.
+        </p>
+        <button
+          onClick={() => navigate('/')}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
+
+  if (!quiz || !subject) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: 'rgb(var(--bg))' }}>
+        <p className="text-lg font-medium mb-4" style={{ color: 'rgb(var(--text))' }}>Quiz not found</p>
+        <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Unable to load quiz data. Please check your connection and try again.
+        </p>
+        <button
+          onClick={() => navigate('/')}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
 
   const masteryState = storage.getMasteryState(quiz.id);
   const totalCount = attempt.correctPromptIds.length + attempt.missedPromptIds.length;

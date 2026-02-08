@@ -1,4 +1,5 @@
 import type { DiagramEngineTemplate, DiagramParams, DiagramRenderResult } from '../../types';
+import { diagramStyleBlock, angleArcPath } from '../designTokens';
 
 export const isoscelesTriangle: DiagramEngineTemplate = {
   templateId: 'math.triangle.isosceles.v1',
@@ -21,8 +22,8 @@ export const isoscelesTriangle: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 500;
-    const height = 400;
+    const width = 620;
+    const height = 500;
 
     const labelA = params.labels?.A || 'A';
     const labelB = params.labels?.B || 'B';
@@ -34,20 +35,37 @@ export const isoscelesTriangle: DiagramEngineTemplate = {
     const showEqualMarks = params.visibility?.showEqualMarks !== false;
     const showAngles = params.visibility?.showAngles !== false;
 
-    const ax = 100;
-    const ay = 320;
-    const bx = 400;
-    const by = 320;
-    const cx = 250;
-    const cy = 80;
+    const ax = 120;
+    const ay = 400;
+    const bx = 500;
+    const by = 400;
+    const cx = 310;
+    const cy = 100;
+    // Equal marks: short perpendicular ticks along AC and BC at 0.35 and 0.45 along each side
+    const tickLen = 8;
+    const placeTick = (x1: number, y1: number, x2: number, y2: number, t: number) => {
+      const mx = x1 + (x2 - x1) * t;
+      const my = y1 + (y2 - y1) * t;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = (-dy / len) * tickLen;
+      const ny = (dx / len) * tickLen;
+      return { x1: mx - nx, y1: my - ny, x2: mx + nx, y2: my + ny };
+    };
+    const t1 = placeTick(ax, ay, cx, cy, 0.35);
+    const t2 = placeTick(ax, ay, cx, cy, 0.45);
+    const t3 = placeTick(bx, by, cx, cy, 0.35);
+    const t4 = placeTick(bx, by, cx, cy, 0.45);
+
+    const arcR = 24;
+    const arcA = showAngles ? angleArcPath(ax, ay, bx, by, cx, cy, arcR) : '';
+    const arcB = showAngles ? angleArcPath(bx, by, ax, ay, cx, cy, arcR) : '';
+    const arcC = showAngles ? angleArcPath(cx, cy, ax, ay, bx, by, arcR) : '';
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #60a5fa; }
-    .diagram-equal-mark { stroke: #f87171; stroke-width: 2; }
+${diagramStyleBlock()}
   </style>
 
   <g id="grp:main">
@@ -57,24 +75,28 @@ export const isoscelesTriangle: DiagramEngineTemplate = {
 
     ${showEqualMarks ? `
     <g id="grp:equal-marks">
-      <line id="mk:eq1a" x1="160" y1="210" x2="170" y2="195" class="diagram-equal-mark"/>
-      <line id="mk:eq1b" x1="170" y1="210" x2="180" y2="195" class="diagram-equal-mark"/>
-      <line id="mk:eq2a" x1="320" y1="210" x2="330" y2="195" class="diagram-equal-mark"/>
-      <line id="mk:eq2b" x1="330" y1="210" x2="340" y2="195" class="diagram-equal-mark"/>
+      <line id="mk:eq1a" x1="${t1.x1}" y1="${t1.y1}" x2="${t1.x2}" y2="${t1.y2}" class="diagram-equal-mark"/>
+      <line id="mk:eq1b" x1="${t2.x1}" y1="${t2.y1}" x2="${t2.x2}" y2="${t2.y2}" class="diagram-equal-mark"/>
+      <line id="mk:eq2a" x1="${t3.x1}" y1="${t3.y1}" x2="${t3.x2}" y2="${t3.y2}" class="diagram-equal-mark"/>
+      <line id="mk:eq2b" x1="${t4.x1}" y1="${t4.y1}" x2="${t4.x2}" y2="${t4.y2}" class="diagram-equal-mark"/>
     </g>` : ''}
+
+    ${arcA ? `<path id="arc:A" d="${arcA}" class="diagram-arc"/>` : ''}
+    ${arcB ? `<path id="arc:B" d="${arcB}" class="diagram-arc"/>` : ''}
+    ${arcC ? `<path id="arc:C" d="${arcC}" class="diagram-arc"/>` : ''}
 
     <circle id="pt:A" cx="${ax}" cy="${ay}" r="4" class="diagram-point"/>
     <circle id="pt:B" cx="${bx}" cy="${by}" r="4" class="diagram-point"/>
     <circle id="pt:C" cx="${cx}" cy="${cy}" r="4" class="diagram-point"/>
 
-    <text id="txt:A" x="${ax - 20}" y="${ay + 5}" class="diagram-text">${labelA}</text>
-    <text id="txt:B" x="${bx + 10}" y="${by + 5}" class="diagram-text">${labelB}</text>
-    <text id="txt:C" x="${cx}" y="${cy - 10}" text-anchor="middle" class="diagram-text">${labelC}</text>
+    <text id="txt:A" x="${ax - 22}" y="${ay + 10}" class="diagram-text">${labelA}</text>
+    <text id="txt:B" x="${bx + 14}" y="${by + 10}" class="diagram-text">${labelB}</text>
+    <text id="txt:C" x="${cx}" y="${cy - 14}" text-anchor="middle" class="diagram-text">${labelC}</text>
 
     ${showAngles ? `
-    <text id="txt:angleA" x="${ax + 20}" y="${ay - 15}" class="diagram-text-angle">${baseAngle}°</text>
-    <text id="txt:angleB" x="${bx - 30}" y="${by - 15}" class="diagram-text-angle">${baseAngle}°</text>
-    <text id="txt:angleC" x="${cx}" y="${cy + 25}" text-anchor="middle" class="diagram-text-angle">${apexAngle}°</text>
+    <text id="txt:angleA" x="${ax + 30}" y="${ay - 18}" class="diagram-text-angle">${baseAngle}°</text>
+    <text id="txt:angleB" x="${bx - 42}" y="${by - 18}" class="diagram-text-angle">${baseAngle}°</text>
+    <text id="txt:angleC" x="${cx}" y="${cy + 34}" text-anchor="middle" class="diagram-text-angle">${apexAngle}°</text>
     ` : ''}
   </g>
 </svg>`;

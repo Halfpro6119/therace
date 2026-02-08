@@ -60,15 +60,15 @@ export const treeDiagram: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #e2e8f0; }
-    .diagram-text-prob { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; }
+    .diagram-text-prob { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; }
     .diagram-text-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: bold; fill: #e2e8f0; }
   </style>
 
   <g id="grp:main">
     <text x="${startX}" y="${startY - 30}" class="diagram-text-label">${firstDrawLabel}</text>
-    <circle id="pt:start" cx="${startX}" cy="${startY}" r="4" fill="#cbd5e1"/>
+    <circle id="pt:start" cx="${startX}" cy="${startY}" r="4" fill="#64748b"/>
 
     ${branches.map((branch, i) => {
       const totalBranches = branches.length;
@@ -86,7 +86,7 @@ export const treeDiagram: DiagramEngineTemplate = {
           
           return `
           <line x1="${level1X}" y1="${y2}" x2="${level2X}" y2="${y3}" class="diagram-line"/>
-          <circle cx="${level2X}" cy="${y3}" r="4" fill="#cbd5e1"/>
+          <circle cx="${level2X}" cy="${y3}" r="4" fill="#64748b"/>
           ${showOutcomes ? `<text x="${level2X + 10}" y="${y3 + 5}" class="diagram-text">${branch.label}, ${secondBranch.label}</text>` : ''}
           ${showProbabilities ? `<text x="${(level1X + level2X) / 2}" y="${(y2 + y3) / 2 - 5}" class="diagram-text-prob">${secondBranch.probability}</text>` : ''}
           `;
@@ -95,7 +95,7 @@ export const treeDiagram: DiagramEngineTemplate = {
       
       return `
       <line x1="${startX}" y1="${y1}" x2="${level1X}" y2="${y2}" class="diagram-line"/>
-      <circle cx="${level1X}" cy="${y2}" r="4" fill="#cbd5e1"/>
+      <circle cx="${level1X}" cy="${y2}" r="4" fill="#64748b"/>
       ${showOutcomes ? `<text x="${level1X + 10}" y="${y2 + 5}" class="diagram-text">${branch.label}</text>` : ''}
       ${showProbabilities ? `<text x="${(startX + level1X) / 2}" y="${(y1 + y2) / 2 - 5}" class="diagram-text-prob">${branch.probability}</text>` : ''}
       ${secondLevelMarkup}

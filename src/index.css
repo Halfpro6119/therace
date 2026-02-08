@@ -744,13 +744,23 @@
     @apply shadow-sm;
   }
 
-  /* Hologram Effect Styles */
+  /* Diagram wrapper: clean surface, no neon effect. Explicit background for print. */
   .diagram-svg-wrapper {
     position: relative;
     background: rgb(var(--surface));
     @apply flex items-center justify-center min-h-[300px];
     border-radius: 12px;
     overflow: hidden;
+  }
+
+  @media print {
+    .diagram-container {
+      background: #fff !important;
+      border-color: #e2e8f0 !important;
+    }
+    .diagram-svg-wrapper {
+      background: #fafafa !important;
+    }
   }
 
   .diagram-svg-wrapper svg {
@@ -760,33 +770,24 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 
-  /* Hologram glow effect - subtle and static */
+  /* Professional look: no glow on shapes; template strokes and fills respected */
   .diagram-svg-wrapper svg line,
   .diagram-svg-wrapper svg circle,
   .diagram-svg-wrapper svg path,
-  .diagram-svg-wrapper svg rect {
-    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+  .diagram-svg-wrapper svg rect,
+  .diagram-svg-wrapper svg polygon {
+    filter: none;
   }
 
+  /* Slight text shadow only for legibility on mixed backgrounds */
   .diagram-svg-wrapper svg text {
-    filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.08));
     font-weight: 600;
   }
 
-  /* Light blue fill for shapes */
-  .diagram-svg-wrapper svg [fill="#cbd5e1"],
-  .diagram-svg-wrapper svg circle {
-    fill: rgba(59, 130, 246, 0.15) !important;
-    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
-  }
-
-  /* Solid blue lines */
-  .diagram-svg-wrapper svg line,
-  .diagram-svg-wrapper svg [stroke="#94a3b8"],
-  .diagram-svg-wrapper svg [stroke="#3b82f6"] {
-    stroke: #3b82f6 !important;
-    stroke-width: 2.5 !important;
-    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+  /* Optional: subtle dark-mode text legibility */
+  .dark .diagram-svg-wrapper svg text {
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
   }
 
   .diagram-caption {
@@ -813,14 +814,13 @@
     @apply mb-6;
   }
 
-  /* SVG Element Styles */
+  /* SVG element states (used by DiagramRenderer overrides) */
   .diag-highlight {
     stroke: rgb(var(--accent)) !important;
-    stroke-width: 2.5 !important;
-    filter: drop-shadow(0 0 4px rgb(var(--accent) / 0.3));
+    stroke-width: 2.25 !important;
   }
 
   .diag-muted {
-    opacity: 0.3 !important;
+    opacity: 0.35 !important;
   }
 }

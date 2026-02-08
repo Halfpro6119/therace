@@ -1,4 +1,5 @@
 import type { DiagramEngineTemplate, DiagramParams, DiagramRenderResult } from '../../types';
+import { diagramStyleBlock } from '../designTokens';
 
 export const cosineRuleTriangle: DiagramEngineTemplate = {
   templateId: 'math.trig.cosine_rule_triangle.v1',
@@ -24,8 +25,8 @@ export const cosineRuleTriangle: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 500;
-    const height = 400;
+    const width = 620;
+    const height = 500;
 
     const labelA = params.labels?.A || 'A';
     const labelB = params.labels?.B || 'B';
@@ -40,9 +41,9 @@ export const cosineRuleTriangle: DiagramEngineTemplate = {
     const showAngleC = params.visibility?.showAngleC !== false;
     const showAngleArc = params.visibility?.showAngleArc !== false;
 
-    const scale = 15;
-    const cx = 300;
-    const cy = 250;
+    const scale = 20;
+    const cx = 360;
+    const cy = 300;
 
     // Place C at vertex, sides a and b extend from C
     const angleCRad = (angleC * Math.PI) / 180;
@@ -57,12 +58,7 @@ export const cosineRuleTriangle: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-point { fill: #cbd5e1; }
-    .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-side { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
-    .diagram-text-angle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #f87171; font-weight: bold; }
-    .diagram-arc { stroke: #f87171; stroke-width: 1.5; fill: none; }
+${diagramStyleBlock()}
   </style>
 
   <g id="grp:main">

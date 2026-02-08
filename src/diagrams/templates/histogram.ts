@@ -64,7 +64,7 @@ export const histogram: DiagramEngineTemplate = {
       ${Array.from({ length: 5 }, (_, i) => {
         const yVal = (yMax / 4) * i;
         const y = convertY(yVal);
-        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
     </g>` : '';
 
@@ -75,7 +75,7 @@ export const histogram: DiagramEngineTemplate = {
       const barY = convertY(cls.frequencyDensity);
 
       return `
-      <rect id="bar:${i}" x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" fill="#60a5fa" stroke="#3b82f6" stroke-width="1"/>
+      <rect id="bar:${i}" x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" fill="#64748b" stroke="#64748b" stroke-width="1"/>
       ${showFrequencyDensity ? `<text x="${barX + barWidth / 2}" y="${barY - 5}" class="diagram-text-value" text-anchor="middle">${cls.frequencyDensity}</text>` : ''}
       ${showFrequencies ? `<text x="${barX + barWidth / 2}" y="${barY + barHeight / 2}" class="diagram-text-freq" text-anchor="middle">${cls.frequency}</text>` : ''}
       <text x="${barX + barWidth / 2}" y="${height - padding + 20}" class="diagram-text-category" text-anchor="middle">${cls.start}-${cls.end}</text>
@@ -84,11 +84,11 @@ export const histogram: DiagramEngineTemplate = {
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-axis { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
     .diagram-text-category { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #e2e8f0; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #60a5fa; font-weight: bold; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #94a3b8; font-weight: bold; }
     .diagram-text-freq { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; fill: #e2e8f0; }
   </style>
 

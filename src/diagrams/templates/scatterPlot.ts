@@ -123,11 +123,11 @@ export const scatterPlot: DiagramEngineTemplate = {
     <g id="grp:grid" opacity="0.2">
       ${Array.from({ length: xMax - xMin + 1 }, (_, i) => {
         const x = convertX(xMin + i);
-        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
       ${Array.from({ length: yMax - yMin + 1 }, (_, i) => {
         const y = convertY(yMin + i);
-        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
     </g>` : '';
 
@@ -136,17 +136,17 @@ export const scatterPlot: DiagramEngineTemplate = {
       const py = convertY(p.y);
       const isOutlier = highlightOutlier && i === outlierIndex;
       
-      return `<circle id="pt:${i}" cx="${px}" cy="${py}" r="${isOutlier ? 6 : 4}" fill="${isOutlier ? '#ef4444' : '#60a5fa'}" stroke="${isOutlier ? '#dc2626' : '#3b82f6'}" stroke-width="${isOutlier ? 2 : 1}"/>`;
+      return `<circle id="pt:${i}" cx="${px}" cy="${py}" r="${isOutlier ? 6 : 4}" fill="${isOutlier ? '#ef4444' : '#64748b'}" stroke="${isOutlier ? '#dc2626' : '#64748b'}" stroke-width="${isOutlier ? 2 : 1}"/>`;
     }).join('\n') : '';
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-axis { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: bold; fill: #e2e8f0; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
   </style>

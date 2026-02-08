@@ -47,7 +47,7 @@ These questions have `answers: ''` in the golden config. The app **cannot auto-g
 | H1-52 | Find the area of a trapezium | numeric | none | **Fixed:** prompt has dimensions, answers '28'. |
 | H1-53 | Find the perimeter of a compound shape | numeric | compoundShape | **Fixed:** diagramParams, answers '32'. |
 | H1-56 | Use Pythagoras to find the hypotenuse | numeric | triangle | **Fixed:** diagramParams (3,4,5), answers '5'. |
-| H1-57 | Use Pythagoras to find a shorter side | numeric | triangle | **Fixed:** diagramParams (5,3,4), answers '4'. |
+| H1-57 | Right-angled triangle: hypotenuse 5 cm, one side 3 cm — find other shorter side (Pythagoras) | numeric | triangle | **Fixed:** full prompt, diagramParams (5,3,4), showSideAC: false, answers '4'. |
 | H1-60 | Find the bearing of B from A | numeric | bearingDiagram | **Fixed:** diagramParams (bearing 65), answers '65'. |
 | H1-63 | Complete a frequency table | tableFill | none | **Fixed:** questionData.rows + answers '10,15,5'. |
 | H1-64 | Find the mean from a frequency table | numeric | none | **Fixed:** fixed data in prompt, answers '1.9'. |

@@ -45,24 +45,24 @@ export const axesBlank: DiagramEngineTemplate = {
     <g id="grp:grid" opacity="0.2">
       ${Array.from({ length: xMax - xMin + 1 }, (_, i) => {
         const x = padding + i * gridSize;
-        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
       ${Array.from({ length: yMax - yMin + 1 }, (_, i) => {
         const y = padding + i * gridSize;
-        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#94a3b8" stroke-width="1"/>`;
+        return `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#64748b" stroke-width="1"/>`;
       }).join('\n')}
     </g>` : '';
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    .diagram-axis { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: bold; fill: #e2e8f0; }
-    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
+    .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; fill: #94a3b8; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
@@ -110,8 +110,8 @@ export const boxPlot: DiagramEngineTemplate = {
     }
   },
   render: (params: DiagramParams): DiagramRenderResult => {
-    const width = 600;
-    const height = 300;
+    const width = 720;
+    const height = 380;
 
     const minVal = Number(params.values?.min) || 10;
     const q1 = Number(params.values?.q1) || 25;
@@ -122,10 +122,11 @@ export const boxPlot: DiagramEngineTemplate = {
     const showLabels = params.visibility?.showLabels !== false;
     const showValues = params.visibility?.showValues !== false;
 
-    const padding = 50;
-    const boxHeight = 60;
+    const padding = 72;
+    const boxHeight = 64;
     const centerY = height / 2;
-    const scale = (width - 2 * padding) / (maxVal - minVal);
+    const range = Math.max(maxVal - minVal, 1);
+    const scale = (width - 2 * padding) / range;
 
     const minX = padding + (minVal - minVal) * scale;
     const q1X = padding + (q1 - minVal) * scale;
@@ -133,13 +134,35 @@ export const boxPlot: DiagramEngineTemplate = {
     const q3X = padding + (q3 - minVal) * scale;
     const maxX = padding + (maxVal - minVal) * scale;
 
+    // Only show label/value when there's enough horizontal gap to avoid overlap
+    const minGap = 32;
+    const positions = [
+      { x: minX, label: 'Min', value: minVal, idLabel: 'minLabel', idVal: 'minVal' },
+      { x: q1X, label: 'Q₁', value: q1, idLabel: 'q1Label', idVal: 'q1Val' },
+      { x: medianX, label: 'Median', value: median, idLabel: 'medianLabel', idVal: 'medianVal' },
+      { x: q3X, label: 'Q₃', value: q3, idLabel: 'q3Label', idVal: 'q3Val' },
+      { x: maxX, label: 'Max', value: maxVal, idLabel: 'maxLabel', idVal: 'maxVal' }
+    ];
+    const showAt = (i: number) =>
+      (i === 0 || positions[i].x - positions[i - 1].x >= minGap) &&
+      (i === positions.length - 1 || positions[i + 1].x - positions[i].x >= minGap);
+    const labelY = centerY - boxHeight / 2 - 34;
+    const valueY = centerY + boxHeight / 2 + 34;
+
+    const labelsMarkup = showLabels
+      ? positions.map((p, i) => showAt(i) ? `<text id="txt:${p.idLabel}" x="${p.x}" y="${labelY}" class="diagram-text">${p.label}</text>` : '').join('\n    ')
+      : '';
+    const valuesMarkup = showValues
+      ? positions.map((p, i) => showAt(i) ? `<text id="txt:${p.idVal}" x="${p.x}" y="${valueY}" class="diagram-text-value">${p.value}</text>` : '').join('\n    ')
+      : '';
+
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .diagram-line { stroke: #94a3b8; stroke-width: 2; fill: none; }
-    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #60a5fa; stroke-width: 2; }
-    .diagram-median { stroke: #f87171; stroke-width: 3; }
+    .diagram-line { stroke: #64748b; stroke-width: 2; fill: none; }
+    .diagram-box { fill: rgba(100, 116, 139, 0.12); stroke: #64748b; stroke-width: 2; }
+    .diagram-median { stroke: #dc2626; stroke-width: 2.5; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #e2e8f0; text-anchor: middle; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; fill: #94a3b8; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
@@ -149,24 +172,11 @@ export const boxPlot: DiagramEngineTemplate = {
     <line id="ln:minBar" x1="${minX}" y1="${centerY - boxHeight / 2}" x2="${minX}" y2="${centerY + boxHeight / 2}" class="diagram-line"/>
     <line id="ln:maxBar" x1="${maxX}" y1="${centerY - boxHeight / 2}" x2="${maxX}" y2="${centerY + boxHeight / 2}" class="diagram-line"/>
 
-    <rect id="rect:box" x="${q1X}" y="${centerY - boxHeight / 2}" width="${q3X - q1X}" height="${boxHeight}" class="diagram-box"/>
+    <rect id="rect:box" x="${q1X}" y="${centerY - boxHeight / 2}" width="${Math.max(q3X - q1X, 2)}" height="${boxHeight}" class="diagram-box"/>
     <line id="ln:median" x1="${medianX}" y1="${centerY - boxHeight / 2}" x2="${medianX}" y2="${centerY + boxHeight / 2}" class="diagram-median"/>
 
-    ${showLabels ? `
-    <text id="txt:minLabel" x="${minX}" y="${centerY - boxHeight / 2 - 25}" class="diagram-text">Min</text>
-    <text id="txt:q1Label" x="${q1X}" y="${centerY - boxHeight / 2 - 25}" class="diagram-text">Q₁</text>
-    <text id="txt:medianLabel" x="${medianX}" y="${centerY - boxHeight / 2 - 25}" class="diagram-text">Median</text>
-    <text id="txt:q3Label" x="${q3X}" y="${centerY - boxHeight / 2 - 25}" class="diagram-text">Q₃</text>
-    <text id="txt:maxLabel" x="${maxX}" y="${centerY - boxHeight / 2 - 25}" class="diagram-text">Max</text>
-    ` : ''}
-
-    ${showValues ? `
-    <text id="txt:minVal" x="${minX}" y="${centerY + boxHeight / 2 + 20}" class="diagram-text-value">${minVal}</text>
-    <text id="txt:q1Val" x="${q1X}" y="${centerY + boxHeight / 2 + 20}" class="diagram-text-value">${q1}</text>
-    <text id="txt:medianVal" x="${medianX}" y="${centerY + boxHeight / 2 + 20}" class="diagram-text-value">${median}</text>
-    <text id="txt:q3Val" x="${q3X}" y="${centerY + boxHeight / 2 + 20}" class="diagram-text-value">${q3}</text>
-    <text id="txt:maxVal" x="${maxX}" y="${centerY + boxHeight / 2 + 20}" class="diagram-text-value">${maxVal}</text>
-    ` : ''}
+    ${labelsMarkup}
+    ${valuesMarkup}
   </g>
 </svg>`;
 
@@ -214,15 +224,15 @@ export const functionMachine: DiagramEngineTemplate = {
     const svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrowhead-machine" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#60a5fa"/>
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
     </marker>
   </defs>
   <style>
-    .diagram-box { fill: #1e40af; fill-opacity: 0.2; stroke: #60a5fa; stroke-width: 2; rx: 8; }
-    .diagram-arrow { stroke: #60a5fa; stroke-width: 2; fill: none; }
+    .diagram-box { fill: rgba(100, 116, 139, 0.12); stroke: #64748b; stroke-width: 2; rx: 8; }
+    .diagram-arrow { stroke: #64748b; stroke-width: 2; fill: none; }
     .diagram-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: bold; fill: #e2e8f0; text-anchor: middle; }
     .diagram-text-small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; text-anchor: middle; }
-    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; fill: #60a5fa; text-anchor: middle; }
+    .diagram-text-value { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; fill: #94a3b8; text-anchor: middle; }
   </style>
 
   <g id="grp:main">
