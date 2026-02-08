@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckCircle, Sparkles } from 'lucide-react';
+import { ChevronLeft, CheckCircle, Sparkles, FileText } from 'lucide-react';
 import { getLanguageTaskById } from '../../config/englishLanguageTasks';
 import { storage } from '../../utils/storage';
-import type { EnglishMarkResult } from '../../types/englishCampus';
+import { SelfMarkAnnotator } from '../../components/english/SelfMarkAnnotator';
+import type { EnglishMarkResult, SelfMarkAnnotations } from '../../types/englishCampus';
 
 const BANDS = ['Level 1 (1–5)', 'Level 2 (6–10)', 'Level 3 (11–15)', 'Level 4 (16–20)', 'Level 5 (21–24)'];
 
@@ -20,31 +21,65 @@ export function EnglishLanguageResultPage() {
   const [mode, setMode] = useState<'choose' | 'self' | 'ai'>('choose');
   const [selfBand, setSelfBand] = useState('');
   const [reflection, setReflection] = useState('');
+  const [selfMarkAnnotations, setSelfMarkAnnotations] = useState<SelfMarkAnnotations>({ spans: [], ticks: [], notes: [] });
   const [saved, setSaved] = useState(false);
   const [lastAIResult, setLastAIResult] = useState<EnglishMarkResult | null>(null);
+  const [savedDraftId, setSavedDraftId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSelfMarkSave = () => {
-    if (!task || !selfBand) return;
+    setSaveError(null);
+    if (!task) {
+      setSaveError('Task not found. Go back and open a task from the Language dashboard.');
+      return;
+    }
+    if (!selfBand) {
+      setSaveError('Please choose a band first (e.g. Level 4).');
+      return;
+    }
+    try {
+    const annotationsToSave: SelfMarkAnnotations = {
+      spans: selfMarkAnnotations.spans.map(s => ({ ...s })),
+      ticks: selfMarkAnnotations.ticks.map(t => ({ ...t })),
+      notes: selfMarkAnnotations.notes.map(n => ({ ...n })),
+    };
     const result: EnglishMarkResult = {
       bandLevel: selfBand,
       marks: undefined,
       maxMarks: 40,
       strengths: [],
-      targets: reflection ? [reflection] : [],
+      targets: reflection?.trim() ? [reflection.trim()] : [],
       isSelfMark: true,
       reflectedAt: new Date().toISOString(),
+      selfMarkAnnotations:
+        annotationsToSave.spans.length > 0 || annotationsToSave.ticks.length > 0 || annotationsToSave.notes.length > 0
+          ? annotationsToSave
+          : undefined,
     };
     const drafts = storage.getEnglishDrafts();
-    const draft = draftId && draftId !== 'new'
+    let draft = draftId && draftId !== 'new'
       ? drafts.find(d => d.id === draftId)
       : drafts.find(d => d.taskId === task.id && !d.result);
-    if (draft) {
-      storage.saveEnglishDraft({ ...draft, result, updatedAt: new Date().toISOString() });
+    if (!draft) {
+      draft = {
+        id: `draft-${task.id}-${Date.now()}`,
+        taskId: task.id,
+        taskTitle: task.title,
+        paper: task.paper,
+        content,
+        wordCount: content.trim().split(/\s+/).filter(Boolean).length,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
     }
+    storage.saveEnglishDraft({ ...draft, result, updatedAt: new Date().toISOString() });
+    setSavedDraftId(draft.id);
     storage.setEnglishLastScore({ bandLevel: selfBand });
-    const targets = storage.getEnglishTargets();
-    if (reflection.trim()) {
-      storage.setEnglishTargets([...targets.targets.filter(t => t !== reflection), reflection].slice(0, 3));
+    const targetsState = storage.getEnglishTargets();
+    const existingTargets = Array.isArray(targetsState?.targets) ? targetsState.targets : [];
+    const reflectionTrimmed = reflection?.trim();
+    if (reflectionTrimmed) {
+      storage.setEnglishTargets([...existingTargets.filter((t: string) => t !== reflectionTrimmed), reflectionTrimmed].slice(0, 3));
     }
     storage.setEnglishContinue({
       type: 'language',
@@ -53,6 +88,9 @@ export function EnglishLanguageResultPage() {
       updatedAt: new Date().toISOString(),
     });
     setSaved(true);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Something went wrong. Try again.');
+    }
   };
 
   const handleAISimulate = () => {
@@ -79,6 +117,7 @@ export function EnglishLanguageResultPage() {
       : drafts.find(d => d.taskId === task.id && !d.result);
     if (draft) {
       storage.saveEnglishDraft({ ...draft, result, updatedAt: new Date().toISOString() });
+      setSavedDraftId(draft.id);
     }
     storage.setEnglishLastScore({ bandLevel: result.bandLevel, marks: result.marks, maxMarks: result.maxMarks });
     storage.setEnglishTargets({ targets: result.targets, updatedAt: new Date().toISOString() });
@@ -114,6 +153,17 @@ export function EnglishLanguageResultPage() {
           <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
             Your targets have been updated. Use them in your next task.
           </p>
+          {savedDraftId && (() => {
+            const savedDraft = storage.getEnglishDraftById(savedDraftId);
+            const ann = savedDraft?.result?.selfMarkAnnotations;
+            if (!savedDraft || !ann || (ann.spans.length === 0 && ann.ticks.length === 0 && ann.notes.length === 0)) return null;
+            return (
+              <div className="rounded-lg border p-4 mb-6 text-left max-w-2xl mx-auto" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
+                <h3 className="font-bold mb-2 text-sm" style={{ color: 'rgb(var(--text))' }}>Your marked draft</h3>
+                <SelfMarkAnnotator content={savedDraft.content} annotations={ann} readOnly />
+              </div>
+            );
+          })()}
           {lastAIResult && !lastAIResult.isSelfMark && (
             <div className="rounded-lg border p-4 mb-6 text-left" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
               <h3 className="font-bold mb-2 text-sm" style={{ color: 'rgb(var(--text))' }}>AI feedback summary</h3>
@@ -134,6 +184,20 @@ export function EnglishLanguageResultPage() {
             </div>
           )}
           <div className="flex gap-3 justify-center flex-wrap">
+            {task && savedDraftId && (
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(`/english-campus/language/task/${task.id}`, {
+                    state: { reopenDraftId: savedDraftId },
+                  })
+                }
+                className="btn-primary flex items-center gap-2"
+              >
+                <FileText size={18} />
+                Improve this draft
+              </button>
+            )}
             <button type="button" onClick={() => navigate('/english-campus/language')} className="btn-primary">
               Back to Language dashboard
             </button>
@@ -201,6 +265,21 @@ export function EnglishLanguageResultPage() {
           Self-mark: {task.title}
         </h1>
       </div>
+
+      <div className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
+        <h2 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+          Mark your draft
+        </h2>
+        <p className="text-sm mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Select text to highlight or underline, add green ticks for good moments, and add pen-style notes for feedback.
+        </p>
+        <SelfMarkAnnotator
+          content={content}
+          annotations={selfMarkAnnotations}
+          onChange={setSelfMarkAnnotations}
+        />
+      </div>
+
       <div className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
         <label className="block font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>
           Choose your band (AO5 Content & Organisation, 24 marks)
@@ -239,12 +318,20 @@ export function EnglishLanguageResultPage() {
           }}
         />
       </div>
+      {saveError && (
+        <div
+          className="rounded-lg border px-4 py-3 text-sm"
+          style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
+          role="alert"
+        >
+          {saveError}
+        </div>
+      )}
       <div className="flex gap-3">
         <button
           type="button"
           onClick={handleSelfMarkSave}
-          disabled={!selfBand}
-          className="btn-primary disabled:opacity-50"
+          className="btn-primary"
         >
           Save reflection & targets
         </button>

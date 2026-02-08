@@ -19,6 +19,7 @@ import { EnglishWritingWorkspacePage } from './pages/english/EnglishWritingWorks
 import { EnglishLanguageResultPage } from './pages/english/EnglishLanguageResultPage';
 import { EnglishDraftsPage } from './pages/english/EnglishDraftsPage';
 import { EnglishCompareDraftsPage } from './pages/english/EnglishCompareDraftsPage';
+import { EnglishDraftMarkingPage } from './pages/english/EnglishDraftMarkingPage';
 import { EnglishLiteraturePage } from './pages/english/EnglishLiteraturePage';
 import { EnglishLiteraturePlaceholder } from './pages/english/EnglishLiteraturePlaceholder';
 import { EnglishVocabLabPage } from './pages/english/EnglishVocabLabPage';
@@ -130,6 +131,7 @@ function App() {
                 <Route path="/english-campus/language/task/:taskId" element={<EnglishWritingWorkspacePage />} />
                 <Route path="/english-campus/language/result" element={<EnglishLanguageResultPage />} />
                 <Route path="/english-campus/language/drafts" element={<EnglishDraftsPage />} />
+                <Route path="/english-campus/language/draft/:draftId/marking" element={<EnglishDraftMarkingPage />} />
                 <Route path="/english-campus/language/compare" element={<EnglishCompareDraftsPage />} />
                 <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
                 <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />

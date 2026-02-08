@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, FileText, GitCompare } from 'lucide-react';
+import { ChevronLeft, FileText, GitCompare, Highlighter } from 'lucide-react';
 import { storage } from '../../utils/storage';
 
 export function EnglishDraftsPage() {
@@ -66,7 +66,7 @@ export function EnglishDraftsPage() {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
                   onClick={() =>
@@ -79,6 +79,16 @@ export function EnglishDraftsPage() {
                   <FileText size={16} />
                   Open
                 </button>
+                {draft.result?.isSelfMark && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/english-campus/language/draft/${draft.id}/marking`)}
+                    className="btn-ghost text-sm flex items-center gap-1"
+                  >
+                    <Highlighter size={16} />
+                    View marking
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => navigate('/english-campus/language/compare', { state: { draftId: draft.id } })}

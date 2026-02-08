@@ -124,6 +124,8 @@ export function QuizPlayerPage() {
 
   // Keep the latest quiz prompts in a ref so endQuiz() can always compute totals (even from stale closures)
   const quizPromptsRef = useRef<any[]>([]);
+  // Ref for "already answered" check in real-time effect – avoids effect re-running on every answeredPrompts change (new Set each time)
+  const answeredPromptsRef = useRef<Set<string>>(new Set());
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [quizStartTime] = useState(Date.now());
@@ -171,12 +173,62 @@ export function QuizPlayerPage() {
   }, [toolkitOpen]);
 
   useEffect(() => {
-    loadQuizData();
-  }, [quizId]);
+    let cancelled = false;
+    if (!quizId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const run = async () => {
+      try {
+        const quizData = await db.getQuiz(quizId);
+        if (cancelled) return;
+        if (quizData) {
+          setQuiz(quizData);
+          const subject = await db.getSubject(quizData.subjectId);
+          if (cancelled) return;
+          setSubjectName(subject?.name ?? null);
 
-  // Reset solved prompts ref when starting a new quiz run
+          let promptsData: Prompt[];
+          if (quizData.promptIds?.length) {
+            promptsData = await db.getPromptsByIds(quizData.promptIds);
+          } else if (quizData.quizType === 'paper_master' && quizData.paperId) {
+            promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
+          } else if (quizData.quizType === 'subject_master') {
+            promptsData = await db.getPromptsForSubjectMasterQuiz(quizData.subjectId);
+          } else {
+            promptsData = [];
+          }
+          if (cancelled) return;
+
+          if (isFixItMode) {
+            const lastAttempts = storage.getAttemptsByQuizId(quizData.id);
+            const lastAttempt = lastAttempts[lastAttempts.length - 1];
+            if (lastAttempt && lastAttempt.missedPromptIds.length > 0) {
+              promptsData = promptsData.filter(p => lastAttempt.missedPromptIds.includes(p.id));
+            }
+          } else {
+            promptsData = [...promptsData].sort(() => Math.random() - 0.5);
+          }
+
+          setQuizPrompts(promptsData);
+          const totalTimeSec = computeTotalQuizTimeSec(promptsData, quizData.timeLimitSec);
+          setTimeRemaining(totalTimeSec);
+        }
+      } catch (error) {
+        if (!cancelled) console.error('Failed to load quiz:', error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [quizId, isFixItMode]);
+
+  // Reset solved/answered refs when starting a new quiz run
   useEffect(() => {
     solvedPromptsRef.current = new Set();
+    answeredPromptsRef.current = new Set();
   }, [quizId, quizStartTime]);
 
   // Always keep the latest prompt list in a ref (interval callbacks can otherwise capture an older empty array)
@@ -268,8 +320,8 @@ export function QuizPlayerPage() {
       return;
     }
 
-    // Don't auto-submit prompts that have already been answered.
-    if (answeredPrompts.has(currentPrompt.id)) {
+    // Don't auto-submit prompts that have already been answered (use ref to avoid effect re-running on every answer).
+    if (answeredPromptsRef.current.has(currentPrompt.id)) {
       return;
     }
 
@@ -294,7 +346,7 @@ export function QuizPlayerPage() {
         autoSubmitTimeoutRef.current = null;
       }
     };
-  }, [currentInput, currentPrompt, isSubmitting, showFeedback, hasStarted, hasEnded, answeredPrompts]);
+  }, [currentInput, currentPrompt, isSubmitting, showFeedback, hasStarted, hasEnded]);
 
   // ========================================================================
   // HANDLERS
@@ -437,6 +489,7 @@ export function QuizPlayerPage() {
       setFeedbackMessage(result.feedbackSummary);
       setExplanation(result.explanation);
       setShowFeedback(true);
+      answeredPromptsRef.current.add(currentPrompt.id);
       setAnsweredPrompts(prev => new Set([...prev, currentPrompt.id]));
 
       // ====================================================================
@@ -504,50 +557,6 @@ export function QuizPlayerPage() {
     }
   }, [insertTextAtCursor]);
 
-  const loadQuizData = async () => {
-    if (!quizId) return;
-
-    try {
-      const quizData = await db.getQuiz(quizId);
-      if (quizData) {
-        setQuiz(quizData);
-        const subject = await db.getSubject(quizData.subjectId);
-        setSubjectName(subject?.name ?? null);
-
-        // Resolve prompts: explicit promptIds always win; otherwise paper_master or subject_master.
-        let promptsData: Prompt[];
-        if (quizData.promptIds?.length) {
-          // Quiz has explicit prompt list (e.g. Maths hub full-paper or topic quiz) – use it.
-          promptsData = await db.getPromptsByIds(quizData.promptIds);
-        } else if (quizData.quizType === 'paper_master' && quizData.paperId) {
-          promptsData = await db.getPromptsForPaperMasterQuiz(quizData.paperId);
-        } else if (quizData.quizType === 'subject_master') {
-          promptsData = await db.getPromptsForSubjectMasterQuiz(quizData.subjectId);
-        } else {
-          promptsData = [];
-        }
-
-        if (isFixItMode) {
-          const lastAttempts = storage.getAttemptsByQuizId(quizData.id);
-          const lastAttempt = lastAttempts[lastAttempts.length - 1];
-          if (lastAttempt && lastAttempt.missedPromptIds.length > 0) {
-            promptsData = promptsData.filter(p => lastAttempt.missedPromptIds.includes(p.id));
-          }
-        } else {
-          promptsData = [...promptsData].sort(() => Math.random() - 0.5);
-        }
-
-        setQuizPrompts(promptsData);
-        const totalTimeSec = computeTotalQuizTimeSec(promptsData, quizData.timeLimitSec);
-        setTimeRemaining(totalTimeSec);
-      }
-    } catch (error) {
-      console.error('Failed to load quiz:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const endQuizCalledRef = useRef(false);
   const endQuiz = () => {
     if (endQuizCalledRef.current) return;
@@ -585,6 +594,34 @@ export function QuizPlayerPage() {
       storage.saveAttempt(attempt);
     } catch (error) {
       console.error('Failed to save attempt:', error);
+    }
+
+    // Update quiz-level MasteryState, XP, streak and profile (CRITICAL: was never called before)
+    try {
+      if (quiz) {
+        const allAttempts = storage.getAttemptsByQuizId(quizId!);
+        if (allAttempts.length > 0) {
+          const bestAccuracy = Math.max(...allAttempts.map(a => a.accuracyPct));
+          const bestTime = Math.min(...allAttempts.map(a => a.timeTakenSec));
+          const { level: masteryLevel } = calculateMasteryLevel(bestAccuracy, bestTime, quiz.grade9TargetSec);
+          storage.updateMasteryState({
+            quizId: quizId!,
+            bestAccuracyPct: bestAccuracy,
+            bestTimeSec: bestTime,
+            masteryLevel: masteryLevel as 0 | 1 | 2 | 3 | 4,
+            lastPlayedAt: attempt.finishedAt,
+          });
+        }
+      }
+      storage.addXP(correctIds.size * 5);
+      storage.updateStreak();
+      const profile = storage.getProfile();
+      storage.updateProfile({
+        totalQuizzes: profile.totalQuizzes + 1,
+        totalTimeMinutes: profile.totalTimeMinutes + Math.round(timeTakenSec / 60),
+      });
+    } catch (error) {
+      console.error('Failed to update progress:', error);
     }
 
     navigate(`/results/${attemptId}`, { replace: true });

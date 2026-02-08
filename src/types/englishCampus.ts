@@ -41,6 +41,30 @@ export interface EnglishWritingDraft {
   checklistTicks?: string[];
 }
 
+/** Self-mark annotation: highlight or underline a text range */
+export interface SelfMarkSpan {
+  start: number;
+  end: number;
+  type: 'highlight' | 'underline';
+}
+
+/** Green tick at a position in the text (e.g. after a phrase) */
+export interface SelfMarkTick {
+  position: number;
+}
+
+/** Green pen note: feedback anchored at a position */
+export interface SelfMarkNote {
+  position: number;
+  text: string;
+}
+
+export interface SelfMarkAnnotations {
+  spans: SelfMarkSpan[];
+  ticks: SelfMarkTick[];
+  notes: SelfMarkNote[];
+}
+
 export interface EnglishMarkResult {
   bandLevel: string;
   marks?: number;
@@ -51,6 +75,8 @@ export interface EnglishMarkResult {
   rewriteSuggestions?: string[];
   isSelfMark: boolean;
   reflectedAt?: string;
+  /** Annotations from self-mark suite (highlights, underlines, ticks, notes) */
+  selfMarkAnnotations?: SelfMarkAnnotations;
 }
 
 export interface EnglishWritingStreak {
@@ -77,4 +103,89 @@ export interface EnglishChecklistItem {
   id: string;
   label: string;
   ao?: string;
+}
+
+// ---- Golden Question Bank types (exam-realistic, LLM-implementable, expandable) ----
+
+/** Language Paper 1/2 Section A: short analysis / comparison reading tasks */
+export type LanguageReadingTaskType = 'analysisShort' | 'comparison' | 'evaluation';
+
+export interface EnglishLanguageReadingTask {
+  id: string;
+  paper: EnglishPaper;
+  type: LanguageReadingTaskType;
+  prompt: string;
+  focus: string;
+  /** e.g. "language + structure", "imagery, sensory language" */
+  markSchemeSummary?: string;
+}
+
+/** Writing task in golden bank: same as EnglishLanguageTask but with optional checklist/model refs */
+export interface GoldenEnglishWritingTask extends EnglishLanguageTask {
+  /** Form label for display (e.g. Description, Narrative, Speech). */
+  form?: string;
+  /** Optional task-specific checklist id (else use default). */
+  checklistId?: string;
+  /** Marks for this task (e.g. 40). */
+  marks?: number;
+  /** Stimulus type: image, opening line, scenario, etc. */
+  stimulusType?: 'image' | 'openingLine' | 'scenario' | 'none';
+  /** Optional planning box hint. */
+  planningHint?: string;
+}
+
+/** Literature: seen poetry (anthology) – single poem question */
+export interface EnglishLiteraturePoetrySeenSingle {
+  id: string;
+  poem: string;
+  prompt: string;
+  focus: string;
+  markSchemeSummary?: string;
+}
+
+/** Literature: seen poetry – comparison (two poems) */
+export interface EnglishLiteraturePoetrySeenComparison {
+  id: string;
+  poemA: string;
+  poemB: string;
+  prompt: string;
+  focus: string;
+  markSchemeSummary?: string;
+}
+
+/** Literature: unseen poetry – analysis or comparison */
+export type UnseenPoetryTaskType = 'analysis' | 'comparison';
+
+export interface EnglishLiteratureUnseenPoetry {
+  id: string;
+  type: UnseenPoetryTaskType;
+  prompt: string;
+  focus: string;
+  markSchemeSummary?: string;
+}
+
+/** Literature: set text (novel/play) – character/theme/extract question */
+export type LiteratureTextCode = 'Macbeth' | 'AChristmasCarol' | 'JekyllHyde' | 'AnInspectorCalls';
+
+export interface EnglishLiteratureTextTask {
+  id: string;
+  text: LiteratureTextCode;
+  prompt: string;
+  focus: string;
+  /** Extract-only vs whole-text vs both */
+  scope?: 'extract' | 'whole' | 'both';
+  markSchemeSummary?: string;
+}
+
+/** Vocab Lab question types */
+export type VocabTaskType = 'spellFromDefinition' | 'meaningFromWord' | 'upgradeWord' | 'useInContext';
+
+export interface EnglishVocabTask {
+  id: string;
+  type: VocabTaskType;
+  prompt: string;
+  /** For spellFromDefinition: the definition. For meaningFromWord: the word. For upgradeWord: word to replace. */
+  stimulus: string;
+  /** Expected answer(s) or hint for marking. */
+  expectedAnswer?: string | string[];
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckSquare, FileText, BookOpen, PanelRightOpen } from 'lucide-react';
+import { ChevronLeft, CheckSquare, FileText, BookOpen, PanelRightOpen, Highlighter } from 'lucide-react';
 import { getLanguageTaskById } from '../../config/englishLanguageTasks';
 import { storage } from '../../utils/storage';
 import type { EnglishWritingDraft, EnglishChecklistItem } from '../../types/englishCampus';
@@ -43,6 +43,7 @@ export function EnglishWritingWorkspacePage() {
   const [showModels, setShowModels] = useState(false);
   const [checklistTicks, setChecklistTicks] = useState<Record<string, boolean>>({});
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   const location = useLocation();
   const reopenDraftId = (location.state as { reopenDraftId?: string } | undefined)?.reopenDraftId;
@@ -73,6 +74,7 @@ export function EnglishWritingWorkspacePage() {
   const tickCount = Object.values(checklistTicks).filter(Boolean).length;
   const coveragePct = Math.round((tickCount / QUICK_CHECKLIST.length) * 100);
 
+  /** Update current draft in place (used by auto-save and submit). */
   const saveDraft = useCallback(() => {
     if (!task) return;
     const id = draftId ?? `draft-${task.id}-${Date.now()}`;
@@ -92,6 +94,27 @@ export function EnglishWritingWorkspacePage() {
     storage.saveEnglishDraft(draft);
     setDraftId(id);
   }, [task, content, wordCount, checklistTicks, draftId]);
+
+  /** Create a new draft snapshot (keeps previous drafts in history). Used by manual "Save draft" only. */
+  const saveDraftAsNewSnapshot = useCallback(() => {
+    if (!task) return;
+    const newId = `draft-${task.id}-${Date.now()}`;
+    const draft: EnglishWritingDraft = {
+      id: newId,
+      taskId: task.id,
+      taskTitle: task.title,
+      paper: task.paper,
+      content,
+      wordCount,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      checklistTicks: Object.entries(checklistTicks)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
+    };
+    storage.saveEnglishDraft(draft);
+    setDraftId(newId);
+  }, [task, content, wordCount, checklistTicks]);
 
   useEffect(() => {
     const interval = setInterval(saveDraft, 30000);
@@ -127,6 +150,9 @@ export function EnglishWritingWorkspacePage() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
+  const currentDraft = draftId ? storage.getEnglishDraftById(draftId) : null;
+  const showViewMarking = currentDraft?.result?.isSelfMark === true;
+
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center gap-4 flex-wrap">
@@ -146,6 +172,17 @@ export function EnglishWritingWorkspacePage() {
             Paper {task.paper} • {task.type} • {task.timeRecommendationMins} mins recommended
           </p>
         </div>
+        {showViewMarking && draftId && (
+          <button
+            type="button"
+            onClick={() => navigate(`/english-campus/language/draft/${draftId}/marking`)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
+            style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+          >
+            <Highlighter size={16} />
+            View marking
+          </button>
+        )}
       </div>
 
       {/* Task prompt */}
@@ -224,10 +261,23 @@ export function EnglishWritingWorkspacePage() {
               color: 'rgb(var(--text))',
             }}
           />
-          <div className="mt-4 flex gap-3">
-            <button type="button" onClick={saveDraft} className="btn-ghost text-sm">
-              Save draft
+          <div className="mt-4 flex gap-3 items-center">
+            <button
+              type="button"
+              onClick={() => {
+                saveDraftAsNewSnapshot();
+                setSaveFeedback(true);
+                setTimeout(() => setSaveFeedback(false), 2000);
+              }}
+              className="btn-ghost text-sm"
+            >
+              {saveFeedback ? 'Saved!' : 'Save draft'}
             </button>
+            {saveFeedback && (
+              <span className="text-sm" style={{ color: 'rgb(var(--muted))' }}>
+                New snapshot saved – previous drafts kept in My drafts
+              </span>
+            )}
             <button
               type="button"
               onClick={handleSubmit}
