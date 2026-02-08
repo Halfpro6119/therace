@@ -68,6 +68,7 @@ export const LANGUAGE_PAPER_1_WRITING: GoldenEnglishWritingTask[] = [
     prompt: 'Write a description suggested by this image.',
     form: 'Description',
     stimulusType: 'image',
+    imageUrl: '/images/english/Beautiful%20Lagoon.jpg',
     timeRecommendationMins: 45,
     marks: 40,
     markSchemeSummary: 'AO5: Content and organisation (24 marks). AO6: Technical accuracy (16 marks). Sensory detail, structure, ambitious vocabulary.',

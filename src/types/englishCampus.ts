@@ -21,6 +21,8 @@ export interface EnglishLanguageTask {
   title: string;
   prompt: string;
   stimulus?: string;
+  /** URL or path to image shown below the question (e.g. for description tasks). */
+  imageUrl?: string;
   timeRecommendationMins: number;
   markSchemeSummary: string;
   audiencePurpose?: string;

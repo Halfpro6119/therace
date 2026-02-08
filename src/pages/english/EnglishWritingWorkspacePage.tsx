@@ -193,8 +193,18 @@ export function EnglishWritingWorkspacePage() {
         <p className="font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>
           {task.prompt}
         </p>
+        {task.imageUrl && (
+          <figure className="mt-3">
+            <img
+              src={task.imageUrl}
+              alt="Stimulus image for description"
+              className="max-w-full rounded-lg border object-contain max-h-[360px]"
+              style={{ borderColor: 'rgb(var(--border))' }}
+            />
+          </figure>
+        )}
         {task.stimulus && (
-          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          <p className="text-sm mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
             {task.stimulus}
           </p>
         )}
