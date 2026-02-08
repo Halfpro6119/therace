@@ -25,6 +25,7 @@ const STORAGE_KEYS = {
   ENGLISH_CONTINUE: 'grade9sprint_english_continue',
   ENGLISH_LITERATURE_DRAFTS: 'grade9sprint_english_literature_drafts',
   ENGLISH_QUOTATION_LAB_PROGRESS: 'grade9sprint_english_quotation_lab_progress',
+  LITERATURE_MODEL_DRILL_COMPLETED: 'grade9sprint_literature_model_drill_completed',
 };
 
 /**
@@ -311,6 +312,20 @@ export const storage = {
     const all = storage.getQuotationLabProgress();
     all[progress.sourceId] = progress;
     localStorage.setItem(STORAGE_KEYS.ENGLISH_QUOTATION_LAB_PROGRESS, JSON.stringify(all));
+  },
+
+  /** Mark a model-derived drill as completed (taskId → drillId → true). */
+  getModelDrillCompletions: (taskId: string): Record<string, boolean> => {
+    const data = localStorage.getItem(STORAGE_KEYS.LITERATURE_MODEL_DRILL_COMPLETED);
+    const map = data ? (JSON.parse(data) as Record<string, Record<string, boolean>>) : {};
+    return map[taskId] ?? {};
+  },
+  setModelDrillCompleted: (taskId: string, drillId: string): void => {
+    const data = localStorage.getItem(STORAGE_KEYS.LITERATURE_MODEL_DRILL_COMPLETED);
+    const map = data ? (JSON.parse(data) as Record<string, Record<string, boolean>>) : {};
+    if (!map[taskId]) map[taskId] = {};
+    map[taskId][drillId] = true;
+    localStorage.setItem(STORAGE_KEYS.LITERATURE_MODEL_DRILL_COMPLETED, JSON.stringify(map));
   },
 
   /** Increment familiarity for a quote (e.g. when viewed in Quote Lab or used in a drill). */

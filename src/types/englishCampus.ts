@@ -124,6 +124,89 @@ export interface EnglishExaminerPackTask {
   };
 }
 
+// ---- Model-derived drills (Literature: Study → Drill → Write) ----
+
+/** Paragraph-level metadata for drill extraction (internal, not shown to students). */
+export interface ModelParagraphMetadata {
+  /** Paragraph index (1-based) */
+  paragraphIndex: number;
+  /** Focus of this paragraph (e.g. power, guilt) */
+  focus: string;
+  /** Drill targets: AO2-purpose, structure, alternative-interpretation, etc. */
+  drillTargets: string[];
+  /** Shortest key quote in this paragraph */
+  keyQuote: string;
+}
+
+/** Model-derived drill: Quote extraction — highlight shortest quote supporting an idea. */
+export interface ModelDrillQuoteExtraction {
+  type: 'quoteExtraction';
+  id: string;
+  taskId: string;
+  grade: 4 | 6 | 8 | 9;
+  paragraphIndex: number;
+  /** Full paragraph text (from model answer) */
+  paragraphText: string;
+  /** Prompt: e.g. "Highlight the shortest possible quotation that supports the idea of power as illusion." */
+  prompt: string;
+  /** Best answer: the shortest effective quote */
+  bestQuote: string;
+  whyBest: string;
+}
+
+/** Model-derived drill: Paragraph skeleton — rebuild with blanks. */
+export interface ModelDrillParagraphSkeleton {
+  type: 'paragraphSkeleton';
+  id: string;
+  taskId: string;
+  grade: 4 | 6 | 8 | 9;
+  paragraphIndex: number;
+  /** Skeleton with blanks: "Shelley presents power as __________. The phrase '________' suggests __________." */
+  skeleton: string;
+  /** Full paragraph for feedback */
+  fullParagraph: string;
+  /** Blanks to fill (in order) */
+  blankHints: string[];
+}
+
+/** Model-derived drill: Grade upgrade — upgrade Grade 6 to top band. */
+export interface ModelDrillGradeUpgrade {
+  type: 'gradeUpgrade';
+  id: string;
+  taskId: string;
+  /** Grade of the weak paragraph shown */
+  fromGrade: 4 | 6 | 8;
+  /** Target grade */
+  toGrade: 9;
+  weakParagraph: string;
+  /** Full Grade 9 paragraph (hidden until reveal) */
+  targetParagraph: string;
+  /** Rubric: conceptual shift, judgement added, context woven */
+  rubric: string[];
+}
+
+/** Model-derived drill: AO mapping — label sentences AO1/AO2/AO3, identify weakest. */
+export interface ModelDrillAOMapping {
+  type: 'aoMapping';
+  id: string;
+  taskId: string;
+  grade: 4 | 6 | 8 | 9;
+  paragraphIndex: number;
+  /** Paragraph text split into sentences (or phrases) */
+  sentences: string[];
+  /** Correct AO for each sentence */
+  correctAO: ('AO1' | 'AO2' | 'AO3')[];
+  /** Which AO is weakest and why */
+  weakestAO: 'AO1' | 'AO2' | 'AO3';
+  whyWeakest: string;
+}
+
+export type ModelDrillItem =
+  | ModelDrillQuoteExtraction
+  | ModelDrillParagraphSkeleton
+  | ModelDrillGradeUpgrade
+  | ModelDrillAOMapping;
+
 // ---- Golden Question Bank types (exam-realistic, LLM-implementable, expandable) ----
 
 /** Language Paper 1/2 Section A: short analysis / comparison reading tasks */
@@ -266,9 +349,19 @@ export interface QuotationLabQuote {
   deploymentTip?: string;
   /** Essay types this quote is best for: guilt essays, moral consequence, etc. */
   bestUsedFor?: string[];
+  /** Common misuse: e.g. "Over-quoting the whole line instead of embedding" */
+  commonMisuse?: string;
+  /** Difficulty: core (essential) or extension (Grade 9 stretch) */
+  difficulty?: 'core' | 'extension';
   /** act/scene or stanza for plays/poems */
   location?: string;
 }
+
+/** Poetry cluster for Quotation Lab (e.g. Power & Conflict) */
+export type QuotationLabClusterId = 'PowerAndConflict';
+
+/** Theme IDs for Quotation Lab entry */
+export type QuotationLabThemeId = 'power' | 'guilt' | 'identity' | 'responsibility';
 
 /** Drill: Explain This Quote — one sentence linking quote to theme; max 20 words, must include judgement */
 export interface QuotationDrillExplain {

@@ -1,54 +1,32 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Quote, FlaskConical, FileEdit, BarChart3, Library } from 'lucide-react';
+import { ChevronLeft, Library, BookOpen, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   QUOTATION_LAB_SOURCE_IDS,
+  QUOTATION_LAB_THEME_IDS,
+  CLUSTER_SOURCES,
   getQuotationLabSourceLabel,
   getQuotationLabQuotesBySource,
   getQuotationLabDrillsBySource,
   getMicroParagraphPromptsBySource,
+  getQuotationLabClusterLabel,
+  getQuotationLabThemeLabel,
+  getQuotationLabQuotesByTheme,
 } from '../../config/quotationLabData';
+import type { QuotationLabSourceId, QuotationLabClusterId, QuotationLabThemeId } from '../../types/englishCampus';
 
 const MODES = [
-  {
-    id: 'quote-lab',
-    title: 'Quote Lab',
-    description: 'Understand quotes (3 panels) + Flexible Deployment (argue TWO ideas)',
-    icon: Quote,
-    path: 'quote-lab',
-    color: '#F59E0B',
-  },
-  {
-    id: 'drills',
-    title: 'Drills',
-    description: '5 drills: explain, finish analysis, select best, link two, which AO, eliminate weak',
-    icon: FlaskConical,
-    path: 'drills',
-    color: '#8B5CF6',
-  },
-  {
-    id: 'micro',
-    title: 'Micro-Paragraph Builder',
-    description: 'Theme + quote + method → 4–5 sentences (argument, AO2, AO3, judgement)',
-    icon: FileEdit,
-    path: 'micro',
-    color: '#0EA5E9',
-  },
-  {
-    id: 'progress',
-    title: 'Progress & mastery',
-    description: 'Heatmap, theme confidence, AO balance, examiner intelligence',
-    icon: BarChart3,
-    path: 'progress',
-    color: '#10B981',
-  },
+  { id: 'quote-lab', title: 'Quote Lab', path: 'quote-lab', color: '#F59E0B' },
+  { id: 'drills', title: 'Drills', path: 'drills', color: '#8B5CF6' },
+  { id: 'micro', title: 'Micro-Paragraph Builder', path: 'micro', color: '#0EA5E9' },
+  { id: 'progress', title: 'Progress & mastery', path: 'progress', color: '#10B981' },
 ] as const;
 
 export function EnglishQuotationLabPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -63,11 +41,12 @@ export function EnglishQuotationLabPage() {
             Quotation Lab
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Recall, selective quotation, Grade 9 micro-analysis — the difference-maker
+            Selective quotation, flexible deployment, examiner judgement — not memorisation
           </p>
         </div>
       </div>
 
+      {/* By Text */}
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,10 +55,10 @@ export function EnglishQuotationLabPage() {
       >
         <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
           <Library size={20} />
-          Choose a text or poem
+          By Text
         </h2>
         <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Each source has a quote bank, drills, and micro-paragraph prompts.
+          Choose a text or poem — each has a quote bank, drills, and micro-paragraph prompts.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {QUOTATION_LAB_SOURCE_IDS.map(sourceId => {
@@ -95,14 +74,9 @@ export function EnglishQuotationLabPage() {
                 disabled={!hasContent}
                 onClick={() => {}}
                 className="rounded-xl border p-4 text-left hover:shadow-md transition disabled:opacity-50"
-                style={{
-                  background: 'rgb(var(--surface-2))',
-                  borderColor: 'rgb(var(--border))',
-                }}
+                style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
               >
-                <div className="font-bold" style={{ color: 'rgb(var(--text))' }}>
-                  {label}
-                </div>
+                <div className="font-bold" style={{ color: 'rgb(var(--text))' }}>{label}</div>
                 <div className="text-xs mt-1 flex flex-wrap gap-2" style={{ color: 'rgb(var(--text-secondary))' }}>
                   <span>{quoteCount} quotes</span>
                   <span>{drillCount} drills</span>
@@ -110,27 +84,20 @@ export function EnglishQuotationLabPage() {
                 </div>
                 {hasContent && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {MODES.map(mode => {
-                      const Icon = mode.icon;
-                      return (
-                        <button
-                          key={mode.id}
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            navigate(`/english-campus/literature/quotation-lab/${mode.path}/${sourceId}`);
-                          }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-                          style={{
-                            background: `${mode.color}20`,
-                            color: mode.color,
-                          }}
-                        >
-                          <Icon size={14} />
-                          {mode.title}
-                        </button>
-                      );
-                    })}
+                    {MODES.map(mode => (
+                      <button
+                        key={mode.id}
+                        type="button"
+                        onClick={e => {
+                          e.stopPropagation();
+                          navigate(`/english-campus/literature/quotation-lab/${mode.path}/${sourceId}`);
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                        style={{ background: `${mode.color}20`, color: mode.color }}
+                      >
+                        {mode.title}
+                      </button>
+                    ))}
                   </div>
                 )}
               </button>
@@ -139,15 +106,96 @@ export function EnglishQuotationLabPage() {
         </div>
       </motion.section>
 
-      <section className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
-        <h2 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-          What you’ll do here
+      {/* By Poetry Cluster */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="rounded-xl border p-4"
+        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+      >
+        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <BookOpen size={20} />
+          By Poetry Cluster
         </h2>
+        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Power & Conflict — choose a poem to access its quote bank and drills.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {(Object.keys(CLUSTER_SOURCES) as QuotationLabClusterId[]).map(clusterId => {
+            const label = getQuotationLabClusterLabel(clusterId);
+            const sources = CLUSTER_SOURCES[clusterId];
+            return (
+              <div key={clusterId} className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
+                <div className="font-bold text-sm mb-2" style={{ color: 'rgb(var(--text))' }}>{label}</div>
+                <div className="flex flex-wrap gap-2">
+                  {sources.map(sourceId => {
+                    const sourceLabel = getQuotationLabSourceLabel(sourceId);
+                    const quoteCount = getQuotationLabQuotesBySource(sourceId).length;
+                    const hasContent = quoteCount > 0;
+                    return (
+                      <button
+                        key={sourceId}
+                        type="button"
+                        disabled={!hasContent}
+                        onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${sourceId}`)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
+                        style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#8B5CF6' }}
+                      >
+                        {sourceLabel} ({quoteCount})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      {/* By Theme */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border p-4"
+        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+      >
+        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <Tag size={20} />
+          By Theme
+        </h2>
+        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Power, Guilt, Identity, Responsibility — explore quotes by theme across texts.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {QUOTATION_LAB_THEME_IDS.map(themeId => {
+            const label = getQuotationLabThemeLabel(themeId);
+            const quotes = getQuotationLabQuotesByTheme(themeId);
+            const count = quotes.length;
+            return (
+              <button
+                key={themeId}
+                type="button"
+                onClick={() => navigate(`/english-campus/literature/quotation-lab/theme/${themeId}`)}
+                className="rounded-xl border p-4 text-left hover:shadow-md transition"
+                style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
+              >
+                <div className="font-bold text-sm" style={{ color: 'rgb(var(--text))' }}>{label}</div>
+                <div className="text-xs mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>{count} quotes</div>
+              </button>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      <section className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
+        <h2 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>What you'll do here</h2>
         <ul className="text-sm space-y-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Quote Lab</strong> — Understand each quote (meaning, method, context); Flexible Deployment: argue TWO ideas with one quote.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Drills</strong> — Explain in one sentence; finish the analysis; select best quote; link two quotes; which AO? eliminate weak quote.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Micro-Paragraph Builder</strong> — Build 4–5 sentence paragraphs with examiner-style auto-feedback.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Progress</strong> — Quote familiarity heatmap, theme confidence, AO balance, examiner intelligence.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Quote Lab</strong> — Four panels: What It Means, How It Works, Why Examiners Love It, Grade 9 Angle.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Drills</strong> — Quote selection, one-sentence analysis, upgrade, link two, eliminate weak.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Micro-Paragraph Builder</strong> — 4–5 sentence paragraphs with examiner-style feedback.</li>
+          <li><strong style={{ color: 'rgb(var(--text))' }}>Progress</strong> — Heatmap, theme confidence, AO balance, grade ceiling.</li>
         </ul>
       </section>
     </div>

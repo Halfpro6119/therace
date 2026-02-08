@@ -28,7 +28,9 @@ import { EnglishLiteratureDraftsPage } from './pages/english/EnglishLiteratureDr
 import { EnglishLiteratureSeenPoetryPage } from './pages/english/EnglishLiteratureSeenPoetryPage';
 import { EnglishLiteratureUnseenPage } from './pages/english/EnglishLiteratureUnseenPage';
 import { EnglishLiteratureTextsPage } from './pages/english/EnglishLiteratureTextsPage';
+import { EnglishLiteratureModelDrillsPage } from './pages/english/EnglishLiteratureModelDrillsPage';
 import { EnglishQuotationLabPage } from './pages/english/EnglishQuotationLabPage';
+import { EnglishQuotationLabThemePage } from './pages/english/EnglishQuotationLabThemePage';
 import { EnglishQuotationLabQuoteLabPage } from './pages/english/EnglishQuotationLabQuoteLabPage';
 import { EnglishQuotationLabDrillsPage } from './pages/english/EnglishQuotationLabDrillsPage';
 import { EnglishQuotationLabMicroPage } from './pages/english/EnglishQuotationLabMicroPage';
@@ -146,12 +148,14 @@ function App() {
                 <Route path="/english-campus/language/compare" element={<EnglishCompareDraftsPage />} />
                 <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
                 <Route path="/english-campus/literature/task/:taskId" element={<EnglishLiteratureWorkspacePage />} />
+                <Route path="/english-campus/literature/task/:taskId/model-drills" element={<EnglishLiteratureModelDrillsPage />} />
                 <Route path="/english-campus/literature/result" element={<EnglishLiteratureResultPage />} />
                 <Route path="/english-campus/literature/drafts" element={<EnglishLiteratureDraftsPage />} />
                 <Route path="/english-campus/literature/poetry" element={<EnglishLiteratureSeenPoetryPage />} />
                 <Route path="/english-campus/literature/unseen" element={<EnglishLiteratureUnseenPage />} />
                 <Route path="/english-campus/literature/texts" element={<EnglishLiteratureTextsPage />} />
                 <Route path="/english-campus/literature/quotation-lab" element={<EnglishQuotationLabPage />} />
+                <Route path="/english-campus/literature/quotation-lab/theme/:themeId" element={<EnglishQuotationLabThemePage />} />
                 <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId" element={<EnglishQuotationLabQuoteLabPage />} />
                 <Route path="/english-campus/literature/quotation-lab/drills/:sourceId" element={<EnglishQuotationLabDrillsPage />} />
                 <Route path="/english-campus/literature/quotation-lab/micro/:sourceId" element={<EnglishQuotationLabMicroPage />} />

@@ -52,6 +52,7 @@ const MAX_HISTORY = 50;
 
 export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, className = '' }: QuestionDoodlePadProps) {
   const strokesCanvasRef = useRef<HTMLCanvasElement>(null);
+  const inkLayerRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -101,18 +102,20 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
     const vh = vp.clientHeight;
     if (vw <= 0 || vh <= 0) return;
 
-    canvas.width = vw * dpr;
-    canvas.height = vh * dpr;
+    const cw = vw * dpr;
+    const ch = vh * dpr;
+    canvas.width = cw;
+    canvas.height = ch;
     canvas.style.width = `${vw}px`;
     canvas.style.height = `${vh}px`;
-
-    ctx.save();
-    ctx.setTransform(dpr * zoom, 0, 0, dpr * zoom, dpr * pan.x, dpr * pan.y);
 
     const worldLeft = -pan.x / zoom;
     const worldRight = (vw - pan.x) / zoom;
     const worldTop = -pan.y / zoom;
     const worldBottom = (vh - pan.y) / zoom;
+
+    ctx.save();
+    ctx.setTransform(dpr * zoom, 0, 0, dpr * zoom, dpr * pan.x, dpr * pan.y);
 
     ctx.fillStyle = getCssBg();
     ctx.fillRect(worldLeft, worldTop, worldRight - worldLeft, worldBottom - worldTop);
@@ -137,42 +140,56 @@ export function QuestionDoodlePad({ sessionId, height = DEFAULT_HEIGHT, classNam
       ctx.stroke();
     }
 
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.restore();
+
+    if (!inkLayerRef.current) inkLayerRef.current = document.createElement('canvas');
+    const ink = inkLayerRef.current;
+    ink.width = cw;
+    ink.height = ch;
+    const inkCtx = ink.getContext('2d');
+    if (!inkCtx) return;
+    inkCtx.clearRect(0, 0, cw, ch);
+    inkCtx.save();
+    inkCtx.setTransform(dpr * zoom, 0, 0, dpr * zoom, dpr * pan.x, dpr * pan.y);
+
+    inkCtx.lineCap = 'round';
+    inkCtx.lineJoin = 'round';
     const inkColor = isDarkRef.current ? INK_DARK : INK_LIGHT;
     for (const s of visibleStrokes) {
       if (s.points.length < 2) continue;
       if (s.tool === 'eraser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.strokeStyle = 'rgba(0,0,0,1)';
-        ctx.lineWidth = s.size / zoom;
+        inkCtx.globalCompositeOperation = 'destination-out';
+        inkCtx.strokeStyle = 'rgba(0,0,0,1)';
+        inkCtx.lineWidth = s.size / zoom;
       } else {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = inkColor;
-        ctx.lineWidth = s.size / zoom;
+        inkCtx.globalCompositeOperation = 'source-over';
+        inkCtx.strokeStyle = inkColor;
+        inkCtx.lineWidth = s.size / zoom;
       }
-      ctx.beginPath();
-      ctx.moveTo(s.points[0].x, s.points[0].y);
-      for (let i = 1; i < s.points.length; i++) ctx.lineTo(s.points[i].x, s.points[i].y);
-      ctx.stroke();
+      inkCtx.beginPath();
+      inkCtx.moveTo(s.points[0].x, s.points[0].y);
+      for (let i = 1; i < s.points.length; i++) inkCtx.lineTo(s.points[i].x, s.points[i].y);
+      inkCtx.stroke();
     }
-    ctx.globalCompositeOperation = 'source-over';
+    inkCtx.globalCompositeOperation = 'source-over';
 
     if (currentStroke && currentStroke.points.length >= 2) {
-      ctx.strokeStyle = inkColor;
-      ctx.lineWidth = currentStroke.size / zoom;
+      inkCtx.strokeStyle = inkColor;
+      inkCtx.lineWidth = currentStroke.size / zoom;
       if (currentStroke.tool === 'eraser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.strokeStyle = 'rgba(0,0,0,1)';
+        inkCtx.globalCompositeOperation = 'destination-out';
+        inkCtx.strokeStyle = 'rgba(0,0,0,1)';
       }
-      ctx.beginPath();
-      ctx.moveTo(currentStroke.points[0].x, currentStroke.points[0].y);
-      for (let i = 1; i < currentStroke.points.length; i++) ctx.lineTo(currentStroke.points[i].x, currentStroke.points[i].y);
-      ctx.stroke();
-      ctx.globalCompositeOperation = 'source-over';
+      inkCtx.beginPath();
+      inkCtx.moveTo(currentStroke.points[0].x, currentStroke.points[0].y);
+      for (let i = 1; i < currentStroke.points.length; i++) inkCtx.lineTo(currentStroke.points[i].x, currentStroke.points[i].y);
+      inkCtx.stroke();
+      inkCtx.globalCompositeOperation = 'source-over';
     }
 
-    ctx.restore();
+    inkCtx.restore();
+
+    ctx.drawImage(ink, 0, 0);
   }, [pan, zoom, visibleStrokes, currentStroke, getCssBg, getGridColor]);
 
   useEffect(() => {

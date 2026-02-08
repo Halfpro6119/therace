@@ -1,222 +1,173 @@
-# Quotation Lab — Full Specification (Chunk 5)
+# Literature Section — Quotation Lab
+## Full Implementation Guide (Grade 9 Engine)
 
-**Purpose:** Turn knowledge into speed, control, flexibility, and examiner confidence.
-
-Students should reach the point where:
-- quotes come instantly
-- analysis is selective, not bloated
-- paragraphs are built deliberately
-- panic disappears
+Production-ready spec for developers, AI agents, and curriculum leads. Operational, not conceptual.
 
 ---
 
-## Part 1 — Quotation Lab (Core Engine)
+## 1️⃣ Purpose (Why This Exists)
 
-### What the Quotation Lab IS
+The Quotation Lab solves the biggest GCSE Literature problem:
 
-A curated, intelligent quote system, not a quote dump.
+- Students either memorise too many quotes with no understanding
+- Or understand themes but panic under timed conditions
 
-Each text / poem / cluster has:
-- **12–20 high-value quotes only**
-- each quote trained for **multiple themes**
-- analysis guidance built into metadata
+The Quotation Lab trains:
+- **Selective quotation** — which quote fits best
+- **Flexible deployment** — use one quote for multiple ideas
+- **Micro-analysis** — 4–5 sentence paragraphs, not essays
+- **Examiner-level judgement** — when to use, when not to
 
-This trains thinking like an examiner, not memorising pages.
+**This is not a memory tool. It is a thinking tool.**
 
-### Quote Object — Data Model (App-Ready)
+---
 
-Each quote is stored as:
+## 2️⃣ Core Design Principles
+
+**Principle 1: Fewer Quotes, Used Better**
+- 12–20 quotes per text / poem cluster
+- Each quote must support multiple themes
+- Every quote must justify its existence
+
+**Principle 2: Quotes Are Tools, Not Facts**
+Students must learn: when to use, why it works, when not to use.
+
+**Principle 3: Drills > Memorisation**
+Every quote must feed at least 3 drills.
+
+---
+
+## 3️⃣ Quotation Lab Structure (Top Level)
+
+```
+Literature
+ └── Quotation Lab
+     ├── By Text
+     │    ├── Macbeth
+     │    ├── A Christmas Carol
+     │    ├── Jekyll & Hyde
+     │    └── An Inspector Calls
+     ├── By Poetry Cluster
+     │    └── Power & Conflict
+     ├── By Theme
+     │    ├── Power
+     │    ├── Guilt
+     │    ├── Identity
+     │    └── Responsibility
+     └── Drills
+```
+
+Students can enter from any route: text-first, theme-first, exam-question-first learners.
+
+---
+
+## 4️⃣ Quote Object (Data Model)
+
+Every quote stored with rich metadata:
 
 ```json
 {
-  "quote_id": "MACBETH-GUILT-03",
+  "quoteId": "MAC-GUILT-04",
   "text": "Will all great Neptune's ocean wash this blood clean from my hand?",
   "source": "Macbeth",
-  "act_scene_or_stanza": "Act 2 Scene 2",
-  "themes": ["guilt", "conscience", "violence"],
+  "location": "Act 2 Scene 2",
+  "themes": ["guilt", "violence", "conscience"],
   "methods": ["hyperbole", "imagery", "mythological allusion"],
-  "coreMeaning": "Guilt is overwhelming and inescapable",
-  "grade9Insight": "Guilt is framed as cosmic and irreversible",
-  "contextHook": "Jacobean beliefs about sin and divine judgement",
-  "bestUsedFor": [
-    "guilt essays",
-    "moral consequence arguments",
-    "psychological collapse"
-  ]
+  "coreMeaning": "Guilt is overwhelming and irreversible",
+  "grade9Insight": "Guilt is framed as cosmic, not personal",
+  "contextHook": "Jacobean beliefs about sin and divine punishment",
+  "bestUsedFor": ["guilt essays", "moral consequence arguments", "psychological collapse"],
+  "commonMisuse": "Over-quoting the whole line instead of embedding",
+  "difficulty": "core"
 }
 ```
 
-This metadata powers everything else in the Quotation Lab.
+---
+
+## 5️⃣ Student Experience (Quote View)
+
+When a student opens a quote, **four collapsible panels**:
+
+| Panel | Content |
+|-------|---------|
+| **Panel 1: What It Means** | Plain-English explanation, one sentence max |
+| **Panel 2: How It Works** | Method → purpose, no technique spotting |
+| **Panel 3: Why Examiners Love It** | When it earns top marks, what questions it fits |
+| **Panel 4: Grade 9 Angle** | Conceptual or alternative reading, optional but powerful |
 
 ---
 
-## Part 2 — Quotation Lab Modes (Student Experience)
+## 6️⃣ Drill System (Core Engine)
 
-### Mode 1: Understand the Quote
+Each quote feeds multiple drill types.
 
-Student sees:
-- quote
-- **3 expandable panels:**
-  - **Meaning** — core meaning
-  - **Method → purpose** — how techniques serve the idea
-  - **Context hook** — AO3 integration
-
-**Goal:** comprehension, not memorisation.
-
-### Mode 2: Select the Best Quote
-
-**Prompt:** *Which quote best supports the idea that guilt is inescapable?*
-
-Student:
-- chooses from 4 quotes
-- must **justify choice in 1 sentence**
-
-**Examiner skill trained:** selectivity.
-
-### Mode 3: Upgrade the Analysis
-
-Student sees a weak response: *"This shows Macbeth feels guilty."*
-
-**Task:** upgrade to Grade 6 → 8 → 9
-
-**Rubric enforced:**
-- add method
-- add judgement
-- avoid retelling
-
-### Mode 4: Flexible Deployment
-
-**Prompt:** *Use this quote to argue TWO different ideas.*
-
-Example:
-- guilt as punishment
-- guilt as loss of masculinity
-
-**This is Grade 9 behaviour.**
+| Drill | Prompt / Task | Skill |
+|-------|---------------|-------|
+| **A: Quote Selection** | Which quote best supports [idea]? 4 options, justify in 1 sentence | AO1 judgement |
+| **B: One-Sentence Analysis** | Explain how this quote presents [theme]. Max 20 words, must include judgement | AO2 precision |
+| **C: Upgrade the Analysis** | Upgrade weak response to Grade 6 → 8 → 9 | Vertical progression |
+| **D: Link Two Quotes** | Link one from Act 1 and one from Act 5 to show change | Structure + development |
+| **E: Eliminate the Weak Quote** | Remove narrative, overlong, off-focus quotes | Examiner filtering |
 
 ---
 
-## Part 3 — Drill Engine (The Multiplier)
+## 7️⃣ Model Answer Integration
 
-Short, repeatable drills (2–5 mins each).
-
-### Drill 1: Explain in One Sentence
-
-**Prompt:** *Explain how this quote links to power.*
-
-**Rules:**
-- max 20 words
-- must include judgement
-
-**Marks:** examiner-style feedback
-
-### Drill 2: Finish the Analysis
-
-**Given:** *"This suggests Macbeth's guilt is overwhelming because…"*
-
-Student completes.
-
-**Prevents:** vague endings, empty AO2.
-
-### Drill 3: Link Two Quotes
-
-**Prompt:** *Link one quote from Act 1 and one from Act 5 to show change.*
-
-Students must:
-- track development
-- show structure awareness
-
-### Drill 4: Which AO Is This?
-
-Student labels: **AO1 / AO2 / AO3** — explains why.
-
-**Builds examiner literacy.**
-
-### Drill 5: Eliminate the Weak Quote
-
-Student removes:
-- overlong
-- narrative
-- irrelevant quotes
-
-**This fixes one of the biggest Grade-7 ceilings.**
+Quotation Lab is wired into the 14 GuidePost packs:
+- Each model paragraph is tagged internally
+- Quotes used in Grade 8/9 models become priority quotes
+- Drills are generated from real model writing
 
 ---
 
-## Part 4 — Grade 9 Micro-Paragraph Builder
+## 8️⃣ Micro-Paragraph Builder
 
-Bridges drills → full essays.
+Students practise 4–5 sentence paragraphs, not essays.
 
-Student is given:
-- question focus
-- 1 quote
-- 1 method
+**Inputs:** question focus, one quote, one method
 
-They must write **4–5 sentences** including:
-- argument
-- embedded quote
-- AO2 purpose
-- AO3 context
-- judgement
+**Outputs:** AO1 argument, AO2 purpose, AO3 woven context, judgement
 
-### Auto-Feedback Checks
-
-- quotation length
-- relevance
-- method-purpose link
-- conceptual depth
+**AI checks:** quote length, relevance, conceptual depth
 
 ---
 
-## Part 5 — Progress & Heatmaps
+## 9️⃣ Progress & Mastery Tracking
 
-Per student, per text:
-- **quote familiarity heatmap**
-- **theme confidence map**
-- **AO balance tracker**
-- **grade ceiling indicator**
-
-Example:
-
-> ⚠️ Strong AO1 & AO2  
-> 🔻 AO3 underused → Grade 8 ceiling
+- **Per text:** quote familiarity heatmap, theme coverage map
+- **Per AO:** AO1 strength, AO2 depth, AO3 integration
+- **Grade ceiling indicator:** e.g. "Currently writing at Grade 7 because AO2 lacks judgement."
 
 ---
 
-## Part 6 — Examiner Intelligence Layer (AI)
+## 🔟 Exam Mode Integration
 
-AI feedback uses examiner language, not generic praise:
-
-- *"This analysis identifies method but lacks purpose."*
-- *"Context is relevant but not integrated."*
-- *"This is descriptive, not analytical."*
-
-Aligned directly to mark schemes.
+When students enter a Literature exam task:
+- Relevant quotes are surfaced subtly (2–3 strategic reminders)
+- No full quote lists
+- Prevents dependency while reducing panic
 
 ---
 
-## Part 7 — Connections to Other Features
+## 1️⃣1️⃣ Teacher / Admin Controls
 
-| Feature | Connection |
-|---------|------------|
-| Language writing | quotation thinking → sentence control |
-| Literature essays | faster, sharper planning |
-| Unseen poetry | imagery drills transfer instantly |
-| Vocab Lab | lexical precision |
-| Progress Replay | shows quote mastery growth |
+Admins can: add/edit quotes, tag themes, flag "Grade 9 essential" quotes, disable weak quotes.
 
 ---
 
-## Why This Works
+## 1️⃣2️⃣ Quality Control Rules (Non-Negotiable)
 
-**Most platforms:**
-- dump quotes
-- hope students memorise
-- reward length
+A quote cannot be added unless:
+- It supports 2+ themes
+- It has a Grade 9 insight
+- It appears in or could appear in a top-band response
 
-**This system:**
-- trains judgement
-- enforces precision
-- rewards thinking
+---
 
-This is exactly what examiners reward.
+## 1️⃣3️⃣ Why This System Works
+
+**Most platforms:** test recall, reward memorisation.
+
+**This system:** trains judgement, builds flexibility, mirrors examiner thinking.
+
+Students stop asking "What quotes do I need?" and start thinking "Which quote fits best here?" — **that is Grade 9 behaviour.**

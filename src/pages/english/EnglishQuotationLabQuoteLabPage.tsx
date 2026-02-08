@@ -26,7 +26,7 @@ export function EnglishQuotationLabQuoteLabPage() {
   const flexPrompts = getFlexibleDeploymentPromptsBySource(validSource);
   const [labMode, setLabMode] = useState<LabMode>('understand');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [expandedPanel, setExpandedPanel] = useState<'meaning' | 'method' | 'context' | null>(null);
+  const [expandedPanel, setExpandedPanel] = useState<'meaning' | 'method' | 'examiners' | 'grade9' | null>(null);
 
   const handleExpand = (qId: string) => {
     setExpandedId(prev => {
@@ -41,7 +41,7 @@ export function EnglishQuotationLabQuoteLabPage() {
     });
   };
 
-  const togglePanel = (panel: 'meaning' | 'method' | 'context') => {
+  const togglePanel = (panel: 'meaning' | 'method' | 'examiners' | 'grade9') => {
     setExpandedPanel(prev => (prev === panel ? null : panel));
   };
 
@@ -159,49 +159,43 @@ export function EnglishQuotationLabQuoteLabPage() {
                       style={{ borderColor: 'rgb(var(--border))' }}
                     >
                       <div className="p-4 pt-2 space-y-2">
-                        {/* Panel 1: Meaning */}
-                        <Panel
-                          title="Meaning"
-                          isOpen={expandedPanel === 'meaning'}
-                          onToggle={() => togglePanel('meaning')}
-                        >
+                        {/* Panel 1: What It Means */}
+                        <Panel title="What It Means" isOpen={expandedPanel === 'meaning'} onToggle={() => togglePanel('meaning')}>
                           <p style={{ color: 'rgb(var(--text-secondary))' }}>{q.meaning}</p>
                         </Panel>
-                        {/* Panel 2: Method → purpose */}
-                        <Panel
-                          title="Method → purpose"
-                          isOpen={expandedPanel === 'method'}
-                          onToggle={() => togglePanel('method')}
-                        >
-                          <p style={{ color: 'rgb(var(--text-secondary))' }}>
-                            {q.methods?.join(', ') ?? q.method}
-                          </p>
+                        {/* Panel 2: How It Works */}
+                        <Panel title="How It Works" isOpen={expandedPanel === 'method'} onToggle={() => togglePanel('method')}>
+                          <p style={{ color: 'rgb(var(--text-secondary))' }}>{q.methods?.join(', ') ?? q.method}</p>
                           <p className="mt-2 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                            How the technique serves the idea: {q.method} — links directly to AO2.
+                            Method → purpose: {q.method} — links directly to AO2.
                           </p>
+                          {q.commonMisuse && (
+                            <p className="mt-2 text-xs italic" style={{ color: 'rgb(var(--muted))' }}>
+                              Avoid: {q.commonMisuse}
+                            </p>
+                          )}
                         </Panel>
-                        {/* Panel 3: Context hook */}
-                        <Panel
-                          title="Context hook"
-                          isOpen={expandedPanel === 'context'}
-                          onToggle={() => togglePanel('context')}
-                        >
-                          <p style={{ color: 'rgb(var(--text-secondary))' }}>{q.contextHook}</p>
+                        {/* Panel 3: Why Examiners Love It */}
+                        <Panel title="Why Examiners Love It" isOpen={expandedPanel === 'examiners'} onToggle={() => togglePanel('examiners')}>
+                          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{q.contextHook}</p>
+                          {q.bestUsedFor && q.bestUsedFor.length > 0 && (
+                            <p className="mt-2 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                              When it earns top marks: {q.bestUsedFor.join(', ')}
+                            </p>
+                          )}
                         </Panel>
-                        {/* Grade 9 insight (bonus) */}
-                        {(q.grade9Insight ?? q.deploymentTip) && (
-                          <div
-                            className="rounded-lg p-3 mt-2"
-                            style={{ background: 'rgba(245, 158, 11, 0.12)', borderLeft: '3px solid #F59E0B' }}
-                          >
-                            <span className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>Grade 9 insight: </span>
-                            <span style={{ color: 'rgb(var(--text-secondary))' }}>{q.grade9Insight ?? q.deploymentTip}</span>
-                          </div>
-                        )}
-                        {q.bestUsedFor && q.bestUsedFor.length > 0 && (
-                          <p className="text-xs mt-2" style={{ color: 'rgb(var(--muted))' }}>
-                            Best for: {q.bestUsedFor.join(', ')}
-                          </p>
+                        {/* Panel 4: Grade 9 Angle */}
+                        <Panel title="Grade 9 Angle" isOpen={expandedPanel === 'grade9'} onToggle={() => togglePanel('grade9')}>
+                          {(q.grade9Insight ?? q.deploymentTip) ? (
+                            <p style={{ color: 'rgb(var(--text-secondary))' }}>{q.grade9Insight ?? q.deploymentTip}</p>
+                          ) : (
+                            <p className="text-sm italic" style={{ color: 'rgb(var(--muted))' }}>Conceptual or alternative reading — extend your analysis.</p>
+                          )}
+                        </Panel>
+                        {q.difficulty && (
+                          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--muted))' }}>
+                            {q.difficulty}
+                          </span>
                         )}
                       </div>
                     </motion.div>

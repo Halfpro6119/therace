@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckSquare, FileText, BookOpen, ListOrdered } from 'lucide-react';
+import { ChevronLeft, CheckSquare, FileText, BookOpen, ListOrdered, Zap, Quote } from 'lucide-react';
 import { getLiteratureTaskById } from '../../config/goldenEnglishQuestionBank';
 import { getGuidePostForLiteratureTask } from '../../config/englishLiteratureGuidePostData';
+import { hasModelDrills } from '../../config/literatureModelDrillsData';
+import { getStrategicQuotesForTask, hasStrategicQuotesForTask } from '../../config/quotationLabData';
 import { storage } from '../../utils/storage';
 import type { EnglishLiteratureDraft, EnglishChecklistItem } from '../../types/englishCampus';
 
@@ -191,6 +193,26 @@ export function EnglishLiteratureWorkspacePage() {
         </p>
       </div>
 
+      {/* Exam mode: 2–3 strategic quote reminders (no full list) */}
+      {taskId && hasStrategicQuotesForTask(taskId) && (() => {
+        const hints = getStrategicQuotesForTask(taskId).slice(0, 3);
+        if (hints.length === 0) return null;
+        return (
+          <div
+            className="rounded-lg border px-3 py-2 flex flex-wrap items-center gap-2"
+            style={{ background: 'rgba(139, 92, 246, 0.08)', borderColor: 'rgba(139, 92, 246, 0.3)' }}
+          >
+            <Quote size={14} style={{ color: '#8B5CF6' }} />
+            <span className="text-xs font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Quote reminders:</span>
+            {hints.map(q => (
+              <span key={q.id} className="text-xs italic" style={{ color: 'rgb(var(--text))' }}>
+                "{q.quote.length > 40 ? q.quote.slice(0, 40) + '…' : q.quote}"
+              </span>
+            ))}
+          </div>
+        );
+      })()}
+
       <div
         className="rounded-xl border px-4 py-3 flex flex-wrap items-center gap-4"
         style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
@@ -229,6 +251,17 @@ export function EnglishLiteratureWorkspacePage() {
             <FileText size={16} />
             Model answers
           </button>
+          {taskId && hasModelDrills(taskId) && (
+            <button
+              type="button"
+              onClick={() => navigate(`/english-campus/literature/task/${taskId}/model-drills`)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
+              style={{ background: 'var(--gradient-primary)', color: 'white' }}
+            >
+              <Zap size={16} />
+              Drills from this model
+            </button>
+          )}
         </div>
       </div>
 
@@ -338,6 +371,11 @@ export function EnglishLiteratureWorkspacePage() {
                 </h3>
                 {guidePost?.modelAnswers ? (
                   <>
+                    {taskId && hasModelDrills(taskId) && (
+                      <p className="text-xs mb-2" style={{ color: 'rgb(var(--muted))' }}>
+                        Study → Drills from this model → Write
+                      </p>
+                    )}
                     <div className="flex gap-1 mb-2 flex-wrap">
                       {MODEL_GRADES.map(g => (
                         <button

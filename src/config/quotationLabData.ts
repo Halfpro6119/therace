@@ -6,6 +6,8 @@
 import type {
   QuotationLabQuote,
   QuotationLabSourceId,
+  QuotationLabClusterId,
+  QuotationLabThemeId,
   QuotationDrillItem,
   QuotationDrillExplain,
   QuotationDrillFinishAnalysis,
@@ -28,9 +30,11 @@ export const QUOTATION_LAB_QUOTES: QuotationLabQuote[] = [
     id: 'M-amb-1',
     sourceId: 'Macbeth',
     quote: 'Vaulting ambition, which o\'erleaps itself',
-    themes: ['ambition', 'hubris', 'downfall'],
+    themes: ['ambition', 'hubris', 'downfall', 'power'],
     method: 'Metaphor (physical movement)',
     meaning: 'Ambition is uncontrolled and self-destructive; it overreaches and falls.',
+    commonMisuse: 'Using without linking to method or purpose',
+    difficulty: 'core',
     contextHook: 'Jacobean fear of ambition disrupting divine order; loyalty to the king.',
     deploymentTip: 'Use this to show Macbeth’s self-awareness — ambition is a choice, not fate.',
     location: 'Act 1, Scene 7',
@@ -70,6 +74,8 @@ export const QUOTATION_LAB_QUOTES: QuotationLabQuote[] = [
     contextHook: 'Biblical/Jacobean idea of blood as guilt; divine judgement.',
     deploymentTip: 'Contrast with Lady Macbeth’s “little hand” — shows his conscience is stronger.',
     bestUsedFor: ['guilt essays', 'moral consequence arguments', 'psychological collapse'],
+    commonMisuse: 'Over-quoting the whole line instead of embedding',
+    difficulty: 'core',
     location: 'Act 2, Scene 2',
   },
   {
@@ -488,6 +494,94 @@ export function getFlexibleDeploymentPromptsBySource(sourceId: QuotationLabSourc
 }
 
 export const QUOTATION_LAB_SOURCE_IDS: QuotationLabSourceId[] = ['Macbeth', 'Ozymandias', 'London', 'Exposure'];
+
+// ---------------------------------------------------------------------------
+// POETRY CLUSTER (Power & Conflict)
+// ---------------------------------------------------------------------------
+
+export const CLUSTER_SOURCES: Record<QuotationLabClusterId, QuotationLabSourceId[]> = {
+  PowerAndConflict: ['Ozymandias', 'London', 'Exposure'],
+};
+
+export function getQuotationLabClusterLabel(clusterId: QuotationLabClusterId): string {
+  return clusterId === 'PowerAndConflict' ? 'Power & Conflict' : clusterId;
+}
+
+// ---------------------------------------------------------------------------
+// THEMES (entry route)
+// ---------------------------------------------------------------------------
+
+const THEME_TO_SOURCE_IDS: Record<QuotationLabThemeId, QuotationLabSourceId[]> = {
+  power: ['Macbeth', 'Ozymandias', 'London'],
+  guilt: ['Macbeth'],
+  identity: ['Ozymandias', 'London'],
+  responsibility: ['Macbeth'],
+};
+
+export const QUOTATION_LAB_THEME_IDS: QuotationLabThemeId[] = ['power', 'guilt', 'identity', 'responsibility'];
+
+export function getQuotationLabThemeLabel(themeId: QuotationLabThemeId): string {
+  const labels: Record<QuotationLabThemeId, string> = {
+    power: 'Power',
+    guilt: 'Guilt',
+    identity: 'Identity',
+    responsibility: 'Responsibility',
+  };
+  return labels[themeId] ?? themeId;
+}
+
+export function getQuotationLabQuotesByTheme(themeId: QuotationLabThemeId): QuotationLabQuote[] {
+  return QUOTATION_LAB_QUOTES.filter(q =>
+    q.themes.some(t => t.toLowerCase() === themeId || t.toLowerCase().includes(themeId))
+  );
+}
+
+// ---------------------------------------------------------------------------
+// EXAM MODE — strategic quote hints (2–3 per task)
+// ---------------------------------------------------------------------------
+
+const TASK_TO_STRATEGIC_QUOTES: Record<string, string[]> = {
+  'P-S01': ['Ozy-1', 'Ozy-2'],
+  'M-03': ['M-guilt-1', 'M-guilt-2', 'M-amb-1'],
+  'P-C02': ['Exp-1', 'Exp-2', 'Lon-1'],
+};
+
+export function getStrategicQuotesForTask(taskId: string): QuotationLabQuote[] {
+  const quoteIds = TASK_TO_STRATEGIC_QUOTES[taskId];
+  if (!quoteIds) return [];
+  return quoteIds
+    .map(id => getQuotationLabQuoteById(id))
+    .filter((q): q is QuotationLabQuote => q != null);
+}
+
+export function hasStrategicQuotesForTask(taskId: string): boolean {
+  return (TASK_TO_STRATEGIC_QUOTES[taskId]?.length ?? 0) > 0;
+}
+
+// ---------------------------------------------------------------------------
+// QUALITY CONTROL (non-negotiable)
+// ---------------------------------------------------------------------------
+
+export type QuoteValidationResult = { valid: boolean; errors: string[] };
+
+/** A quote cannot be added unless: 2+ themes, Grade 9 insight, top-band suitable */
+export function validateQuoteForQuality(q: Partial<QuotationLabQuote>): QuoteValidationResult {
+  const errors: string[] = [];
+  if (!q.themes || q.themes.length < 2) {
+    errors.push('Quote must support 2+ themes');
+  }
+  if (!q.grade9Insight && !q.deploymentTip) {
+    errors.push('Quote must have a Grade 9 insight or deployment tip');
+  }
+  if (!q.meaning || !q.contextHook) {
+    errors.push('Quote must have core meaning and context hook (top-band suitable)');
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+// ---------------------------------------------------------------------------
+// HELPERS
+// ---------------------------------------------------------------------------
 
 export function getQuotationLabSourceLabel(sourceId: QuotationLabSourceId): string {
   const labels: Record<QuotationLabSourceId, string> = {
