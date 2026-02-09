@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
-import { HomePage } from './pages/HomePage';
 import { SubjectsPage } from './pages/SubjectsPage';
 import { SubjectDetailPageWithTier } from './pages/SubjectDetailPageWithTier';
 import { QuizPlayerPage } from './pages/QuizPlayerPage';
@@ -162,7 +161,7 @@ function App() {
           element={
             <AppShell>
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<SubjectsPage />} />
                 <Route path="/discover" element={<DiscoverPage />} />
                 <Route path="/playlists/:playlistId" element={<PlaylistDetailPage />} />
                 <Route path="/library" element={<LibraryPage />} />

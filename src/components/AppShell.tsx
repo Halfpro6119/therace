@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Trophy, User, Sun, Moon, Zap, Compass } from 'lucide-react';
+import { BookOpen, Trophy, User, Sun, Moon, Zap, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { StreakFlame } from './StreakFlame';
 import { storage } from '../utils/storage';
@@ -30,9 +30,8 @@ export function AppShell({ children }: AppShellProps) {
   };
 
   const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: BookOpen, label: 'Subjects', path: '/' },
     { icon: Compass, label: 'Discover', path: '/discover' },
-    { icon: BookOpen, label: 'Subjects', path: '/subjects' },
     { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
     { icon: User, label: 'Profile', path: '/profile' },
   ];

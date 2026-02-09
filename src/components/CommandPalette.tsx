@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Home, Compass, BookOpen, User, Trophy, Library, X } from 'lucide-react';
+import { Search, Compass, BookOpen, User, Trophy, Library, X } from 'lucide-react';
 import { db } from '../db/client';
 import { Subject, Quiz } from '../types';
 
@@ -63,10 +63,10 @@ export function CommandPalette() {
 
   const navigationItems: CommandItem[] = [
     {
-      id: 'home',
-      label: 'Home',
-      description: 'Return to dashboard',
-      icon: Home,
+      id: 'subjects',
+      label: 'Subjects',
+      description: 'Browse all subjects',
+      icon: BookOpen,
       action: () => {
         navigate('/');
         setIsOpen(false);
@@ -79,16 +79,6 @@ export function CommandPalette() {
       icon: Compass,
       action: () => {
         navigate('/discover');
-        setIsOpen(false);
-      }
-    },
-    {
-      id: 'subjects',
-      label: 'Subjects',
-      description: 'Browse all subjects',
-      icon: BookOpen,
-      action: () => {
-        navigate('/subjects');
         setIsOpen(false);
       }
     },
