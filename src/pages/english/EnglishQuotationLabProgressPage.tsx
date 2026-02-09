@@ -65,9 +65,10 @@ export function EnglishQuotationLabProgressPage() {
     return quotes.map(q => {
       const count = quoteFamiliarity[q.id] ?? 0;
       const level = familiarityLevel(count);
-      return { quote: q, count, ...level };
+      const confidence = storage.getQuoteConfidence(validSource, q.id);
+      return { quote: q, count, confidence, ...level };
     });
-  }, [quotes, quoteFamiliarity]);
+  }, [quotes, quoteFamiliarity, validSource]);
 
   /** Theme confidence: aggregate familiarity by theme */
   const themeConfidenceMap = useMemo(() => {
@@ -118,17 +119,21 @@ export function EnglishQuotationLabProgressPage() {
           Per quote
         </h2>
         <p className="text-xs mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          ✔ Selected accurately · ✔ Analysed at Grade 8+ · ⚠ Weak context use
+          Green = confidently used · Amber = partial · Red = avoided or misused
         </p>
         <div className="space-y-2">
-          {heatmapData.map(({ quote: q, count, label: levelLabel, color, pct }) => {
+          {heatmapData.map(({ quote: q, count, confidence, label: levelLabel, color, pct }) => {
             const isWeak = weakThemes.some(t => q.themes.some(th => th.toLowerCase().includes(t.toLowerCase())));
             const status = count >= 2 && !isWeak ? 'ok' : count >= 1 ? 'progress' : 'weak';
+            const confColor = confidence === 'green' ? '#10B981' : confidence === 'amber' ? '#F59E0B' : '#EF4444';
             return (
               <div key={q.id} className="flex items-center gap-3">
-                <span className="text-base flex-shrink-0" aria-hidden>
-                  {status === 'ok' ? '✔' : status === 'weak' ? '⚠' : '🔁'}
-                </span>
+                <span
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{ background: confColor }}
+                  title={confidence === 'green' ? 'Confidently used' : confidence === 'amber' ? 'Partial understanding' : 'Avoided or misused'}
+                  aria-hidden
+                />
                 <div
                   className="w-20 h-5 rounded flex-shrink-0 overflow-hidden"
                   style={{ background: 'rgb(var(--surface-2))' }}

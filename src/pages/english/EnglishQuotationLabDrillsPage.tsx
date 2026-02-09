@@ -22,6 +22,7 @@ import {
   QUOTATION_LAB_SOURCE_IDS,
 } from '../../config/quotationLabData';
 import { MISUSE_REASON_OPTIONS } from '../../config/quotationLabDrillGenerator';
+import { storage } from '../../utils/storage';
 
 function isExplain(d: QuotationDrillItem): d is QuotationDrillExplain {
   return d.type === 'explainQuote';
@@ -372,7 +373,12 @@ export function EnglishQuotationLabDrillsPage() {
               {!showWhy ? (
                 <button
                   type="button"
-                  onClick={() => setShowWhy(true)}
+                  onClick={() => {
+                    setShowWhy(true);
+                    if (selectedQuoteId && selectedQuoteId !== drill.bestQuoteId) {
+                      storage.recordQuoteMisuse(validSource, selectedQuoteId);
+                    }
+                  }}
                   className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
                   style={{ background: 'rgb(var(--accent))', color: 'white' }}
                 >
@@ -517,7 +523,12 @@ export function EnglishQuotationLabDrillsPage() {
               {!showWhy ? (
                 <button
                   type="button"
-                  onClick={() => setShowWhy(true)}
+                  onClick={() => {
+                    setShowWhy(true);
+                    if (selectedQuoteId && selectedQuoteId !== drill.bestQuoteId) {
+                      storage.recordQuoteMisuse(validSource, selectedQuoteId);
+                    }
+                  }}
                   className="mt-3 flex items-center gap-2 text-sm font-medium"
                   style={{ color: 'rgb(var(--accent))' }}
                 >
@@ -607,7 +618,13 @@ export function EnglishQuotationLabDrillsPage() {
               {!showWhy ? (
                 <button
                   type="button"
-                  onClick={() => setShowWhy(true)}
+                  onClick={() => {
+                    setShowWhy(true);
+                    const correctSet = new Set(drill.correctReasonIds);
+                    const selectedSet = new Set(selectedReasons);
+                    const wrong = selectedReasons.some(r => !correctSet.has(r)) || drill.correctReasonIds.some(r => !selectedSet.has(r));
+                    if (wrong) storage.recordQuoteMisuse(validSource, drill.quoteId);
+                  }}
                   className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
                   style={{ background: 'rgb(var(--accent))', color: 'white' }}
                 >

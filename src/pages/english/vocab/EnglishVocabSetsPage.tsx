@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Search, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Search, ChevronRight, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { vocabApi, getCurrentUserId } from '../../../utils/vocab';
 import type { VocabSet, VocabSetMode, VocabTier } from '../../../types/vocab';
 
-const MODE_OPTIONS: { value: VocabSetMode | ''; label: string }[] = [
+const MODE_OPTIONS: { value: VocabSetMode | 'language' | ''; label: string }[] = [
   { value: '', label: 'All' },
+  { value: 'language', label: 'Language' },
   { value: 'language_p1', label: 'Lang P1' },
   { value: 'language_p2', label: 'Lang P2' },
   { value: 'literature', label: 'Literature' },
@@ -22,12 +23,13 @@ const TIER_OPTIONS: { value: VocabTier | ''; label: string }[] = [
 export function EnglishVocabSetsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const modeParam = searchParams.get('mode') as VocabSetMode | null;
+  const modeParam = searchParams.get('mode') as VocabSetMode | 'language' | null;
   const sprintParam = searchParams.get('sprint') === '1';
+  const weakParam = searchParams.get('weak') === '1';
 
   const [sets, setSets] = useState<VocabSet[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState<VocabSetMode | ''>(modeParam || '');
+  const [mode, setMode] = useState<VocabSetMode | 'language' | ''>(modeParam || '');
   const [theme, setTheme] = useState('');
   const [tier, setTier] = useState<VocabTier | ''>('');
   const [difficultyMin, setDifficultyMin] = useState(1);
@@ -39,6 +41,10 @@ export function EnglishVocabSetsPage() {
   useEffect(() => {
     if (modeParam) setMode(modeParam);
   }, [modeParam]);
+  useEffect(() => {
+    const t = searchParams.get('theme');
+    if (t != null) setTheme(t);
+  }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,7 +88,9 @@ export function EnglishVocabSetsPage() {
 
   const themes = Array.from(new Set(sets.map(s => s.theme_tag))).sort();
   const filtered = sets.filter(s => {
-    if (mode && s.mode !== mode) return false;
+    if (mode === 'language') {
+      if (s.mode !== 'language_p1' && s.mode !== 'language_p2') return false;
+    } else if (mode && s.mode !== mode) return false;
     if (theme && s.theme_tag !== theme) return false;
     if (tier && s.tier !== tier) return false;
     if (search) {
@@ -113,6 +121,39 @@ export function EnglishVocabSetsPage() {
         </div>
       </div>
 
+      {weakParam && sets.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl border p-4"
+          style={{ background: 'rgba(245, 158, 11, 0.12)', borderColor: 'rgba(245, 158, 11, 0.3)' }}
+        >
+          <h2 className="font-bold mb-2 flex items-center gap-2" style={{ color: '#F59E0B' }}>
+            <Zap size={20} />
+            My Weak Words
+          </h2>
+          <p className="text-sm mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+            Start a session focused on words below 60% mastery across all sets.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/english-campus/vocab/session', {
+              state: {
+                setIds: sets.map(s => s.id),
+                length: 20,
+                mode: 'spell' as const,
+                weakOnly: true,
+              },
+            })}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white"
+            style={{ background: '#F59E0B' }}
+          >
+            <Zap size={18} />
+            Start weak words session
+          </button>
+        </motion.section>
+      )}
+
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,7 +167,7 @@ export function EnglishVocabSetsPage() {
             </label>
             <select
               value={mode}
-              onChange={e => setMode(e.target.value as VocabSetMode | '')}
+              onChange={e => setMode(e.target.value as VocabSetMode | 'language' | '')}
               className="w-full rounded-lg border px-3 py-2 text-sm"
               style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
             >

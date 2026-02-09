@@ -3,7 +3,7 @@
  */
 
 import { supabase } from '../../db/client';
-import type { VocabSet, VocabWord, VocabMastery, VocabFixItEntry, VocabAttempt } from '../../types/vocab';
+import type { VocabSet, VocabWord, VocabMastery, VocabFixItEntry, VocabAttempt, VocabSetMode, VocabTier, VocabConnotation, VocabWordClass } from '../../types/vocab';
 import { getMasteryDelta, getStreakDelta, shouldAddToFixIt } from './mastery';
 import { gradeSpellAttempt } from './grading';
 
@@ -244,5 +244,101 @@ export const vocabApi = {
       },
       { onConflict: 'user_id,word_id' }
     );
+  },
+
+  // Admin CRUD (requires Supabase auth with policies for authenticated users)
+  async createSet(payload: { name: string; mode: VocabSetMode; theme_tag: string; tier: VocabTier }): Promise<VocabSet> {
+    const { data, error } = await supabase
+      .from('vocab_sets')
+      .insert({
+        name: payload.name,
+        mode: payload.mode,
+        theme_tag: payload.theme_tag,
+        tier: payload.tier,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return mapSet(data);
+  },
+
+  async updateSet(id: string, payload: Partial<{ name: string; mode: VocabSetMode; theme_tag: string; tier: VocabTier }>): Promise<void> {
+    const { error } = await supabase.from('vocab_sets').update(payload).eq('id', id);
+    if (error) throw error;
+  },
+
+  async deleteSet(id: string): Promise<void> {
+    const { error } = await supabase.from('vocab_sets').delete().eq('id', id);
+    if (error) throw error;
+  },
+
+  async createWord(payload: {
+    set_id: string;
+    word: string;
+    pronunciation?: string | null;
+    definition: string;
+    synonyms?: string[];
+    antonyms?: string[];
+    connotation: VocabConnotation;
+    word_class: VocabWordClass;
+    example_sentence: string;
+    common_misspellings?: string[];
+    difficulty?: number;
+    tags?: string[];
+  }): Promise<VocabWord> {
+    const { data, error } = await supabase
+      .from('vocab_words')
+      .insert({
+        set_id: payload.set_id,
+        word: payload.word.trim(),
+        pronunciation: payload.pronunciation ?? null,
+        definition: payload.definition,
+        synonyms: payload.synonyms ?? [],
+        antonyms: payload.antonyms ?? [],
+        connotation: payload.connotation,
+        word_class: payload.word_class,
+        example_sentence: payload.example_sentence,
+        common_misspellings: payload.common_misspellings ?? [],
+        difficulty: Math.min(5, Math.max(1, payload.difficulty ?? 3)),
+        tags: payload.tags ?? [],
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return mapWord(data);
+  },
+
+  async updateWord(id: string, payload: Partial<{
+    word: string;
+    pronunciation: string | null;
+    definition: string;
+    synonyms: string[];
+    antonyms: string[];
+    connotation: VocabConnotation;
+    word_class: VocabWordClass;
+    example_sentence: string;
+    common_misspellings: string[];
+    difficulty: number;
+    tags: string[];
+  }>): Promise<void> {
+    const updates: any = {};
+    if (payload?.word !== undefined) updates.word = payload.word.trim();
+    if (payload?.pronunciation !== undefined) updates.pronunciation = payload.pronunciation;
+    if (payload?.definition !== undefined) updates.definition = payload.definition;
+    if (payload?.synonyms !== undefined) updates.synonyms = payload.synonyms;
+    if (payload?.antonyms !== undefined) updates.antonyms = payload.antonyms;
+    if (payload?.connotation !== undefined) updates.connotation = payload.connotation;
+    if (payload?.word_class !== undefined) updates.word_class = payload.word_class;
+    if (payload?.example_sentence !== undefined) updates.example_sentence = payload.example_sentence;
+    if (payload?.common_misspellings !== undefined) updates.common_misspellings = payload.common_misspellings;
+    if (payload?.difficulty !== undefined) updates.difficulty = Math.min(5, Math.max(1, payload.difficulty));
+    if (payload?.tags !== undefined) updates.tags = payload.tags;
+    const { error } = await supabase.from('vocab_words').update(updates).eq('id', id);
+    if (error) throw error;
+  },
+
+  async deleteWord(id: string): Promise<void> {
+    const { error } = await supabase.from('vocab_words').delete().eq('id', id);
+    if (error) throw error;
   },
 };

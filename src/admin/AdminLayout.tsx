@@ -1,6 +1,6 @@
 import { Component, useState, useEffect, ReactNode, Suspense } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Lock, Home, BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, Shield, LogOut, List, Activity, Image, Layout, ListOrdered, AlertCircle } from 'lucide-react';
+import { Lock, Home, BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, Shield, LogOut, List, Activity, Image, Layout, ListOrdered, AlertCircle, BookMarked, Quote, Star, BarChart3 } from 'lucide-react';
 
 const ADMIN_PASSCODE = 'admin123';
 const PASSCODE_KEY = 'grade9_admin_auth';
@@ -144,6 +144,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { path: '/admin/playlists', icon: List, label: 'Playlists' },
     { path: '/admin/tools', icon: Wrench, label: 'Tools' },
     { path: '/admin/audit', icon: Shield, label: 'Coverage Audit' },
+    { path: '/admin/vocab/sets', icon: BookMarked, label: 'Vocab Lab' },
+    { path: '/admin/quotation/audit', icon: BarChart3, label: 'Quotation Audit' },
+    { path: '/admin/quotation/gold', icon: Star, label: 'Gold Quotes' },
   ];
 
   return (

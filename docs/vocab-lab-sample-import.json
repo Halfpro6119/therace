@@ -1,0 +1,123 @@
+{
+  "set": {
+    "name": "Rhetoric Basics",
+    "mode": "language_p2",
+    "theme_tag": "Rhetoric",
+    "tier": "core"
+  },
+  "words": [
+    {
+      "word": "inevitable",
+      "definition": "Certain to happen; unavoidable.",
+      "synonyms": ["unavoidable", "inescapable", "certain"],
+      "antonyms": ["avoidable", "uncertain"],
+      "connotation": "neutral",
+      "word_class": "adj",
+      "example_sentence": "Change is inevitable in life.",
+      "difficulty": 2,
+      "tags": ["formal"],
+      "common_misspellings": ["inevitible", "inevitabel"]
+    },
+    {
+      "word": "persuasive",
+      "definition": "Good at convincing others to believe or do something.",
+      "synonyms": ["convincing", "compelling", "cogent"],
+      "antonyms": ["weak", "unconvincing"],
+      "connotation": "positive",
+      "word_class": "adj",
+      "example_sentence": "She gave a persuasive speech on recycling.",
+      "difficulty": 2,
+      "tags": []
+    },
+    {
+      "word": "emphasise",
+      "definition": "To give special importance or prominence to something.",
+      "synonyms": ["stress", "highlight", "underline"],
+      "antonyms": ["understate", "play down"],
+      "connotation": "neutral",
+      "word_class": "verb",
+      "example_sentence": "The teacher emphasised the need for revision.",
+      "difficulty": 1,
+      "tags": [],
+      "common_misspellings": ["emphasize"]
+    },
+    {
+      "word": "controversial",
+      "definition": "Causing disagreement or discussion.",
+      "synonyms": ["contentious", "debated", "disputed"],
+      "antonyms": ["uncontroversial", "agreed"],
+      "connotation": "neutral",
+      "word_class": "adj",
+      "example_sentence": "The new policy was highly controversial.",
+      "difficulty": 2,
+      "tags": []
+    },
+    {
+      "word": "significant",
+      "definition": "Sufficiently great or important to be worthy of attention.",
+      "synonyms": ["important", "notable", "meaningful"],
+      "antonyms": ["insignificant", "trivial"],
+      "connotation": "neutral",
+      "word_class": "adj",
+      "example_sentence": "There was a significant increase in sales.",
+      "difficulty": 1,
+      "tags": []
+    },
+    {
+      "word": "analyse",
+      "definition": "To examine in detail the structure of something.",
+      "synonyms": ["examine", "study", "evaluate"],
+      "antonyms": ["ignore", "overlook"],
+      "connotation": "neutral",
+      "word_class": "verb",
+      "example_sentence": "We need to analyse the data before deciding.",
+      "difficulty": 1,
+      "tags": [],
+      "common_misspellings": ["analyze"]
+    },
+    {
+      "word": "convey",
+      "definition": "To make an idea or feeling known to someone.",
+      "synonyms": ["communicate", "express", "transmit"],
+      "antonyms": ["conceal", "hide"],
+      "connotation": "neutral",
+      "word_class": "verb",
+      "example_sentence": "Her tone conveyed her disappointment.",
+      "difficulty": 2,
+      "tags": []
+    },
+    {
+      "word": "compelling",
+      "definition": "Evoking interest or attention in a powerful way.",
+      "synonyms": ["gripping", "fascinating", "persuasive"],
+      "antonyms": ["boring", "weak"],
+      "connotation": "positive",
+      "word_class": "adj",
+      "example_sentence": "The documentary made a compelling case.",
+      "difficulty": 3,
+      "tags": []
+    },
+    {
+      "word": "rhetoric",
+      "definition": "The art of effective or persuasive speaking or writing.",
+      "synonyms": ["oratory", "eloquence", "persuasion"],
+      "antonyms": [],
+      "connotation": "neutral",
+      "word_class": "noun",
+      "example_sentence": "Politicians often use rhetoric to win support.",
+      "difficulty": 3,
+      "tags": ["formal"]
+    },
+    {
+      "word": "audience",
+      "definition": "The people who watch, read or listen to something.",
+      "synonyms": ["viewers", "readers", "listeners"],
+      "antonyms": [],
+      "connotation": "neutral",
+      "word_class": "noun",
+      "example_sentence": "The audience applauded at the end.",
+      "difficulty": 1,
+      "tags": []
+    }
+  ]
+}

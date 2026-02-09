@@ -23,12 +23,14 @@ function shuffle<T>(arr: T[]): T[] {
 /**
  * Bucket words into due (next_due <= now or null with existing mastery), weak (mastery < 60), new (no mastery).
  * Then interleave by ratio 50% due, 30% weak, 20% new (by availability).
+ * When weakOnly is true, returns only weak words (or due/new if no weak words).
  */
 export function selectSessionWords(
   words: VocabWord[],
   masteryByWordId: Map<string, VocabMastery>,
   limit: number,
-  now: Date = new Date()
+  now: Date = new Date(),
+  weakOnly = false
 ): VocabSessionItem[] {
   const due: VocabSessionItem[] = [];
   const weak: VocabSessionItem[] = [];
@@ -64,6 +66,13 @@ export function selectSessionWords(
   const shuffledWeak = shuffle(weak);
   const shuffledNew = shuffle(newWords);
   const shuffledRest = shuffle(rest);
+
+  if (weakOnly && shuffledWeak.length > 0) {
+    return shuffle(shuffledWeak).slice(0, limit);
+  }
+  if (weakOnly) {
+    return shuffle([...shuffledDue, ...shuffledNew]).slice(0, limit);
+  }
 
   const nDue = Math.min(shuffledDue.length, Math.ceil(limit * DUE_RATIO));
   const nWeak = Math.min(shuffledWeak.length, Math.ceil(limit * WEAK_RATIO));

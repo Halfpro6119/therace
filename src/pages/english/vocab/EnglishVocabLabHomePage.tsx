@@ -117,7 +117,7 @@ export function EnglishVocabLabHomePage() {
           >
             <button
               type="button"
-              onClick={() => navigate('/english-campus/vocab/sets?mode=language_p1')}
+              onClick={() => navigate('/english-campus/vocab/sets?mode=language')}
               className="w-full text-left"
             >
               <div
@@ -284,7 +284,7 @@ export function EnglishVocabLabHomePage() {
           >
             <button
               type="button"
-              onClick={() => navigate('/english-campus/vocab/session?sprint=1')}
+              onClick={() => navigate('/english-campus/vocab/sets?sprint=1')}
               className="w-full text-left"
             >
               <div
@@ -313,6 +313,18 @@ export function EnglishVocabLabHomePage() {
       {!userId && !loading && (
         <p className="text-sm text-center" style={{ color: 'rgb(var(--muted))' }}>
           Sign in to save progress and track mastery.
+        </p>
+      )}
+
+      {!loading && (
+        <p className="text-sm text-center" style={{ color: 'rgb(var(--muted))' }}>
+          <button
+            type="button"
+            onClick={() => navigate('/english-campus/vocab/heatmap')}
+            className="underline hover:no-underline"
+          >
+            View heatmap
+          </button>
         </p>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../db/client';
-import { BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, TrendingUp, BarChart3 } from 'lucide-react';
+import { BookOpen, Layers, Tag, FileText, Database, Upload, Wrench, TrendingUp, BarChart3, Star } from 'lucide-react';
 
 interface Stats {
   subjects: number;
@@ -62,6 +62,8 @@ export function AdminDashboard() {
     { label: 'Bulk Import', description: 'Import prompts from CSV or JSON', icon: Upload, link: '/admin/import', color: 'blue' },
     { label: 'Batch Tools', description: 'Deduplicate and create quizzes', icon: Wrench, link: '/admin/tools', color: 'purple' },
     { label: 'Create Quiz', description: 'Build a new quiz manually', icon: Database, link: '/admin/quizzes', color: 'green' },
+    { label: 'Quotation Audit', description: 'Quote usage stats and quality audit', icon: BarChart3, link: '/admin/quotation/audit', color: 'orange' },
+    { label: 'Gold Quotes', description: 'Manage gold quotes (8–12 per text)', icon: Star, link: '/admin/quotation/gold', color: 'yellow' },
   ];
 
   if (loading) {

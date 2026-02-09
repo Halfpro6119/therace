@@ -28,16 +28,25 @@ function computeExaminerFeedback(
     feedback.push({ id: 'wc', message: 'Too long. Keep it tight — 4–5 sentences.', type: 'warning' });
   }
 
-  // 2. Quotation — is it embedded? (short phrase from quote)
+  // 2. Quotation — embedded vs dropped vs floating vs awkward
   const quoteWords = quoteText.replace(/[“”'""]/g, '').split(/\s+/).filter(Boolean);
   const shortQuote = quoteWords.length > 4 ? quoteWords.slice(0, 4).join(' ') : quoteText;
   const contentNorm = content.toLowerCase().replace(/[“”'""]/g, '');
   const quoteNorm = shortQuote.toLowerCase();
   const hasQuote = contentNorm.includes(quoteNorm) || quoteWords.some(w => w.length > 4 && contentNorm.includes(w.toLowerCase()));
   if (!hasQuote && wordCount > 20) {
-    feedback.push({ id: 'quote', message: 'Embed a short quotation to support your argument.', type: 'error' });
+    feedback.push({ id: 'quote', message: 'Dropped quotation — embed a short phrase from the text to support your argument.', type: 'error' });
   } else if (hasQuote) {
-    feedback.push({ id: 'quote', message: 'Quote is embedded.', type: 'success' });
+    const floatingPatterns = /\b(the quote|this quote|the phrase)\s+[“'"]|\.\s*["'][^"']+["']\s*(suggests|shows|means)/i;
+    const quotedChunk = content.match(/["'][^"']+["']/g);
+    const veryLongChunk = quotedChunk?.some(m => m.split(/\s+/).length > 8);
+    if (floatingPatterns.test(content) || (quotedChunk?.some(m => m.length > 55))) {
+      feedback.push({ id: 'quote', message: 'Floating quote — weave the phrase into your own sentence instead of dropping it in as a separate chunk.', type: 'warning' });
+    } else if (veryLongChunk) {
+      feedback.push({ id: 'quote', message: 'Awkward embedding — use a shorter extract (a few words) so the quote fits the sentence.', type: 'warning' });
+    } else {
+      feedback.push({ id: 'quote', message: 'Quote is embedded.', type: 'success' });
+    }
   }
 
   // 3. Method–purpose link (AO2)

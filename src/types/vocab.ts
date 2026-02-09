@@ -79,6 +79,8 @@ export interface VocabSessionConfig {
   length: 10 | 20 | 40 | 'mastery_sprint';
   mode: VocabAttemptMode;
   isFixIt?: boolean;
+  /** When true, prioritize weak words (mastery < 60) only */
+  weakOnly?: boolean;
 }
 
 /** One item in a session (word + optional mastery) */

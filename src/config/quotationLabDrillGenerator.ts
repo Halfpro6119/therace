@@ -24,6 +24,10 @@ export const MISUSE_REASON_OPTIONS: { id: QuotationMisuseReasonId; label: string
   { id: 'technique-spotting', label: 'Technique spotting only' },
   { id: 'over-quoting', label: 'Over-quoting' },
   { id: 'no-focus', label: 'No focus on question' },
+  { id: 'too-narrative', label: 'Too narrative' },
+  { id: 'no-method', label: 'No method' },
+  { id: 'too-specific', label: 'Too specific' },
+  { id: 'repeats-question', label: 'Repeats the question' },
 ];
 
 /** Map commonMisuse text to reason ids (heuristic). */
@@ -36,13 +40,20 @@ function misuseToReasonIds(commonMisuse: string): QuotationMisuseReasonId[] {
   if (lower.includes('technique') || lower.includes('method') || lower.includes('spotting')) ids.push('technique-spotting');
   if (lower.includes('over-quot') || lower.includes('whole line') || lower.includes('embed')) ids.push('over-quoting');
   if (lower.includes('focus') || lower.includes('irrelevant') || lower.includes('without linking')) ids.push('no-focus');
+  if (lower.includes('narrative') || lower.includes('retelling') || lower.includes('descriptive')) ids.push('too-narrative');
+  if (lower.includes('method') && (lower.includes('without') || lower.includes('no ') || lower.includes('lack'))) ids.push('no-method');
+  if (lower.includes('specific') || lower.includes('narrow')) ids.push('too-specific');
+  if (lower.includes('repeat') || lower.includes('rephrase') || lower.includes('restate')) ids.push('repeats-question');
   if (ids.length === 0) ids.push('over-simplified', 'no-judgement');
   return ids.slice(0, 3);
 }
 
 /** Build option ids list for a drill (use correct ones + fill with others). */
 function reasonOptionIdsFor(correctIds: QuotationMisuseReasonId[]): QuotationMisuseReasonId[] {
-  const all: QuotationMisuseReasonId[] = ['over-simplified', 'no-judgement', 'no-development', 'technique-spotting', 'over-quoting', 'no-focus'];
+  const all: QuotationMisuseReasonId[] = [
+    'over-simplified', 'no-judgement', 'no-development', 'technique-spotting', 'over-quoting', 'no-focus',
+    'too-narrative', 'no-method', 'too-specific', 'repeats-question',
+  ];
   const rest = all.filter(id => !correctIds.includes(id));
   return [...correctIds, ...rest].slice(0, 4);
 }
@@ -62,20 +73,27 @@ function themeLabel(theme: string): string {
   return theme.charAt(0).toUpperCase() + theme.slice(1);
 }
 
+/** Student-facing quote set: exclude archived (dead weight). */
+function quotesForDrills(quotes: QuotationLabQuote[]): QuotationLabQuote[] {
+  return quotes.filter(q => q.qualityTier !== 'archived');
+}
+
 /**
  * Generate all drill types from quote bank.
- * Pipeline: Quote Selection, One-Sentence, Grade Upgrade, Link Two, Misuse Detection, Context Weave.
+ * Pipeline: Quote Selection (prioritised), Misuse Detection, One-Sentence, Grade Upgrade, Link Two, Context Weave.
+ * Archived quotes are excluded from drills.
  */
 export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationDrillItem[] {
   const drills: QuotationDrillItem[] = [];
+  const eligible = quotesForDrills(quotes);
   const bySource = new Map<QuotationLabSourceId, QuotationLabQuote[]>();
-  for (const q of quotes) {
+  for (const q of eligible) {
     const list = bySource.get(q.sourceId) ?? [];
     list.push(q);
     bySource.set(q.sourceId, list);
   }
 
-  // ---- 1. Quote Selection (AO1) — per source, per theme with ≥4 quotes ----
+  // ---- 1. Quote Selection (AO1) — per source, per theme with ≥4 quotes; prefer anchor/gold ----
   bySource.forEach((sourceQuotes, sourceId) => {
     const byTheme = new Map<string, QuotationLabQuote[]>();
     for (const q of sourceQuotes) {
@@ -90,7 +108,10 @@ export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationD
       if (themeQuotes.length < 4) return;
       const unique = Array.from(new Map(themeQuotes.map(q => [q.id, q])).values());
       if (unique.length < 4) return;
-      const best = unique.find(q => q.bestUsedFor?.some(b => b.toLowerCase().includes(themeKey))) ?? unique[0];
+      const anchorFirst = [...unique].sort((a, b) => (b.qualityTier === 'anchor' ? 1 : 0) - (a.qualityTier === 'anchor' ? 1 : 0));
+      const best = anchorFirst.find(q => q.bestUsedFor?.some(b => b.toLowerCase().includes(themeKey)))
+        ?? anchorFirst.find(q => q.bestFor?.some(b => b.toLowerCase().includes(themeKey)))
+        ?? anchorFirst[0];
       const options = unique
         .sort(() => Math.random() - 0.5)
         .slice(0, 4);
@@ -115,7 +136,7 @@ export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationD
   });
 
   // ---- 2. One-Sentence Analysis (AO2) — per quote, per theme ----
-  quotes.forEach(q => {
+  eligible.forEach(q => {
     const themes = q.themes.length ? q.themes : ['meaning'];
     themes.slice(0, 2).forEach((theme, i) => {
       const themeName = themeLabel(theme);
@@ -132,7 +153,7 @@ export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationD
   });
 
   // ---- 3. Grade Upgrade — per quote (core preferred) ----
-  quotes.forEach(q => {
+  eligible.forEach(q => {
     const weak = weakSentenceFromQuote(q);
     const focus = q.grade9Insight ?? q.deploymentTip ?? `Add method (${q.method}), precision, and judgement.`;
     drills.push({
@@ -172,7 +193,7 @@ export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationD
   });
 
   // ---- 5. Misuse Detection — per quote with commonMisuse ----
-  quotes.forEach(q => {
+  eligible.forEach(q => {
     if (!q.commonMisuse) return;
     const correctIds = misuseToReasonIds(q.commonMisuse);
     const optionIds = reasonOptionIdsFor(correctIds);
@@ -190,7 +211,7 @@ export function generateQuotationDrills(quotes: QuotationLabQuote[]): QuotationD
   });
 
   // ---- 6. Context Weave (AO3) — per quote with contextHook ----
-  quotes.forEach(q => {
+  eligible.forEach(q => {
     if (!q.contextHook) return;
     drills.push({
       type: 'contextWeave',

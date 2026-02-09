@@ -7,7 +7,16 @@ import type {
   EnglishLiteratureDraft,
   QuotationLabProgress,
   QuotationLabSourceId,
+  QuoteConfidenceLevel,
 } from '../types/englishCampus';
+import type {
+  ScienceLabMastery,
+  ScienceLabSession,
+  ScienceSubject,
+  FlashcardMastery,
+  TopicMastery,
+  ConfidenceLevel,
+} from '../types/scienceLab';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -27,6 +36,11 @@ const STORAGE_KEYS = {
   ENGLISH_QUOTATION_LAB_PROGRESS: 'grade9sprint_english_quotation_lab_progress',
   ENGLISH_QUOTATION_LAB_PRIORITY_QUOTES: 'grade9sprint_english_quotation_lab_priority_quotes',
   LITERATURE_MODEL_DRILL_COMPLETED: 'grade9sprint_literature_model_drill_completed',
+  // Science Lab
+  SCIENCE_LAB_MASTERY: 'grade9sprint_science_lab_mastery',
+  SCIENCE_LAB_SESSIONS: 'grade9sprint_science_lab_sessions',
+  SCIENCE_LAB_FLASHCARD_MASTERY: 'grade9sprint_science_lab_flashcard_mastery',
+  SCIENCE_LAB_TOPIC_MASTERY: 'grade9sprint_science_lab_topic_mastery',
 };
 
 /**
@@ -340,8 +354,40 @@ export const storage = {
       aoBalance: existing?.aoBalance ?? { AO1: 0.4, AO2: 0.4, AO3: 0.2 },
       weakThemes: existing?.weakThemes ?? [],
       lastUpdated: new Date().toISOString(),
+      quoteMisuseCount: existing?.quoteMisuseCount ?? {},
+      quoteConfidence: existing?.quoteConfidence ?? {},
     };
     storage.saveQuotationLabProgress(progress);
+  },
+
+  /** Record that a quote was chosen but later flagged as weak (misuse tracking for heatmap). */
+  recordQuoteMisuse: (sourceId: QuotationLabSourceId, quoteId: string): void => {
+    const existing = storage.getQuotationLabProgressBySource(sourceId);
+    const quoteMisuseCount = { ...(existing?.quoteMisuseCount ?? {}) };
+    quoteMisuseCount[quoteId] = (quoteMisuseCount[quoteId] ?? 0) + 1;
+    const progress: QuotationLabProgress = {
+      sourceId,
+      quoteFamiliarity: existing?.quoteFamiliarity ?? {},
+      aoBalance: existing?.aoBalance ?? { AO1: 0.4, AO2: 0.4, AO3: 0.2 },
+      weakThemes: existing?.weakThemes ?? [],
+      lastUpdated: new Date().toISOString(),
+      quoteMisuseCount,
+      quoteConfidence: existing?.quoteConfidence ?? {},
+    };
+    storage.saveQuotationLabProgress(progress);
+  },
+
+  /** Get quote confidence for heatmap: green = confident, amber = partial, red = avoided/misused. */
+  getQuoteConfidence: (sourceId: QuotationLabSourceId, quoteId: string): QuoteConfidenceLevel => {
+    const prog = storage.getQuotationLabProgressBySource(sourceId);
+    const fam = prog?.quoteFamiliarity?.[quoteId] ?? 0;
+    const misuse = prog?.quoteMisuseCount?.[quoteId] ?? 0;
+    const stored = prog?.quoteConfidence?.[quoteId];
+    if (stored) return stored;
+    if (misuse >= 2) return 'red';
+    if (fam >= 2 && misuse === 0) return 'green';
+    if (fam >= 1 || misuse === 1) return 'amber';
+    return 'red';
   },
 
   /** Priority quotes (saved by student for quick access). */
@@ -357,6 +403,202 @@ export const storage = {
   },
   isPriorityQuote: (quoteId: string): boolean => {
     return storage.getPriorityQuoteIds().includes(quoteId);
+  },
+
+  // —— Science Lab mastery (per subject) ——
+  getScienceLabMastery: (): Record<ScienceSubject, ScienceLabMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  getScienceLabMasteryBySubject: (subject: ScienceSubject): ScienceLabMastery | undefined => {
+    return storage.getScienceLabMastery()[subject];
+  },
+  saveScienceLabMastery: (mastery: ScienceLabMastery): void => {
+    const all = storage.getScienceLabMastery();
+    all[mastery.subject] = mastery;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_MASTERY, JSON.stringify(all));
+  },
+  /** Update mastery for a concept (only increases on correct answers) */
+  updateConceptMastery: (subject: ScienceSubject, conceptId: string, isCorrect: boolean): void => {
+    const existing = storage.getScienceLabMasteryBySubject(subject);
+    const conceptMastery = { ...(existing?.conceptMastery ?? {}) };
+    if (isCorrect) {
+      conceptMastery[conceptId] = Math.min(5, (conceptMastery[conceptId] ?? 0) + 1);
+    }
+    const mastery: ScienceLabMastery = {
+      subject,
+      conceptMastery,
+      equationMastery: existing?.equationMastery ?? {},
+      practicalMastery: existing?.practicalMastery ?? {},
+      questionTypeMastery: existing?.questionTypeMastery ?? {
+        shortAnswer: 0,
+        calculation: 0,
+        explanation: 0,
+        practical: 0,
+        graph: 0,
+        mixed: 0,
+      },
+      topicMastery: existing?.topicMastery ?? {},
+      lastUpdated: new Date().toISOString(),
+    };
+    storage.saveScienceLabMastery(mastery);
+  },
+  /** Update mastery for an equation */
+  updateEquationMastery: (subject: ScienceSubject, equationId: string, isCorrect: boolean): void => {
+    const existing = storage.getScienceLabMasteryBySubject(subject);
+    const equationMastery = { ...(existing?.equationMastery ?? {}) };
+    if (isCorrect) {
+      equationMastery[equationId] = Math.min(5, (equationMastery[equationId] ?? 0) + 1);
+    }
+    const mastery: ScienceLabMastery = {
+      subject,
+      conceptMastery: existing?.conceptMastery ?? {},
+      equationMastery,
+      practicalMastery: existing?.practicalMastery ?? {},
+      questionTypeMastery: existing?.questionTypeMastery ?? {
+        shortAnswer: 0,
+        calculation: 0,
+        explanation: 0,
+        practical: 0,
+        graph: 0,
+        mixed: 0,
+      },
+      topicMastery: existing?.topicMastery ?? {},
+      lastUpdated: new Date().toISOString(),
+    };
+    storage.saveScienceLabMastery(mastery);
+  },
+
+  // —— Science Lab sessions ——
+  getScienceLabSessions: (): ScienceLabSession[] => {
+    const data = localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_SESSIONS);
+    return data ? JSON.parse(data) : [];
+  },
+  saveScienceLabSession: (session: ScienceLabSession): void => {
+    const sessions = storage.getScienceLabSessions();
+    sessions.push(session);
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_SESSIONS, JSON.stringify(sessions));
+  },
+  getScienceLabSessionById: (id: string): ScienceLabSession | undefined => {
+    return storage.getScienceLabSessions().find(s => s.id === id);
+  },
+
+  // —— Flashcard Mastery Tracking ——
+  getFlashcardMastery: (): Record<string, FlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  getFlashcardMasteryById: (flashcardId: string): FlashcardMastery | undefined => {
+    return storage.getFlashcardMastery()[flashcardId];
+  },
+  updateFlashcardMastery: (
+    flashcardId: string,
+    confidenceLevel: ConfidenceLevel,
+    viewed: boolean = true
+  ): void => {
+    const all = storage.getFlashcardMastery();
+    const existing = all[flashcardId] || {
+      flashcardId,
+      confidenceLevel: 1,
+      timesViewed: 0,
+      timesConfident: 0,
+      lastViewed: '',
+      nextReviewDate: '',
+      masteryPercent: 0,
+    };
+
+    if (viewed) {
+      existing.timesViewed += 1;
+      existing.lastViewed = new Date().toISOString();
+    }
+
+    existing.confidenceLevel = confidenceLevel;
+    if (confidenceLevel === 3) {
+      existing.timesConfident += 1;
+    }
+
+    // Calculate mastery: based on confidence and consistency
+    const confidenceWeight = confidenceLevel === 3 ? 0.7 : confidenceLevel === 2 ? 0.4 : 0.1;
+    const consistencyWeight = Math.min(existing.timesConfident / 3, 0.3);
+    existing.masteryPercent = Math.min(100, Math.round((confidenceWeight + consistencyWeight) * 100));
+
+    // Set next review date (spaced repetition)
+    const daysUntilReview = confidenceLevel === 3 ? 7 : confidenceLevel === 2 ? 3 : 1;
+    const nextReview = new Date();
+    nextReview.setDate(nextReview.getDate() + daysUntilReview);
+    existing.nextReviewDate = nextReview.toISOString();
+
+    all[flashcardId] = existing;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+
+  // —— Topic Mastery (for gating quiz access) ——
+  getTopicMastery: (): Record<string, TopicMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  getTopicMasteryByKey: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string
+  ): TopicMastery | undefined => {
+    const key = `${subject}-${paper}-${tier}-${topic}`;
+    return storage.getTopicMastery()[key];
+  },
+  updateTopicMastery: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string,
+    flashcardMastery: number,
+    quickCheckPassed?: boolean
+  ): void => {
+    const all = storage.getTopicMastery();
+    const key = `${subject}-${paper}-${tier}-${topic}`;
+    const existing = all[key] || {
+      subject,
+      paper: paper as 1 | 2,
+      tier: tier as 'Foundation' | 'Higher',
+      topic,
+      flashcardMastery: 0,
+      quickCheckPassed: false,
+      quizUnlocked: false,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    existing.flashcardMastery = flashcardMastery;
+    if (quickCheckPassed !== undefined) {
+      existing.quickCheckPassed = quickCheckPassed;
+    }
+
+    // Unlock quiz if flashcard mastery >= 70% and quick check passed
+    existing.quizUnlocked = existing.flashcardMastery >= 70 && existing.quickCheckPassed;
+    existing.lastUpdated = new Date().toISOString();
+
+    all[key] = existing;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
+  },
+  calculateTopicFlashcardMastery: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string,
+    flashcardIds: string[]
+  ): number => {
+    const mastery = storage.getFlashcardMastery();
+    const topicFlashcards = flashcardIds.filter(id => {
+      const cardMastery = mastery[id];
+      return cardMastery;
+    });
+
+    if (topicFlashcards.length === 0) return 0;
+
+    const totalMastery = topicFlashcards.reduce((sum, id) => {
+      return sum + (mastery[id]?.masteryPercent || 0);
+    }, 0);
+
+    return Math.round(totalMastery / topicFlashcards.length);
   },
 };
 

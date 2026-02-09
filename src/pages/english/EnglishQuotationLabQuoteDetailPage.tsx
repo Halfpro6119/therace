@@ -14,6 +14,7 @@ import {
   getQuotationLabQuoteById,
   getQuotationLabSourceLabel,
   QUOTATION_LAB_SOURCE_IDS,
+  isGoldQuote,
 } from '../../config/quotationLabData';
 import { storage } from '../../utils/storage';
 
@@ -66,8 +67,11 @@ export function EnglishQuotationLabQuoteDetailPage() {
   const quote = quoteId ? getQuotationLabQuoteById(quoteId) : null;
   const label = getQuotationLabSourceLabel(validSource);
 
-  const [openPanel, setOpenPanel] = useState<'meaning' | 'how' | 'grade9' | 'when' | null>('meaning');
+  const [openPanel, setOpenPanel] = useState<'meaning' | 'how' | 'grade9' | 'when' | 'alternative' | 'examiner' | null>(null);
   const isPriority = quoteId ? storage.isPriorityQuote(quoteId) : false;
+  const isGold = quote && isGoldQuote(validSource, quote.id);
+  const isStretch = quote && (quote.difficulty === 'stretch' || quote.difficulty === 'extension');
+  const isAnchor = quote?.qualityTier === 'anchor';
 
   const togglePriority = () => {
     if (quoteId) {
@@ -113,11 +117,37 @@ export function EnglishQuotationLabQuoteDetailPage() {
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
             {label} · {quote.location ?? '—'}
+            {isGold && (
+              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#D97706' }}>
+                Gold quote
+              </span>
+            )}
           </p>
         </div>
       </div>
 
-      {/* Accordion: What It Means, How It Works, Grade 9 Angle, When to Use It */}
+      {/* Exam Mode default: quote + themes + one-line insight only */}
+      <div className="rounded-lg border p-4" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))' }}>
+        <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>{quote.meaning}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {quote.themes.map(t => (
+            <span
+              key={t}
+              className="px-2 py-0.5 rounded text-xs capitalize"
+              style={{ background: 'rgb(var(--surface))', color: 'rgb(var(--text-secondary))' }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+        {quote.themes.length > 1 && (
+          <p className="text-xs mt-2" style={{ color: 'rgb(var(--muted))' }}>
+            Also useful for → {quote.themes.slice(0, 4).join(', ')}
+          </p>
+        )}
+      </div>
+
+      {/* Progressive disclosure: expand for method, Grade 9, when to use, alternative read, examiner preference */}
       <div className="space-y-2">
         <AccordionPanel
           title="What It Means"
@@ -148,6 +178,24 @@ export function EnglishQuotationLabQuoteDetailPage() {
             <p className="italic">Conceptual or alternative reading — extend your analysis.</p>
           )}
         </AccordionPanel>
+        {(quote.alternativeInterpretation || isStretch) && (
+          <AccordionPanel
+            title="You could also argue…"
+            open={openPanel === 'alternative'}
+            onToggle={() => setOpenPanel(openPanel === 'alternative' ? null : 'alternative')}
+          >
+            <p>{quote.alternativeInterpretation ?? 'Consider a different angle on the same evidence — e.g. character vs structure, or sympathy vs critique.'}</p>
+          </AccordionPanel>
+        )}
+        {(quote.whyExaminersPrefer || isAnchor) && (
+          <AccordionPanel
+            title="Why examiners prefer this quote"
+            open={openPanel === 'examiner'}
+            onToggle={() => setOpenPanel(openPanel === 'examiner' ? null : 'examiner')}
+          >
+            <p>{quote.whyExaminersPrefer ?? 'Flexible language, clear symbolic payoff, links to structure or context — use sparingly and precisely.'}</p>
+          </AccordionPanel>
+        )}
         <AccordionPanel
           title="When to Use It"
           open={openPanel === 'when'}
@@ -155,13 +203,16 @@ export function EnglishQuotationLabQuoteDetailPage() {
         >
           {quote.bestUsedFor && quote.bestUsedFor.length > 0 && (
             <ul className="list-disc pl-4 space-y-1">
-              {quote.bestUsedFor.map((use, i) => (
+              {(quote.bestFor ?? quote.bestUsedFor).map((use, i) => (
                 <li key={i}>{use}</li>
               ))}
             </ul>
           )}
           {quote.commonMisuse && (
             <p className="mt-2 text-sm"><strong>When not to use:</strong> {quote.commonMisuse}</p>
+          )}
+          {quote.avoidIf && quote.avoidIf.length > 0 && (
+            <p className="mt-2 text-sm"><strong>Avoid if:</strong> {quote.avoidIf.join('; ')}</p>
           )}
           {(!quote.bestUsedFor || quote.bestUsedFor.length === 0) && !quote.commonMisuse && (
             <p>Use for essays that focus on {quote.themes.join(', ')}.</p>

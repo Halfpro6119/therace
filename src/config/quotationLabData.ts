@@ -8,6 +8,7 @@ import type {
   QuotationLabSourceId,
   QuotationLabClusterId,
   QuotationLabThemeId,
+  QuotationQualityTier,
   QuotationDrillItem,
   QuotationDrillExplain,
   QuotationDrillFinishAnalysis,
@@ -908,6 +909,23 @@ export const QUOTATION_FLEXIBLE_DEPLOYMENT_PROMPTS: QuotationFlexibleDeploymentP
 // HELPERS
 // ---------------------------------------------------------------------------
 
+/** Max words for student-facing quote (embeddable fragment). Poetry line-break exceptions allowed. */
+export const MAX_QUOTE_WORDS_STANDARD = 8;
+
+/** Gold quotes per source (8–12): default in drills, shown first in Exam Mode. */
+export const GOLD_QUOTE_IDS: Record<QuotationLabSourceId, string[]> = {
+  Macbeth: ['M-amb-1', 'M-guilt-1', 'M-guilt-2', 'M-pow-2', 'M-lady-1', 'M-lady-2', 'MAC-AMB-01', 'MAC-GUILT-01', 'MAC-POWER-01'],
+  AChristmasCarol: ['ACC-SELF-01', 'ACC-RED-01', 'ACC-SOC-01'],
+  JekyllHyde: ['JH-DUAL-01', 'JH-HYDE-01'],
+  AnInspectorCalls: ['AIC-RESP-01', 'AIC-POW-01'],
+  Ozymandias: ['Ozy-1', 'Ozy-2', 'OZY-POW-01', 'OZY-POW-03', 'OZY-TIME-01'],
+  London: ['Lon-1'],
+  Exposure: ['Exp-1', 'Exp-2', 'EXP-CON-01', 'EXP-FUT-01'],
+  CheckingOutMeHistory: ['COMH-ID-01', 'COMH-ID-02'],
+  Kamikaze: [],
+  BayonetCharge: ['BC-FEAR-01', 'BC-FEAR-02'],
+};
+
 const QUOTES_BY_SOURCE: Record<QuotationLabSourceId, QuotationLabQuote[]> = (() => {
   const map: Record<string, QuotationLabQuote[]> = {
     Macbeth: [],
@@ -946,8 +964,22 @@ const DRILLS_BY_SOURCE: Record<QuotationLabSourceId, QuotationDrillItem[]> = (()
   return map as Record<QuotationLabSourceId, QuotationDrillItem[]>;
 })();
 
+/** Student-facing: no archived quotes, gold first. Admin can use raw QUOTES_BY_SOURCE. */
 export function getQuotationLabQuotesBySource(sourceId: QuotationLabSourceId): QuotationLabQuote[] {
-  return QUOTES_BY_SOURCE[sourceId] ?? [];
+  const list = (QUOTES_BY_SOURCE[sourceId] ?? []).filter(
+    q => q.qualityTier !== 'archived'
+  );
+  const goldSet = new Set(GOLD_QUOTE_IDS[sourceId] ?? []);
+  return [...list].sort((a, b) => {
+    const aGold = goldSet.has(a.id) ? 1 : 0;
+    const bGold = goldSet.has(b.id) ? 1 : 0;
+    if (bGold !== aGold) return bGold - aGold;
+    return 0;
+  });
+}
+
+export function isGoldQuote(sourceId: QuotationLabSourceId, quoteId: string): boolean {
+  return (GOLD_QUOTE_IDS[sourceId] ?? []).includes(quoteId);
 }
 
 export function getQuotationLabQuoteById(quoteId: string): QuotationLabQuote | undefined {
@@ -961,11 +993,25 @@ function getGeneratedDrills(): QuotationDrillItem[] {
   return _generatedDrills;
 }
 
-/** Static + generated drills per source. Generated drills scale with quote bank. */
+/** Drill type priority: selection and misuse first (exam-faithful), then analysis, then AO/link. */
+const DRILL_TYPE_ORDER: Record<QuotationDrillItem['type'], number> = {
+  whichQuoteFitsBest: 0,
+  misuseDetection: 1,
+  eliminateWeakQuote: 2,
+  explainQuote: 3,
+  upgradeAnalysis: 4,
+  linkTwoQuotes: 5,
+  contextWeave: 6,
+  finishAnalysis: 7,
+  whichAO: 8,
+};
+
+/** Static + generated drills per source. Exam-faithful order: Quote Selection and Misuse first. */
 export function getQuotationLabDrillsBySource(sourceId: QuotationLabSourceId): QuotationDrillItem[] {
   const staticDrills = DRILLS_BY_SOURCE[sourceId] ?? [];
   const generated = getGeneratedDrills().filter(d => d.sourceId === sourceId);
-  return [...staticDrills, ...generated];
+  const combined = [...staticDrills, ...generated];
+  return combined.sort((a, b) => (DRILL_TYPE_ORDER[a.type] ?? 9) - (DRILL_TYPE_ORDER[b.type] ?? 9));
 }
 
 export function getMicroParagraphPromptsBySource(sourceId: QuotationLabSourceId): QuotationMicroParagraphPrompt[] {
@@ -1100,11 +1146,34 @@ export function hasStrategicQuotesForTask(taskId: string): boolean {
 // QUALITY CONTROL (non-negotiable)
 // ---------------------------------------------------------------------------
 
-export type QuoteValidationResult = { valid: boolean; errors: string[] };
+export type QuoteValidationResult = { valid: boolean; errors: string[]; suggestedTier?: QuotationQualityTier };
 
-/** A quote cannot be added unless: 2+ themes, Grade 9 insight, top-band suitable */
+function quoteWordCount(text: string): number {
+  return text.replace(/[\s/]+/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+}
+
+/** Classify quote: anchor (high-value, flexible), support (useful but limited), archived (dead weight). */
+export function classifyQuoteTier(q: Partial<QuotationLabQuote>): QuotationQualityTier {
+  if (!q.quote) return 'support';
+  const words = quoteWordCount(q.quote);
+  const themesOk = (q.themes?.length ?? 0) >= 2;
+  const hasPayoff = !!(q.meaning && (q.grade9Insight ?? q.deploymentTip ?? q.contextHook));
+  const flexible = (q.flexibilityScore ?? 0) >= 4 || (q.bestUsedFor?.length ?? 0) >= 2;
+  if (words <= MAX_QUOTE_WORDS_STANDARD && themesOk && hasPayoff && flexible) return 'anchor';
+  if (words > 12 || !themesOk || !hasPayoff) return 'archived';
+  return 'support';
+}
+
+/** A quote cannot be added unless: ≤8 words (or poetry exception), 2+ themes, embeddable, Grade 9 insight, analytical payoff. */
 export function validateQuoteForQuality(q: Partial<QuotationLabQuote>): QuoteValidationResult {
   const errors: string[] = [];
+  const text = (q.quote ?? '').trim();
+  const words = quoteWordCount(text);
+  if (words > MAX_QUOTE_WORDS_STANDARD && words <= 12) {
+    errors.push(`Quote should be ≤${MAX_QUOTE_WORDS_STANDARD} words for embedding; ${words} words may be acceptable for poetry line breaks.`);
+  } else if (words > 12) {
+    errors.push(`Quote too long (${words} words). Store as fullTextRef and show only a short fragment to students.`);
+  }
   if (!q.themes || q.themes.length < 2) {
     errors.push('Quote must support 2+ themes');
   }
@@ -1114,7 +1183,8 @@ export function validateQuoteForQuality(q: Partial<QuotationLabQuote>): QuoteVal
   if (!q.meaning || !q.contextHook) {
     errors.push('Quote must have core meaning and context hook (top-band suitable)');
   }
-  return { valid: errors.length === 0, errors };
+  const suggestedTier = classifyQuoteTier(q);
+  return { valid: errors.length === 0, errors, suggestedTier };
 }
 
 // ---------------------------------------------------------------------------

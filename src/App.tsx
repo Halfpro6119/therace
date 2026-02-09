@@ -36,12 +36,28 @@ import { EnglishQuotationLabQuoteDetailPage } from './pages/english/EnglishQuota
 import { EnglishQuotationLabDrillsPage } from './pages/english/EnglishQuotationLabDrillsPage';
 import { EnglishQuotationLabMicroPage } from './pages/english/EnglishQuotationLabMicroPage';
 import { EnglishQuotationLabProgressPage } from './pages/english/EnglishQuotationLabProgressPage';
-import { EnglishVocabLabPage } from './pages/english/EnglishVocabLabPage';
+import { EnglishVocabLabHomePage } from './pages/english/vocab/EnglishVocabLabHomePage';
+import { EnglishVocabSetsPage } from './pages/english/vocab/EnglishVocabSetsPage';
+import { EnglishVocabSetDetailPage } from './pages/english/vocab/EnglishVocabSetDetailPage';
+import { EnglishVocabSessionPage } from './pages/english/vocab/EnglishVocabSessionPage';
+import { EnglishVocabResultsPage } from './pages/english/vocab/EnglishVocabResultsPage';
+import { EnglishVocabHeatmapPage } from './pages/english/vocab/EnglishVocabHeatmapPage';
+import { EnglishVocabWordDetailPage } from './pages/english/vocab/EnglishVocabWordDetailPage';
 import { MathsMasteryHomePage } from './pages/maths/MathsMasteryHomePage';
 import { MathsHubPage } from './pages/maths/MathsHubPage';
 import { FurtherMathsPlaceholder } from './pages/maths/FurtherMathsPlaceholder';
 import { StatisticsPlaceholder } from './pages/maths/StatisticsPlaceholder';
 import { ScienceLabHomePage } from './pages/science/ScienceLabHomePage';
+import { ScienceLabSubjectPage } from './pages/science/ScienceLabSubjectPage';
+import { ScienceLabModePage } from './pages/science/ScienceLabModePage';
+import { ScienceLabConceptLabPage } from './pages/science/ScienceLabConceptLabPage';
+import { ScienceLabQuestionLabPage } from './pages/science/ScienceLabQuestionLabPage';
+import { ScienceLabMethodMarkPage } from './pages/science/ScienceLabMethodMarkPage';
+import { ScienceLabPracticalLabPage } from './pages/science/ScienceLabPracticalLabPage';
+import { ScienceLabEquationLabPage } from './pages/science/ScienceLabEquationLabPage';
+import { ScienceLabMisconceptionLabPage } from './pages/science/ScienceLabMisconceptionLabPage';
+import { ScienceLabFlashcardPage } from './pages/science/ScienceLabFlashcardPage';
+import { ScienceLabQuickCheckPage } from './pages/science/ScienceLabQuickCheckPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -61,6 +77,12 @@ const QuizzesPage = lazy(() => import('./admin/QuizzesPage').then(m => ({ defaul
 const PlaylistsPage = lazy(() => import('./admin/PlaylistsPage').then(m => ({ default: m.PlaylistsPage })));
 const ToolsPage = lazy(() => import('./admin/ToolsPage').then(m => ({ default: m.ToolsPage })));
 const AuditPage = lazy(() => import('./admin/AuditPage').then(m => ({ default: m.AuditPage })));
+const AdminVocabSetsPage = lazy(() => import('./admin/vocab/AdminVocabSetsPage').then(m => ({ default: m.AdminVocabSetsPage })));
+const AdminVocabWordsPage = lazy(() => import('./admin/vocab/AdminVocabWordsPage').then(m => ({ default: m.AdminVocabWordsPage })));
+const AdminVocabImportPage = lazy(() => import('./admin/vocab/AdminVocabImportPage').then(m => ({ default: m.AdminVocabImportPage })));
+const AdminVocabExportPage = lazy(() => import('./admin/vocab/AdminVocabExportPage').then(m => ({ default: m.AdminVocabExportPage })));
+const AdminQuotationAuditPage = lazy(() => import('./admin/quotation/AdminQuotationAuditPage').then(m => ({ default: m.AdminQuotationAuditPage })));
+const AdminQuotationGoldPage = lazy(() => import('./admin/quotation/AdminQuotationGoldPage').then(m => ({ default: m.AdminQuotationGoldPage })));
 const ContentOpsHome = lazy(() => import('./admin/ContentOpsHome').then(m => ({ default: m.ContentOpsHome })));
 const SubjectOpsDetail = lazy(() => import('./admin/ops/SubjectOpsDetail').then(m => ({ default: m.SubjectOpsDetail })));
 const ImportLogPage = lazy(() => import('./admin/ops/ImportLogPage').then(m => ({ default: m.ImportLogPage })));
@@ -123,6 +145,12 @@ function App() {
           <Route path="import" element={<ImportPage />} />
           <Route path="tools" element={<ToolsPage />} />
           <Route path="audit" element={<AuditPage />} />
+          <Route path="vocab/sets" element={<AdminVocabSetsPage />} />
+          <Route path="vocab/words" element={<AdminVocabWordsPage />} />
+          <Route path="vocab/import" element={<AdminVocabImportPage />} />
+          <Route path="vocab/export" element={<AdminVocabExportPage />} />
+          <Route path="quotation/audit" element={<AdminQuotationAuditPage />} />
+          <Route path="quotation/gold" element={<AdminQuotationGoldPage />} />
         </Route>
 
         <Route path="/admin/diagrams/:diagramId" element={<Suspense fallback={<AdminRouteFallback />}><DiagramEditor /></Suspense>} />
@@ -163,12 +191,28 @@ function App() {
                 <Route path="/english-campus/literature/quotation-lab/micro/:sourceId" element={<EnglishQuotationLabMicroPage />} />
                 <Route path="/english-campus/literature/quotation-lab/progress/:sourceId" element={<EnglishQuotationLabProgressPage />} />
                 <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />
-                <Route path="/english-campus/vocab" element={<EnglishVocabLabPage />} />
+                <Route path="/english-campus/vocab" element={<EnglishVocabLabHomePage />} />
+                <Route path="/english-campus/vocab/sets" element={<EnglishVocabSetsPage />} />
+                <Route path="/english-campus/vocab/set/:setId" element={<EnglishVocabSetDetailPage />} />
+                <Route path="/english-campus/vocab/session" element={<EnglishVocabSessionPage />} />
+                <Route path="/english-campus/vocab/results/:sessionId" element={<EnglishVocabResultsPage />} />
+                <Route path="/english-campus/vocab/heatmap" element={<EnglishVocabHeatmapPage />} />
+                <Route path="/english-campus/vocab/word/:wordId" element={<EnglishVocabWordDetailPage />} />
                 <Route path="/maths-mastery" element={<MathsMasteryHomePage />} />
                 <Route path="/maths-mastery/maths" element={<MathsHubPage />} />
                 <Route path="/maths-mastery/further-maths" element={<FurtherMathsPlaceholder />} />
                 <Route path="/maths-mastery/statistics" element={<StatisticsPlaceholder />} />
                 <Route path="/science-lab" element={<ScienceLabHomePage />} />
+                <Route path="/science-lab/subjects" element={<ScienceLabSubjectPage />} />
+                <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/flashcard" element={<ScienceLabFlashcardPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ScienceLabConceptLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/question" element={<ScienceLabQuestionLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/methodMark" element={<ScienceLabMethodMarkPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/practical" element={<ScienceLabPracticalLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/equation" element={<ScienceLabEquationLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/misconception" element={<ScienceLabMisconceptionLabPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />

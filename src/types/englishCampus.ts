@@ -339,16 +339,19 @@ export type QuotationLabSourceId =
   | 'Kamikaze'
   | 'BayonetCharge';
 
+/** Quote quality tier for filtering and prioritisation (anchor = high-value flexible, support = useful but limited, archived = hidden from drills) */
+export type QuotationQualityTier = 'anchor' | 'support' | 'archived';
+
 export interface QuotationLabQuote {
   id: string;
   sourceId: QuotationLabSourceId;
-  /** The quoted text */
+  /** The quoted text — short, embeddable fragment (≤8 words). Long versions in fullTextRef (admin only). */
   quote: string;
-  /** e.g. ambition, guilt, power */
+  /** e.g. ambition, guilt, power — strictly from controlled theme list where possible */
   themes: string[];
   /** e.g. metaphor, soliloquy, imagery — single method for display; use methods[] for full list */
   method: string;
-  /** Multiple methods (hyperbole, imagery, allusion, etc.) */
+  /** Multiple methods, purpose-based (not technique-spotting) */
   methods?: string[];
   /** Core meaning in one line */
   meaning: string;
@@ -358,14 +361,28 @@ export interface QuotationLabQuote {
   contextHook: string;
   /** Grade 9 deployment tip (legacy; grade9Insight preferred) */
   deploymentTip?: string;
-  /** Essay types this quote is best for: guilt essays, moral consequence, etc. */
+  /** Essay types / question focuses this quote is best for (guilt, power, conflict, etc.) */
   bestUsedFor?: string[];
-  /** Common misuse: e.g. "Over-quoting the whole line instead of embedding" */
+  /** Same as bestUsedFor — plan alias for bestFor[] */
+  bestFor?: string[];
+  /** Common misuse / when not to use — feeds avoidIf and misuse drills */
   commonMisuse?: string;
-  /** Difficulty: core (essential) or extension (Grade 9 stretch) */
-  difficulty?: 'core' | 'extension';
+  /** Explicit "avoid if" warnings (e.g. "narrative-only questions") */
+  avoidIf?: string[];
+  /** Difficulty: core (essential) or stretch (Grade 9). Prefer 'stretch'; 'extension' accepted. */
+  difficulty?: 'core' | 'extension' | 'stretch';
   /** act/scene or stanza for plays/poems */
   location?: string;
+  /** 1–5: how flexible the quote is across themes/questions. Higher = anchor. */
+  flexibilityScore?: number;
+  /** Quality classification: anchor (default in drills), support, or archived (hidden from student drills) */
+  qualityTier?: QuotationQualityTier;
+  /** Full line for admin reference only; student sees only quote fragment */
+  fullTextRef?: string;
+  /** Stretch only: "You could also argue…" — alternative interpretation */
+  alternativeInterpretation?: string;
+  /** Anchor quotes: "Why examiners prefer this quote" (flexible language, symbolic, links to structure) */
+  whyExaminersPrefer?: string;
 }
 
 /** Poetry cluster for Quotation Lab (e.g. Power & Conflict) */
@@ -474,14 +491,18 @@ export interface QuotationDrillContextWeave {
   rewardNote?: string;
 }
 
-/** Standard reason ids for misuse detection (over-simplified, no judgement, etc.) */
+/** Standard reason ids for misuse detection — exam-faithful (why would this score poorly?) */
 export type QuotationMisuseReasonId =
   | 'over-simplified'
   | 'no-judgement'
   | 'no-development'
   | 'technique-spotting'
   | 'over-quoting'
-  | 'no-focus';
+  | 'no-focus'
+  | 'too-narrative'
+  | 'no-method'
+  | 'too-specific'
+  | 'repeats-question';
 
 /** Drill: Misuse Detection — why would this be a weak use of the quote? From commonMisuse */
 export interface QuotationDrillMisuseDetection {
@@ -536,6 +557,9 @@ export interface QuotationFlexibleDeploymentPrompt {
   examinerNote: string;
 }
 
+/** Quote confidence for heatmap: green = confidently used, amber = partial, red = avoided or misused */
+export type QuoteConfidenceLevel = 'green' | 'amber' | 'red';
+
 /** Per-source progress for Quotation Lab */
 export interface QuotationLabProgress {
   sourceId: QuotationLabSourceId;
@@ -548,4 +572,8 @@ export interface QuotationLabProgress {
   /** Themes with lower familiarity or accuracy */
   weakThemes: string[];
   lastUpdated: string;
+  /** quoteId -> times chosen but later flagged as weak (misuse tracking) */
+  quoteMisuseCount?: Record<string, number>;
+  /** quoteId -> confidence level for heatmap (green/amber/red) */
+  quoteConfidence?: Record<string, QuoteConfidenceLevel>;
 }

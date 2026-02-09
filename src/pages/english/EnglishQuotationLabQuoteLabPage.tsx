@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Filter, Brain, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Filter, Brain, AlertTriangle, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { QuotationLabQuote, QuotationLabSourceId } from '../../types/englishCampus';
 import {
   getQuotationLabQuotesBySource,
   getQuotationLabSourceLabel,
   QUOTATION_LAB_SOURCE_IDS,
+  isGoldQuote,
 } from '../../config/quotationLabData';
 
 type DifficultyFilter = 'core' | 'stretch' | 'all';
@@ -14,7 +15,7 @@ type DifficultyFilter = 'core' | 'stretch' | 'all';
 function filterQuotes(quotes: QuotationLabQuote[], difficulty: DifficultyFilter): QuotationLabQuote[] {
   if (difficulty === 'all') return quotes;
   if (difficulty === 'core') return quotes.filter(q => (q.difficulty ?? 'core') === 'core');
-  return quotes.filter(q => q.difficulty === 'extension');
+  return quotes.filter(q => q.difficulty === 'extension' || q.difficulty === 'stretch');
 }
 
 export function EnglishQuotationLabQuoteLabPage() {
@@ -121,6 +122,11 @@ export function EnglishQuotationLabQuoteLabPage() {
               "{q.quote}"
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-2 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+              {isGoldQuote(validSource, q.id) && (
+                <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#D97706' }}>
+                  <Star size={12} fill="currentColor" /> Gold
+                </span>
+              )}
               <span>{label}</span>
               {q.location && <span>· {q.location}</span>}
               <span className="opacity-80">Themes: {q.themes.map(t => t).join(' · ')}</span>
@@ -128,7 +134,7 @@ export function EnglishQuotationLabQuoteLabPage() {
                 className="px-1.5 py-0.5 rounded capitalize"
                 style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--muted))' }}
               >
-                {(q.difficulty ?? 'core')}
+                {q.difficulty === 'extension' || q.difficulty === 'stretch' ? 'Stretch' : (q.difficulty ?? 'Core')}
               </span>
             </div>
             {/* Hover / tap feedback: Grade 9 hint or misuse warning */}
