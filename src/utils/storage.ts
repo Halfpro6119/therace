@@ -25,6 +25,7 @@ const STORAGE_KEYS = {
   ENGLISH_CONTINUE: 'grade9sprint_english_continue',
   ENGLISH_LITERATURE_DRAFTS: 'grade9sprint_english_literature_drafts',
   ENGLISH_QUOTATION_LAB_PROGRESS: 'grade9sprint_english_quotation_lab_progress',
+  ENGLISH_QUOTATION_LAB_PRIORITY_QUOTES: 'grade9sprint_english_quotation_lab_priority_quotes',
   LITERATURE_MODEL_DRILL_COMPLETED: 'grade9sprint_literature_model_drill_completed',
 };
 
@@ -341,6 +342,21 @@ export const storage = {
       lastUpdated: new Date().toISOString(),
     };
     storage.saveQuotationLabProgress(progress);
+  },
+
+  /** Priority quotes (saved by student for quick access). */
+  getPriorityQuoteIds: (): string[] => {
+    const data = localStorage.getItem(STORAGE_KEYS.ENGLISH_QUOTATION_LAB_PRIORITY_QUOTES);
+    return data ? JSON.parse(data) : [];
+  },
+  togglePriorityQuote: (quoteId: string): boolean => {
+    const ids = storage.getPriorityQuoteIds();
+    const next = ids.includes(quoteId) ? ids.filter(id => id !== quoteId) : [...ids, quoteId];
+    localStorage.setItem(STORAGE_KEYS.ENGLISH_QUOTATION_LAB_PRIORITY_QUOTES, JSON.stringify(next));
+    return next.includes(quoteId);
+  },
+  isPriorityQuote: (quoteId: string): boolean => {
+    return storage.getPriorityQuoteIds().includes(quoteId);
   },
 };
 

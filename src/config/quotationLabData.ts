@@ -19,6 +19,7 @@ import type {
   QuotationMicroParagraphPrompt,
   QuotationFlexibleDeploymentPrompt,
 } from '../types/englishCampus';
+import { generateQuotationDrills } from './quotationLabDrillGenerator';
 
 // ---------------------------------------------------------------------------
 // QUOTE BANKS (curated, not massive lists)
@@ -953,8 +954,18 @@ export function getQuotationLabQuoteById(quoteId: string): QuotationLabQuote | u
   return QUOTATION_LAB_QUOTES.find(q => q.id === quoteId);
 }
 
+/** Auto-generated drills from quote metadata (cached). */
+let _generatedDrills: QuotationDrillItem[] | null = null;
+function getGeneratedDrills(): QuotationDrillItem[] {
+  if (_generatedDrills == null) _generatedDrills = generateQuotationDrills(QUOTATION_LAB_QUOTES);
+  return _generatedDrills;
+}
+
+/** Static + generated drills per source. Generated drills scale with quote bank. */
 export function getQuotationLabDrillsBySource(sourceId: QuotationLabSourceId): QuotationDrillItem[] {
-  return DRILLS_BY_SOURCE[sourceId] ?? [];
+  const staticDrills = DRILLS_BY_SOURCE[sourceId] ?? [];
+  const generated = getGeneratedDrills().filter(d => d.sourceId === sourceId);
+  return [...staticDrills, ...generated];
 }
 
 export function getMicroParagraphPromptsBySource(sourceId: QuotationLabSourceId): QuotationMicroParagraphPrompt[] {
@@ -1011,13 +1022,22 @@ export function getQuotationLabClusterLabel(clusterId: QuotationLabClusterId): s
 // ---------------------------------------------------------------------------
 
 const THEME_TO_SOURCE_IDS: Record<QuotationLabThemeId, QuotationLabSourceId[]> = {
-  power: ['Macbeth', 'Ozymandias', 'London'],
+  power: ['Macbeth', 'Ozymandias', 'London', 'Exposure', 'CheckingOutMeHistory'],
   guilt: ['Macbeth'],
-  identity: ['Ozymandias', 'London'],
-  responsibility: ['Macbeth'],
+  identity: ['Ozymandias', 'London', 'CheckingOutMeHistory', 'Kamikaze'],
+  responsibility: ['Macbeth', 'AnInspectorCalls'],
+  conflict: ['Exposure', 'BayonetCharge', 'Kamikaze'],
+  time: ['Ozymandias', 'Exposure'],
 };
 
-export const QUOTATION_LAB_THEME_IDS: QuotationLabThemeId[] = ['power', 'guilt', 'identity', 'responsibility'];
+export const QUOTATION_LAB_THEME_IDS: QuotationLabThemeId[] = [
+  'power',
+  'guilt',
+  'identity',
+  'responsibility',
+  'conflict',
+  'time',
+];
 
 export function getQuotationLabThemeLabel(themeId: QuotationLabThemeId): string {
   const labels: Record<QuotationLabThemeId, string> = {
@@ -1025,6 +1045,8 @@ export function getQuotationLabThemeLabel(themeId: QuotationLabThemeId): string 
     guilt: 'Guilt',
     identity: 'Identity',
     responsibility: 'Responsibility',
+    conflict: 'Conflict',
+    time: 'Time',
   };
   return labels[themeId] ?? themeId;
 }

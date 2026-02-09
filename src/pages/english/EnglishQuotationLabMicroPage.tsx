@@ -72,6 +72,36 @@ function computeExaminerFeedback(
   return feedback;
 }
 
+type AOSignal = 'ok' | 'warn' | 'fail';
+
+/** Live AO1/AO2/AO3 signals — no marks, just signals (spec: non-intrusive). */
+function computeAOSignals(content: string, quoteText: string, method: string): { AO1: AOSignal; AO2: AOSignal; AO3: AOSignal } {
+  const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+  const contentNorm = content.toLowerCase().replace(/[""'""]/g, '');
+  const quoteWords = quoteText.replace(/[""'""]/g, '').split(/\s+/).filter(Boolean);
+  const shortQuote = quoteWords.length > 4 ? quoteWords.slice(0, 4).join(' ') : quoteText;
+  const quoteNorm = shortQuote.toLowerCase();
+  const hasQuote = contentNorm.includes(quoteNorm) || quoteWords.some(w => w.length > 4 && contentNorm.includes(w.toLowerCase()));
+  let AO1: AOSignal = 'fail';
+  if (wordCount > 20 && hasQuote) AO1 = 'ok';
+  else if (wordCount > 10) AO1 = 'warn';
+
+  const methodTerms = (method || '').toLowerCase().split(/[\s,;]+/).filter(w => w.length > 3);
+  const hasMethod = methodTerms.some(t => contentNorm.includes(t)) || contentNorm.includes('effect') || contentNorm.includes('suggests') || contentNorm.includes('emphasises');
+  const judgementWords = ['suggests', 'reveals', 'emphasises', 'highlights', 'reinforces', 'undermines', 'exposes', 'criticises'];
+  const hasJudgement = judgementWords.some(w => contentNorm.includes(w));
+  let AO2: AOSignal = 'fail';
+  if (wordCount > 30 && hasMethod && hasJudgement) AO2 = 'ok';
+  else if (wordCount > 20 && (hasMethod || hasJudgement)) AO2 = 'warn';
+
+  const contextWords = ['jacobean', 'shakespeare', 'context', 'historical', 'belief', 'society', 'audience'];
+  const hasContext = contextWords.some(w => contentNorm.includes(w));
+  let AO3: AOSignal = 'fail';
+  if (wordCount > 50 && hasContext) AO3 = 'ok';
+  else if (wordCount > 40) AO3 = 'warn';
+  return { AO1, AO2, AO3 };
+}
+
 export function EnglishQuotationLabMicroPage() {
   const navigate = useNavigate();
   const { sourceId } = useParams<{ sourceId: string }>();
@@ -89,6 +119,10 @@ export function EnglishQuotationLabMicroPage() {
   const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
   const feedback = useMemo(
     () => (quote && prompt ? computeExaminerFeedback(content, quote.quote, prompt.method) : []),
+    [content, quote, prompt]
+  );
+  const aoSignals = useMemo(
+    () => (quote && prompt ? computeAOSignals(content, quote.quote, prompt.method) : null),
     [content, quote, prompt]
   );
 
@@ -134,57 +168,63 @@ export function EnglishQuotationLabMicroPage() {
 
           {prompt && quote && (
             <div className="rounded-xl border p-5 space-y-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
-              <div>
-                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Theme</p>
+              {/* Question focus (locked) */}
+              <div className="rounded-lg border p-3" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))' }}>
+                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Question focus</p>
                 <p className="font-medium" style={{ color: 'rgb(var(--text))' }}>{prompt.theme}</p>
               </div>
+              {/* Chosen quote (from Lab) */}
               <div>
-                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Quote</p>
+                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Chosen quote</p>
                 <p className="italic" style={{ color: 'rgb(var(--text))' }}>"{quote.quote}"</p>
               </div>
+              {/* Method hint (optional) */}
               <div>
-                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Method to analyse</p>
+                <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>Method hint</p>
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{prompt.method}</p>
               </div>
-              <div className="rounded-lg p-3 space-y-2" style={{ background: 'rgb(var(--surface-2))' }}>
-                <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: 'rgb(var(--text))' }}>
-                  <CheckCircle size={14} />
-                  Checklist — include each in your 4–5 sentences
-                </p>
-                <ul className="text-sm space-y-1" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {prompt.checklist.map((c, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">{i + 1}.</span>
-                      {c}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Writing box — 5–6 sentences */}
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  Your micro-paragraph (4–5 sentences)
+                  Your paragraph (5–6 sentences)
                 </label>
                 <textarea
                   value={content}
                   onChange={e => setContent(e.target.value)}
-                  placeholder="Write your paragraph: argument → embedded quote → AO2 analysis → AO3 context → judgement."
+                  placeholder="Argument → embedded quote → AO2 analysis → AO3 context → judgement."
                   rows={6}
                   className="w-full rounded-lg border p-3 text-sm resize-none"
                   style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
                 />
                 <p className="text-xs mt-1" style={{ color: 'rgb(var(--muted))' }}>
-                  {wordCount} words · Aim for 60–80 words
+                  {wordCount} words · Aim for 60–80
                 </p>
               </div>
 
-              {/* Examiner-style auto-feedback */}
+              {/* Live AI feedback — AO1 / AO2 / AO3 signals only (no marks) */}
+              {aoSignals && (
+                <div className="flex flex-wrap gap-4 pt-2" aria-label="AO feedback">
+                  {(['AO1', 'AO2', 'AO3'] as const).map(ao => {
+                    const s = aoSignals[ao];
+                    const icon = s === 'ok' ? '✔' : s === 'warn' ? '⚠' : '❌';
+                    const color = s === 'ok' ? '#10B981' : s === 'warn' ? '#F59E0B' : '#EF4444';
+                    return (
+                      <span key={ao} className="flex items-center gap-1.5 text-sm font-medium" style={{ color }}>
+                        <span>{ao}</span>
+                        <span>{icon}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
               {feedback.length > 0 && (
-                <div className="rounded-lg p-3 space-y-2 border" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
-                  <p className="text-xs font-semibold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+                <details className="rounded-lg border p-3" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
+                  <summary className="text-xs font-semibold flex items-center gap-2 cursor-pointer" style={{ color: 'rgb(var(--text))' }}>
                     <MessageSquare size={14} />
-                    Examiner-style feedback
-                  </p>
-                  <ul className="space-y-1.5">
+                    More feedback
+                  </summary>
+                  <ul className="space-y-1.5 mt-2">
                     {feedback.map(f => (
                       <li key={f.id} className="flex items-start gap-2 text-sm">
                         {f.type === 'success' ? (
@@ -192,13 +232,11 @@ export function EnglishQuotationLabMicroPage() {
                         ) : (
                           <AlertCircle size={14} style={{ color: f.type === 'error' ? '#EF4444' : '#F59E0B' }} className="flex-shrink-0 mt-0.5" />
                         )}
-                        <span style={{ color: f.type === 'success' ? 'rgb(var(--text-secondary))' : f.type === 'error' ? '#EF4444' : 'rgb(var(--text))' }}>
-                          {f.message}
-                        </span>
+                        <span style={{ color: 'rgb(var(--text-secondary))' }}>{f.message}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </details>
               )}
             </div>
           )}

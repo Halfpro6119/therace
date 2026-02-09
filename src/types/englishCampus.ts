@@ -371,8 +371,8 @@ export interface QuotationLabQuote {
 /** Poetry cluster for Quotation Lab (e.g. Power & Conflict) */
 export type QuotationLabClusterId = 'PowerAndConflict';
 
-/** Theme IDs for Quotation Lab entry */
-export type QuotationLabThemeId = 'power' | 'guilt' | 'identity' | 'responsibility';
+/** Theme IDs for Quotation Lab entry (scalable Grade 4 → 9) */
+export type QuotationLabThemeId = 'power' | 'guilt' | 'identity' | 'responsibility' | 'conflict' | 'time';
 
 /** Drill: Explain This Quote — one sentence linking quote to theme; max 20 words, must include judgement */
 export interface QuotationDrillExplain {
@@ -461,6 +461,46 @@ export interface QuotationDrillLinkTwo {
   rewardNote: string;
 }
 
+/** Drill: Context Weave (AO3) — add one contextual idea that deepens analysis; from contextHook */
+export interface QuotationDrillContextWeave {
+  type: 'contextWeave';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  /** e.g. "Add one contextual idea that deepens the analysis (not bolted on)." */
+  prompt: string;
+  maxWords: number;
+  /** Examiner note: reject historical dumping, detached facts */
+  rewardNote?: string;
+}
+
+/** Standard reason ids for misuse detection (over-simplified, no judgement, etc.) */
+export type QuotationMisuseReasonId =
+  | 'over-simplified'
+  | 'no-judgement'
+  | 'no-development'
+  | 'technique-spotting'
+  | 'over-quoting'
+  | 'no-focus';
+
+/** Drill: Misuse Detection — why would this be a weak use of the quote? From commonMisuse */
+export interface QuotationDrillMisuseDetection {
+  type: 'misuseDetection';
+  id: string;
+  sourceId: QuotationLabSourceId;
+  quoteId: string;
+  /** "Why would this be a weak use of the quote?" */
+  prompt: string;
+  /** Example weak student sentence */
+  studentText: string;
+  /** Multi-select reason option ids (subset of QuotationMisuseReasonId) */
+  reasonOptionIds: QuotationMisuseReasonId[];
+  /** Which reason ids are correct for this misuse */
+  correctReasonIds: string[];
+  /** Brief explanation (from commonMisuse) */
+  whyWeak: string;
+}
+
 export type QuotationDrillItem =
   | QuotationDrillExplain
   | QuotationDrillFinishAnalysis
@@ -468,7 +508,9 @@ export type QuotationDrillItem =
   | QuotationDrillBestFit
   | QuotationDrillLinkTwo
   | QuotationDrillWhichAO
-  | QuotationDrillEliminateWeak;
+  | QuotationDrillEliminateWeak
+  | QuotationDrillContextWeave
+  | QuotationDrillMisuseDetection;
 
 /** Micro-paragraph builder: theme + one quote + one method → 4–5 sentences (argument, quote, AO2, AO3, judgement) */
 export interface QuotationMicroParagraphPrompt {

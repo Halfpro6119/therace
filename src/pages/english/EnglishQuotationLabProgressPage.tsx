@@ -115,34 +115,38 @@ export function EnglishQuotationLabProgressPage() {
       <section className="rounded-xl border p-5" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
         <h2 className="font-semibold flex items-center gap-2 mb-3" style={{ color: 'rgb(var(--text))' }}>
           <Thermometer size={18} />
-          Quote familiarity heatmap
+          Per quote
         </h2>
         <p className="text-xs mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Practice quotes in the Quote Lab and Drills to build familiarity. More practice = higher heat.
+          ✔ Selected accurately · ✔ Analysed at Grade 8+ · ⚠ Weak context use
         </p>
         <div className="space-y-2">
-          {heatmapData.map(({ quote: q, count, label: levelLabel, color, pct }) => (
-            <div key={q.id} className="flex items-center gap-3">
-              <div
-                className="w-24 h-6 rounded flex-shrink-0 overflow-hidden"
-                style={{ background: 'rgb(var(--surface-2))' }}
-              >
+          {heatmapData.map(({ quote: q, count, label: levelLabel, color, pct }) => {
+            const isWeak = weakThemes.some(t => q.themes.some(th => th.toLowerCase().includes(t.toLowerCase())));
+            const status = count >= 2 && !isWeak ? 'ok' : count >= 1 ? 'progress' : 'weak';
+            return (
+              <div key={q.id} className="flex items-center gap-3">
+                <span className="text-base flex-shrink-0" aria-hidden>
+                  {status === 'ok' ? '✔' : status === 'weak' ? '⚠' : '🔁'}
+                </span>
                 <div
-                  className="h-full rounded transition-all"
-                  style={{ width: `${pct}%`, background: color }}
-                />
+                  className="w-20 h-5 rounded flex-shrink-0 overflow-hidden"
+                  style={{ background: 'rgb(var(--surface-2))' }}
+                >
+                  <div
+                    className="h-full rounded transition-all"
+                    style={{ width: `${pct}%`, background: color }}
+                  />
+                </div>
+                <span className="text-sm truncate flex-1 italic" style={{ color: 'rgb(var(--text))' }}>
+                  "{q.quote}"
+                </span>
               </div>
-              <span className="text-xs w-14 flex-shrink-0" style={{ color: 'rgb(var(--muted))' }}>
-                {levelLabel}
-              </span>
-              <span className="text-sm truncate flex-1 italic" style={{ color: 'rgb(var(--text))' }}>
-                "{q.quote}"
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
         {heatmapData.length === 0 && (
-          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No quotes for this source. Complete Quote Lab to see heatmap.</p>
+          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No quotes for this source. Use Quote Lab to see progress.</p>
         )}
       </section>
 
@@ -150,25 +154,27 @@ export function EnglishQuotationLabProgressPage() {
         <section className="rounded-xl border p-5" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
           <h2 className="font-semibold flex items-center gap-2 mb-3" style={{ color: 'rgb(var(--text))' }}>
             <BarChart3 size={18} />
-            Theme confidence
+            Per theme
           </h2>
           <p className="text-xs mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-            % of quotes per theme you've practiced enough to feel secure.
+            Green = flexible · Amber = narrow use · Red = avoided
           </p>
           <div className="flex flex-wrap gap-2">
-            {themeConfidenceMap.map(({ theme, pct }) => (
-              <div
-                key={theme}
-                className="px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"
-                style={{
-                  background: pct >= 66 ? 'rgba(16, 185, 129, 0.15)' : pct >= 33 ? 'rgba(14, 165, 233, 0.15)' : 'rgb(var(--surface-2))',
-                  color: pct >= 66 ? '#10B981' : pct >= 33 ? '#0EA5E9' : 'rgb(var(--text-secondary))',
-                }}
-              >
-                <span>{theme}</span>
-                <span className="text-xs font-medium">{pct}%</span>
-              </div>
-            ))}
+            {themeConfidenceMap.map(({ theme, pct }) => {
+              const heat = pct >= 66 ? 'green' : pct >= 33 ? 'amber' : 'red';
+              return (
+                <div
+                  key={theme}
+                  className="px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"
+                  style={{
+                    background: heat === 'green' ? 'rgba(16, 185, 129, 0.2)' : heat === 'amber' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(239, 68, 68, 0.15)',
+                    color: heat === 'green' ? '#059669' : heat === 'amber' ? '#D97706' : '#DC2626',
+                  }}
+                >
+                  <span>{theme}</span>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
@@ -200,16 +206,22 @@ export function EnglishQuotationLabProgressPage() {
       <section className="rounded-xl border p-5" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
         <h2 className="font-semibold flex items-center gap-2 mb-3" style={{ color: 'rgb(var(--text))' }}>
           <MessageSquare size={18} />
-          Examiner intelligence
+          Grade ceiling indicator
         </h2>
         <p className="text-xs mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Examiner-style feedback based on your AO balance and progress.
+          Motivational, not punitive. Shows what’s holding you back and how to reach the next grade.
         </p>
         <div className="space-y-2">
-          {gradeCeiling && (
-            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: 'rgba(245, 158, 11, 0.15)' }}>
+          {(gradeCeiling || examinerFeedback.length > 0) && (
+            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: 'rgba(245, 158, 11, 0.12)' }}>
               <AlertCircle size={18} style={{ color: '#F59E0B' }} className="flex-shrink-0 mt-0.5" />
-              <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{gradeCeiling}</p>
+              <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>
+                {gradeCeiling
+                  ? (gradeCeiling.toLowerCase().startsWith("you're") ? gradeCeiling : `You're currently writing at Grade 7 because ${gradeCeiling}`)
+                  : examinerFeedback.some(m => m.includes('Grade 8') || m.includes('underused'))
+                    ? "You're currently writing at Grade 7 because AO2 lacks judgement."
+                    : examinerFeedback[0] ?? 'Do more drills to see your grade ceiling here.'}
+              </p>
             </div>
           )}
           {examinerFeedback.map((msg, i) => (
@@ -217,12 +229,12 @@ export function EnglishQuotationLabProgressPage() {
               key={i}
               className="flex items-start gap-2 p-3 rounded-lg text-sm"
               style={{
-                background: msg.includes('Grade 8') || msg.includes('underused') ? 'rgba(245, 158, 11, 0.12)' : 'rgb(var(--surface-2))',
+                background: msg.includes('Grade 8') || msg.includes('underused') ? 'rgba(245, 158, 11, 0.1)' : 'rgb(var(--surface-2))',
                 color: 'rgb(var(--text))',
               }}
             >
               {msg.includes('Strong') || msg.includes('Good') ? (
-                <span className="text-emerald-600 dark:text-emerald-400">✓</span>
+                <span className="text-emerald-600 dark:text-emerald-400">✔</span>
               ) : (
                 <AlertCircle size={16} style={{ color: '#F59E0B' }} className="flex-shrink-0 mt-0.5" />
               )}
@@ -238,7 +250,7 @@ export function EnglishQuotationLabProgressPage() {
         </div>
         {!progress && examinerFeedback.length <= 1 && (
           <p className="text-sm text-center py-4" style={{ color: 'rgb(var(--muted))' }}>
-            Do more Quote Lab and Drills to see personalised examiner feedback and grade ceiling here.
+            Do more Quote Lab and Drills to see your grade ceiling here.
           </p>
         )}
       </section>

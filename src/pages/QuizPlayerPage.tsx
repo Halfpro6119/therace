@@ -10,7 +10,7 @@
  * - REAL-TIME DETECTION: Detects correct answers as user types and auto-submits
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { X, Clock, CheckCircle, Lightbulb, Flag, Settings, Eye, EyeOff, Zap, Volume2, VolumeX, Check, MoreHorizontal, RotateCcw, Wrench, Calculator, Keyboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -269,6 +269,13 @@ export function QuizPlayerPage() {
   useEffect(() => {
     setCalculatorModalOpen(false);
   }, [currentPromptIndex]);
+
+  // Maths: scroll to top instantly on every new question (before paint so user never sees wrong position)
+  useLayoutEffect(() => {
+    if (isMathsSubject) {
+      window.scrollTo(0, 0);
+    }
+  }, [currentPromptIndex, isMathsSubject]);
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {

@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Library, BookOpen, Tag, Zap } from 'lucide-react';
+import { ChevronLeft, Library, BookOpen, Tag, Zap, CheckCircle, RefreshCw, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   QUOTATION_LAB_TEXT_SOURCE_IDS,
@@ -9,25 +10,82 @@ import {
   getQuotationLabSourceLabel,
   getQuotationLabQuotesBySource,
   getQuotationLabDrillsBySource,
-  getMicroParagraphPromptsBySource,
   getQuotationLabClusterLabel,
   getQuotationLabThemeLabel,
   getQuotationLabQuotesByTheme,
 } from '../../config/quotationLabData';
 import type { QuotationLabSourceId, QuotationLabClusterId, QuotationLabThemeId } from '../../types/englishCampus';
+import { storage } from '../../utils/storage';
 
-const MODES = [
-  { id: 'quote-lab', title: 'Quote Lab', path: 'quote-lab', color: '#F59E0B' },
-  { id: 'drills', title: 'Drills', path: 'drills', color: '#8B5CF6' },
-  { id: 'micro', title: 'Micro-Paragraph Builder', path: 'micro', color: '#0EA5E9' },
-  { id: 'progress', title: 'Progress & mastery', path: 'progress', color: '#10B981' },
-] as const;
+/** Progress signals under each tile: no percentages, just counts/signals */
+function useProgressSignals() {
+  return useMemo(() => {
+    const allProgress = storage.getQuotationLabProgress();
+    let mastered = 0;
+    let inProgress = 0;
+    const weakThemeSet = new Set<string>();
+    for (const sourceId of QUOTATION_LAB_SOURCE_IDS) {
+      const prog = allProgress[sourceId as QuotationLabSourceId];
+      if (!prog) continue;
+      const fam = prog.quoteFamiliarity ?? {};
+      for (const count of Object.values(fam)) {
+        if (count >= 3) mastered += 1;
+        else if (count >= 1) inProgress += 1;
+      }
+      (prog.weakThemes ?? []).forEach((t: string) => weakThemeSet.add(t));
+    }
+    return { mastered, inProgress, weakCount: weakThemeSet.size };
+  }, []);
+}
+
+const TILE_BY_TEXT = {
+  id: 'by-text',
+  title: 'By Text',
+  color: '#DC2626',
+  bgLight: 'rgba(220, 38, 38, 0.12)',
+  items: QUOTATION_LAB_TEXT_SOURCE_IDS,
+  getLabel: (id: string) => getQuotationLabSourceLabel(id as QuotationLabSourceId),
+  getPath: (id: string) => `/english-campus/literature/quotation-lab/quote-lab/${id}`,
+  hasContent: (id: string) => getQuotationLabQuotesBySource(id as QuotationLabSourceId).length > 0,
+};
+
+const TILE_POETRY = {
+  id: 'poetry',
+  title: 'By Poetry Cluster',
+  color: '#7C3AED',
+  bgLight: 'rgba(124, 58, 237, 0.12)',
+  clusters: true,
+  getPath: (id: string) => `/english-campus/literature/quotation-lab/quote-lab/${id}`,
+  hasContent: (id: string) => getQuotationLabQuotesBySource(id as QuotationLabSourceId).length > 0,
+};
+
+const TILE_THEME = {
+  id: 'by-theme',
+  title: 'By Theme',
+  color: '#2563EB',
+  bgLight: 'rgba(37, 99, 235, 0.12)',
+  themeIds: QUOTATION_LAB_THEME_IDS,
+  getLabel: (id: string) => getQuotationLabThemeLabel(id as QuotationLabThemeId),
+  getPath: (id: string) => `/english-campus/literature/quotation-lab/theme/${id}`,
+  getCount: (id: string) => getQuotationLabQuotesByTheme(id as QuotationLabThemeId).length,
+};
+
+const TILE_DRILL = {
+  id: 'drill-mode',
+  title: 'Drill Mode',
+  color: '#059669',
+  bgLight: 'rgba(5, 150, 105, 0.12)',
+  subtitle: 'Randomised drills based on your weak areas',
+  getPath: (sourceId: string) => `/english-campus/literature/quotation-lab/drills/${sourceId}`,
+  hasDrills: (id: string) => getQuotationLabDrillsBySource(id as QuotationLabSourceId).length > 0,
+};
 
 export function EnglishQuotationLabPage() {
   const navigate = useNavigate();
+  const { mastered, inProgress, weakCount } = useProgressSignals();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -42,203 +100,241 @@ export function EnglishQuotationLabPage() {
             Quotation Lab
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Selective quotation, flexible deployment, examiner judgement — not memorisation
+            Select • Analyse • Deploy
           </p>
         </div>
       </div>
 
-      {/* By Text — Macbeth, A Christmas Carol, Jekyll & Hyde, An Inspector Calls */}
-      <motion.section
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border p-4"
-        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-      >
-        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <Library size={20} />
-          By Text
-        </h2>
-        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Macbeth, A Christmas Carol, Jekyll & Hyde, An Inspector Calls — quote bank, drills, micro-paragraphs per text.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {QUOTATION_LAB_TEXT_SOURCE_IDS.map(sourceId => {
-            const label = getQuotationLabSourceLabel(sourceId);
-            const quoteCount = getQuotationLabQuotesBySource(sourceId).length;
-            const drillCount = getQuotationLabDrillsBySource(sourceId).length;
-            const microCount = getMicroParagraphPromptsBySource(sourceId).length;
-            const hasContent = quoteCount > 0;
-            return (
-              <div
-                key={sourceId}
-                className="rounded-xl border p-4 text-left transition"
-                style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
-              >
+      {/* 3-column grid: 4 entry tiles */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* By Text */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl border overflow-hidden"
+          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+        >
+          <div
+            className="px-4 py-3 border-b"
+            style={{ borderColor: 'rgb(var(--border))', background: TILE_BY_TEXT.bgLight }}
+          >
+            <h2 className="font-bold flex items-center gap-2" style={{ color: TILE_BY_TEXT.color }}>
+              <Library size={20} />
+              {TILE_BY_TEXT.title}
+            </h2>
+          </div>
+          <div className="p-4 space-y-2">
+            {TILE_BY_TEXT.items.map((sourceId: string) => {
+              const label = TILE_BY_TEXT.getLabel(sourceId);
+              const hasContent = TILE_BY_TEXT.hasContent(sourceId);
+              return (
                 <button
+                  key={sourceId}
                   type="button"
-                  onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${sourceId}`)}
                   disabled={!hasContent}
-                  className="w-full text-left disabled:opacity-60"
+                  onClick={() => navigate(TILE_BY_TEXT.getPath(sourceId))}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50 hover:opacity-90 transition"
+                  style={{
+                    background: hasContent ? 'rgb(var(--surface-2))' : 'transparent',
+                    color: 'rgb(var(--text))',
+                  }}
                 >
-                  <div className="font-bold" style={{ color: 'rgb(var(--text))' }}>{label}</div>
-                  <div className="text-xs mt-1 flex flex-wrap gap-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    <span>{quoteCount} quotes</span>
-                    <span>{drillCount} drills</span>
-                    <span>{microCount} micro-paragraphs</span>
-                  </div>
-                  {!hasContent && (
-                    <p className="text-xs mt-2 italic" style={{ color: 'rgb(var(--muted))' }}>Coming soon</p>
-                  )}
+                  {label}
                 </button>
-                {hasContent && (
-                  <div className="mt-3 flex flex-wrap gap-2" onClick={e => e.stopPropagation()}>
-                    {MODES.map(mode => (
-                      <button
-                        key={mode.id}
-                        type="button"
-                        onClick={() => navigate(`/english-campus/literature/quotation-lab/${mode.path}/${sourceId}`)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-90"
-                        style={{ background: `${mode.color}20`, color: mode.color }}
-                      >
-                        {mode.title}
-                      </button>
-                    ))}
+              );
+            })}
+          </div>
+          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <span className="flex items-center gap-1">
+              <CheckCircle size={14} style={{ color: '#059669' }} /> {mastered} mastered
+            </span>
+            <span className="flex items-center gap-1">
+              <RefreshCw size={14} style={{ color: '#2563EB' }} /> {inProgress} in progress
+            </span>
+            {weakCount > 0 && (
+              <span className="flex items-center gap-1">
+                <AlertTriangle size={14} style={{ color: '#D97706' }} /> {weakCount} weak themes
+              </span>
+            )}
+          </div>
+        </motion.section>
+
+        {/* By Poetry Cluster */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-xl border overflow-hidden"
+          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+        >
+          <div
+            className="px-4 py-3 border-b"
+            style={{ borderColor: 'rgb(var(--border))', background: TILE_POETRY.bgLight }}
+          >
+            <h2 className="font-bold flex items-center gap-2" style={{ color: TILE_POETRY.color }}>
+              <BookOpen size={20} />
+              {TILE_POETRY.title}
+            </h2>
+          </div>
+          <div className="p-4 space-y-2">
+            {(Object.keys(CLUSTER_SOURCES) as QuotationLabClusterId[]).map(clusterId => {
+              const label = getQuotationLabClusterLabel(clusterId);
+              const sources = CLUSTER_SOURCES[clusterId];
+              return (
+                <div key={clusterId}>
+                  <p className="text-xs font-medium mb-1.5" style={{ color: 'rgb(var(--muted))' }}>
+                    {label}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {sources.map((sourceId: string) => {
+                      const hasContent = TILE_POETRY.hasContent(sourceId);
+                      const sourceLabel = getQuotationLabSourceLabel(sourceId as QuotationLabSourceId);
+                      return (
+                        <button
+                          key={sourceId}
+                          type="button"
+                          disabled={!hasContent}
+                          onClick={() => navigate(TILE_POETRY.getPath(sourceId))}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
+                          style={{
+                            background: hasContent ? TILE_POETRY.bgLight : 'transparent',
+                            color: TILE_POETRY.color,
+                          }}
+                        >
+                          {sourceLabel}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </motion.section>
-
-      {/* By Poetry Cluster */}
-      <motion.section
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="rounded-xl border p-4"
-        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-      >
-        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <BookOpen size={20} />
-          By Poetry Cluster
-        </h2>
-        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Power & Conflict — choose a poem to access its quote bank and drills.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {(Object.keys(CLUSTER_SOURCES) as QuotationLabClusterId[]).map(clusterId => {
-            const label = getQuotationLabClusterLabel(clusterId);
-            const sources = CLUSTER_SOURCES[clusterId];
-            return (
-              <div key={clusterId} className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}>
-                <div className="font-bold text-sm mb-2" style={{ color: 'rgb(var(--text))' }}>{label}</div>
-                <div className="flex flex-wrap gap-2">
-                  {sources.map(sourceId => {
-                    const sourceLabel = getQuotationLabSourceLabel(sourceId);
-                    const quoteCount = getQuotationLabQuotesBySource(sourceId).length;
-                    const hasContent = quoteCount > 0;
-                    return (
-                      <button
-                        key={sourceId}
-                        type="button"
-                        disabled={!hasContent}
-                        onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${sourceId}`)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
-                        style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#8B5CF6' }}
-                      >
-                        {sourceLabel} ({quoteCount})
-                      </button>
-                    );
-                  })}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </motion.section>
+              );
+            })}
+          </div>
+          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <span className="flex items-center gap-1">
+              <CheckCircle size={14} style={{ color: '#059669' }} /> Quotes mastered
+            </span>
+            <span className="flex items-center gap-1">
+              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
+            </span>
+            {weakCount > 0 && (
+              <span className="flex items-center gap-1">
+                <AlertTriangle size={14} style={{ color: '#D97706' }} /> Weak themes
+              </span>
+            )}
+          </div>
+        </motion.section>
 
-      {/* Drills — Quote Selection, One-Sentence, Upgrade, Link Two, Eliminate Weak */}
-      <motion.section
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-        className="rounded-xl border p-4"
-        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-      >
-        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <Zap size={20} />
-          Drills
-        </h2>
-        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Quote selection, one-sentence analysis, upgrade, link two quotes, eliminate the weak — pick a source.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {QUOTATION_LAB_SOURCE_IDS.map(sourceId => {
-            const label = getQuotationLabSourceLabel(sourceId);
-            const drillCount = getQuotationLabDrillsBySource(sourceId).length;
-            const hasDrills = drillCount > 0;
-            return (
-              <button
-                key={sourceId}
-                type="button"
-                disabled={!hasDrills}
-                onClick={() => navigate(`/english-campus/literature/quotation-lab/drills/${sourceId}`)}
-                className="px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50"
-                style={{ background: hasDrills ? 'rgba(139, 92, 246, 0.2)' : 'rgb(var(--surface-2))', color: hasDrills ? '#8B5CF6' : 'rgb(var(--muted))' }}
-              >
-                {label} ({drillCount})
-              </button>
-            );
-          })}
-        </div>
-      </motion.section>
+        {/* By Theme */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="rounded-xl border overflow-hidden"
+          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+        >
+          <div
+            className="px-4 py-3 border-b"
+            style={{ borderColor: 'rgb(var(--border))', background: TILE_THEME.bgLight }}
+          >
+            <h2 className="font-bold flex items-center gap-2" style={{ color: TILE_THEME.color }}>
+              <Tag size={20} />
+              {TILE_THEME.title}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-wrap gap-2">
+            {TILE_THEME.themeIds.map((themeId: string) => {
+              const label = TILE_THEME.getLabel(themeId);
+              const count = TILE_THEME.getCount(themeId);
+              return (
+                <button
+                  key={themeId}
+                  type="button"
+                  onClick={() => navigate(TILE_THEME.getPath(themeId))}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium hover:opacity-90"
+                  style={{
+                    background: count > 0 ? TILE_THEME.bgLight : 'rgb(var(--surface-2))',
+                    color: TILE_THEME.color,
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <span className="flex items-center gap-1">
+              <CheckCircle size={14} style={{ color: '#059669' }} /> Mastered
+            </span>
+            <span className="flex items-center gap-1">
+              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
+            </span>
+            {weakCount > 0 && (
+              <span className="flex items-center gap-1">
+                <AlertTriangle size={14} style={{ color: '#D97706' }} /> Weak themes
+              </span>
+            )}
+          </div>
+        </motion.section>
 
-      {/* By Theme */}
-      <motion.section
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="rounded-xl border p-4"
-        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-      >
-        <h2 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <Tag size={20} />
-          By Theme
-        </h2>
-        <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Power, Guilt, Identity, Responsibility — explore quotes by theme across texts.
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {QUOTATION_LAB_THEME_IDS.map(themeId => {
-            const label = getQuotationLabThemeLabel(themeId);
-            const quotes = getQuotationLabQuotesByTheme(themeId);
-            const count = quotes.length;
-            return (
-              <button
-                key={themeId}
-                type="button"
-                onClick={() => navigate(`/english-campus/literature/quotation-lab/theme/${themeId}`)}
-                className="rounded-xl border p-4 text-left hover:shadow-md transition"
-                style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
-              >
-                <div className="font-bold text-sm" style={{ color: 'rgb(var(--text))' }}>{label}</div>
-                <div className="text-xs mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>{count} quotes</div>
-              </button>
-            );
-          })}
-        </div>
-      </motion.section>
-
-      <section className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
-        <h2 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>What you'll do here</h2>
-        <ul className="text-sm space-y-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Quote Lab</strong> — Four panels: What It Means, How It Works, Why Examiners Love It, Grade 9 Angle.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Drills</strong> — Quote selection, one-sentence analysis, upgrade, link two, eliminate weak.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Micro-Paragraph Builder</strong> — 4–5 sentence paragraphs with examiner-style feedback.</li>
-          <li><strong style={{ color: 'rgb(var(--text))' }}>Progress</strong> — Heatmap, theme confidence, AO balance, grade ceiling.</li>
-        </ul>
-      </section>
+        {/* Drill Mode — spans full width on 3-col so add as 4th or wrap; spec says 4 tiles, so 2x2 on large or 4th row */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border overflow-hidden sm:col-span-2 lg:col-span-1"
+          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+        >
+          <div
+            className="px-4 py-3 border-b"
+            style={{ borderColor: 'rgb(var(--border))', background: TILE_DRILL.bgLight }}
+          >
+            <h2 className="font-bold flex items-center gap-2" style={{ color: TILE_DRILL.color }}>
+              <Zap size={20} />
+              {TILE_DRILL.title}
+            </h2>
+            {TILE_DRILL.subtitle && (
+              <p className="text-xs mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                {TILE_DRILL.subtitle}
+              </p>
+            )}
+          </div>
+          <div className="p-4 flex flex-wrap gap-2">
+            {QUOTATION_LAB_SOURCE_IDS.map((sourceId: string) => {
+              const hasDrills = TILE_DRILL.hasDrills(sourceId);
+              const label = getQuotationLabSourceLabel(sourceId as QuotationLabSourceId);
+              return (
+                <button
+                  key={sourceId}
+                  type="button"
+                  disabled={!hasDrills}
+                  onClick={() => navigate(TILE_DRILL.getPath(sourceId))}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
+                  style={{
+                    background: hasDrills ? TILE_DRILL.bgLight : 'rgb(var(--surface-2))',
+                    color: hasDrills ? TILE_DRILL.color : 'rgb(var(--muted))',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <span className="flex items-center gap-1">
+              <CheckCircle size={14} style={{ color: '#059669' }} /> Mastered
+            </span>
+            <span className="flex items-center gap-1">
+              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
+            </span>
+            {weakCount > 0 && (
+              <span className="flex items-center gap-1">
+                <AlertTriangle size={14} style={{ color: '#D97706' }} /> {weakCount} weak themes
+              </span>
+            )}
+          </div>
+        </motion.section>
+      </div>
     </div>
   );
 }

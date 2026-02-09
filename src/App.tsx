@@ -32,6 +32,7 @@ import { EnglishLiteratureModelDrillsPage } from './pages/english/EnglishLiterat
 import { EnglishQuotationLabPage } from './pages/english/EnglishQuotationLabPage';
 import { EnglishQuotationLabThemePage } from './pages/english/EnglishQuotationLabThemePage';
 import { EnglishQuotationLabQuoteLabPage } from './pages/english/EnglishQuotationLabQuoteLabPage';
+import { EnglishQuotationLabQuoteDetailPage } from './pages/english/EnglishQuotationLabQuoteDetailPage';
 import { EnglishQuotationLabDrillsPage } from './pages/english/EnglishQuotationLabDrillsPage';
 import { EnglishQuotationLabMicroPage } from './pages/english/EnglishQuotationLabMicroPage';
 import { EnglishQuotationLabProgressPage } from './pages/english/EnglishQuotationLabProgressPage';
@@ -157,6 +158,7 @@ function App() {
                 <Route path="/english-campus/literature/quotation-lab" element={<EnglishQuotationLabPage />} />
                 <Route path="/english-campus/literature/quotation-lab/theme/:themeId" element={<EnglishQuotationLabThemePage />} />
                 <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId" element={<EnglishQuotationLabQuoteLabPage />} />
+                <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId/quote/:quoteId" element={<EnglishQuotationLabQuoteDetailPage />} />
                 <Route path="/english-campus/literature/quotation-lab/drills/:sourceId" element={<EnglishQuotationLabDrillsPage />} />
                 <Route path="/english-campus/literature/quotation-lab/micro/:sourceId" element={<EnglishQuotationLabMicroPage />} />
                 <Route path="/english-campus/literature/quotation-lab/progress/:sourceId" element={<EnglishQuotationLabProgressPage />} />

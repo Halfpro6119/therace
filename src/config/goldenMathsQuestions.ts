@@ -195,7 +195,7 @@ const H1: GoldenMathsQuestion[] = [
   { id: 'H1-60', prompt: 'Find the bearing of B from A', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'bearingDiagram', answers: '65', diagramParams: { values: { bearing: 65 }, visibility: { showBearingLabel: false } } },
   // Probability & Statistics (66–80)
   { id: 'H1-61', prompt: 'A bag has 3 red and 5 blue counters. Find P(red)', type: 'fill', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '3/8' },
-  { id: 'H1-62', prompt: 'Two counters drawn with replacement. Find probability both are blue', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '25/64' },
+  { id: 'H1-62', prompt: 'A bag contains 5 blue and 3 red counters. Two counters are drawn at random with replacement. Find the probability that both are blue.', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '25/64' },
   { id: 'H1-63', prompt: 'Complete the frequency table. Values 1, 2, 3. Total frequency 30. Frequencies are in ratio 2 : 3 : 1. Fill in the three frequencies.', type: 'tableFill', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '10,15,5', questionData: { rows: [ { value: '1', frequency: '10' }, { value: '2', frequency: '15' }, { value: '3', frequency: '5' } ], columnLabels: { value: 'Value', frequency: 'Frequency' } } },
   { id: 'H1-64', prompt: 'Find the mean from a frequency table: value 1 (freq 3), 2 (freq 5), 3 (freq 2)', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '1.9' },
   { id: 'H1-65', prompt: 'Find the median from the list 2, 5, 7, 8, 9', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: '7' },
@@ -204,7 +204,7 @@ const H1: GoldenMathsQuestion[] = [
   { id: 'H1-68', prompt: 'Identify an outlier', type: 'multiNumeric', paper: 1, tier: 'higher', calculator: false, diagram: 'scatterPlot', answers: '10,4', diagramParams: { values: { points: '[{"x":2,"y":3},{"x":4,"y":5},{"x":5,"y":6},{"x":7,"y":8},{"x":8,"y":9},{"x":10,"y":4}]' } } },
   { id: 'H1-69', prompt: 'Find frequency from a histogram', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'histogram', answers: '20', diagramParams: { values: { classes: '[{"start":0,"end":10,"frequency":20,"frequencyDensity":2},{"start":10,"end":20,"frequency":30,"frequencyDensity":3},{"start":20,"end":40,"frequency":40,"frequencyDensity":2}]' }, visibility: { showFrequencies: true } } },
   { id: 'H1-70', prompt: 'Compare two box plots', type: 'short', paper: 1, tier: 'higher', calculator: false, diagram: 'boxPlot', answers: ['A has a higher median', 'B has a greater spread', 'similar median', 'different IQR', 'one has a higher median than the other'] },
-  { id: 'H1-71', prompt: 'Find the probability from a Venn diagram', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'vennDiagram', answers: '0.25', diagramParams: { labels: { onlyA: '3', onlyB: '5', intersection: '2', outside: '10' } } },
+  { id: 'H1-71', prompt: 'One member is chosen at random from the universal set. Find P(A) from the Venn diagram.', type: 'numeric', paper: 1, tier: 'higher', calculator: false, diagram: 'vennDiagram', answers: '0.25', diagramParams: { labels: { onlyA: '3', onlyB: '5', intersection: '2', outside: '10' } } },
   {
     id: 'H1-72',
     prompt: '18 people were asked whether they like tea (A) or coffee (B). The numbers 5, 3, 2, 8 represent counts for: A only, B only, A and B, Neither. Drag each number to the correct region of the Venn diagram.',
@@ -236,7 +236,7 @@ const H1: GoldenMathsQuestion[] = [
   { id: 'H1-77', prompt: 'Explain why probabilities sum to 1', type: 'short', paper: 1, tier: 'higher', calculator: false, diagram: 'none', answers: ['all outcomes covered', 'exhaustive', 'every possibility included', 'complete set of outcomes'] },
   {
     id: 'H1-78',
-    prompt: 'Show that the probability is 3/8',
+    prompt: 'A bag contains 3 red and 5 blue counters. One counter is drawn at random. Show that the probability that it is red is 3/8.',
     type: 'proofShort',
     paper: 1,
     tier: 'higher',
@@ -384,7 +384,7 @@ const H2: GoldenMathsQuestion[] = [
       ],
     },
   },
-  { id: 'H2-71', prompt: 'Find P(B) from the Venn diagram.', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'vennDiagram', answers: '0.5', diagramParams: { labels: { onlyA: '4', onlyB: '6', intersection: '4', outside: '6' } } },
+  { id: 'H2-71', prompt: 'One member is chosen at random from the universal set. Find P(B) from the Venn diagram.', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'vennDiagram', answers: '0.5', diagramParams: { labels: { onlyA: '4', onlyB: '6', intersection: '4', outside: '6' } } },
   { id: 'H2-72', prompt: 'Grouped frequency: 0–10 (freq 5), 10–20 (8), 20–30 (7). Find mean (midpoints 5, 15, 25)', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '15.5' },
   { id: 'H2-73', prompt: 'Find the median from cumulative frequency curve', type: 'graphRead', paper: 2, tier: 'higher', calculator: true, diagram: 'cumulativeFrequency', answers: ['35', '36', '37', 'median', '50th percentile', 'middle value'], diagramParams: { values: { data: '[{"ub":10,"cf":5},{"ub":20,"cf":18},{"ub":30,"cf":42},{"ub":40,"cf":68},{"ub":50,"cf":85},{"ub":60,"cf":95},{"ub":70,"cf":100}]', totalFrequency: 100 }, visibility: { showMedianLine: true } } },
   { id: 'H2-74', prompt: 'Data: 3, 5, 7, 8, 9, 11, 12. Find the interquartile range', type: 'numeric', paper: 2, tier: 'higher', calculator: true, diagram: 'none', answers: '6' },
@@ -534,7 +534,7 @@ const H3: GoldenMathsQuestion[] = [
       ],
     },
   },
-  { id: 'H3-65', prompt: 'Find the probability from a Venn diagram.', type: 'numeric', paper: 3, tier: 'higher', calculator: true, diagram: 'vennDiagram', answers: '0.2', diagramParams: { labels: { onlyA: '6', onlyB: '8', intersection: '2', outside: '4' } } },
+  { id: 'H3-65', prompt: 'One member is chosen at random from the universal set. Find the probability that they are in neither A nor B from the Venn diagram.', type: 'numeric', paper: 3, tier: 'higher', calculator: true, diagram: 'vennDiagram', answers: '0.2', diagramParams: { labels: { onlyA: '6', onlyB: '8', intersection: '2', outside: '4' } } },
   { id: 'H3-66', prompt: 'Grouped frequency: 0–20 (5), 20–40 (10), 40–60 (5). Midpoints 10, 30, 50. Find the mean.', type: 'numeric', paper: 3, tier: 'higher', calculator: true, diagram: 'none', answers: '30' },
   { id: 'H3-67', prompt: 'Use the cumulative frequency curve to estimate the median value.', type: 'graphRead', paper: 3, tier: 'higher', calculator: true, diagram: 'cumulativeFrequency', answers: ['32', '33', '34', 'median', '50th percentile', 'middle value'], diagramParams: { values: { data: '[{"ub":5,"cf":2},{"ub":15,"cf":12},{"ub":25,"cf":35},{"ub":35,"cf":55},{"ub":45,"cf":72},{"ub":55,"cf":85},{"ub":65,"cf":95},{"ub":75,"cf":100}]', totalFrequency: 100 }, visibility: { showMedianLine: true } } },
   { id: 'H3-68', prompt: 'Cumulative frequency curve: Q1=20, Q3=45. Find the interquartile range.', type: 'numeric', paper: 3, tier: 'higher', calculator: true, diagram: 'none', answers: '25' },
@@ -548,7 +548,7 @@ const H3: GoldenMathsQuestion[] = [
   { id: 'H3-76', prompt: 'A company has 10 employees earning £25,000 each and the owner earning £1,000,000. The mean salary is £125,000. Explain why the mean is misleading.', type: 'short', paper: 3, tier: 'higher', calculator: true, diagram: 'none', answers: ['outliers', 'skewed', 'extreme values', 'not representative', 'affected by outliers', 'owner salary distorts mean'] },
   {
     id: 'H3-77',
-    prompt: 'Show that the probability is 5/12.',
+    prompt: 'A bag contains 5 red and 7 blue counters. One counter is drawn at random. Show that the probability that it is red is 5/12.',
     type: 'proofShort',
     paper: 3,
     tier: 'higher',

@@ -5,14 +5,13 @@ import {
   getQuotationLabThemeLabel,
   getQuotationLabQuotesByTheme,
   getQuotationLabSourceLabel,
+  QUOTATION_LAB_THEME_IDS,
 } from '../../config/quotationLabData';
-
-const THEME_IDS: QuotationLabThemeId[] = ['power', 'guilt', 'identity', 'responsibility'];
 
 export function EnglishQuotationLabThemePage() {
   const navigate = useNavigate();
   const { themeId } = useParams<{ themeId: string }>();
-  const validTheme = themeId && THEME_IDS.includes(themeId as QuotationLabThemeId)
+  const validTheme = themeId && QUOTATION_LAB_THEME_IDS.includes(themeId as QuotationLabThemeId)
     ? (themeId as QuotationLabThemeId)
     : 'power';
   const quotes = getQuotationLabQuotesByTheme(validTheme);
@@ -29,12 +28,15 @@ export function EnglishQuotationLabThemePage() {
         >
           <ChevronLeft size={24} style={{ color: 'rgb(var(--text))' }} />
         </button>
-        <div>
+        <div className="flex-1 min-w-0">
+          <nav className="text-xs mb-1" style={{ color: 'rgb(var(--muted))' }}>
+            Quotation Lab → {label}
+          </nav>
           <h1 className="text-xl font-bold" style={{ color: 'rgb(var(--text))' }}>
-            Quotation Lab — {label}
+            {label}
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {quotes.length} quotes for this theme across texts
+            {quotes.length} quotes · click to earn depth
           </p>
         </div>
       </div>
@@ -42,27 +44,31 @@ export function EnglishQuotationLabThemePage() {
       {quotes.length > 0 ? (
         <div className="space-y-3">
           {quotes.map(q => (
-            <div
+            <button
               key={q.id}
-              className="rounded-xl border p-4"
+              type="button"
+              onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${q.sourceId}/quote/${q.id}`)}
+              className="w-full rounded-xl border p-4 text-left group transition"
               style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
             >
-              <p className="italic text-sm mb-2" style={{ color: 'rgb(var(--text))' }}>"{q.quote}"</p>
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}>
-                  {getQuotationLabSourceLabel(q.sourceId)}
+              <p className="font-medium text-sm italic" style={{ color: 'rgb(var(--text))' }}>"{q.quote}"</p>
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+                <span>{getQuotationLabSourceLabel(q.sourceId)}</span>
+                {q.location && <span>· {q.location}</span>}
+                <span className="opacity-80">Themes: {q.themes.join(' · ')}</span>
+                <span className="px-1.5 py-0.5 rounded capitalize" style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--muted))' }}>
+                  {(q.difficulty ?? 'core')}
                 </span>
-                {q.location && <span className="text-xs" style={{ color: 'rgb(var(--muted))' }}>{q.location}</span>}
-                <button
-                  type="button"
-                  onClick={() => navigate(`/english-campus/literature/quotation-lab/quote-lab/${q.sourceId}`)}
-                  className="text-xs font-medium"
-                  style={{ color: 'rgb(var(--accent))' }}
-                >
-                  Open full Quote Lab →
-                </button>
               </div>
-            </div>
+              <div className="mt-2 flex items-center gap-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                {q.grade9Insight || (q.bestUsedFor?.length ?? 0) > 0 ? (
+                  <span style={{ color: '#059669' }}>Used well in Grade 9 answers</span>
+                ) : null}
+                {q.commonMisuse && (
+                  <span style={{ color: '#D97706' }}>Often misused by students</span>
+                )}
+              </div>
+            </button>
           ))}
         </div>
       ) : (
