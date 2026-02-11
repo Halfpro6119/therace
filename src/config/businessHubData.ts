@@ -636,6 +636,45 @@ export const BUSINESS_CASE_STUDIES: BusinessCaseStudy[] = [
       { id: 'cs-p2-q3', question: 'Evaluate whether TechGadgets Ltd should use retained profit or a bank loan to finance expansion.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Retained profit: no interest, no loss of control', marks: 2 }, { idea: 'Loan: interest cost, but retains ownership', marks: 2 }, { idea: 'Conclusion with justification', marks: 2 }], modelAnswer: 'Retained profit avoids interest and does not dilute ownership, but may be limited if the business is already using profits. A loan provides a larger sum and keeps ownership but adds interest and repayment pressure. If cash flow is already tight, a loan could worsen it; retained profit might be safer if available.' },
     ],
   },
+  {
+    id: 'cs-p1-hr',
+    unitIds: ['3.1', '3.2', '3.4'],
+    paper: 1,
+    title: 'BakeRight Ltd',
+    scenario: 'BakeRight Ltd is a private limited company making artisan bread. It has 45 employees and is recruiting a new production manager. The HR director is deciding between internal promotion and external recruitment. The business must comply with the National Minimum Wage and Equality Act.',
+    data: 'Staff: 30 production, 10 sales, 5 admin. Annual turnover £1.2m. Wage bill £420,000.',
+    questions: [
+      { id: 'cs-hr-q1', question: 'Define the term internal recruitment.', marks: 2, type: 'define', markScheme: [{ idea: 'Filling vacancy from existing staff', marks: 2 }], modelAnswer: 'Internal recruitment is when a business fills a vacancy by promoting or moving an existing employee rather than hiring from outside.' },
+      { id: 'cs-hr-q2', question: 'Explain one benefit of using internal recruitment for the production manager role.', marks: 3, type: 'explain', markScheme: [{ idea: 'Identify benefit (e.g. knows business, faster, cheaper)', marks: 1 }, { idea: 'Application to BakeRight', marks: 1 }, { idea: 'Development', marks: 1 }], modelAnswer: 'Internal recruitment means the candidate already knows the business and bakery processes, so they can start effectively faster. They may also be cheaper than external recruitment (no agency fees) and it can motivate other staff who see promotion opportunities.' },
+      { id: 'cs-hr-q3', question: 'Evaluate the impact of legislation (e.g. NMW, Equality Act) on BakeRight Ltd.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Costs: wages, training, compliance', marks: 2 }, { idea: 'Benefits: reputation, safe workplace, fair treatment', marks: 2 }, { idea: 'Conclusion', marks: 2 }], modelAnswer: 'Legislation adds costs (wages must meet NMW, recruitment must be fair under Equality Act) and may require training. However, compliance can improve reputation, attract staff and reduce risk of tribunals or fines. For a business like BakeRight, fair treatment helps retention; the cost is often outweighed by benefits.' },
+    ],
+  },
+  {
+    id: 'cs-p2-marketing',
+    unitIds: ['3.1', '3.2', '3.5'],
+    paper: 2,
+    title: 'StyleCo Fashion',
+    scenario: 'StyleCo is a small fashion retailer considering a new product launch. It wants to use market research to understand its target market before deciding on price and promotion. The business competes with both high-street and online rivals.',
+    data: 'Current customers: 60% aged 18–35, 40% aged 35–55. Average spend £45. Competitors: 5 within 2 miles.',
+    questions: [
+      { id: 'cs-mkt-q1', question: 'Define the term market segmentation.', marks: 2, type: 'define', markScheme: [{ idea: 'Dividing market into groups', marks: 1 }, { idea: 'e.g. age, gender, location, income', marks: 1 }], modelAnswer: 'Market segmentation is dividing the market into groups of customers with similar characteristics (e.g. age, gender, location, income) so the business can target them more effectively.' },
+      { id: 'cs-mkt-q2', question: 'Explain one advantage of primary research for StyleCo.', marks: 3, type: 'explain', markScheme: [{ idea: 'Identify advantage (e.g. specific to business, up to date)', marks: 1 }, { idea: 'Application to StyleCo', marks: 1 }, { idea: 'Development', marks: 1 }], modelAnswer: 'Primary research gives StyleCo data specific to its own customers and products, which secondary data may not provide. For a fashion retailer, understanding what their target customers want (e.g. through surveys or focus groups) helps design and price the new product correctly.' },
+      { id: 'cs-mkt-q3', question: 'Evaluate whether StyleCo should use price skimming or penetration pricing for the new product.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Skimming: high initial price, early profit', marks: 2 }, { idea: 'Penetration: low price, gain share', marks: 2 }, { idea: 'Conclusion with justification', marks: 2 }], modelAnswer: 'Skimming would maximise profit from early adopters but might limit volume. Penetration would attract customers quickly and build market share but could reduce profit per unit. For a small retailer competing with larger rivals, penetration might help gain customers; if the product is unique, skimming could work. Depends on competition and product uniqueness.' },
+    ],
+  },
+  {
+    id: 'cs-p2-finance',
+    unitIds: ['3.1', '3.2', '3.6'],
+    paper: 2,
+    title: 'PrintPro Ltd',
+    scenario: 'PrintPro Ltd provides printing services to local businesses. It is considering investing in a new printer costing £50,000. The machine is expected to generate extra net profit of £12,500 per year for 4 years. PrintPro also wants to improve its cash flow management.',
+    data: 'Current: Revenue £180,000; Cost of sales £90,000; Other expenses £60,000. Monthly cash flow often negative in quarter 1.',
+    questions: [
+      { id: 'cs-fin-q1', question: 'Calculate the average rate of return for the new printer.', marks: 4, type: 'calculate', markScheme: [{ idea: 'Total profit = 12500 × 4 = 50000', marks: 1 }, { idea: 'Average annual = 12500', marks: 1 }, { idea: 'ARR = (12500/50000) × 100', marks: 1 }, { idea: '25%', marks: 1 }], modelAnswer: 'Total profit = £12,500 × 4 = £50,000. Average annual profit = £12,500. ARR = (£12,500 ÷ £50,000) × 100 = 25%.' },
+      { id: 'cs-fin-q2', question: 'Explain one solution to cash flow problems.', marks: 3, type: 'explain', markScheme: [{ idea: 'Identify solution (e.g. overdraft, chase debtors)', marks: 1 }, { idea: 'Application', marks: 1 }, { idea: 'Development', marks: 1 }], modelAnswer: 'Chasing debtors can improve cash flow by getting payment in sooner. Offering a discount for early payment might encourage faster payment. Alternatively, an overdraft could cover short-term shortfalls until cash arrives.' },
+      { id: 'cs-fin-q3', question: 'Define the term cash flow.', marks: 2, type: 'define', markScheme: [{ idea: 'Movement of money in and out', marks: 2 }], modelAnswer: 'Cash flow is the movement of money into and out of a business over a period of time.' },
+    ],
+  },
 ];
 
 // ============================================================================
@@ -649,6 +688,7 @@ export const CALCULATION_TASKS: CalculationTask[] = [
   { id: 'calc-arr-1', unitId: '3.6', type: 'averageRateOfReturn', scenario: 'A machine costs £20,000 and is expected to generate net profit of £5,000 per year for 4 years. Calculate the average rate of return.', inputs: { initialCost: 20000, annualProfit: 5000, years: 4 }, expected: { totalProfit: 20000, arrPercent: 25 }, formulaHint: 'ARR = (average annual profit ÷ initial cost) × 100; total profit = annual × years', interpretationQuestion: 'What does a 25% ARR suggest to the business?', interpretationAnswer: 'The investment returns 25% per year on average; the business can compare this with other uses of the £20,000 or with the cost of borrowing to decide if the investment is worthwhile.' },
   { id: 'calc-margin-1', unitId: '3.6', type: 'grossProfitMargin', scenario: 'Revenue £80,000; cost of sales £48,000. Calculate gross profit and gross profit margin.', inputs: { revenue: 80000, costOfSales: 48000 }, expected: { grossProfit: 32000, marginPercent: 40 }, formulaHint: 'Gross profit = revenue − cost of sales; Gross profit margin = (gross profit ÷ revenue) × 100', interpretationQuestion: 'Why might a business compare its gross profit margin with the previous year?', interpretationAnswer: 'To see if it is controlling cost of sales better or worse; a falling margin might mean rising supplier costs or need to cut prices.' },
   { id: 'calc-margin-2', unitId: '3.6', type: 'netProfitMargin', scenario: 'Revenue £80,000; net profit £8,000. Calculate net profit margin.', inputs: { revenue: 80000, netProfit: 8000 }, expected: { marginPercent: 10 }, formulaHint: 'Net profit margin = (net profit ÷ revenue) × 100', interpretationQuestion: 'What does net profit margin show that gross profit margin does not?', interpretationAnswer: 'Net profit margin includes all expenses (e.g. wages, rent, admin), so it shows how much of each £ of revenue becomes profit after everything is paid. It is a key measure of overall profitability.' },
+  { id: 'calc-be-1', unitId: '3.6', type: 'breakEvenInterpret', scenario: 'A business has a break-even chart. The total revenue and total cost lines intersect at 400 units. Current output is 550 units. Identify the break-even level of output and the margin of safety.', inputs: { intersectionOutput: 400, currentOutput: 550 }, expected: { breakEvenOutput: 400, marginOfSafety: 150 }, formulaHint: 'Break-even output = where total revenue = total cost. Margin of safety = current output − break-even output', interpretationQuestion: 'What does the margin of safety tell the business?', interpretationAnswer: 'A margin of safety of 150 units means the business can sell 150 fewer units than current output before making a loss. It shows how much "buffer" the business has if sales fall.' },
 ];
 
 // ============================================================================

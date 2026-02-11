@@ -21,6 +21,7 @@ const HUB_ICONS = {
   Landmark,
   Globe,
   BookHeart,
+  Heart,
   Cpu,
 };
 

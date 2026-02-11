@@ -115,10 +115,9 @@ export function GeographyHubOptionSelectPage() {
                   className="w-full rounded-lg border px-3 py-2 text-sm"
                   style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}
                 >
-                  {PHYSICAL_LANDSCAPE_OPTIONS.filter((o) => o.id !== otherLandscape(0)).map((opt) => (
+                  {PHYSICAL_LANDSCAPE_OPTIONS.map((opt) => (
                     <option key={opt.id} value={opt.id}>{opt.label}</option>
                   ))}
-                  <option value={selection.physicalLandscapes[0]}>{PHYSICAL_LANDSCAPE_OPTIONS.find((o) => o.id === selection.physicalLandscapes[0])?.label}</option>
                 </select>
               </div>
               <div>
@@ -129,10 +128,9 @@ export function GeographyHubOptionSelectPage() {
                   className="w-full rounded-lg border px-3 py-2 text-sm"
                   style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}
                 >
-                  {PHYSICAL_LANDSCAPE_OPTIONS.filter((o) => o.id !== otherLandscape(1)).map((opt) => (
+                  {landscape2Options.map((opt) => (
                     <option key={opt.id} value={opt.id}>{opt.label}</option>
                   ))}
-                  <option value={selection.physicalLandscapes[1]}>{PHYSICAL_LANDSCAPE_OPTIONS.find((o) => o.id === selection.physicalLandscapes[1])?.label}</option>
                 </select>
               </div>
             </div>

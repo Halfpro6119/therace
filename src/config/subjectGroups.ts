@@ -96,6 +96,15 @@ export const FEATURED_HUBS: SubjectHub[] = [
     accentColor: '#DC2626',
     hubPath: '/health-hub',
   },
+  {
+    id: 'compute',
+    title: 'Compute Lab',
+    subtitle: 'AQA GCSE Computer Science 8525 – Algorithms, programming, theory & SQL',
+    subjectNames: ['Computer Science'],
+    icon: 'Cpu',
+    accentColor: '#0891B2',
+    hubPath: '/compute-lab',
+  },
 ];
 
 /** Order for chosen subjects section. (Geography, Computer Science have dedicated hubs.) */
