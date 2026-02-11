@@ -42,13 +42,16 @@ export function ReligiousStudiesHubOptionSelectPage() {
     if (!THEMATIC_THEMES.includes(themeId)) return;
     setSelection((s) => {
       const has = s.themes.includes(themeId);
+      const thematic = s.themes.filter((t) => THEMATIC_THEMES.includes(t));
       if (has) {
-        return { ...s, themes: s.themes.filter((t) => t !== themeId) };
+        const nextThematic = thematic.filter((t) => t !== themeId);
+        return { ...s, themes: s.textualRoute ? [...nextThematic, ...TEXTUAL_THEMES] : nextThematic };
       }
       if (s.textualRoute) {
-        return { ...s, themes: [...s.themes.filter((t) => !TEXTUAL_THEMES.includes(t)), themeId] };
+        if (thematic.length >= 2) return s;
+        return { ...s, themes: [...thematic, themeId, ...TEXTUAL_THEMES] };
       }
-      return { ...s, themes: [...s.themes, themeId].filter((t) => THEMATIC_THEMES.includes(t)).slice(0, 4) };
+      return { ...s, themes: [...thematic, themeId].slice(0, 4) };
     });
   };
 
@@ -145,7 +148,8 @@ export function ReligiousStudiesHubOptionSelectPage() {
               {THEMATIC_THEMES.map((themeId) => {
                 const theme = THEMES.find((t) => t.id === themeId);
                 const checked = selection.themes.includes(themeId);
-                const disabled = !selection.textualRoute && selection.themes.filter((t) => THEMATIC_THEMES.includes(t)).length >= 4 && !checked;
+                const thematicCount = selection.themes.filter((t) => THEMATIC_THEMES.includes(t)).length;
+                const disabled = (selection.textualRoute ? thematicCount >= 2 && !checked : thematicCount >= 4 && !checked);
                 return (
                   <label key={themeId} className={`flex items-center gap-2 p-2 rounded-lg border ${disabled ? 'opacity-50' : 'cursor-pointer'}`} style={{ borderColor: 'rgb(var(--border))' }}>
                     <input

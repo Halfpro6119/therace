@@ -11,7 +11,7 @@ export function ReligiousStudiesHubQuickCheckPage() {
   const selection = storage.getRSOptionSelection();
   const items = selection ? getQuickChecksForSelection(selection) : [];
   const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState<string | string[]>('');
   const [feedback, setFeedback] = useState<{ correct: boolean; text: string } | null>(null);
 
   const item = items[index];
@@ -19,8 +19,12 @@ export function ReligiousStudiesHubQuickCheckPage() {
   const check = () => {
     if (!item) return;
     const correct = Array.isArray(item.correctAnswer)
-      ? item.correctAnswer.every((a) => answer.trim().toLowerCase().includes(String(a).toLowerCase()))
-      : answer.trim().toLowerCase() === String(item.correctAnswer).toLowerCase();
+      ? (() => {
+          const ans = Array.isArray(answer) ? answer.filter(Boolean) : (typeof answer === 'string' && answer.includes(',') ? answer.split(',').map((s) => s.trim()).filter(Boolean) : (answer ? [String(answer)] : []));
+          const correctSet = new Set(item.correctAnswer.map((a) => String(a).toLowerCase()));
+          return ans.length === correctSet.size && ans.every((a) => correctSet.has(String(a).toLowerCase()));
+        })()
+      : (typeof answer === 'string' ? answer : '').trim().toLowerCase() === String(item.correctAnswer).toLowerCase();
     setFeedback({
       correct,
       text: correct ? (item.feedback?.correct ?? 'Correct!') : (item.feedback?.incorrect ?? 'Not quite.'),
@@ -31,6 +35,13 @@ export function ReligiousStudiesHubQuickCheckPage() {
     setAnswer('');
     setFeedback(null);
     setIndex((i) => (i >= items.length - 1 ? 0 : i + 1));
+  };
+
+  const toggleWhichTwo = (opt: string) => {
+    const current = Array.isArray(answer) ? answer : (answer ? [answer] : []);
+    const has = current.includes(opt);
+    if (has) setAnswer(current.filter((o) => o !== opt));
+    else if (current.length < 2) setAnswer([...current, opt]);
   };
 
   if (!selection) {
@@ -63,7 +74,7 @@ export function ReligiousStudiesHubQuickCheckPage() {
             </div>
           )}
           {(item.type === 'shortAnswer' || item.type === 'trueFalse') && (
-            <input type="text" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Your answer" className="w-full rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }} />
+            <input type="text" value={typeof answer === 'string' ? answer : ''} onChange={(e) => setAnswer(e.target.value)} placeholder="Your answer" className="w-full rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }} />
           )}
           {item.type === 'trueFalse' && (
             <div className="flex gap-2 mt-2">
@@ -73,9 +84,13 @@ export function ReligiousStudiesHubQuickCheckPage() {
           )}
           {item.type === 'whichTwo' && item.options && (
             <div className="space-y-2">
-              {item.options.map((opt) => (
-                <button key={opt} type="button" onClick={() => setAnswer(opt)} className="w-full text-left rounded-lg border px-4 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}>{opt}</button>
-              ))}
+              <p className="text-xs mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Select exactly two:</p>
+              {item.options.map((opt) => {
+                const selected = Array.isArray(answer) ? answer.includes(opt) : answer === opt;
+                return (
+                  <button key={opt} type="button" onClick={() => toggleWhichTwo(opt)} className={`w-full text-left rounded-lg border px-4 py-2 text-sm ${selected ? 'ring-2' : ''}`} style={{ borderColor: selected ? '#7C3AED' : 'rgb(var(--border))', color: 'rgb(var(--text))', ...(selected ? { borderWidth: '2px' } : {}) }}>{opt}{selected ? ' ✓' : ''}</button>
+                );
+              })}
             </div>
           )}
           {!feedback && <button type="button" onClick={check} className="mt-4 px-4 py-2 rounded-xl font-medium text-white" style={{ background: ACCENT }}>Check</button>}

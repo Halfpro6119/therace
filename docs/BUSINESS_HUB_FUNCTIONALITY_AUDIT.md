@@ -18,10 +18,11 @@
 | Case Study | ✅ | Scenario, data, questions; model answer; Finish → Calculations |
 | Calculation Lab | ✅ | breakEvenInterpret supported; empty state for units with no tasks |
 | Evaluation | ✅ | Prompts, model answers, breakdown; empty state |
-| Gating | ⚠️ **Bug** | Evaluation locked for units 3.2, 3.3, 3.4, 3.5 (no calculations) |
-| Case Study finish flow | ⚠️ **UX** | Units with no calculations navigate to empty Calculations page |
+| Gating | ✅ Fixed | Evaluation unlocks when Case Study done (for units with no calculations) |
+| Case Study finish flow | ✅ Fixed | Units with no calculations navigate to Evaluation instead of Calculations |
+| Recommended step | ✅ Fixed | Skips Calculation Lab for units with no calculations |
 
-**Critical fix:** Evaluation must unlock when Case Study is completed for units that have no calculation tasks.
+**Fixes applied:** Evaluation unlock logic, Case Study finish navigation, Unit page recommended step.
 
 ---
 

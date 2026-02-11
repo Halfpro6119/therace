@@ -280,23 +280,26 @@ const PERIOD_AB = getHistoryOptionKey('period', 'AB');
 
 const GERMANY_TIMELINE: TimelineEvent[] = [
   { id: 'AB-1-1890', optionKey: PERIOD_AB, partId: 'AB-1', date: '1890', title: 'Kaiser Wilhelm II becomes Emperor', description: 'Wilhelm II succeeded his father Frederick III. He favoured strong personal rule and clashed with Chancellor Bismarck, who resigned in 1890. Industrialisation and the growth of socialism increased during his reign.', order: 1 },
-  { id: 'AB-1-1914', optionKey: PERIOD_AB, partId: 'AB-1', date: '1914', title: 'Outbreak of the First World War', description: 'Germany entered the war as part of the Triple Alliance. The war placed huge strain on the economy and society; war weariness and defeat led to the end of the monarchy.', order: 2 },
-  { id: 'AB-1-1918', optionKey: PERIOD_AB, partId: 'AB-1', date: 'November 1918', title: 'Abdication of the Kaiser; armistice', description: 'Wilhelm II abdicated and fled to the Netherlands. The Weimar Republic was declared. Germany signed the armistice ending the First World War.', order: 3 },
-  { id: 'AB-1-1919', optionKey: PERIOD_AB, partId: 'AB-1', date: 'January 1919', title: 'Spartacist Uprising', description: 'The Spartacist League (Rosa Luxemburg and Karl Liebknecht) attempted a communist revolution in Berlin. It was crushed by the Freikorps and the new government.', order: 4 },
-  { id: 'AB-1-1919b', optionKey: PERIOD_AB, partId: 'AB-1', date: 'June 1919', title: 'Treaty of Versailles signed', description: 'Germany was forced to accept war guilt (Article 231), reparations, loss of territory, and military restrictions. Many Germans saw it as a Diktat and resented the Weimar government for signing.', order: 5 },
-  { id: 'AB-1-1920', optionKey: PERIOD_AB, partId: 'AB-1', date: 'March 1920', title: 'Kapp Putsch', description: 'Right-wing Freikorps under Wolfgang Kapp marched on Berlin in protest at disbandment. The government fled; the putsch failed when workers went on strike.', order: 6 },
-  { id: 'AB-1-1923', optionKey: PERIOD_AB, partId: 'AB-1', date: '1923', title: 'Occupation of the Ruhr; hyperinflation', description: 'France and Belgium occupied the Ruhr after Germany failed to pay reparations. The government printed money to pay workers, leading to hyperinflation and the collapse of the mark.', order: 7 },
-  { id: 'AB-1-1923b', optionKey: PERIOD_AB, partId: 'AB-1', date: 'November 1923', title: 'Munich Putsch', description: 'Hitler and the Nazis attempted to seize power in Munich. The putsch failed and Hitler was imprisoned, where he wrote Mein Kampf.', order: 8 },
-  { id: 'AB-1-1924', optionKey: PERIOD_AB, partId: 'AB-1', date: '1924–1929', title: 'Stresemann era – recovery', description: 'Stresemann introduced the Rentenmark, negotiated the Dawes Plan (1924) and Young Plan (1929), and improved relations with the Allies. Weimar culture flourished.', order: 9 },
-  { id: 'AB-2-1929', optionKey: PERIOD_AB, partId: 'AB-2', date: 'October 1929', title: 'Wall Street Crash', description: 'The US stock market crashed. US loans to Germany were withdrawn, leading to mass unemployment and a crisis that weakened the Weimar Republic and boosted support for the Nazis.', order: 10 },
-  { id: 'AB-2-1932', optionKey: PERIOD_AB, partId: 'AB-2', date: '1932', title: 'Nazi Party becomes largest in Reichstag', description: 'In July 1932 the Nazis won 230 seats. Hitler was not yet Chancellor; Hindenburg and Papen were reluctant to appoint him.', order: 11 },
-  { id: 'AB-2-1933', optionKey: PERIOD_AB, partId: 'AB-2', date: '30 January 1933', title: 'Hitler becomes Chancellor', description: 'Under pressure from Papen and others, Hindenburg appointed Hitler as Chancellor. The Nazis were in government but did not yet have full control.', order: 12 },
-  { id: 'AB-2-1933b', optionKey: PERIOD_AB, partId: 'AB-2', date: '27 February 1933', title: 'Reichstag Fire', description: 'The Reichstag building was set on fire. The Nazis blamed communists and used the incident to push through the Reichstag Fire Decree, restricting civil liberties.', order: 13 },
-  { id: 'AB-2-1933c', optionKey: PERIOD_AB, partId: 'AB-2', date: '23 March 1933', title: 'Enabling Act', description: 'The Enabling Act gave Hitler the power to pass laws without the Reichstag for four years. It effectively made him dictator.', order: 14 },
-  { id: 'AB-2-1934', optionKey: PERIOD_AB, partId: 'AB-2', date: 'June 1934', title: 'Night of the Long Knives', description: 'Hitler ordered the murder of Röhm and other SA leaders, and political opponents. The SA was weakened and the SS grew in power. Hitler became Führer after Hindenburg’s death.', order: 15 },
-  { id: 'AB-3-1935', optionKey: PERIOD_AB, partId: 'AB-3', date: '1935', title: 'Nuremberg Laws', description: 'Laws stripped Jews of citizenship and banned marriage between Jews and non-Jews. Persecution of minorities intensified.', order: 16 },
-  { id: 'AB-3-1938', optionKey: PERIOD_AB, partId: 'AB-3', date: 'November 1938', title: 'Kristallnacht', description: 'A wave of violence against Jews; synagogues and businesses were destroyed. It marked a major escalation in anti-Jewish policy.', order: 17 },
-  { id: 'AB-3-1939', optionKey: PERIOD_AB, partId: 'AB-3', date: '1939–1945', title: 'Second World War', description: 'Germany invaded Poland in September 1939. The war led to bombing, rationing, labour shortages, and the Holocaust (Final Solution).', order: 18 },
+  { id: 'AB-1-1898', optionKey: PERIOD_AB, partId: 'AB-1', date: '1898', title: 'First Navy Law', description: 'Germany began building a large navy to rival Britain. Naval race increased Anglo-German tension.', order: 2 },
+  { id: 'AB-1-1914', optionKey: PERIOD_AB, partId: 'AB-1', date: '1914', title: 'Outbreak of the First World War', description: 'Germany entered the war as part of the Triple Alliance. The war placed huge strain on the economy and society; war weariness and defeat led to the end of the monarchy.', order: 3 },
+  { id: 'AB-1-1918', optionKey: PERIOD_AB, partId: 'AB-1', date: 'November 1918', title: 'Abdication of the Kaiser; armistice', description: 'Wilhelm II abdicated and fled to the Netherlands. The Weimar Republic was declared. Germany signed the armistice ending the First World War.', order: 4 },
+  { id: 'AB-1-1919', optionKey: PERIOD_AB, partId: 'AB-1', date: 'January 1919', title: 'Spartacist Uprising', description: 'The Spartacist League (Rosa Luxemburg and Karl Liebknecht) attempted a communist revolution in Berlin. It was crushed by the Freikorps and the new government.', order: 5 },
+  { id: 'AB-1-1919b', optionKey: PERIOD_AB, partId: 'AB-1', date: 'June 1919', title: 'Treaty of Versailles signed', description: 'Germany was forced to accept war guilt (Article 231), reparations, loss of territory, and military restrictions. Many Germans saw it as a Diktat and resented the Weimar government for signing.', order: 6 },
+  { id: 'AB-1-1920', optionKey: PERIOD_AB, partId: 'AB-1', date: 'March 1920', title: 'Kapp Putsch', description: 'Right-wing Freikorps under Wolfgang Kapp marched on Berlin in protest at disbandment. The government fled; the putsch failed when workers went on strike.', order: 7 },
+  { id: 'AB-1-1923', optionKey: PERIOD_AB, partId: 'AB-1', date: '1923', title: 'Occupation of the Ruhr; hyperinflation', description: 'France and Belgium occupied the Ruhr after Germany failed to pay reparations. The government printed money to pay workers, leading to hyperinflation and the collapse of the mark.', order: 8 },
+  { id: 'AB-1-1923b', optionKey: PERIOD_AB, partId: 'AB-1', date: 'November 1923', title: 'Munich Putsch', description: 'Hitler and the Nazis attempted to seize power in Munich. The putsch failed and Hitler was imprisoned, where he wrote Mein Kampf.', order: 9 },
+  { id: 'AB-1-1924', optionKey: PERIOD_AB, partId: 'AB-1', date: '1924–1929', title: 'Stresemann era – recovery', description: 'Stresemann introduced the Rentenmark, negotiated the Dawes Plan (1924) and Young Plan (1929), and improved relations with the Allies. Weimar culture flourished.', order: 10 },
+  { id: 'AB-2-1929', optionKey: PERIOD_AB, partId: 'AB-2', date: 'October 1929', title: 'Wall Street Crash', description: 'The US stock market crashed. US loans to Germany were withdrawn, leading to mass unemployment and a crisis that weakened the Weimar Republic and boosted support for the Nazis.', order: 11 },
+  { id: 'AB-2-1930', optionKey: PERIOD_AB, partId: 'AB-2', date: '1930', title: 'Brüning\'s austerity; Article 48', description: 'Chancellor Brüning used presidential decree (Article 48) to govern. Coalition government collapsed; democracy weakened.', order: 12 },
+  { id: 'AB-2-1932', optionKey: PERIOD_AB, partId: 'AB-2', date: '1932', title: 'Nazi Party becomes largest in Reichstag', description: 'In July 1932 the Nazis won 230 seats. Hitler was not yet Chancellor; Hindenburg and Papen were reluctant to appoint him.', order: 13 },
+  { id: 'AB-2-1933', optionKey: PERIOD_AB, partId: 'AB-2', date: '30 January 1933', title: 'Hitler becomes Chancellor', description: 'Under pressure from Papen and others, Hindenburg appointed Hitler as Chancellor. The Nazis were in government but did not yet have full control.', order: 14 },
+  { id: 'AB-2-1933b', optionKey: PERIOD_AB, partId: 'AB-2', date: '27 February 1933', title: 'Reichstag Fire', description: 'The Reichstag building was set on fire. The Nazis blamed communists and used the incident to push through the Reichstag Fire Decree, restricting civil liberties.', order: 15 },
+  { id: 'AB-2-1933c', optionKey: PERIOD_AB, partId: 'AB-2', date: '23 March 1933', title: 'Enabling Act', description: 'The Enabling Act gave Hitler the power to pass laws without the Reichstag for four years. It effectively made him dictator.', order: 16 },
+  { id: 'AB-2-1934', optionKey: PERIOD_AB, partId: 'AB-2', date: 'June 1934', title: 'Night of the Long Knives', description: 'Hitler ordered the murder of Röhm and other SA leaders, and political opponents. The SA was weakened and the SS grew in power. Hitler became Führer after Hindenburg’s death.', order: 17 },
+  { id: 'AB-3-1935', optionKey: PERIOD_AB, partId: 'AB-3', date: '1935', title: 'Nuremberg Laws', description: 'Laws stripped Jews of citizenship and banned marriage between Jews and non-Jews. Persecution of minorities intensified.', order: 18 },
+  { id: 'AB-3-1936', optionKey: PERIOD_AB, partId: 'AB-3', date: '1936', title: 'Four Year Plan; rearmament', description: 'Goering led economic preparation for war. Autarchy; synthetic materials. Rearmament created jobs.', order: 19 },
+  { id: 'AB-3-1938', optionKey: PERIOD_AB, partId: 'AB-3', date: 'November 1938', title: 'Kristallnacht', description: 'A wave of violence against Jews; synagogues and businesses were destroyed. It marked a major escalation in anti-Jewish policy.', order: 20 },
+  { id: 'AB-3-1939', optionKey: PERIOD_AB, partId: 'AB-3', date: '1939–1945', title: 'Second World War', description: 'Germany invaded Poland in September 1939. The war led to bombing, rationing, labour shortages, and the Holocaust (Final Solution).', order: 21 },
 ];
 
 export const HISTORY_TIMELINE_EVENTS: TimelineEvent[] = [
@@ -445,6 +448,32 @@ const GERMANY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
     questionHowConvincing: 'Which interpretation do you find more convincing about the reasons for the failure of the Weimar Republic?',
     markSchemeSummary: 'AO4: Compare content/focus; explain different evidence, purpose, or context; evaluate in context of your knowledge.',
   },
+  {
+    id: 'AB-int2',
+    optionKey: PERIOD_AB,
+    partId: 'AB-2',
+    interpretations: [
+      { id: 'i1', text: 'Hitler came to power legally. He was appointed Chancellor by the President. The Nazis won the most seats in democratic elections. Democracy destroyed itself.', ascription: 'A political scientist.' },
+      { id: 'i2', text: 'Hitler exploited democracy to destroy it. The elites – Papen, Hindenburg – made a deal with him, thinking they could control him. They were wrong.', ascription: 'A historian writing in 2000.' },
+    ],
+    questionHowDiffer: 'How do these interpretations differ about how Hitler came to power?',
+    questionWhyDiffer: 'Why might these interpretations differ?',
+    questionHowConvincing: 'Which interpretation do you find more convincing?',
+    markSchemeSummary: 'AO4: Compare; explain context; evaluate.',
+  },
+  {
+    id: 'AB-int3',
+    optionKey: PERIOD_AB,
+    partId: 'AB-3',
+    interpretations: [
+      { id: 'i1', text: 'The Nazi economy was a success. Unemployment fell, industry grew, and Germans had jobs and stability. The regime delivered on its promises.', ascription: 'A German economist in 1938.' },
+      { id: 'i2', text: 'The Nazi economy was built on propaganda and war preparation. Real wages stayed low; workers had less freedom. It was unsustainable without war.', ascription: 'A modern economic historian.' },
+    ],
+    questionHowDiffer: 'How do these interpretations differ about the Nazi economy?',
+    questionWhyDiffer: 'Why might these interpretations differ?',
+    questionHowConvincing: 'Which interpretation do you find more convincing?',
+    markSchemeSummary: 'AO4: Compare; explain context; evaluate.',
+  },
 ];
 
 export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
@@ -461,6 +490,15 @@ export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
 // ============================================================================
 // QUESTION LAB – Germany (period_AB)
 // ============================================================================
+
+const GERMANY_QUESTION_LAB: HistoryQuestionLabItem[] = [
+  { id: 'AB-ql1', optionKey: PERIOD_AB, partId: 'AB-1', questionType: 'describe', question: 'Describe two key features of the Weimar Republic.', markSchemeSummary: '2 × (feature + supporting detail). AO1.' },
+  { id: 'AB-ql2', optionKey: PERIOD_AB, partId: 'AB-1', questionType: 'explain', question: 'In what ways did the Treaty of Versailles affect Germany? Explain your answer.', markSchemeSummary: 'AO1 + AO2.' },
+  { id: 'AB-ql3', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'account', question: 'Write an account of how Hitler became Chancellor.', markSchemeSummary: 'Narrative account. AO1 + AO2.' },
+  { id: 'AB-ql4', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'essay', question: '"The main reason for the rise of the Nazis was the Wall Street Crash." How far do you agree?', markSchemeSummary: 'Essay. Consider Depression, Versailles, Weimar weaknesses, Hitler\'s appeal. AO1 + AO2.' },
+  { id: 'AB-ql5', optionKey: PERIOD_AB, partId: 'AB-3', questionType: 'describe', question: 'Describe two key features of Nazi control of Germany.', markSchemeSummary: '2 × (feature + supporting detail). AO1.' },
+  { id: 'AB-ql6', optionKey: PERIOD_AB, partId: 'AB-3', questionType: 'explain', question: 'In what ways did the Nazis control Germany in the 1930s? Explain your answer.', markSchemeSummary: 'AO1 + AO2.' },
+];
 
 export const HISTORY_QUESTION_LAB_ITEMS: HistoryQuestionLabItem[] = [
   ...GERMANY_QUESTION_LAB,

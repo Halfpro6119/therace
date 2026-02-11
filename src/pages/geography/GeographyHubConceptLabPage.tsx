@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
@@ -12,8 +12,15 @@ export function GeographyHubConceptLabPage() {
   const sections = selection ? getGeographySectionsForSelection(selection) : [];
   const sectionIds = sections.map((s) => s.id);
   const concepts = getConceptsForSections(sectionIds);
-  const [sectionFilter, setSectionFilter] = useState(sectionIds[0] ?? '');
+  const [sectionFilter, setSectionFilter] = useState('');
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (sectionIds.length > 0 && !sectionIds.includes(sectionFilter)) {
+      setSectionFilter(sectionIds[0]);
+      setIndex(0);
+    }
+  }, [sectionIds, sectionFilter]);
 
   const filteredConcepts = sectionFilter ? concepts.filter((c) => c.sectionId === sectionFilter) : concepts;
   const current = filteredConcepts[index];

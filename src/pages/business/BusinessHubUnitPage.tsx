@@ -47,22 +47,17 @@ export function BusinessHubUnitPage() {
     }
     if (!caseStudyUnlocked && total > 0) return { mode: 'quick-check' as const, label: 'Do Quick Check first', path: `/business-hub/unit/${unit.id}/quick-check` };
     if (caseStudyUnlocked) {
-      const all = storage.getBusinessTopicProgress();
-      const anyCaseStudyDone = topicIds.some((tid) => all[`${unit.id}-${tid}`]?.caseStudyCompleted);
       if (!anyCaseStudyDone) return { mode: 'case-study' as const, label: 'Try Case Study Lab', path: `/business-hub/unit/${unit.id}/case-study` };
     }
-    if (calculationsUnlocked) {
-      const all = storage.getBusinessTopicProgress();
-      const anyCalcDone = topicIds.some((tid) => all[`${unit.id}-${tid}`]?.calculationsCompleted);
-      if (!anyCalcDone) return { mode: 'calculations' as const, label: 'Try Calculation Lab', path: `/business-hub/unit/${unit.id}/calculations` };
+    if (hasCalculations && calculationsUnlocked && !anyCalcDone) {
+      return { mode: 'calculations' as const, label: 'Try Calculation Lab', path: `/business-hub/unit/${unit.id}/calculations` };
     }
     if (evaluationUnlocked) {
-      const all = storage.getBusinessTopicProgress();
-      const anyEvalDone = topicIds.some((tid) => all[`${unit.id}-${tid}`]?.evaluationCompleted);
+      const anyEvalDone = topicIds.some((tid) => allProgress[`${unit.id}-${tid}`]?.evaluationCompleted);
       if (!anyEvalDone) return { mode: 'evaluation' as const, label: 'Try Evaluation Builder', path: `/business-hub/unit/${unit.id}/evaluation` };
     }
     return { mode: 'concept' as const, label: 'Start with Concept Lab', path: `/business-hub/unit/${unit.id}/concept` };
-  }, [unit, quickCheckSummary.passed, quickCheckSummary.total, caseStudyUnlocked, calculationsUnlocked, evaluationUnlocked, topicIds]);
+  }, [unit, quickCheckSummary.passed, quickCheckSummary.total, caseStudyUnlocked, calculationsUnlocked, evaluationUnlocked, topicIds, hasCalculations, anyCaseStudyDone, anyCalcDone, allProgress]);
 
   if (!unit) {
     return (

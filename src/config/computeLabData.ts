@@ -385,7 +385,7 @@ ENDFOR`,
 // ============================================================================
 
 export const COMPUTE_CALCULATION_TASKS: ComputeCalculationTask[] = [
-  { id: 'calc-bin-dec-1', unitId: '3.3', topicId: '3.3.2', type: 'binaryToDecimal', scenario: 'Convert 11010110 from binary to decimal.', inputs: { binary: 11010110 }, expected: 214, formulaHint: 'Each position is a power of 2: 128, 64, 32, 16, 8, 4, 2, 1' },
+  { id: 'calc-bin-dec-1', unitId: '3.3', topicId: '3.3.2', type: 'binaryToDecimal', scenario: 'Convert the binary number 11010110 to decimal.', inputs: {}, expected: 214, formulaHint: 'Each bit position is a power of 2: 128, 64, 32, 16, 8, 4, 2, 1' },
   { id: 'calc-dec-bin-1', unitId: '3.3', topicId: '3.3.2', type: 'decimalToBinary', scenario: 'Convert 42 from decimal to binary.', inputs: { decimal: 42 }, expected: 101010, formulaHint: 'Repeatedly divide by 2 and note remainders' },
   { id: 'calc-bitmap-1', unitId: '3.3', topicId: '3.3.6', type: 'bitmapFileSize', scenario: 'An image is 800 × 600 pixels with 24-bit colour depth. Calculate file size in bytes.', inputs: { width: 800, height: 600, depth: 24 }, expected: 1440000, formulaHint: '(W × H × D) / 8 bytes' },
   { id: 'calc-sound-1', unitId: '3.3', topicId: '3.3.7', type: 'soundFileSize', scenario: 'Sound: 44.1 kHz, 16-bit resolution, 10 seconds. File size in bits?', inputs: { rate: 44100, resolution: 16, seconds: 10 }, expected: 7056000, formulaHint: 'rate × resolution × seconds' },

@@ -113,6 +113,8 @@ const GEOGRAPHY_KEY_TERMS: GeographyKeyTerm[] = [
   { id: 'econ-kt1', sectionId: 'human-economic', term: 'HDI', definition: 'Human Development Index – measures life expectancy, education and GNI.', inContext: 'More comprehensive than GNI alone.' },
   { id: 'econ-kt2', sectionId: 'human-economic', term: 'TNC', definition: 'Transnational corporation – company operating in many countries.', inContext: 'Can bring jobs and investment but also exploitation.' },
   { id: 'econ-kt3', sectionId: 'human-economic', term: 'Development gap', definition: 'Difference in wealth and wellbeing between richer and poorer countries.', inContext: 'Strategies aim to reduce it.' },
+  { id: 'uk-kt1', sectionId: 'physical-uk-overview', term: 'Upland', definition: 'Area of high relief (hills, mountains). In UK: north and west (e.g. Scottish Highlands, Pennines).', inContext: 'Contrast with lowlands in south and east.' },
+  { id: 'uk-kt2', sectionId: 'physical-uk-overview', term: 'Lowland', definition: 'Area of low relief; often more densely populated.', inContext: 'South and east of UK.' },
   { id: 'res-kt1', sectionId: 'human-resource-overview', term: 'Food miles', definition: 'Distance food travels from producer to consumer.', inContext: 'Longer food miles = higher carbon footprint.' },
   { id: 'food-kt1', sectionId: 'human-food', term: 'Food security', definition: 'Reliable access to sufficient nutritious food.', inContext: 'Affected by supply, distribution and access.' },
   { id: 'water-kt1', sectionId: 'human-water', term: 'Water transfer', definition: 'Moving water from areas of surplus to areas of deficit.', inContext: 'Example: schemes from wet north to dry south in UK.' },
@@ -131,13 +133,14 @@ export function getKeyTermsForSections(sectionIds: GeographySectionId[]): Geogra
 const GEOGRAPHY_QUICK_CHECKS: GeographyQuickCheckItem[] = [
   { id: 'nh-qc1', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'What type of plate margin has volcanoes and earthquakes?', options: ['Constructive only', 'Destructive only', 'Both constructive and destructive', 'Conservative only'], correctAnswer: 'Both constructive and destructive', feedback: { correct: 'Correct.', incorrect: 'Both constructive and destructive margins have volcanic and earthquake activity.' } },
   { id: 'nh-qc2', sectionId: 'physical-natural-hazards', type: 'trueFalse', question: 'Mitigation means reducing the causes of climate change.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Mitigation reduces causes (e.g. alternative energy); adaptation responds to change.' } },
-  { id: 'nh-qc3', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'What ocean temperature (in °C) is needed for tropical storms to form?', correctAnswer: '26', feedback: { correct: 'Correct – 26°C or above.', incorrect: 'Tropical storms need sea surface temperature of at least 26°C.' } },
+  { id: 'nh-qc3', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'What ocean temperature (in °C) is needed for tropical storms to form?', correctAnswer: ['26', '26°c', '26 degrees', '26c'], feedback: { correct: 'Correct – 26°C or above.', incorrect: 'Tropical storms need sea surface temperature of at least 26°C.' } },
   { id: 'eco-qc1', sectionId: 'physical-ecosystems', type: 'multipleChoice', question: 'What do decomposers do?', options: ['Make food from sunlight', 'Eat other animals', 'Break down dead matter and return nutrients', 'Only eat plants'], correctAnswer: 'Break down dead matter and return nutrients', feedback: { correct: 'Correct.', incorrect: 'Decomposers break down dead organisms and return nutrients to the soil.' } },
   { id: 'rf-qc1', sectionId: 'physical-rainforests', type: 'trueFalse', question: 'Selective logging is more sustainable than clear-felling.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Selective logging leaves most trees, allowing regeneration.' } },
   { id: 'ds-qc1', sectionId: 'physical-desert', type: 'shortAnswer', question: 'Name one cause of desertification.', correctAnswer: ['overgrazing', 'over-cultivation', 'climate change', 'removal of fuel wood', 'population growth'], feedback: { correct: 'Correct.', incorrect: 'Causes include overgrazing, over-cultivation, climate change, removal of fuel wood, population growth.' } },
   { id: 'cl-qc1', sectionId: 'physical-cold', type: 'multipleChoice', question: 'What is permafrost?', options: ['Frozen ocean', 'Permanently frozen ground', 'A type of glacier', 'Seasonal snow'], correctAnswer: 'Permanently frozen ground', feedback: { correct: 'Correct.', incorrect: 'Permafrost is ground that stays frozen for two or more years.' } },
   { id: 'coast-qc1', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'Which process transports sediment along the coast?', options: ['Hydraulic action', 'Longshore drift', 'Abrasion', 'Attrition'], correctAnswer: 'Longshore drift', feedback: { correct: 'Correct.', incorrect: 'Longshore drift moves sediment along the coast in a zigzag pattern.' } },
   { id: 'river-qc1', sectionId: 'physical-river', type: 'trueFalse', question: 'Urbanisation increases flood risk.', correctAnswer: 'true', feedback: { correct: 'Correct – impermeable surfaces reduce infiltration.', incorrect: 'Urbanisation increases runoff and flood risk.' } },
+  { id: 'uk-qc1', sectionId: 'physical-uk-overview', type: 'multipleChoice', question: 'Where are the UK uplands mainly located?', options: ['South and east', 'North and west', 'Centre only', 'Coastal areas only'], correctAnswer: 'North and west', feedback: { correct: 'Correct.', incorrect: 'Uplands are in the north and west (e.g. Scottish Highlands, Pennines).' } },
   { id: 'glac-qc1', sectionId: 'physical-glacial', type: 'shortAnswer', question: 'What shape is a corrie?', correctAnswer: ['armchair', 'armchair-shaped', 'hollow'], feedback: { correct: 'Correct.', incorrect: 'A corrie is armchair-shaped, formed by glacial erosion.' } },
   { id: 'urb-qc1', sectionId: 'human-urban', type: 'multipleChoice', question: 'What is a megacity?', options: ['Any city', 'City with 1 million people', 'City with 10 million people', 'Capital city'], correctAnswer: 'City with 10 million people', feedback: { correct: 'Correct.', incorrect: 'A megacity has over 10 million people.' } },
   { id: 'econ-qc1', sectionId: 'human-economic', type: 'multipleChoice', question: 'What does HDI measure?', options: ['Only income', 'Life expectancy, education and GNI', 'Population growth', 'Trade balance'], correctAnswer: 'Life expectancy, education and GNI', feedback: { correct: 'Correct.', incorrect: 'HDI combines life expectancy, education and GNI.' } },
@@ -193,6 +196,17 @@ const GEOGRAPHY_ISSUE_SCENARIOS: GeographyIssueScenario[] = [
     ],
     sectionIds: ['physical-river', 'human-resource-overview'],
   },
+  {
+    id: 'issue-3',
+    title: 'Sustainable energy development',
+    resources: ['Map of proposed wind farm location', 'Data on energy demand and supply', 'Stakeholder views (residents, energy company, environmental group)'],
+    questions: [
+      { question: 'Outline one advantage of the proposed wind farm for the local area.', markScheme: 'Jobs; clean energy; reduced fossil fuel use.' },
+      { question: 'Outline one disadvantage of the proposed wind farm.', markScheme: 'Visual impact; noise; wildlife; cost.' },
+      { question: 'Evaluate the proposal. Would you support it? Justify your decision.', markScheme: 'Consider stakeholders; balance advantages and disadvantages; reasoned conclusion.' },
+    ],
+    sectionIds: ['human-energy', 'human-urban'],
+  },
 ];
 
 export const GEOGRAPHY_ISSUE_SCENARIOS_LIST = GEOGRAPHY_ISSUE_SCENARIOS;
@@ -223,6 +237,20 @@ const GEOGRAPHY_FIELDWORK_TASKS: GeographyFieldworkTask[] = [
     question: 'Why might systematic sampling be more appropriate than random sampling for a transect across a beach?',
     markScheme: 'Transect shows change across space; systematic captures pattern; random might miss gradient.',
   },
+  {
+    id: 'fw-4',
+    type: 'unfamiliar',
+    enquiryStrand: 'Data presentation',
+    question: 'A group plotted land use data on a pie chart. Suggest a more appropriate method and justify your choice.',
+    markScheme: 'Choropleth or divided bar if showing distribution; pie shows proportions but not location.',
+  },
+  {
+    id: 'fw-5',
+    type: 'unfamiliar',
+    enquiryStrand: 'Evaluation',
+    question: 'A group collected 5 samples at each site. How could they improve the reliability of their data?',
+    markScheme: 'Increase sample size; repeat sampling; use control; ensure consistent method.',
+  },
 ];
 
 export const GEOGRAPHY_FIELDWORK_TASKS_LIST = GEOGRAPHY_FIELDWORK_TASKS;
@@ -242,6 +270,12 @@ const GEOGRAPHY_QUESTION_LAB: GeographyQuestionLabItem[] = [
   { id: 'urb-ql1', sectionId: 'human-urban', questionType: 'caseStudy', question: 'Using a case study of a city in an LIC or NEE, explain the opportunities and challenges of urban growth.', markSchemeSummary: 'Opportunities: jobs, services. Challenges: slums, pollution, congestion. Name city.' },
   { id: 'econ-ql1', sectionId: 'human-economic', questionType: 'evaluate', question: 'Evaluate the advantages and disadvantages of TNCs for a host country.', markSchemeSummary: 'Advantages: jobs, investment, technology. Disadvantages: profits leave; poor working conditions; environmental damage. Conclusion.' },
   { id: 'res-ql1', sectionId: 'human-resource-overview', questionType: 'explain', question: 'Explain why the UK has a water deficit in some areas.', markSchemeSummary: 'Population density; rainfall distribution; demand; geology.' },
+  { id: 'ds-ql1', sectionId: 'physical-desert', questionType: 'caseStudy', question: 'Using a case study of a hot desert, explain the development opportunities and challenges.', markSchemeSummary: 'Opportunities: minerals, energy, farming, tourism. Challenges: temperature, water, inaccessibility. Name location (e.g. Thar Desert, Sahara).' },
+  { id: 'cl-ql1', sectionId: 'physical-cold', questionType: 'caseStudy', question: 'Using a case study of a cold environment, explain the development opportunities and challenges.', markSchemeSummary: 'Opportunities: minerals, energy, fishing, tourism. Challenges: temperature, inaccessibility, permafrost. Name location (e.g. Alaska, Svalbard).' },
+  { id: 'uk-ql1', sectionId: 'physical-uk-overview', questionType: 'describe', question: 'Describe the relief of the UK.', markSchemeSummary: 'Uplands north and west; lowlands south and east; major river systems.' },
+  { id: 'food-ql1', sectionId: 'human-food', questionType: 'evaluate', question: 'Evaluate strategies to increase food supply.', markSchemeSummary: 'Strategies: irrigation, biotechnology, urban farming. Advantages and disadvantages; sustainability.' },
+  { id: 'water-ql1', sectionId: 'human-water', questionType: 'explain', question: 'Explain the causes and impacts of water insecurity.', markSchemeSummary: 'Causes: climate, geology, pollution, over-abstraction. Impacts: disease, food production, conflict.' },
+  { id: 'energy-ql1', sectionId: 'human-energy', questionType: 'evaluate', question: 'Evaluate the advantages and disadvantages of renewable energy.', markSchemeSummary: 'Advantages: sustainable, lower emissions. Disadvantages: intermittency, land use, cost.' },
 ];
 
 export function getQuestionLabForSections(sectionIds: GeographySectionId[]): GeographyQuestionLabItem[] {

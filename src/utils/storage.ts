@@ -1075,7 +1075,8 @@ export const storage = {
   },
   updatePsychologyTopicProgress: (progress: PsychologyTopicProgress): void => {
     const all = storage.getPsychologyTopicProgress();
-    all[progress.topicId] = progress;
+    const existing = all[progress.topicId] || {};
+    all[progress.topicId] = { ...existing, ...progress };
     localStorage.setItem(STORAGE_KEYS.PSYCHOLOGY_HUB_TOPIC_PROGRESS, JSON.stringify(all));
   },
   getPsychologyFlashcardMastery: (): Record<string, PsychologyFlashcardMastery> => {

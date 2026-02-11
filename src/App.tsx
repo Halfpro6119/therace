@@ -338,6 +338,17 @@ function App() {
                 <Route path="/health-hub/unit/:unitId/concept" element={<HealthHubConceptLabPage />} />
                 <Route path="/health-hub/unit/:unitId/flashcard" element={<HealthHubFlashcardPage />} />
                 <Route path="/health-hub/unit/:unitId/quick-check" element={<HealthHubQuickCheckPage />} />
+                <Route path="/compute-lab" element={<ComputeLabHomePage />} />
+                <Route path="/compute-lab/unit/:unitId" element={<ComputeLabUnitPage />} />
+                <Route path="/compute-lab/unit/:unitId/topics" element={<ComputeLabTopicsPage />} />
+                <Route path="/compute-lab/unit/:unitId/concept" element={<ComputeLabConceptLabPage />} />
+                <Route path="/compute-lab/unit/:unitId/flashcard" element={<ComputeLabFlashcardPage />} />
+                <Route path="/compute-lab/unit/:unitId/quick-check" element={<ComputeLabQuickCheckPage />} />
+                <Route path="/compute-lab/unit/:unitId/algorithm-lab" element={<ComputeLabAlgorithmLabPage />} />
+                <Route path="/compute-lab/unit/:unitId/calculation-lab" element={<ComputeLabCalculationLabPage />} />
+                <Route path="/compute-lab/unit/:unitId/logic-lab" element={<ComputeLabLogicLabPage />} />
+                <Route path="/compute-lab/unit/:unitId/sql-lab" element={<ComputeLabSqlLabPage />} />
+                <Route path="/compute-lab/unit/:unitId/question-lab" element={<ComputeLabQuestionLabPage />} />
                 <Route path="/health-hub/unit/:unitId/case-study" element={<HealthHubCaseStudyPage />} />
                 <Route path="/health-hub/unit/:unitId/investigation" element={<HealthHubInvestigationPage />} />
                 <Route path="/health-hub/unit/:unitId/question-lab" element={<HealthHubQuestionLabPage />} />

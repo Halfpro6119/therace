@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
@@ -12,7 +12,7 @@ export function GeographyHubQuickCheckPage() {
   const sections = selection ? getGeographySectionsForSelection(selection) : [];
   const sectionIds = sections.map((s) => s.id);
   const allItems = getQuickChecksForSections(sectionIds);
-  const [sectionFilter, setSectionFilter] = useState(sectionIds[0] ?? '');
+  const [sectionFilter, setSectionFilter] = useState('');
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState<{ correct: boolean; text: string } | null>(null);
@@ -36,6 +36,14 @@ export function GeographyHubQuickCheckPage() {
     setFeedback(null);
     setIndex((i) => (i >= items.length - 1 ? 0 : i + 1));
   };
+
+  useEffect(() => {
+    if (sectionIds.length > 0 && !sectionIds.includes(sectionFilter)) {
+      setSectionFilter(sectionIds[0]);
+      setIndex(0);
+      setFeedback(null);
+    }
+  }, [sectionIds.join(','), sectionFilter]);
 
   if (!selection) {
     return (
