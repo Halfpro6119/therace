@@ -37,7 +37,15 @@ export function GeographyHubOptionSelectPage() {
 
   useEffect(() => {
     const saved = storage.getGeographyOptionSelection();
-    if (saved) setSelection(saved);
+    if (saved) {
+      const [a, b] = saved.physicalLandscapes;
+      if (a === b) {
+        const other = PHYSICAL_LANDSCAPE_OPTIONS.find((o) => o.id !== a)?.id ?? 'river';
+        setSelection({ ...saved, physicalLandscapes: [a, other] });
+      } else {
+        setSelection(saved);
+      }
+    }
   }, []);
 
   const handleSave = () => {

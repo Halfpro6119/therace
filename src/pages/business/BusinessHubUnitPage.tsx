@@ -92,7 +92,7 @@ export function BusinessHubUnitPage() {
   const lockMessage = (modeId: string) => {
     if (modeId === 'case-study') return 'Complete Quick Check for at least one topic to unlock.';
     if (modeId === 'calculations') return 'Complete Case Study Lab for this unit to unlock.';
-    if (modeId === 'evaluation') return 'Complete Calculation Lab for this unit to unlock.';
+    if (modeId === 'evaluation') return hasCalculations ? 'Complete Calculation Lab for this unit to unlock.' : 'Complete Case Study Lab for this unit to unlock.';
     return '';
   };
 

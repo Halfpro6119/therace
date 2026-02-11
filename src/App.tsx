@@ -109,6 +109,18 @@ import { PsychologyHubIssuesDebatesPage } from './pages/psychology/PsychologyHub
 import { PsychologyHubResearchMethodsPage } from './pages/psychology/PsychologyHubResearchMethodsPage';
 import { PsychologyHubQuestionLabPage } from './pages/psychology/PsychologyHubQuestionLabPage';
 import { PsychologyHubRevisionMapPage } from './pages/psychology/PsychologyHubRevisionMapPage';
+import { HealthHubHomePage } from './pages/health/HealthHubHomePage';
+import { HealthHubAwardSelectPage } from './pages/health/HealthHubAwardSelectPage';
+import { HealthHubUnitPage } from './pages/health/HealthHubUnitPage';
+import { HealthHubConceptLabPage } from './pages/health/HealthHubConceptLabPage';
+import { HealthHubFlashcardPage } from './pages/health/HealthHubFlashcardPage';
+import { HealthHubLifeStagesPage } from './pages/health/HealthHubLifeStagesPage';
+import { HealthHubQuickCheckPage } from './pages/health/HealthHubQuickCheckPage';
+import { HealthHubCaseStudyPage } from './pages/health/HealthHubCaseStudyPage';
+import { HealthHubInvestigationPage } from './pages/health/HealthHubInvestigationPage';
+import { HealthHubCareValuesPage } from './pages/health/HealthHubCareValuesPage';
+import { HealthHubQuestionLabPage } from './pages/health/HealthHubQuestionLabPage';
+import { HealthHubRevisionMapPage } from './pages/health/HealthHubRevisionMapPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -306,6 +318,18 @@ function App() {
                 <Route path="/psychology-hub/research-methods" element={<PsychologyHubResearchMethodsPage />} />
                 <Route path="/psychology-hub/question-lab" element={<PsychologyHubQuestionLabPage />} />
                 <Route path="/psychology-hub/revision-map" element={<PsychologyHubRevisionMapPage />} />
+                <Route path="/health-hub" element={<HealthHubHomePage />} />
+                <Route path="/health-hub/award-select" element={<HealthHubAwardSelectPage />} />
+                <Route path="/health-hub/life-stages" element={<HealthHubLifeStagesPage />} />
+                <Route path="/health-hub/care-values" element={<HealthHubCareValuesPage />} />
+                <Route path="/health-hub/revision-map" element={<HealthHubRevisionMapPage />} />
+                <Route path="/health-hub/unit/:unitId" element={<HealthHubUnitPage />} />
+                <Route path="/health-hub/unit/:unitId/concept" element={<HealthHubConceptLabPage />} />
+                <Route path="/health-hub/unit/:unitId/flashcard" element={<HealthHubFlashcardPage />} />
+                <Route path="/health-hub/unit/:unitId/quick-check" element={<HealthHubQuickCheckPage />} />
+                <Route path="/health-hub/unit/:unitId/case-study" element={<HealthHubCaseStudyPage />} />
+                <Route path="/health-hub/unit/:unitId/investigation" element={<HealthHubInvestigationPage />} />
+                <Route path="/health-hub/unit/:unitId/question-lab" element={<HealthHubQuestionLabPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />
