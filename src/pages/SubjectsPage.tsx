@@ -9,7 +9,7 @@ import {
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, BookHeart, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
 

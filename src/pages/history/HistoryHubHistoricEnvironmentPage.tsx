@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
-import { getHistoryOptionsForSelection } from '../../config/historyHubData';
+import { getHistoryOptionsForSelection, getHistoricEnvironmentSitesForOption } from '../../config/historyHubData';
 
 const ACCENT = '#B45309';
 
@@ -10,6 +10,7 @@ export function HistoryHubHistoricEnvironmentPage() {
   const selection = storage.getHistoryOptionSelection();
   const options = selection ? getHistoryOptionsForSelection(selection) : [];
   const britishOption = options.find((o) => o.section === 'britishDepth');
+  const sites = britishOption ? getHistoricEnvironmentSitesForOption(britishOption.optionKey) : [];
 
   if (!selection) {
     return (
@@ -30,12 +31,28 @@ export function HistoryHubHistoricEnvironmentPage() {
         Your British depth study: <strong style={{ color: 'rgb(var(--text))' }}>{britishOption?.title ?? '—'}</strong>
       </p>
       <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-        The historic environment question (Q4) is based on a specified site that AQA publishes three years in advance. Check{' '}
-        <a href="https://www.aqa.org.uk/subjects/history/gcse/history-8145" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: ACCENT }}>aqa.org.uk/history</a> for the current site.
+        The historic environment question (Q4) is based on a specified site that AQA publishes three years in advance. Sites for 2026–2028 are included below. Check{' '}
+        <a href="https://www.aqa.org.uk/subjects/history/gcse/history-8145" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: ACCENT }}>aqa.org.uk/history</a> for updates.
       </p>
-      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-        Content for the current specified site will be added here. Use Question lab for essay practice linked to your depth study.
-      </p>
+      {sites.length > 0 ? (
+        <div className="space-y-4">
+          {sites.map((site) => (
+            <div key={site.id} className="rounded-xl border p-4" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
+              <h3 className="font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>{site.title}</h3>
+              <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>{site.description}</p>
+              {site.location && <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>Location: {site.location}</p>}
+              {site.function && <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>Function: {site.function}</p>}
+              {site.sampleEssayPrompt && (
+                <p className="text-sm mt-2 font-medium" style={{ color: 'rgb(var(--text))' }}>Practice: {site.sampleEssayPrompt}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Historic environment applies to British depth options. Select a British depth study to see sites.
+        </p>
+      )}
     </div>
   );
 }

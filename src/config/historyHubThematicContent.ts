@@ -105,6 +105,15 @@ export const THEMATIC_BB_SOURCE_SETS: HistorySourceSet[] = [
   },
 ];
 
+export const THEMATIC_BB_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'T-BB-cc1', optionKey: TH_BB, partId: 'T-BB-4', prompt: 'Why did some women use militant tactics in the campaign for the vote?', conceptType: 'cause', modelAnswer: 'Peaceful methods (suffragists) had failed for decades. Frustration; government ignored. Pankhursts believed direct action was necessary to gain attention.' },
+];
+
+export const THEMATIC_BB_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'T-BB-qc1', optionKey: TH_BB, partId: 'T-BB-1', type: 'multipleChoice', question: 'In which year was the Magna Carta signed?', options: ['1066', '1215', '1381', '1642'], correctAnswer: '1215', feedback: { correct: 'Correct.', incorrect: 'Magna Carta was signed in 1215.' } },
+  { id: 'T-BB-qc2', optionKey: TH_BB, partId: 'T-BB-4', type: 'shortAnswer', question: 'In which year did women gain equal voting rights with men?', correctAnswer: '1928', feedback: { correct: 'Correct.', incorrect: 'Women gained equal franchise in 1928.' } },
+];
+
 export const THEMATIC_BB_QUESTION_LAB: HistoryQuestionLabItem[] = [
   { id: 'T-BB-ql1', optionKey: TH_BB, partId: 'T-BB-1', questionType: 'describe', question: 'Describe two key features of the Magna Carta.', markSchemeSummary: '2 × (feature + supporting detail). AO1.' },
   { id: 'T-BB-ql2', optionKey: TH_BB, partId: 'T-BB-3', questionType: 'explain', question: 'In what ways did the Great Reform Act change British politics? Explain your answer.', markSchemeSummary: 'AO1 + AO2.' },
@@ -148,6 +157,15 @@ export const THEMATIC_AC_SOURCE_SETS: HistorySourceSet[] = [
     question: 'How useful is this source for understanding the experiences of post-war migrants to Britain?',
     markSchemeSummary: 'Content: invitation, war service, rejection. Provenance: migrant. Context: Windrush, racism. Limitation: one perspective.',
   },
+];
+
+export const THEMATIC_AC_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'T-AC-cc1', optionKey: TH_AC, partId: 'T-AC-4', prompt: 'What were the causes of migration to Britain after 1945?', conceptType: 'cause', modelAnswer: 'Labour shortage; government invited workers. Empire/Commonwealth links. Refugees. Push factors: poverty, discrimination abroad.' },
+];
+
+export const THEMATIC_AC_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'T-AC-qc1', optionKey: TH_AC, partId: 'T-AC-2', type: 'multipleChoice', question: 'Who were the Huguenots?', options: ['Viking settlers', 'French Protestants', 'Slave traders', 'Indian rulers'], correctAnswer: 'French Protestants', feedback: { correct: 'Correct.', incorrect: 'Huguenots were French Protestants who fled to Britain.' } },
+  { id: 'T-AC-qc2', optionKey: TH_AC, partId: 'T-AC-4', type: 'shortAnswer', question: 'Which ship symbolises post-war Caribbean migration to Britain?', correctAnswer: 'Windrush', feedback: { correct: 'Correct.', incorrect: 'SS Empire Windrush.' } },
 ];
 
 export const THEMATIC_AC_QUESTION_LAB: HistoryQuestionLabItem[] = [

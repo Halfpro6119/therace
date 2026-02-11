@@ -10,7 +10,7 @@ export interface SubjectHub {
   /** Subject names to show in this hub (matched against DB subject.name) */
   subjectNames: string[];
   /** Lucide icon name for hub styling */
-  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark';
+  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark' | 'Globe';
   /** Accent hex for tint (e.g. #0EA5E9 for English, #3B82F6 for Maths, #22C55E for Science) */
   accentColor: string;
   /** Path to dedicated hub page */
@@ -69,12 +69,20 @@ export const FEATURED_HUBS: SubjectHub[] = [
     accentColor: '#B45309',
     hubPath: '/history-hub',
   },
+  {
+    id: 'geography',
+    title: 'Geography Hub',
+    subtitle: 'AQA GCSE Geography 8035 – Physical, human & geographical skills',
+    subjectNames: ['Geography'],
+    icon: 'Globe',
+    accentColor: '#0D9488',
+    hubPath: '/geography-hub',
+  },
 ];
 
-/** Order for chosen subjects section. (Business Studies has dedicated Business Hub.) */
+/** Order for chosen subjects section. (Geography has dedicated Geography Hub.) */
 export const CHOSEN_SUBJECT_NAMES: string[] = [
   'Computer Science',
-  'Geography',
   'Health and Social Studies',
   'Psychology',
   'Religious Studies',

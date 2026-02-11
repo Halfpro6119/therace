@@ -14,7 +14,111 @@ import {
   type HistoryInterpretationSet,
   type HistoryQuestionLabItem,
   type HistorySourceSet,
+  type HistoricEnvironmentSite,
 } from '../types/historyHub';
+
+import {
+  PERIOD_AA_TIMELINE,
+  PERIOD_AA_KEY_TERMS,
+  PERIOD_AA_CONCEPT_CARDS,
+  PERIOD_AA_QUICK_CHECKS,
+  PERIOD_AA_INTERPRETATION_SETS,
+  PERIOD_AA_QUESTION_LAB,
+  PERIOD_AC_TIMELINE,
+  PERIOD_AC_KEY_TERMS,
+  PERIOD_AC_CONCEPT_CARDS,
+  PERIOD_AC_QUICK_CHECKS,
+  PERIOD_AC_INTERPRETATION_SETS,
+  PERIOD_AC_QUESTION_LAB,
+  PERIOD_AD_TIMELINE,
+  PERIOD_AD_KEY_TERMS,
+  PERIOD_AD_CONCEPT_CARDS,
+  PERIOD_AD_QUICK_CHECKS,
+  PERIOD_AD_INTERPRETATION_SETS,
+  PERIOD_AD_QUESTION_LAB,
+} from './historyHubPeriodContent';
+
+import {
+  WW_BA_TIMELINE,
+  WW_BA_KEY_TERMS,
+  WW_BA_CONCEPT_CARDS,
+  WW_BA_QUICK_CHECKS,
+  WW_BA_SOURCE_SETS,
+  WW_BA_QUESTION_LAB,
+  WW_BB_TIMELINE,
+  WW_BB_KEY_TERMS,
+  WW_BB_CONCEPT_CARDS,
+  WW_BB_QUICK_CHECKS,
+  WW_BB_SOURCE_SETS,
+  WW_BB_QUESTION_LAB,
+  WW_BC_TIMELINE,
+  WW_BC_KEY_TERMS,
+  WW_BC_CONCEPT_CARDS,
+  WW_BC_QUICK_CHECKS,
+  WW_BC_SOURCE_SETS,
+  WW_BC_QUESTION_LAB,
+  WW_BD_TIMELINE,
+  WW_BD_KEY_TERMS,
+  WW_BD_CONCEPT_CARDS,
+  WW_BD_QUICK_CHECKS,
+  WW_BD_SOURCE_SETS,
+  WW_BD_QUESTION_LAB,
+  WW_BE_TIMELINE,
+  WW_BE_KEY_TERMS,
+  WW_BE_CONCEPT_CARDS,
+  WW_BE_QUICK_CHECKS,
+  WW_BE_SOURCE_SETS,
+  WW_BE_QUESTION_LAB,
+} from './historyHubWiderWorldContent';
+
+import {
+  THEMATIC_AA_TIMELINE,
+  THEMATIC_AA_KEY_TERMS,
+  THEMATIC_AA_CONCEPT_CARDS,
+  THEMATIC_AA_QUICK_CHECKS,
+  THEMATIC_AA_SOURCE_SETS,
+  THEMATIC_AA_QUESTION_LAB,
+  THEMATIC_BB_TIMELINE,
+  THEMATIC_BB_KEY_TERMS,
+  THEMATIC_BB_CONCEPT_CARDS,
+  THEMATIC_BB_QUICK_CHECKS,
+  THEMATIC_BB_SOURCE_SETS,
+  THEMATIC_BB_QUESTION_LAB,
+  THEMATIC_AC_TIMELINE,
+  THEMATIC_AC_KEY_TERMS,
+  THEMATIC_AC_CONCEPT_CARDS,
+  THEMATIC_AC_QUICK_CHECKS,
+  THEMATIC_AC_SOURCE_SETS,
+  THEMATIC_AC_QUESTION_LAB,
+} from './historyHubThematicContent';
+
+import {
+  BRITISH_BA_TIMELINE,
+  BRITISH_BA_KEY_TERMS,
+  BRITISH_BA_CONCEPT_CARDS,
+  BRITISH_BA_QUICK_CHECKS,
+  BRITISH_BA_INTERPRETATION_SETS,
+  BRITISH_BA_QUESTION_LAB,
+  BRITISH_BB_TIMELINE,
+  BRITISH_BB_KEY_TERMS,
+  BRITISH_BB_CONCEPT_CARDS,
+  BRITISH_BB_QUICK_CHECKS,
+  BRITISH_BB_INTERPRETATION_SETS,
+  BRITISH_BB_QUESTION_LAB,
+  BRITISH_BC_TIMELINE,
+  BRITISH_BC_KEY_TERMS,
+  BRITISH_BC_CONCEPT_CARDS,
+  BRITISH_BC_QUICK_CHECKS,
+  BRITISH_BC_INTERPRETATION_SETS,
+  BRITISH_BC_QUESTION_LAB,
+  BRITISH_BD_TIMELINE,
+  BRITISH_BD_KEY_TERMS,
+  BRITISH_BD_CONCEPT_CARDS,
+  BRITISH_BD_QUICK_CHECKS,
+  BRITISH_BD_INTERPRETATION_SETS,
+  BRITISH_BD_QUESTION_LAB,
+  HISTORIC_ENVIRONMENT_SITES,
+} from './historyHubBritishDepthContent';
 
 // ============================================================================
 // OPTION METADATA
@@ -174,7 +278,7 @@ export function getHistoryOptionsForSelection(selection: {
 
 const PERIOD_AB = getHistoryOptionKey('period', 'AB');
 
-export const HISTORY_TIMELINE_EVENTS: TimelineEvent[] = [
+const GERMANY_TIMELINE: TimelineEvent[] = [
   { id: 'AB-1-1890', optionKey: PERIOD_AB, partId: 'AB-1', date: '1890', title: 'Kaiser Wilhelm II becomes Emperor', description: 'Wilhelm II succeeded his father Frederick III. He favoured strong personal rule and clashed with Chancellor Bismarck, who resigned in 1890. Industrialisation and the growth of socialism increased during his reign.', order: 1 },
   { id: 'AB-1-1914', optionKey: PERIOD_AB, partId: 'AB-1', date: '1914', title: 'Outbreak of the First World War', description: 'Germany entered the war as part of the Triple Alliance. The war placed huge strain on the economy and society; war weariness and defeat led to the end of the monarchy.', order: 2 },
   { id: 'AB-1-1918', optionKey: PERIOD_AB, partId: 'AB-1', date: 'November 1918', title: 'Abdication of the Kaiser; armistice', description: 'Wilhelm II abdicated and fled to the Netherlands. The Weimar Republic was declared. Germany signed the armistice ending the First World War.', order: 3 },
@@ -195,11 +299,30 @@ export const HISTORY_TIMELINE_EVENTS: TimelineEvent[] = [
   { id: 'AB-3-1939', optionKey: PERIOD_AB, partId: 'AB-3', date: '1939–1945', title: 'Second World War', description: 'Germany invaded Poland in September 1939. The war led to bombing, rationing, labour shortages, and the Holocaust (Final Solution).', order: 18 },
 ];
 
+export const HISTORY_TIMELINE_EVENTS: TimelineEvent[] = [
+  ...GERMANY_TIMELINE,
+  ...PERIOD_AA_TIMELINE,
+  ...PERIOD_AC_TIMELINE,
+  ...PERIOD_AD_TIMELINE,
+  ...WW_BA_TIMELINE,
+  ...WW_BB_TIMELINE,
+  ...WW_BC_TIMELINE,
+  ...WW_BD_TIMELINE,
+  ...WW_BE_TIMELINE,
+  ...THEMATIC_AA_TIMELINE,
+  ...THEMATIC_BB_TIMELINE,
+  ...THEMATIC_AC_TIMELINE,
+  ...BRITISH_BA_TIMELINE,
+  ...BRITISH_BB_TIMELINE,
+  ...BRITISH_BC_TIMELINE,
+  ...BRITISH_BD_TIMELINE,
+];
+
 // ============================================================================
 // KEY TERMS – Germany (period_AB)
 // ============================================================================
 
-export const HISTORY_KEY_TERMS: HistoryKeyTerm[] = [
+const GERMANY_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'AB-kt1', optionKey: PERIOD_AB, partId: 'AB-1', term: 'Kaiser', definition: 'German Emperor; head of state until 1918.', dateOrContext: '1890–1918' },
   { id: 'AB-kt2', optionKey: PERIOD_AB, partId: 'AB-1', term: 'Weimar Republic', definition: 'The democratic government of Germany from 1919 to 1933, named after the town where its constitution was agreed.', dateOrContext: '1919–1933' },
   { id: 'AB-kt3', optionKey: PERIOD_AB, partId: 'AB-1', term: 'Treaty of Versailles', definition: 'Peace treaty of 1919. Germany accepted war guilt (Article 231), reparations, loss of territory, and military limits.', dateOrContext: '1919' },
@@ -221,22 +344,60 @@ export const HISTORY_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'AB-kt19', optionKey: PERIOD_AB, partId: 'AB-3', term: 'Final Solution', definition: 'Nazi plan to murder all Jews in Europe; implemented through extermination camps from 1941.', dateOrContext: '1941 onwards' },
 ];
 
+export const HISTORY_KEY_TERMS: HistoryKeyTerm[] = [
+  ...GERMANY_KEY_TERMS,
+  ...PERIOD_AA_KEY_TERMS,
+  ...PERIOD_AC_KEY_TERMS,
+  ...PERIOD_AD_KEY_TERMS,
+  ...WW_BA_KEY_TERMS,
+  ...WW_BB_KEY_TERMS,
+  ...WW_BC_KEY_TERMS,
+  ...WW_BD_KEY_TERMS,
+  ...WW_BE_KEY_TERMS,
+  ...THEMATIC_AA_KEY_TERMS,
+  ...THEMATIC_BB_KEY_TERMS,
+  ...THEMATIC_AC_KEY_TERMS,
+  ...BRITISH_BA_KEY_TERMS,
+  ...BRITISH_BB_KEY_TERMS,
+  ...BRITISH_BC_KEY_TERMS,
+  ...BRITISH_BD_KEY_TERMS,
+];
+
 // ============================================================================
 // CONCEPT CARDS – Germany (period_AB)
 // ============================================================================
 
-export const HISTORY_CONCEPT_CARDS: HistoryConceptCard[] = [
+const GERMANY_CONCEPT_CARDS: HistoryConceptCard[] = [
   { id: 'AB-cc1', optionKey: PERIOD_AB, partId: 'AB-1', prompt: 'The Treaty of Versailles contributed to the collapse of the Weimar Republic. Identify one cause and one consequence of the treaty for Germany.', conceptType: 'consequence', modelAnswer: 'Cause: defeat in WW1 and the terms imposed (e.g. war guilt, reparations). Consequence: economic strain (e.g. hyperinflation when Germany could not pay), political unrest, and lasting resentment that the Nazis exploited.' },
   { id: 'AB-cc2', optionKey: PERIOD_AB, partId: 'AB-1', prompt: 'What changed and what stayed the same in Germany between 1924 and 1929 (the Stresemann era)?', conceptType: 'change', modelAnswer: 'Changed: economy stabilised (Rentenmark, Dawes/Young Plans), international relations improved, Weimar culture flourished (art, cinema, literature). Stayed the same: political instability (short-lived governments), many still opposed democracy; some groups (e.g. Nazis) remained marginal.' },
   { id: 'AB-cc3', optionKey: PERIOD_AB, partId: 'AB-2', prompt: 'Why did support for the Nazis grow between 1928 and 1932?', conceptType: 'cause', modelAnswer: 'Wall Street Crash (1929) led to US loans being withdrawn, mass unemployment, and hardship. The Weimar government was blamed; moderate parties lost support. Hitler promised jobs, order, and to overturn Versailles; the SA offered strength and action. Papen and Hindenburg’s tactics also helped bring Hitler to power.' },
   { id: 'AB-cc4', optionKey: PERIOD_AB, partId: 'AB-3', prompt: 'How did the Nazis use propaganda and terror to control Germany?', conceptType: 'significance', modelAnswer: 'Propaganda (Goebbels): controlled press, radio, rallies, and culture to spread Nazi ideas and create a cult around Hitler. Terror: Gestapo and SS arrested and intimidated opponents; concentration camps; fear of being reported. Together they reduced open opposition and encouraged conformity.' },
 ];
 
+export const HISTORY_CONCEPT_CARDS: HistoryConceptCard[] = [
+  ...GERMANY_CONCEPT_CARDS,
+  ...PERIOD_AA_CONCEPT_CARDS,
+  ...PERIOD_AC_CONCEPT_CARDS,
+  ...PERIOD_AD_CONCEPT_CARDS,
+  ...WW_BA_CONCEPT_CARDS,
+  ...WW_BB_CONCEPT_CARDS,
+  ...WW_BC_CONCEPT_CARDS,
+  ...WW_BD_CONCEPT_CARDS,
+  ...WW_BE_CONCEPT_CARDS,
+  ...THEMATIC_AA_CONCEPT_CARDS,
+  ...THEMATIC_BB_CONCEPT_CARDS,
+  ...THEMATIC_AC_CONCEPT_CARDS,
+  ...BRITISH_BA_CONCEPT_CARDS,
+  ...BRITISH_BB_CONCEPT_CARDS,
+  ...BRITISH_BC_CONCEPT_CARDS,
+  ...BRITISH_BD_CONCEPT_CARDS,
+];
+
 // ============================================================================
 // QUICK CHECK – Germany (period_AB)
 // ============================================================================
 
-export const HISTORY_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+const GERMANY_QUICK_CHECKS: HistoryQuickCheckItem[] = [
   { id: 'AB-qc1', optionKey: PERIOD_AB, partId: 'AB-1', type: 'multipleChoice', question: 'When did the Kaiser abdicate?', options: ['1917', '1918', '1919', '1920'], correctAnswer: '1918', feedback: { correct: 'Correct – November 1918.', incorrect: 'The Kaiser abdicated in November 1918, after defeat in the First World War.' } },
   { id: 'AB-qc2', optionKey: PERIOD_AB, partId: 'AB-1', type: 'multipleChoice', question: 'What was Article 231 of the Treaty of Versailles?', options: ['Reparations', 'War guilt clause', 'Territorial losses', 'Military restrictions'], correctAnswer: 'War guilt clause', feedback: { correct: 'Correct.', incorrect: 'Article 231 was the war guilt clause – Germany had to accept responsibility for the war.' } },
   { id: 'AB-qc3', optionKey: PERIOD_AB, partId: 'AB-1', type: 'trueFalse', question: 'The Spartacist Uprising was a right-wing revolt.', correctAnswer: 'false', feedback: { correct: 'Correct – it was a left-wing (communist) revolt.', incorrect: 'The Spartacists were communists; the Kapp Putsch was right-wing.' } },
@@ -247,11 +408,30 @@ export const HISTORY_QUICK_CHECKS: HistoryQuickCheckItem[] = [
   { id: 'AB-qc8', optionKey: PERIOD_AB, partId: 'AB-3', type: 'shortAnswer', question: 'Who was in charge of Nazi propaganda?', correctAnswer: 'Goebbels', feedback: { correct: 'Correct.', incorrect: 'Joseph Goebbels was Minister of Propaganda.' } },
 ];
 
+export const HISTORY_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  ...GERMANY_QUICK_CHECKS,
+  ...PERIOD_AA_QUICK_CHECKS,
+  ...PERIOD_AC_QUICK_CHECKS,
+  ...PERIOD_AD_QUICK_CHECKS,
+  ...WW_BA_QUICK_CHECKS,
+  ...WW_BB_QUICK_CHECKS,
+  ...WW_BC_QUICK_CHECKS,
+  ...WW_BD_QUICK_CHECKS,
+  ...WW_BE_QUICK_CHECKS,
+  ...THEMATIC_AA_QUICK_CHECKS,
+  ...THEMATIC_BB_QUICK_CHECKS,
+  ...THEMATIC_AC_QUICK_CHECKS,
+  ...BRITISH_BA_QUICK_CHECKS,
+  ...BRITISH_BB_QUICK_CHECKS,
+  ...BRITISH_BC_QUICK_CHECKS,
+  ...BRITISH_BD_QUICK_CHECKS,
+];
+
 // ============================================================================
 // INTERPRETATION SETS – Germany (period_AB)
 // ============================================================================
 
-export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
+const GERMANY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
   {
     id: 'AB-int1',
     optionKey: PERIOD_AB,
@@ -267,6 +447,17 @@ export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
   },
 ];
 
+export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
+  ...GERMANY_INTERPRETATION_SETS,
+  ...PERIOD_AA_INTERPRETATION_SETS,
+  ...PERIOD_AC_INTERPRETATION_SETS,
+  ...PERIOD_AD_INTERPRETATION_SETS,
+  ...BRITISH_BA_INTERPRETATION_SETS,
+  ...BRITISH_BB_INTERPRETATION_SETS,
+  ...BRITISH_BC_INTERPRETATION_SETS,
+  ...BRITISH_BD_INTERPRETATION_SETS,
+];
+
 // ============================================================================
 // QUESTION LAB – Germany (period_AB)
 // ============================================================================
@@ -276,6 +467,25 @@ export const HISTORY_QUESTION_LAB_ITEMS: HistoryQuestionLabItem[] = [
   { id: 'AB-ql2', optionKey: PERIOD_AB, partId: 'AB-1', questionType: 'explain', question: 'In what ways were Germans affected by hyperinflation in 1923? Explain your answer.', markSchemeSummary: 'AO1 + AO2. Explain ways (e.g. savings wiped out, wages paid daily, barter) with knowledge.' },
   { id: 'AB-ql3', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'account', question: 'Write an account of how Hitler became Chancellor in January 1933.', markSchemeSummary: 'Narrative account showing cause/consequence. AO1 + AO2.' },
   { id: 'AB-ql4', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'essay', question: '"The main reason Hitler was able to establish a dictatorship by 1934 was the Enabling Act." How far do you agree?', markSchemeSummary: 'Essay with judgement; consider Enabling Act and other factors (e.g. Reichstag Fire, Night of the Long Knives, terror, propaganda). AO1 + AO2.' },
+];
+
+export const HISTORY_QUESTION_LAB_ITEMS: HistoryQuestionLabItem[] = [
+  ...GERMANY_QUESTION_LAB,
+  ...PERIOD_AA_QUESTION_LAB,
+  ...PERIOD_AC_QUESTION_LAB,
+  ...PERIOD_AD_QUESTION_LAB,
+  ...WW_BA_QUESTION_LAB,
+  ...WW_BB_QUESTION_LAB,
+  ...WW_BC_QUESTION_LAB,
+  ...WW_BD_QUESTION_LAB,
+  ...WW_BE_QUESTION_LAB,
+  ...THEMATIC_AA_QUESTION_LAB,
+  ...THEMATIC_BB_QUESTION_LAB,
+  ...THEMATIC_AC_QUESTION_LAB,
+  ...BRITISH_BA_QUESTION_LAB,
+  ...BRITISH_BB_QUESTION_LAB,
+  ...BRITISH_BC_QUESTION_LAB,
+  ...BRITISH_BD_QUESTION_LAB,
 ];
 
 // ============================================================================
@@ -317,7 +527,14 @@ export function getInterpretationSetsForOption(optionKey: string, partId?: strin
 // ============================================================================
 
 export const HISTORY_SOURCE_SETS: HistorySourceSet[] = [
-  // Wider world & thematic content added below
+  ...WW_BA_SOURCE_SETS,
+  ...WW_BB_SOURCE_SETS,
+  ...WW_BC_SOURCE_SETS,
+  ...WW_BD_SOURCE_SETS,
+  ...WW_BE_SOURCE_SETS,
+  ...THEMATIC_AA_SOURCE_SETS,
+  ...THEMATIC_BB_SOURCE_SETS,
+  ...THEMATIC_AC_SOURCE_SETS,
 ];
 
 export function getSourceSetsForOption(optionKey: string, partId?: string): HistorySourceSet[] {
@@ -330,4 +547,10 @@ export function getQuestionLabItemsForOption(optionKey: string, partId?: string)
   let list = HISTORY_QUESTION_LAB_ITEMS.filter(q => q.optionKey === optionKey);
   if (partId) list = list.filter(q => q.partId === partId);
   return list;
+}
+
+export const HISTORY_HISTORIC_ENVIRONMENT_SITES = HISTORIC_ENVIRONMENT_SITES;
+
+export function getHistoricEnvironmentSitesForOption(optionKey: string): HistoricEnvironmentSite[] {
+  return HISTORIC_ENVIRONMENT_SITES.filter(s => s.optionKey === optionKey);
 }

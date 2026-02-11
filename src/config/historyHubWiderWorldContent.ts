@@ -42,6 +42,15 @@ export const WW_BA_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'BA-kt8', optionKey: WW_BA, partId: 'BA-3', term: 'Armistice', definition: 'Ceasefire agreed 11 November 1918.', dateOrContext: '1918' },
 ];
 
+export const WW_BA_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'BA-cc1', optionKey: WW_BA, partId: 'BA-1', prompt: 'What were the causes of the First World War?', conceptType: 'cause', modelAnswer: 'Alliances (Triple Entente vs Triple Alliance), imperialism, militarism, naval race, Balkan crises, assassination at Sarajevo, July Crisis. Long-term and short-term causes.' },
+];
+
+export const WW_BA_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'BA-qc1', optionKey: WW_BA, partId: 'BA-1', type: 'multipleChoice', question: 'When did the First World War begin?', options: ['1912', '1914', '1916', '1918'], correctAnswer: '1914', feedback: { correct: 'Correct.', incorrect: 'The First World War began in 1914.' } },
+  { id: 'BA-qc2', optionKey: WW_BA, partId: 'BA-3', type: 'shortAnswer', question: 'On what date did the armistice take effect?', correctAnswer: '11 November 1918', feedback: { correct: 'Correct.', incorrect: '11 November 1918.' } },
+];
+
 export const WW_BA_SOURCE_SETS: HistorySourceSet[] = [
   {
     id: 'BA-src1',
@@ -102,6 +111,15 @@ export const WW_BB_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'BB-kt8', optionKey: WW_BB, partId: 'BB-3', term: 'Nazi-Soviet Pact', definition: '1939 agreement between Germany and USSR; divided Eastern Europe.', dateOrContext: '1939' },
 ];
 
+export const WW_BB_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'BB-cc1', optionKey: WW_BB, partId: 'BB-2', prompt: 'Why did the League of Nations fail to prevent aggression in the 1930s?', conceptType: 'cause', modelAnswer: 'USA not a member; no army; major powers (Germany, Japan, Italy) left or ignored it; Manchuria and Abyssinia showed weakness; economic sanctions not enforced.' },
+];
+
+export const WW_BB_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'BB-qc1', optionKey: WW_BB, partId: 'BB-1', type: 'multipleChoice', question: 'Which country did not join the League of Nations?', options: ['Britain', 'France', 'USA', 'Italy'], correctAnswer: 'USA', feedback: { correct: 'Correct.', incorrect: 'The USA did not join the League.' } },
+  { id: 'BB-qc2', optionKey: WW_BB, partId: 'BB-3', type: 'shortAnswer', question: 'In which year did Germany invade Poland?', correctAnswer: '1939', feedback: { correct: 'Correct.', incorrect: '1939.' } },
+];
+
 export const WW_BB_SOURCE_SETS: HistorySourceSet[] = [
   {
     id: 'BB-src1',
@@ -151,6 +169,15 @@ export const WW_BC_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'BC-kt8', optionKey: WW_BC, partId: 'BC-3', term: 'SALT 1', definition: '1972 treaty limiting nuclear weapons.', dateOrContext: '1972' },
 ];
 
+export const WW_BC_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'BC-cc1', optionKey: WW_BC, partId: 'BC-1', prompt: 'What were the causes of the Cold War?', conceptType: 'cause', modelAnswer: 'Ideological differences (capitalism vs communism); wartime alliances broke down; Yalta/Potsdam disagreements; Soviet control of Eastern Europe; Truman Doctrine; Marshall Plan; Berlin Blockade.' },
+];
+
+export const WW_BC_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'BC-qc1', optionKey: WW_BC, partId: 'BC-1', type: 'multipleChoice', question: 'Who gave the Iron Curtain speech?', options: ['Truman', 'Stalin', 'Churchill', 'Roosevelt'], correctAnswer: 'Churchill', feedback: { correct: 'Correct.', incorrect: 'Churchill gave the Iron Curtain speech in 1946.' } },
+  { id: 'BC-qc2', optionKey: WW_BC, partId: 'BC-3', type: 'shortAnswer', question: 'In which year was the Berlin Wall built?', correctAnswer: '1961', feedback: { correct: 'Correct.', incorrect: '1961.' } },
+];
+
 export const WW_BC_SOURCE_SETS: HistorySourceSet[] = [
   {
     id: 'BC-src1',
@@ -196,6 +223,14 @@ export const WW_BD_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'BD-kt6', optionKey: WW_BD, partId: 'BD-3', term: 'Fall of Saigon', definition: '1975; North Vietnam captured South\'s capital.', dateOrContext: '1975' },
 ];
 
+export const WW_BD_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'BD-cc1', optionKey: WW_BD, partId: 'BD-2', prompt: 'Why did the USA become involved in Vietnam?', conceptType: 'cause', modelAnswer: 'Containment of communism; domino theory; support for South Vietnam; Gulf of Tonkin; fear of Soviet/Chinese expansion.' },
+];
+
+export const WW_BD_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'BD-qc1', optionKey: WW_BD, partId: 'BD-2', type: 'multipleChoice', question: 'In which year did the Tet Offensive occur?', options: ['1964', '1966', '1968', '1970'], correctAnswer: '1968', feedback: { correct: 'Correct.', incorrect: '1968.' } },
+];
+
 export const WW_BD_SOURCE_SETS: HistorySourceSet[] = [
   {
     id: 'BD-src1',
@@ -235,6 +270,14 @@ export const WW_BE_KEY_TERMS: HistoryKeyTerm[] = [
   { id: 'BE-kt3', optionKey: WW_BE, partId: 'BE-2', term: 'Taliban', definition: 'Islamic regime in Afghanistan; harboured al-Qaeda.', dateOrContext: '1990s–2001' },
   { id: 'BE-kt4', optionKey: WW_BE, partId: 'BE-3', term: 'WMD', definition: 'Weapons of mass destruction; justification for Iraq invasion disputed.', dateOrContext: '2003' },
   { id: 'BE-kt5', optionKey: WW_BE, partId: 'BE-3', term: 'Surge', definition: '2007 US troop increase in Iraq to combat insurgency.', dateOrContext: '2007' },
+];
+
+export const WW_BE_CONCEPT_CARDS: HistoryConceptCard[] = [
+  { id: 'BE-cc1', optionKey: WW_BE, partId: 'BE-2', prompt: 'How did 9/11 change US foreign policy?', conceptType: 'consequence', modelAnswer: 'War on Terror; invasion of Afghanistan; increased security; Patriot Act; later Iraq invasion. Shift to pre-emptive action.' },
+];
+
+export const WW_BE_QUICK_CHECKS: HistoryQuickCheckItem[] = [
+  { id: 'BE-qc1', optionKey: WW_BE, partId: 'BE-2', type: 'shortAnswer', question: 'In which year did the 9/11 attacks occur?', correctAnswer: '2001', feedback: { correct: 'Correct.', incorrect: '2001.' } },
 ];
 
 export const WW_BE_SOURCE_SETS: HistorySourceSet[] = [

@@ -243,6 +243,28 @@ export const BUSINESS_CONCEPTS: BusinessConcept[] = [
     ],
   },
   {
+    id: 'c-3.2.4-globalisation',
+    unitId: '3.2',
+    topicId: '3.2.4',
+    title: 'Globalisation and exchange rates',
+    coreIdea: 'Globalisation means UK businesses compete internationally. Design, quality and price matter. Exchange rates affect businesses that import or export: a stronger pound makes UK exports dearer abroad and imports cheaper; a weaker pound has the opposite effect. No exchange rate calculations are required.',
+    commonMisconception: 'Thinking a weaker pound always hurts UK businesses – exporters may benefit from cheaper prices abroad.',
+    changeScenarios: [
+      { prompt: 'A UK business imports materials from abroad. The pound strengthens against the euro. How might it be affected?', explanation: 'Imports become cheaper in pounds; cost of materials falls; profit may improve.' },
+    ],
+  },
+  {
+    id: 'c-3.2.5-legislation',
+    unitId: '3.2',
+    topicId: '3.2.5',
+    title: 'Legislation and business',
+    coreIdea: 'Laws affect how businesses operate. Employment law: National Minimum Wage, living wage, Equality Act 2010 (fair treatment). Health and Safety at Work Act (HASAWA) 1974: safe working environment. Consumer law: trade descriptions, product safety. Businesses must comply or face fines, tribunal, reputational damage.',
+    commonMisconception: 'Thinking legislation only adds costs – compliance can reduce risk, improve reputation and attract staff.',
+    changeScenarios: [
+      { prompt: 'A business must increase wages to meet the National Minimum Wage. What might it do?', explanation: 'Raise prices, cut other costs, reduce staff hours, improve productivity to cover the increase.' },
+    ],
+  },
+  {
     id: 'c-3.2.6-competition',
     unitId: '3.2',
     topicId: '3.2.6',
@@ -266,6 +288,17 @@ export const BUSINESS_CONCEPTS: BusinessConcept[] = [
     ],
   },
   {
+    id: 'c-3.3.2-procurement',
+    unitId: '3.3',
+    topicId: '3.3.2',
+    title: 'Procurement and stock management',
+    coreIdea: 'Procurement is buying supplies. JIT (Just in time) means materials arrive only when needed; JIC (Just in case) holds buffer stock. Businesses choose suppliers based on price, quality and reliability. Supply chain management improves efficiency and unit costs.',
+    commonMisconception: 'Thinking JIT is always better – JIC can be safer if deliveries are unreliable or demand is unpredictable.',
+    changeScenarios: [
+      { prompt: 'When might a business prefer JIC over JIT?', explanation: 'When suppliers are unreliable, lead times are long, or demand is unpredictable; buffer stock reduces risk of production stopping.' },
+    ],
+  },
+  {
     id: 'c-3.3.3-quality',
     unitId: '3.3',
     topicId: '3.3.3',
@@ -274,6 +307,17 @@ export const BUSINESS_CONCEPTS: BusinessConcept[] = [
     commonMisconception: 'Thinking quality is only about the product – service quality matters too.',
     changeScenarios: [
       { prompt: 'What are the costs and benefits of maintaining high quality?', explanation: 'Costs: inspection, training, better materials. Benefits: higher price, loyalty, reputation, fewer returns.' },
+    ],
+  },
+  {
+    id: 'c-3.3.4-customer-service',
+    unitId: '3.3',
+    topicId: '3.3.4',
+    title: 'Customer service',
+    coreIdea: 'Good customer service includes product knowledge, customer engagement and post-sales support (training, helplines, servicing). Benefits: satisfaction, loyalty, higher spend, profit. Poor service leads to lost customers and damage to reputation. ICT (websites, e-commerce, social media) supports customer service.',
+    commonMisconception: 'Thinking customer service ends at the sale – post-sales support builds loyalty and repeat business.',
+    changeScenarios: [
+      { prompt: 'How might poor customer service affect a business?', explanation: 'Lost sales, negative reviews, damage to reputation, customers switching to competitors.' },
     ],
   },
   // 3.4
@@ -299,7 +343,62 @@ export const BUSINESS_CONCEPTS: BusinessConcept[] = [
       { prompt: 'When might external recruitment be better than internal?', explanation: 'When new skills or fresh ideas are needed; when no suitable internal candidate exists.' },
     ],
   },
+  {
+    id: 'c-3.4.3-motivation',
+    unitId: '3.4',
+    topicId: '3.4.3',
+    title: 'Motivating employees',
+    coreIdea: 'A motivated workforce is more productive and less likely to leave. Financial methods: salary, wage, commission, profit sharing. Non-financial: management style, training, responsibility, fringe benefits. Different workers respond to different incentives.',
+    commonMisconception: 'Assuming pay is the only motivator – recognition, development and working conditions matter too.',
+    changeScenarios: [
+      { prompt: 'How might a business motivate staff without raising pay?', explanation: 'Training, promotion opportunities, flexible working, praise, team-building, better working conditions.' },
+    ],
+  },
+  {
+    id: 'c-3.4.4-training',
+    unitId: '3.4',
+    topicId: '3.4.4',
+    title: 'Training',
+    coreIdea: 'Training improves skills and productivity. Types: induction (new starters), on-the-job (learning while doing), off-the-job (external courses). Induction helps new staff settle. On-the-job is cheaper; off-the-job can bring new ideas but takes staff away.',
+    commonMisconception: 'Thinking training is a cost to cut – it can improve quality, reduce errors and increase retention.',
+    changeScenarios: [
+      { prompt: 'When might off-the-job training be better than on-the-job?', explanation: 'When new skills or qualifications are needed that existing staff cannot teach; when a fresh perspective is valuable.' },
+    ],
+  },
   // 3.5
+  {
+    id: 'c-3.5.1-customers',
+    unitId: '3.5',
+    topicId: '3.5.1',
+    title: 'Identifying and understanding customers',
+    coreIdea: 'Businesses must identify and satisfy customer needs. Understanding customers helps: choose the right product, increase sales, get the marketing mix right, avoid costly mistakes, stay competitive.',
+    commonMisconception: 'Assuming the business knows what customers want without researching – needs change and vary.',
+    changeScenarios: [
+      { prompt: 'Why might a business lose sales if it does not understand its customers?', explanation: 'Wrong product, wrong price, wrong promotion or place; customers go to competitors who meet their needs better.' },
+    ],
+  },
+  {
+    id: 'c-3.5.2-segmentation',
+    unitId: '3.5',
+    topicId: '3.5.2',
+    title: 'Market segmentation',
+    coreIdea: 'Segmentation divides the market into groups (e.g. by gender, age, location, income). Businesses target each segment with tailored products and marketing. Helps focus resources and meet needs more precisely.',
+    commonMisconception: 'Thinking all customers are the same – different segments have different needs and spending power.',
+    changeScenarios: [
+      { prompt: 'A business sells luxury skincare. How might it segment its market?', explanation: 'By age (anti-ageing for older), income (premium for high earners), gender (different products).' },
+    ],
+  },
+  {
+    id: 'c-3.5.3-market-research',
+    unitId: '3.5',
+    topicId: '3.5.3',
+    title: 'Market research',
+    coreIdea: 'Market research finds out about customers and competitors. Primary: questionnaires, surveys, interviews, focus groups (first-hand). Secondary: internet, printed press (existing data). Qualitative = opinions; quantitative = numbers. Use findings to inform decisions.',
+    commonMisconception: 'Thinking primary research is always better – secondary can be cheaper and faster; choice depends on budget and need.',
+    changeScenarios: [
+      { prompt: 'When might a business use secondary rather than primary research?', explanation: 'When time or budget is limited; when general market data is enough; when validating primary findings.' },
+    ],
+  },
   {
     id: 'c-3.5.4-mix',
     unitId: '3.5',
@@ -333,6 +432,17 @@ export const BUSINESS_CONCEPTS: BusinessConcept[] = [
     commonMisconception: 'Confusing cash flow with profit – a firm can make a profit but have negative cash flow (e.g. lots of credit sales not yet paid).',
     changeScenarios: [
       { prompt: 'What could a business do to improve cash flow?', explanation: 'Chase debtors, delay paying creditors, reduce stock, arrange overdraft, delay non-essential spending.' },
+    ],
+  },
+  {
+    id: 'c-3.6.3-breakeven',
+    unitId: '3.6',
+    topicId: '3.6.3',
+    title: 'Break-even and financial calculations',
+    coreIdea: 'Break-even is the output where total revenue equals total cost; no profit or loss. Margin of safety is how much output exceeds break-even. From a break-even chart you can identify break-even output and margin of safety. ARR (average rate of return) evaluates investment projects. Break-even has value for planning but assumptions (fixed costs, selling all output) may not hold.',
+    commonMisconception: 'Thinking break-even means the business is safe – it only covers costs; any fall in sales below break-even creates a loss.',
+    changeScenarios: [
+      { prompt: 'What are the limitations of break-even analysis?', explanation: 'Assumes all output is sold; fixed and variable costs may change; ignores non-financial factors; single product/services mix may vary.' },
     ],
   },
   {

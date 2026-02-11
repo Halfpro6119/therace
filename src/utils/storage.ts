@@ -30,6 +30,17 @@ import type {
   HistoryConfidenceLevel,
   HistoryFactorEssayDraft,
 } from '../types/historyHub';
+import type {
+  ReligiousStudiesOptionSelection,
+  RSFlashcardMastery,
+  RSConfidenceLevel,
+} from '../types/religiousStudiesHub';
+import type {
+  GeographyOptionSelection,
+  GeographySectionProgress,
+  GeographyFlashcardMastery,
+  GeographyConfidenceLevel,
+} from '../types/geographyHub';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -62,6 +73,10 @@ const STORAGE_KEYS = {
   HISTORY_HUB_PART_PROGRESS: 'grade9sprint_history_hub_part_progress',
   HISTORY_HUB_FLASHCARD_MASTERY: 'grade9sprint_history_hub_flashcard_mastery',
   HISTORY_HUB_FACTOR_ESSAY_DRAFTS: 'grade9sprint_history_hub_factor_essay_drafts',
+  // Religious Studies Hub
+  RS_HUB_OPTIONS: 'grade9sprint_rs_hub_options',
+  RS_HUB_FLASHCARD_MASTERY: 'grade9sprint_rs_hub_flashcard_mastery',
+  RS_HUB_PART_PROGRESS: 'grade9sprint_rs_hub_part_progress',
 };
 
 /**
@@ -799,6 +814,63 @@ export const storage = {
     const map: Record<string, HistoryFactorEssayDraft> = data ? JSON.parse(data) : {};
     map[draft.questionId] = { ...draft, updatedAt: Date.now() };
     localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_FACTOR_ESSAY_DRAFTS, JSON.stringify(map));
+  },
+
+  // —— Religious Studies Hub ——
+  getRSOptionSelection: (): ReligiousStudiesOptionSelection | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.RS_HUB_OPTIONS);
+    return data ? JSON.parse(data) : null;
+  },
+  setRSOptionSelection: (selection: ReligiousStudiesOptionSelection): void => {
+    localStorage.setItem(STORAGE_KEYS.RS_HUB_OPTIONS, JSON.stringify(selection));
+  },
+  getRSFlashcardMastery: (): Record<string, RSFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.RS_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateRSFlashcardMastery: (cardId: string, religionId: string | undefined, themeId: string | undefined, confidence: RSConfidenceLevel): void => {
+    const all = storage.getRSFlashcardMastery();
+    all[cardId] = { cardId, religionId: religionId as never, themeId: themeId as never, confidence, lastSeen: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.RS_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+  getRSPartProgress: (): Record<string, { beliefLabViewed?: boolean; quickCheckPassed?: boolean; shortAnswerCompleted?: boolean; extendedWritingCompleted?: boolean }> => {
+    const data = localStorage.getItem(STORAGE_KEYS.RS_HUB_PART_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  updateRSPartProgress: (key: string, progress: Partial<{ beliefLabViewed: boolean; quickCheckPassed: boolean; shortAnswerCompleted: boolean; extendedWritingCompleted: boolean }>): void => {
+    const all = storage.getRSPartProgress();
+    all[key] = { ...(all[key] || {}), ...progress };
+    localStorage.setItem(STORAGE_KEYS.RS_HUB_PART_PROGRESS, JSON.stringify(all));
+  },
+
+  // —— Geography Hub ——
+  getGeographyOptionSelection: (): GeographyOptionSelection | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.GEOGRAPHY_HUB_OPTIONS);
+    return data ? JSON.parse(data) : null;
+  },
+  setGeographyOptionSelection: (selection: GeographyOptionSelection): void => {
+    localStorage.setItem(STORAGE_KEYS.GEOGRAPHY_HUB_OPTIONS, JSON.stringify(selection));
+  },
+  getGeographySectionProgress: (): Record<string, GeographySectionProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.GEOGRAPHY_HUB_SECTION_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getGeographySectionProgressByKey: (sectionId: string): GeographySectionProgress | undefined => {
+    return storage.getGeographySectionProgress()[sectionId];
+  },
+  updateGeographySectionProgress: (progress: GeographySectionProgress): void => {
+    const all = storage.getGeographySectionProgress();
+    all[progress.sectionId] = progress;
+    localStorage.setItem(STORAGE_KEYS.GEOGRAPHY_HUB_SECTION_PROGRESS, JSON.stringify(all));
+  },
+  getGeographyFlashcardMastery: (): Record<string, GeographyFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.GEOGRAPHY_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateGeographyFlashcardMastery: (termId: string, sectionId: string, confidence: GeographyConfidenceLevel): void => {
+    const all = storage.getGeographyFlashcardMastery();
+    all[termId] = { termId, sectionId: sectionId as GeographyFlashcardMastery['sectionId'], confidence, lastSeen: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.GEOGRAPHY_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
   },
 };
 
