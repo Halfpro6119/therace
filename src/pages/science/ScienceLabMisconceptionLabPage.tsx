@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, AlertTriangle, CheckCircle, XCircle, Lightbulb } from 'lucide-react';
 import { getMisconceptionsBySubject } from '../../config/scienceLabData';
+import { gradeMisconceptionAnswer } from '../../utils/scienceGrading';
 import type { ScienceSubject } from '../../types/scienceLab';
 
 export function ScienceLabMisconceptionLabPage() {
@@ -11,6 +12,8 @@ export function ScienceLabMisconceptionLabPage() {
   const [currentMisconceptionIndex, setCurrentMisconceptionIndex] = useState(0);
   const [userCorrection, setUserCorrection] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
+  const [gradedCorrect, setGradedCorrect] = useState<boolean | null>(null);
+  const [graderFeedback, setGraderFeedback] = useState<string | undefined>(undefined);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
@@ -21,11 +24,17 @@ export function ScienceLabMisconceptionLabPage() {
   const misconceptions = getMisconceptionsBySubject(normalizedSubject);
   const currentMisconception = misconceptions[currentMisconceptionIndex];
 
+  const paperNum = paper ? parseInt(paper) : 1;
+  const tierValue = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : 'Higher';
+
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}`);
+    navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
   };
 
   const handleSubmit = () => {
+    const result = gradeMisconceptionAnswer(currentMisconception, userCorrection);
+    setGradedCorrect(result.correct);
+    setGraderFeedback(result.feedback);
     setShowFeedback(true);
   };
 
@@ -34,6 +43,8 @@ export function ScienceLabMisconceptionLabPage() {
       setCurrentMisconceptionIndex(currentMisconceptionIndex + 1);
       setUserCorrection('');
       setShowFeedback(false);
+      setGradedCorrect(null);
+      setGraderFeedback(undefined);
     }
   };
 
@@ -147,6 +158,25 @@ export function ScienceLabMisconceptionLabPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
+            {gradedCorrect !== null && (
+              <div
+                className={`p-4 rounded-lg border flex items-start gap-3 ${
+                  gradedCorrect ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+                }`}
+              >
+                {gradedCorrect ? <CheckCircle size={24} className="text-green-600 flex-shrink-0" /> : <XCircle size={24} className="text-amber-600 flex-shrink-0" />}
+                <div>
+                  <p className="font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                    {gradedCorrect ? 'Good! Your correction captures the key idea.' : 'Not quite. Check the correct understanding below.'}
+                  </p>
+                  {!gradedCorrect && graderFeedback && (
+                    <p className="text-sm mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {graderFeedback}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
             <div>
               <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
                 <CheckCircle size={20} className="text-green-600 dark:text-green-400" />

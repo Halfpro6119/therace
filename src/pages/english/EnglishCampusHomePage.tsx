@@ -127,6 +127,10 @@ export function EnglishCampusHomePage() {
                   state: continueState.draftId ? { reopenDraftId: continueState.draftId } : undefined,
                 });
               else if (continueState.type === 'literature') navigate('/english-campus/literature');
+              else if (continueState.type === 'vocab' && continueState.vocabSetIds?.length)
+                navigate('/english-campus/vocab/session', {
+                  state: { setIds: continueState.vocabSetIds, length: continueState.vocabLength ?? 10, mode: 'spell' },
+                });
               else navigate('/english-campus/vocab');
             }}
             className="w-full rounded-xl p-4 flex items-center justify-between border transition hover:opacity-90"
@@ -142,6 +146,28 @@ export function EnglishCampusHomePage() {
           </button>
         </motion.section>
       )}
+
+      {/* What you'll be tested on + suggested path */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        className="rounded-xl border p-4"
+        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+      >
+        <h2 className="text-base font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+          What you'll be tested on (AQA-style)
+        </h2>
+        <p className="text-sm mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+          <strong>Language:</strong> Paper 1 = Section A (Reading) + Section B (Creative writing). Paper 2 = Section A (Reading) + Section B (Transactional writing). <strong>Literature:</strong> Shakespeare + 19th‑century novel; modern text + seen & unseen poetry.
+        </p>
+        <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>
+          Suggested path
+        </p>
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Language (Section B writing) → Language (Section A reading) → Literature → Vocab Lab. Build writing first, then analysis, then vocabulary.
+        </p>
+      </motion.section>
 
       {/* Big mode cards */}
       <section className="space-y-4">
@@ -186,6 +212,10 @@ export function EnglishCampusHomePage() {
           })}
         </div>
       </section>
+
+      <p className="text-xs text-center" style={{ color: 'rgb(var(--muted))' }}>
+        Content aligned to AQA GCSE English Language & Literature. Spoken Language (presentation) is assessed separately by your school and is not covered here.
+      </p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Literature GuidePost content — all 14 tasks
+ * Literature GuidePost content — all 15 tasks
  * Examiner-faithful mark schemes, Grade 9 checklists, step-by-step methods, model answers (4/6/8/9).
  * Model answers: 45-minute exam-style responses with sustained argument, developed paragraphs, embedded quotations.
  * Source: docs/ENGLISH_LITERATURE_GUIDEPOST.md, docs/LITERATURE_GUIDEPOST_MODEL_ANSWERS.md
@@ -324,6 +324,48 @@ The comparison shows that while imagery is fundamental in both poems, its purpos
   }
 );
 
+// ----- M-01: Macbeth — ambition (extract) -----
+const M_01: EnglishExaminerPackTask = pack(
+  [
+    { id: 'M-01-1', label: 'I focus tightly on the extract only.', ao: 'AO1' },
+    { id: 'M-01-2', label: "I define ambition clearly in relation to the extract.", ao: 'AO1' },
+    { id: 'M-01-3', label: 'I use short, embedded quotations from the extract.', ao: 'AO1' },
+    { id: 'M-01-4', label: 'I analyse language that reveals ambition (e.g. metaphor, imagery).', ao: 'AO2' },
+    { id: 'M-01-5', label: 'I analyse dramatic methods (soliloquy, aside, contrast).', ao: 'AO2' },
+    { id: 'M-01-6', label: 'I link methods directly to how ambition is presented.', ao: 'AO2' },
+    { id: 'M-01-7', label: 'I avoid drifting into the rest of the play.', ao: 'AO1' },
+    { id: 'M-01-8', label: 'I weave Jacobean context naturally (e.g. divine order, ambition as sin).', ao: 'AO3' },
+    { id: 'M-01-9', label: 'I include evaluative judgement.', ao: 'AO1' },
+    { id: 'M-01-10', label: 'I write with a clear analytical voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses focus tightly on the extract, selecting precise quotations that show ambition. Weak responses retell plot or drift to whole play.
+
+AO2 (12): Top-band answers analyse language and dramatic methods (soliloquy, imagery, metaphor) with purpose. Weak answers list techniques without effect.
+
+AO3 (6): Context woven (e.g. ambition as threat to order). Weak context bolted on.
+
+Weak: whole-play summary, long quotes, technique spotting, unclear focus.`,
+  `Step 1 (2 min): Define ambition (desire for power, moral conflict).
+Step 2 (5 min): Identify 3 moments in the extract that show ambition.
+Step 3 (5 min): Select short quotes for each.
+Step 4 (30 min): Write 3 analytical paragraphs focused on the extract.
+Step 5 (5 min): Tighten focus; ensure no whole-play drift.`,
+  {
+    grade4: `Shakespeare presents Macbeth's ambition in the extract by showing that he wants to be king. He thinks about killing Duncan, which shows his ambition is strong.
+
+His words show he is tempted. This makes the audience see how ambition can lead to bad choices.`,
+    grade6: `In the extract, Shakespeare presents Macbeth's ambition as powerful and dangerous. Macbeth's soliloquy reveals his inner conflict between ambition and conscience. Imagery of vaulting ambition suggests ambition can lead to a fall.
+
+Shakespeare shows ambition as a temptation that challenges moral boundaries.`,
+    grade8: `Shakespeare presents Macbeth's ambition in the extract as both compelling and morally destructive. The metaphor of "vaulting ambition" suggests ambition overreaches and will bring downfall. Soliloquy allows the audience to see Macbeth's awareness of the consequences, which makes his later choice more tragic.
+
+Contextually, ambition that threatens the natural order was deeply troubling to a Jacobean audience. Shakespeare presents ambition as a force that corrupts judgement.`,
+    grade9: `Shakespeare presents Macbeth's ambition in the extract as self-aware and morally fraught. The metaphor of "vaulting ambition" captures ambition as an overreach that "o'erleaps itself" — Macbeth recognises his desire will destroy him yet is drawn to it. Soliloquy exposes the tension between conscience and ambition, making his fall tragic rather than simply villainous.
+
+Contextually, Jacobean beliefs about divine order and the sin of regicide deepen the extract's stakes. Alternatively, Shakespeare may suggest ambition is not merely personal but catalysed by external forces (witches, Lady Macbeth), complicating simple moral judgement.`,
+  }
+);
+
 // ----- M-03: Macbeth — guilt (whole play) -----
 const M_03: EnglishExaminerPackTask = pack(
   [
@@ -524,16 +566,18 @@ Step 3 (5 min): Choose short quotations.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add alternative interpretation.`,
   {
-    grade4: `Hyde is frightening because he is violent and strange. People are scared of him.
+    grade4: `Stevenson presents Hyde as frightening through the way he is described and how others react to him. Hyde is shown as violent and strange—characters feel fear when they see him or hear about him. The writer uses words that suggest something is wrong with Hyde, which makes the reader feel uneasy.
 
-This shows he is dangerous.`,
-    grade6: `Hyde is frightening because of his behaviour and unclear appearance. People feel uneasy around him.
+When people in the novel describe Hyde, they struggle to say exactly what he looks like, but they know he is dangerous. This makes him seem more frightening because the reader cannot picture him clearly. Stevenson shows that Hyde is a threat to others and that his presence creates fear.`,
+    grade6: `Stevenson presents Hyde as frightening through a combination of unclear description and violent behaviour. Hyde's appearance is deliberately vague—witnesses struggle to describe him, which suggests he represents something beyond normal human form. This ambiguity makes him unsettling.
 
-Stevenson makes Hyde seem evil.`,
-    grade8: `Stevenson presents Hyde as frightening through ambiguity and violence. His unclear appearance suggests moral corruption rather than physical deformity.
+His actions are clearly violent and cruel, which creates fear. The way other characters react—with instinctive disgust or terror—reinforces the idea that Hyde is evil. Stevenson uses narrative perspective so that we see Hyde through the eyes of those who fear him, which makes the reader share that fear.`,
+    grade8: `Stevenson presents Hyde as frightening through ambiguity and suggestion rather than graphic detail. Hyde's appearance is never fully fixed; witnesses describe something wrong or disturbing but cannot say exactly what. This refusal to clarify creates fear through uncertainty—the reader's imagination fills the gap.
 
-This makes him unsettling.`,
-    grade9: `Hyde is frightening because he embodies moral degeneration. Stevenson's refusal to clearly describe him creates fear through uncertainty. Contextually, Hyde reflects Victorian fears of repression and hidden desire. Alternatively, Hyde is frightening because he represents impulses society refuses to acknowledge.`,
+Violence and moral corruption are linked: Hyde embodies the evil that emerges when respectability is stripped away. Structurally, Stevenson delays and fragments our view of Hyde, so that each encounter builds unease. Contextually, Victorian fears about degeneration and hidden desire make Hyde a figure of genuine terror.`,
+    grade9: `Stevenson presents Hyde as frightening because he embodies moral degeneration that cannot be fully seen or named. The deliberate vagueness of Hyde's description—witnesses recoil but struggle to explain why—creates fear through uncertainty. He represents what society represses: violence, desire, the unacceptable self.
+
+Contextually, Victorian anxieties about respectability, evolution and the unconscious make Hyde a powerful symbol. Stevenson's narrative structure keeps Hyde partially hidden, so that the reader shares the characters' inability to pin him down. Alternatively, Hyde is frightening precisely because he is the part of human nature that civilisation tries to deny—once acknowledged, he cannot be controlled.`,
   }
 );
 
@@ -560,16 +604,18 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
-    grade4: `Jekyll has two sides: good and bad.
+    grade4: `Stevenson explores duality through the character of Jekyll, who has two sides: a good, respectable side and a bad side that he tries to hide. Jekyll creates Hyde so that he can do bad things without people knowing it is him. This shows that people can have different sides to their character.
 
-This shows people can be different.`,
-    grade6: `Stevenson shows duality by separating Jekyll and Hyde. Jekyll wants to hide his bad side.
+The problem is that Hyde becomes stronger and harder to control. Jekyll realises that he cannot keep the two sides separate forever. Stevenson uses this to show that trying to hide part of yourself can lead to trouble. The novel is about the struggle between good and bad inside one person.`,
+    grade6: `Stevenson explores duality by showing how Jekyll tries to separate his good and bad sides through science. Jekyll wants to hide his darker impulses in Hyde, but the experiment goes wrong. Hyde gradually becomes stronger, and Jekyll loses control over when he transforms.
 
-This causes problems.`,
-    grade8: `Jekyll's attempt to separate good and evil shows duality. Hyde becomes stronger, suggesting imbalance.
+The structure of the novel supports this idea: we learn about Hyde and Jekyll in fragments, which mirrors the split in Jekyll's identity. Stevenson suggests that dividing yourself in this way is dangerous. The duality is not just between two characters but within one person who cannot hold both sides together.`,
+    grade8: `Stevenson explores duality as the central theme of the novel. Jekyll's attempt to separate good and evil into two bodies leads to disaster: Hyde grows in power while Jekyll weakens. The duality is not simply good versus evil but the impossibility of dividing human nature without destruction.
 
-This shows danger of repression.`,
-    grade9: `Stevenson explores duality as internal conflict. Jekyll's attempt to isolate morality leads to loss of control. Structurally, delayed revelation mirrors repression. Contextually, the novel reflects anxieties about respectability. Alternatively, Stevenson suggests duality cannot be divided without destruction.`,
+Structurally, the delayed revelation of Jekyll and Hyde's connection mirrors the theme—the truth is repressed until it can no longer be contained. Symbolism (the potion, the door, the mirror) reinforces the idea of the divided self. Contextually, Victorian anxieties about respectability and repression make Jekyll's experiment a warning: duality cannot be safely managed.`,
+    grade9: `Stevenson explores duality as an internal conflict that cannot be resolved by separation. Jekyll's attempt to isolate his moral self from his desires leads to loss of control: Hyde is not a separate person but the part of Jekyll that has been denied and therefore grows monstrous. Structurally, the delayed revelation of their identity mirrors repression—the truth is hidden until it erupts.
+
+Contextually, the novel reflects Victorian anxieties about respectability, science and the unconscious. The duality of Jekyll and Hyde suggests that human nature cannot be divided without destruction. Alternatively, Stevenson may be suggesting that society's demand for a single, respectable self creates the very split it fears—duality is the cost of repression.`,
   }
 );
 
@@ -595,10 +641,18 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
-    grade4: `Priestley shows responsibility by making characters admit their actions.`,
-    grade6: `Responsibility is shown through the Inspector questioning characters. Younger characters accept it more.`,
-    grade8: `Responsibility is shown as moral duty. Priestley contrasts attitudes to show consequences.`,
-    grade9: `Priestley presents responsibility as collective duty. Dramatic structure exposes consequence. Contextually, this supports socialist ideology. Alternatively, cyclical structure suggests society resists responsibility.`,
+    grade4: `Priestley shows responsibility by making characters face up to their actions. The Inspector arrives and questions each character about their part in Eva Smith's life. Some characters, like Mr Birling, refuse to accept responsibility and blame others. Others, like Sheila and Eric, begin to understand that their actions had consequences.
+
+The younger characters are more willing to accept responsibility, while the older ones try to protect themselves. Priestley shows that responsibility means admitting what you have done and being willing to change. By the end, the audience can see who has learned this lesson and who has not.`,
+    grade6: `Priestley presents responsibility through the Inspector's investigation and the way each character responds. The Inspector forces the Birlings and Gerald to confront their role in Eva Smith's suffering. Responsibility is shown as something that connects everyone—each character's actions contributed to her fate.
+
+Priestley contrasts those who accept responsibility (Sheila, Eric) with those who reject it (Mr and Mrs Birling). The dramatic structure—one character exposed after another—shows how responsibility cannot be avoided when it is fairly examined. The Inspector speaks for the idea that we are all responsible for each other.`,
+    grade8: `Priestley presents responsibility as a moral and collective duty. The Inspector's questioning exposes how each character's selfishness or indifference contributed to Eva Smith's destruction. Responsibility is not just personal but social: the play argues that we are "responsible for each other".
+
+Dramatic methods reinforce this. The Inspector's authority and the structure of the play—each character's secret revealed in turn—create a moral reckoning. Priestley contrasts the older generation's refusal to accept responsibility with the younger characters' willingness to change. Contextually, this supports a socialist message about collective care.`,
+    grade9: `Priestley presents responsibility as collective moral duty, central to his political message. The Inspector functions as a catalyst, forcing each character to confront their role in Eva Smith's fate. Responsibility is not individual guilt alone but the idea that "we are members of one body"—society fails when people refuse to care for each other.
+
+Dramatic structure exposes consequence: the revelation of each character's involvement builds a picture of collective responsibility. Contextually, Priestley's socialist beliefs shape the play's argument. Alternatively, the cyclical structure—the return of the Inspector's threat—suggests that society resists responsibility and may never learn.`,
   }
 );
 
@@ -624,10 +678,18 @@ Step 3 (5 min): Select quotes.
 Step 4 (30 min): Write analytical paragraphs.
 Step 5 (5 min): Add judgement.`,
   {
-    grade4: `The Inspector teaches characters a lesson.`,
-    grade6: `The Inspector challenges characters to think differently.`,
-    grade8: `The Inspector represents Priestley's ideas. His authority forces reflection.`,
-    grade9: `The Inspector acts as a moral catalyst. His authority disrupts capitalist complacency. Contextually, he embodies socialist ideals. Alternatively, his ambiguity suggests ideas transcend individual authority.`,
+    grade4: `Priestley uses the Inspector to teach the characters and the audience a lesson. The Inspector questions each character and makes them admit what they did to Eva Smith. He does not let them hide or make excuses. Through the Inspector, Priestley shows that actions have consequences and that people should take responsibility for how they treat others.
+
+The Inspector is serious and confident, which makes the characters listen to him. He leaves them with the idea that they are all connected and responsible for each other. Priestley uses him to convey the message that society should be fairer and more caring.`,
+    grade6: `Priestley uses the Inspector to challenge the characters and convey his ideas about responsibility. The Inspector's questioning forces each character to face their role in Eva Smith's suffering. He is not a normal policeman—he seems to know everything already and speaks with moral authority. Through him, Priestley argues that we are "responsible for each other".
+
+The Inspector's language is direct and often prophetic. He leaves before the characters can dismiss him, so his message lingers. Priestley uses the Inspector to show that moral truth cannot be avoided, even when the powerful try to ignore it.`,
+    grade8: `Priestley uses the Inspector as the main vehicle for his ideas. The Inspector's dramatic function is to expose the consequences of selfishness and to argue for collective responsibility. His authority—he controls the stage, the timing of revelations, and the final warning—forces the characters and the audience to reflect.
+
+His language is carefully chosen: he speaks in terms of "we" and "us", reinforcing the socialist message. The Inspector does not simply solve a crime; he delivers a moral and political argument. Contextually, he embodies Priestley's belief that society must change and that the individual is part of a collective.`,
+    grade9: `Priestley uses the Inspector as a moral catalyst who disrupts the Birlings' capitalist complacency. The Inspector's authority is not legal but moral: he already knows the truth and forces the characters to confront it. His function is to convey Priestley's socialist ideals—collective responsibility, the failure of individualism, the need for change.
+
+Contextually, the Inspector embodies the voice of conscience and social justice. His ambiguity—who is he? could he be real?—suggests that the ideas he represents transcend any single character. Alternatively, his supernatural overtones imply that moral truth will always return to demand accountability, whether society accepts it or not.`,
   }
 );
 
@@ -639,6 +701,7 @@ const GUIDE_POST_BY_TASK_ID: Record<string, EnglishExaminerPackTask> = {
   'P-C03': P_C03,
   'UP-02': UP_02,
   'UP-C02': UP_C02,
+  'M-01': M_01,
   'M-03': M_03,
   'ACC-01': ACC_01,
   'ACC-02': ACC_02,

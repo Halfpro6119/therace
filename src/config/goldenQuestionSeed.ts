@@ -13,6 +13,8 @@ import {
   GOLDEN_MATHS_QUESTIONS,
   GOLDEN_DIAGRAM_TO_TEMPLATE_ID,
   calculatorAllowedForPaper,
+  getDefaultMarksForGoldenQuestion,
+  getDefaultDifficultyForGoldenQuestion,
 } from './goldenMathsQuestions';
 import { DIAGRAM_TYPE_TO_TEMPLATE_ID, getTemplateIdForDiagramType } from '../diagrams/diagramTypeSpec';
 
@@ -147,6 +149,7 @@ export async function seedGoldenQuestionsForSubject(
 
     const meta: Record<string, unknown> = {
       goldenId: q.id,
+      difficulty: getDefaultDifficultyForGoldenQuestion(q),
     };
     if (q.questionData && typeof q.questionData === 'object' && Object.keys(q.questionData).length > 0) {
       meta.questionData = q.questionData;
@@ -234,7 +237,7 @@ export async function seedGoldenQuestionsForSubject(
           type: q.type,
           question: q.prompt,
           answers,
-          marks: q.marks ?? 1,
+          marks: getDefaultMarksForGoldenQuestion(q),
           timeAllowanceSec: q.timeAllowanceSec ?? 60,
           hint: q.hint ?? undefined,
           explanation: q.explanation ?? undefined,
@@ -253,7 +256,7 @@ export async function seedGoldenQuestionsForSubject(
           type: q.type,
           question: q.prompt,
           answers,
-          marks: q.marks ?? 1,
+          marks: getDefaultMarksForGoldenQuestion(q),
           timeAllowanceSec: q.timeAllowanceSec ?? 60,
           hint: q.hint ?? undefined,
           explanation: q.explanation ?? undefined,

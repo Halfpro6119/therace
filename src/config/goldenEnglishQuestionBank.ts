@@ -266,6 +266,7 @@ export const LITERATURE_UNSEEN_POETRY: EnglishLiteratureUnseenPoetry[] = [
 // ---------- LITERATURE TEXTS (Novels & Plays) ----------
 
 export const LITERATURE_TEXT_MACBETH: EnglishLiteratureTextTask[] = [
+  { id: 'M-01', text: 'Macbeth', prompt: "How does Shakespeare present Macbeth's ambition in this extract?", focus: 'ambition', scope: 'extract', markSchemeSummary: 'AO1/AO2. Extract focus; language and dramatic methods.' },
   { id: 'M-03', text: 'Macbeth', prompt: 'How does Shakespeare present guilt in the play as a whole?', focus: 'guilt', scope: 'whole', markSchemeSummary: 'AO1/AO2/AO3. Thematic response; methods and context.' },
 ];
 

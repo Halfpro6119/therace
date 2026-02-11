@@ -200,6 +200,7 @@ export const TASK_TO_QUOTATION_LAB_SOURCE: Record<string, string> = {
   'P-S01': 'Ozymandias',
   'P-C02': 'Exposure',
   'P-C03': 'CheckingOutMeHistory',
+  'M-01': 'Macbeth',
   'M-03': 'Macbeth',
   'ACC-01': 'AChristmasCarol',
   'ACC-02': 'AChristmasCarol',

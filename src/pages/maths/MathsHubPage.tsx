@@ -5,7 +5,12 @@ import { ChevronLeft, Play, FileQuestion, BookOpen } from 'lucide-react';
 import { db } from '../../db/client';
 import { Subject, Paper, Prompt, TierFilter } from '../../types';
 import { getTierLabel, getTierColor } from '../../admin/tierNormalizer';
-import { GOLDEN_TOPIC_SPECS, type GoldenTopicSpec } from '../../config/goldenMathsTopicUnitSpec';
+import {
+  GOLDEN_TOPIC_SPECS,
+  getGoldenUnitsByTopic,
+  type GoldenTopicSpec,
+  type GoldenUnitSpec,
+} from '../../config/goldenMathsTopicUnitSpec';
 
 /** Resolve prompt IDs in the order defined by the golden topic spec. */
 function promptIdsForGoldenTopic(questionIds: string[], prompts: Prompt[]): string[] {
@@ -35,6 +40,7 @@ export function MathsHubPage() {
   const [mode, setMode] = useState<'full' | 'topic' | null>(null);
   /** Selected curriculum topic (from golden spec) for topic practice */
   const [selectedGoldenTopic, setSelectedGoldenTopic] = useState<GoldenTopicSpec | null>(null);
+  const [selectedGoldenUnit, setSelectedGoldenUnit] = useState<GoldenUnitSpec | null>(null);
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
@@ -83,7 +89,8 @@ export function MathsHubPage() {
       : [];
 
   const canStartFull = mode === 'full' && promptsForTier.length > 0;
-  const canStartTopic = mode === 'topic' && selectedGoldenTopic != null;
+  const canStartTopic = mode === 'topic' && selectedGoldenTopic != null && selectedGoldenUnit == null;
+  const canStartUnit = mode === 'topic' && selectedGoldenUnit != null;
 
   const handleStartFullPaper = async () => {
     if (!subject || !selectedPaper || promptsForTier.length === 0) return;
@@ -131,6 +138,38 @@ export function MathsHubPage() {
         grade9TargetSec,
         promptIds,
         quizType: 'topic',
+      });
+      navigate(`/quiz/${quiz.id}?tier=${tier}`);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to start quiz');
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  const handleStartUnitQuiz = async () => {
+    if (!subject || !selectedGoldenUnit) return;
+    setStarting(true);
+    try {
+      const prompts = await db.getPromptsByGoldenIds(subject.id, selectedGoldenUnit.questionIds);
+      const promptIds = promptIdsForGoldenTopic(selectedGoldenUnit.questionIds, prompts);
+      if (promptIds.length === 0) {
+        alert('No questions found for this unit. Ensure golden questions are seeded.');
+        setStarting(false);
+        return;
+      }
+      const timeLimitSec = promptIds.length * 60;
+      const grade9TargetSec = promptIds.length * 45;
+      const quiz = await db.createQuiz({
+        subjectId: subject.id,
+        scopeType: 'unit',
+        title: `${selectedGoldenUnit.name} (${getTierLabel(tier === 'higher' ? 'higher' : 'foundation')})`,
+        description: `Unit practice – ${selectedGoldenUnit.name}`,
+        timeLimitSec,
+        grade9TargetSec,
+        promptIds,
+        quizType: 'unit',
       });
       navigate(`/quiz/${quiz.id}?tier=${tier}`);
     } catch (e) {
@@ -192,7 +231,7 @@ export function MathsHubPage() {
           GCSE Maths
         </h1>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Choose tier, paper, then full paper quiz or a specific topic.
+          Covers all topics you&apos;ll be tested on. Choose tier, paper, then full paper or topic and unit practice.
         </p>
       </motion.section>
 
@@ -247,6 +286,7 @@ export function MathsHubPage() {
                   setSelectedPaper(paper);
                   setMode(null);
                   setSelectedGoldenTopic(null);
+                  setSelectedGoldenUnit(null);
                 }}
                 className="rounded-xl p-4 text-left border-2 transition-all"
                 style={{
@@ -286,6 +326,7 @@ export function MathsHubPage() {
                 onClick={() => {
                   setMode('full');
                   setSelectedGoldenTopic(null);
+                  setSelectedGoldenUnit(null);
                 }}
                 className="rounded-xl p-4 flex items-center gap-3 text-left border-2 transition-all"
                 style={{
@@ -338,6 +379,11 @@ export function MathsHubPage() {
               <h2 className="text-sm font-semibold" style={{ color: 'rgb(var(--text))' }}>
                 4. Choose a topic
               </h2>
+              {selectedPaper && (
+                <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {selectedPaper.name} – topics below
+                </p>
+              )}
               {goldenTopicsForPaper.length === 0 ? (
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                   No topics defined for this paper and tier.
@@ -351,7 +397,10 @@ export function MathsHubPage() {
                       <button
                         key={spec.key}
                         type="button"
-                        onClick={() => setSelectedGoldenTopic(spec)}
+                        onClick={() => {
+                          setSelectedGoldenTopic(spec);
+                          setSelectedGoldenUnit(null);
+                        }}
                         className="rounded-lg p-3 text-left border-2 transition-all flex justify-between items-center"
                         style={{
                           background: isSelected ? 'rgb(var(--surface-2))' : 'rgb(var(--surface))',
@@ -369,11 +418,38 @@ export function MathsHubPage() {
                   })}
                 </div>
               )}
+              {selectedGoldenTopic && (
+                <div className="space-y-2 pt-2 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+                  <p className="text-xs font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    Or practice a unit (short focused drill):
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {getGoldenUnitsByTopic(selectedGoldenTopic.key).map((unit) => {
+                      const isUnitSelected = selectedGoldenUnit?.key === unit.key;
+                      return (
+                        <button
+                          key={unit.key}
+                          type="button"
+                          onClick={() => setSelectedGoldenUnit(isUnitSelected ? null : unit)}
+                          className="rounded-lg px-3 py-2 text-left border-2 transition-all text-sm"
+                          style={{
+                            background: isUnitSelected ? 'rgb(var(--surface-2))' : 'rgb(var(--surface))',
+                            borderColor: isUnitSelected ? 'rgb(var(--primary))' : 'rgb(var(--border))',
+                            color: 'rgb(var(--text))',
+                          }}
+                        >
+                          {unit.name} ({unit.questionIds.length} q)
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </motion.section>
           )}
 
           {/* Start */}
-          {(canStartFull || canStartTopic) && (
+          {(canStartFull || canStartTopic || canStartUnit) && (
             <motion.section
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -391,7 +467,7 @@ export function MathsHubPage() {
                   {starting ? 'Starting…' : `Start full paper quiz (${promptsForTier.length} questions)`}
                 </button>
               )}
-              {mode === 'topic' && selectedGoldenTopic && (
+              {mode === 'topic' && selectedGoldenTopic && !selectedGoldenUnit && (
                 <button
                   type="button"
                   disabled={starting}
@@ -403,6 +479,20 @@ export function MathsHubPage() {
                   {starting
                     ? 'Starting…'
                     : `Start ${selectedGoldenTopic.name} quiz (${selectedGoldenTopic.questionIds.length} questions)`}
+                </button>
+              )}
+              {mode === 'topic' && selectedGoldenUnit && (
+                <button
+                  type="button"
+                  disabled={starting}
+                  onClick={handleStartUnitQuiz}
+                  className="w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 text-white transition-opacity disabled:opacity-60"
+                  style={{ background: 'var(--gradient-primary)' }}
+                >
+                  <Play size={20} />
+                  {starting
+                    ? 'Starting…'
+                    : `Start unit: ${selectedGoldenUnit.name} (${selectedGoldenUnit.questionIds.length} questions)`}
                 </button>
               )}
             </motion.section>

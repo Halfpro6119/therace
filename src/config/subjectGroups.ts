@@ -10,7 +10,7 @@ export interface SubjectHub {
   /** Subject names to show in this hub (matched against DB subject.name) */
   subjectNames: string[];
   /** Lucide icon name for hub styling */
-  icon: 'BookOpen' | 'Calculator' | 'FlaskConical';
+  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark';
   /** Accent hex for tint (e.g. #0EA5E9 for English, #3B82F6 for Maths, #22C55E for Science) */
   accentColor: string;
   /** Path to dedicated hub page */
@@ -51,14 +51,30 @@ export const FEATURED_HUBS: SubjectHub[] = [
     accentColor: '#22C55E',
     hubPath: '/science-lab',
   },
+  {
+    id: 'business',
+    title: 'Business Hub',
+    subtitle: 'AQA GCSE Business 8132 – Concepts, case studies & finance',
+    subjectNames: ['Business Studies'],
+    icon: 'Briefcase',
+    accentColor: '#F59E0B',
+    hubPath: '/business-hub',
+  },
+  {
+    id: 'history',
+    title: 'History Hub',
+    subtitle: 'AQA GCSE History 8145 – Timeline, sources, interpretations & essays',
+    subjectNames: ['History'],
+    icon: 'Landmark',
+    accentColor: '#B45309',
+    hubPath: '/history-hub',
+  },
 ];
 
-/** Order for chosen subjects section. */
+/** Order for chosen subjects section. (Business Studies has dedicated Business Hub.) */
 export const CHOSEN_SUBJECT_NAMES: string[] = [
-  'Business Studies',
   'Computer Science',
   'Geography',
-  'History',
   'Health and Social Studies',
   'Psychology',
   'Religious Studies',

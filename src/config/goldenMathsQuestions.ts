@@ -44,6 +44,9 @@ export type GoldenDiagramType =
   | 'cumulativeFrequency'
   | 'prePlottedGraph';
 
+/** Difficulty 1 (easiest) to 5 (hardest). Used for filtering and display in Maths Mastery. */
+export type GoldenMathsDifficulty = 1 | 2 | 3 | 4 | 5;
+
 export interface GoldenMathsQuestion {
   id: string;
   prompt: string;
@@ -53,7 +56,10 @@ export interface GoldenMathsQuestion {
   calculator?: boolean;
   diagram?: GoldenDiagramType;
   answers: string | string[];
+  /** Marks for this question (1–6 typical for GCSE). Default 1 when not set. */
   marks?: number;
+  /** Difficulty 1–5 for grading and filtering. Stored in prompt meta when seeding. */
+  difficulty?: GoldenMathsDifficulty;
   timeAllowanceSec?: number;
   hint?: string;
   explanation?: string;
@@ -65,6 +71,19 @@ export interface GoldenMathsQuestion {
    * Use with answers to enable auto-grading of diagram-dependent questions.
    */
   diagramParams?: Record<string, unknown>;
+}
+
+/** Default marks when not set: 1 for most types; 2 for multi-part/proof. */
+export function getDefaultMarksForGoldenQuestion(q: GoldenMathsQuestion): number {
+  if (q.marks != null && q.marks >= 1) return q.marks;
+  if (q.type === 'proofShort' || q.type === 'multiNumeric' || q.type === 'tableFill' || q.type === 'dragMatch') return 2;
+  return 1;
+}
+
+/** Default difficulty when not set: foundation 1–2, higher 2–4. */
+export function getDefaultDifficultyForGoldenQuestion(q: GoldenMathsQuestion): GoldenMathsDifficulty {
+  if (q.difficulty != null && q.difficulty >= 1 && q.difficulty <= 5) return q.difficulty;
+  return q.tier === 'foundation' ? 2 : 3;
 }
 
 /** Foundation Paper 1 (non-calculator) */
@@ -95,6 +114,11 @@ const F1: GoldenMathsQuestion[] = [
   { id: 'F1-24', prompt: 'Bag has 5 red, 3 blue, 2 green. Find P(blue)', type: 'fill', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '3/10' },
   { id: 'F1-25', prompt: 'Find the mean of the data from the frequency table: Value 1 (freq 5), Value 2 (freq 10), Value 3 (freq 5).', type: 'numeric', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '2' },
   { id: 'F1-26', prompt: 'Read the frequency for each category from the bar chart.', type: 'numeric', paper: 1, tier: 'foundation', calculator: false, diagram: 'barChart', answers: '' },
+  // Foundation Paper 1 extension — more Graphs & Geometry / mixed non-calculator
+  { id: 'F1-27', prompt: 'Find the area of a trapezium with parallel sides 6 cm and 10 cm and height 5 cm.', type: 'numeric', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '40' },
+  { id: 'F1-28', prompt: 'Find the mode of 3, 5, 5, 7, 5, 8', type: 'numeric', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '5' },
+  { id: 'F1-29', prompt: 'Put these in order from smallest to largest: 0.4, 0.35, 0.09, 0.5', type: 'short', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '0.09,0.35,0.4,0.5' },
+  { id: 'F1-30', prompt: 'Work out (−3) × (−4)', type: 'numeric', paper: 1, tier: 'foundation', calculator: false, diagram: 'none', answers: '12' },
 ];
 
 /** Foundation Paper 2 (calculator) */
@@ -113,6 +137,29 @@ const F2: GoldenMathsQuestion[] = [
   { id: 'F2-12', prompt: 'Bearing of B from A is 065°. Draw and find angle', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'bearingDiagram', answers: '', diagramParams: { values: { bearing: 65 } } },
   { id: 'F2-13', prompt: 'Describe correlation and identify outlier', type: 'short', paper: 2, tier: 'foundation', calculator: true, diagram: 'scatterPlot', answers: '' },
   { id: 'F2-14', prompt: 'Find the fraction of the circle represented by the shaded sector.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'pieChart', answers: '' },
+  // Foundation Paper 2 (mixed practice) — additional coverage to ~25 questions
+  { id: 'F2-15', prompt: 'Decrease £240 by 15%. Find the new amount.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '204' },
+  { id: 'F2-16', prompt: 'Write 0.00078 in standard form', type: 'fill', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '7.8×10^-4' },
+  { id: 'F2-17', prompt: 'A length is 12.4 cm to 1 dp. Write the upper bound.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '12.45' },
+  { id: 'F2-18', prompt: 'Complete the table for y = 3x − 2 when x = 0, 1, 2, 3', type: 'tableFill', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '-2,1,4,7', questionData: { rows: [{ x: '0', y: '-2' }, { x: '1', y: '1' }, { x: '2', y: '4' }, { x: '3', y: '7' }], columnLabels: { x: 'x', y: 'y' } } },
+  { id: 'F2-19', prompt: 'Find the equation of the line with gradient 4 that passes through (0, 5).', type: 'expression', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: 'y=4x+5' },
+  { id: 'F2-20', prompt: 'Solve 1.5x + 4 = 10', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '4' },
+  { id: 'F2-21', prompt: 'A cylinder has radius 5 cm and height 8 cm. Find its volume in cm³ (πr²h).', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '628' },
+  { id: 'F2-22', prompt: 'Find the area of a triangle with base 10 cm and height 6 cm.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '30' },
+  { id: 'F2-23', prompt: 'From the bar chart, which category has the highest frequency?', type: 'short', paper: 2, tier: 'foundation', calculator: true, diagram: 'barChart', answers: '' },
+  { id: 'F2-24', prompt: 'Find the median of 3, 7, 8, 10, 12', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '8' },
+  { id: 'F2-25', prompt: 'A bag has 2 red and 5 blue counters. Find P(red).', type: 'fill', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '2/7' },
+  // Foundation Paper 2 extended mixed practice (F2-26 – F2-35)
+  { id: 'F2-26', prompt: 'Write 45000 in standard form.', type: 'fill', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '4.5×10^4' },
+  { id: 'F2-27', prompt: 'A price increases from £50 to £57.50. Find the percentage increase.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '15' },
+  { id: 'F2-28', prompt: 'Draw the line y = −x + 3 for x from 0 to 3.', type: 'graphPlot', paper: 2, tier: 'foundation', calculator: true, diagram: 'coordinateGrid', answers: '' },
+  { id: 'F2-29', prompt: 'Solve 2(x + 5) = 24', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '7' },
+  { id: 'F2-30', prompt: 'Find the volume of a cylinder with radius 3 cm and height 10 cm. Give your answer in terms of π.', type: 'expression', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '90π' },
+  { id: 'F2-31', prompt: 'A square has perimeter 20 cm. Find its area.', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '25' },
+  { id: 'F2-32', prompt: 'Find the mean of 12, 15, 18, 20, 25', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '18' },
+  { id: 'F2-33', prompt: 'Two dice are thrown. Find P(total score is 7).', type: 'fill', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '1/6' },
+  { id: 'F2-34', prompt: 'Simplify 7 − 2(3x − 1)', type: 'expression', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '9-6x' },
+  { id: 'F2-35', prompt: 'From a pie chart showing four sectors, one sector is 90°. What fraction of the total is that sector?', type: 'numeric', paper: 2, tier: 'foundation', calculator: true, diagram: 'none', answers: '1/4' },
 ];
 
 /** Foundation Paper 3 (calculator) — mixed/problem solving */
@@ -125,6 +172,40 @@ const F3: GoldenMathsQuestion[] = [
   { id: 'F3-06', prompt: 'Find the mean from this grouped frequency table: 0–10 (freq 5), 10–20 (freq 8), 20–30 (freq 7). Use midpoints 5, 15, 25.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '16' },
   { id: 'F3-07', prompt: 'A car travels at 60 km/h for 30 minutes, then stops for 20 minutes, then continues at 40 km/h. Describe what the distance-time graph shows between 30 and 60 minutes.', type: 'short', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: ['stationary', 'stopped', 'no movement', 'flat', 'at rest', 'not moving'] },
   { id: 'F3-08', prompt: 'A sum of money is shared in the ratio 3:5. The larger share is £120. The total is then increased by 20%. Find the new total.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '192' },
+  // Foundation Paper 3 (mixed) — extended to 30 questions for full paper coverage
+  { id: 'F3-09', prompt: 'Convert 2.5 hours into minutes.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '150' },
+  { id: 'F3-10', prompt: 'A recipe for 4 people uses 300 g flour. How much flour is needed for 10 people?', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '750' },
+  { id: 'F3-11', prompt: 'Simplify 5a + 3b − 2a + 4b', type: 'expression', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '3a+7b' },
+  { id: 'F3-12', prompt: 'Expand 3(2x − 5)', type: 'expression', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '6x-15' },
+  { id: 'F3-13', prompt: 'Solve 4x + 7 = 31', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '6' },
+  { id: 'F3-14', prompt: 'Share £90 in the ratio 2 : 3 : 4', type: 'multiNumeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '20,30,40' },
+  { id: 'F3-15', prompt: 'A TV costs £320. In a sale it is reduced by 25%. Find the sale price.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '240' },
+  { id: 'F3-16', prompt: 'Find the perimeter of a rectangle 12 m long and 7 m wide.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '38' },
+  { id: 'F3-17', prompt: 'A triangle has angles 40° and 85°. Find the third angle.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '55' },
+  { id: 'F3-18', prompt: 'List the first five multiples of 9.', type: 'short', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '9,18,27,36,45' },
+  { id: 'F3-19', prompt: 'Write 3/5 as a decimal.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '0.6' },
+  { id: 'F3-20', prompt: 'Find 15% of 80.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '12' },
+  { id: 'F3-21', prompt: 'Evaluate 2³ + 4²', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '24' },
+  { id: 'F3-22', prompt: 'A dice is rolled. Find P(rolling a 4).', type: 'fill', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '1/6' },
+  { id: 'F3-23', prompt: 'Find the range of 4, 9, 2, 12, 7', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '10' },
+  { id: 'F3-24', prompt: 'Estimate 19.7 × 4.2', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '80' },
+  { id: 'F3-25', prompt: 'Factorise 8x + 12', type: 'expression', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '4(2x+3)' },
+  { id: 'F3-26', prompt: 'Solve 3x − 5 > 10', type: 'short', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '5' },
+  { id: 'F3-27', prompt: 'A train travels 120 miles in 2 hours. Find its average speed in mph.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '60' },
+  { id: 'F3-28', prompt: 'Write 0.35 as a fraction in its simplest form.', type: 'expression', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '7/20' },
+  { id: 'F3-29', prompt: 'The mean of 5 numbers is 12. The sum of 4 of them is 45. Find the fifth number.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '15' },
+  { id: 'F3-30', prompt: 'A shape is translated by vector (3, −2). Describe the transformation.', type: 'short', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: ['3 right, 2 down', 'translation 3 right 2 down', 'move 3 right and 2 down'] },
+  // Foundation Paper 3 extended mixed (F3-31 – F3-40)
+  { id: 'F3-31', prompt: 'Find 2/3 of 99', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '66' },
+  { id: 'F3-32', prompt: 'Solve 5 − 2x = 11', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '-3' },
+  { id: 'F3-33', prompt: 'A map scale is 1 : 25000. A road is 4 cm on the map. Find the real length in km.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '1' },
+  { id: 'F3-34', prompt: 'List all the factors of 24.', type: 'short', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '1,2,3,4,6,8,12,24' },
+  { id: 'F3-35', prompt: 'Increase 80 by 35%.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '108' },
+  { id: 'F3-36', prompt: 'Find the next two terms in the sequence: 5, 8, 11, 14, …', type: 'multiNumeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '17,20' },
+  { id: 'F3-37', prompt: 'A right-angled triangle has shorter sides 6 cm and 8 cm. Find the length of the hypotenuse.', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '10' },
+  { id: 'F3-38', prompt: 'Work out 2.4 ÷ 0.06', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '40' },
+  { id: 'F3-39', prompt: 'Three coins are flipped. Find P(all three heads).', type: 'fill', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '1/8' },
+  { id: 'F3-40', prompt: 'A box has dimensions 6 cm by 5 cm by 4 cm. Find its surface area in cm².', type: 'numeric', paper: 3, tier: 'foundation', calculator: true, diagram: 'none', answers: '148' },
 ];
 
 /** Higher Paper 1 (non-calculator) — 80 golden questions */

@@ -56,17 +56,21 @@ export function MathsMasteryHomePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Maths Mastery</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Maths, Further Maths & Statistics – build fluency and speed
+          Build fluency and exam-ready speed across GCSE Maths – by paper or by topic.
         </p>
       </motion.section>
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
-          Choose a subject
+          Practice GCSE Maths
         </h2>
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Full papers and topic drills covering everything you&apos;ll be tested on. Further Maths and Statistics are coming soon.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PILLARS.map((pillar, index) => {
             const Icon = pillar.icon;
+            const isComingSoon = pillar.id !== 'maths';
             return (
               <motion.button
                 key={pillar.id}
@@ -75,12 +79,23 @@ export function MathsMasteryHomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
                 onClick={() => navigate(pillar.path)}
-                className="rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex flex-col"
+                className={`rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex flex-col relative ${
+                  pillar.id === 'maths' ? 'ring-2 ring-offset-2 ring-offset-[rgb(var(--bg))]' : ''
+                }`}
                 style={{
-                  background: 'rgb(var(--surface))',
-                  borderColor: 'rgb(var(--border))',
+                  background: pillar.id === 'maths' ? 'rgb(var(--surface))' : 'rgb(var(--surface))',
+                  borderColor: pillar.id === 'maths' ? hubConfig.accentColor : 'rgb(var(--border))',
+                  ...(pillar.id === 'maths' ? { boxShadow: `0 0 0 2px ${hubConfig.accentColor}40` } : {}),
                 }}
               >
+                {isComingSoon && (
+                  <span
+                    className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}
+                  >
+                    Coming soon
+                  </span>
+                )}
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                   style={{ background: `${pillar.color}20` }}
@@ -94,7 +109,7 @@ export function MathsMasteryHomePage() {
                   {pillar.description}
                 </p>
                 <div className="mt-4 flex items-center gap-1 font-semibold text-sm" style={{ color: pillar.color }}>
-                  <span>Open</span>
+                  <span>{pillar.id === 'maths' ? 'Start practising' : 'Open'}</span>
                   <ChevronRight size={16} />
                 </div>
               </motion.button>

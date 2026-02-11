@@ -220,6 +220,11 @@ function extractKeyTerms(text: string): string[] {
     'DNA', 'gene', 'chromosome', 'allele', 'genotype', 'phenotype',
     'natural selection', 'evolution', 'variation',
     'ecosystem', 'food chain', 'trophic level', 'carbon cycle',
+    'mole', 'concentration', 'neutralisation', 'reactivity', 'electrolysis', 'cathode', 'anode',
+    'exothermic', 'endothermic', 'activation energy', 'crude oil', 'alkane', 'fractional distillation',
+    'greenhouse', 'infrared', 'life cycle assessment',
+    'density', 'specific heat capacity', 'wave', 'wavelength', 'frequency', 'resistance', 'current', 'potential difference',
+    'force', 'acceleration', 'magnetic field', 'Fleming',
   ];
 
   const lowerText = text.toLowerCase();
@@ -227,24 +232,27 @@ function extractKeyTerms(text: string): string[] {
 }
 
 /**
- * Get all flashcards for a subject, paper, and tier
+ * Get all flashcards for a subject, paper, and tier (optionally filtered by topic)
  */
 export function getFlashcardsByFilters(
   subject: ScienceSubject,
   paper: SciencePaper,
-  tier: ScienceTier
+  tier: ScienceTier,
+  topic?: string
 ): ScienceFlashcard[] {
   const conceptCards = generateConceptFlashcards(subject, paper, tier);
   const misconceptionCards = generateMisconceptionFlashcards(subject, paper, tier);
   const practicalCards = generatePracticalFlashcards(subject, paper, tier);
   const equationCards = generateEquationFlashcards(subject, paper, tier);
 
-  return [
+  const all = [
     ...conceptCards,
     ...misconceptionCards,
     ...practicalCards,
     ...equationCards,
   ];
+  if (topic) return all.filter(f => f.topic === topic);
+  return all;
 }
 
 /**
@@ -258,9 +266,15 @@ export function generateQuickChecks(
   const flashcards = getFlashcardsByFilters(subject, paper, tier);
   const quickChecks: ScienceQuickCheck[] = [];
 
-  // Generate misconception checks
+  // Generate misconception checks (MC with improved options)
   const misconceptions = getMisconceptionsBySubject(subject);
   misconceptions.forEach(misconception => {
+    const distractors = [
+      misconception.misconception,
+      misconception.whyWrong.length > 80 ? misconception.whyWrong.slice(0, 80) + '...' : misconception.whyWrong,
+      misconception.example && misconception.example.length < 100 ? misconception.example : misconception.misconception,
+    ].filter((v, i, a) => a.indexOf(v) === i && v !== misconception.correctUnderstanding);
+    const options = [misconception.correctUnderstanding, ...distractors.slice(0, 2)].sort(() => Math.random() - 0.5);
     quickChecks.push({
       id: `quickcheck-misconception-${misconception.id}`,
       subject,
@@ -269,16 +283,29 @@ export function generateQuickChecks(
       topic: misconception.topic,
       type: 'multipleChoice',
       question: `Which statement is correct about ${misconception.topic}?`,
-      options: [
-        misconception.misconception,
-        misconception.correctUnderstanding,
-        misconception.misconception.split(' ').slice(0, 3).join(' ') + '... (incorrect)',
-        'None of the above',
-      ],
+      options,
       correctAnswer: misconception.correctUnderstanding,
       feedback: {
         correct: `Correct! ${misconception.correctUnderstanding}`,
         incorrect: `Incorrect. ${misconception.whyWrong}`,
+        ideaReference: misconception.correctUnderstanding,
+      },
+      relatedFlashcardIds: [`flashcard-misconception-${misconception.id}`],
+    });
+    // True/False: "True or False: [misconception]"
+    quickChecks.push({
+      id: `quickcheck-tf-${misconception.id}`,
+      subject,
+      paper,
+      tier,
+      topic: misconception.topic,
+      type: 'trueFalse',
+      question: `True or False: "${misconception.misconception}"`,
+      options: ['True', 'False'],
+      correctAnswer: 'False',
+      feedback: {
+        correct: `Correct! This is a misconception. ${misconception.correctUnderstanding}`,
+        incorrect: `False. This is wrong. ${misconception.whyWrong}`,
         ideaReference: misconception.correctUnderstanding,
       },
       relatedFlashcardIds: [`flashcard-misconception-${misconception.id}`],
@@ -317,12 +344,15 @@ export function generateQuickChecks(
 }
 
 /**
- * Get quick checks by filters
+ * Get quick checks by filters (optionally filtered by topic)
  */
 export function getQuickChecksByFilters(
   subject: ScienceSubject,
   paper: SciencePaper,
-  tier: ScienceTier
+  tier: ScienceTier,
+  topic?: string
 ): ScienceQuickCheck[] {
-  return generateQuickChecks(subject, paper, tier);
+  const all = generateQuickChecks(subject, paper, tier);
+  if (topic) return all.filter(q => q.topic === topic);
+  return all;
 }

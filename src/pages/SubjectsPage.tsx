@@ -9,7 +9,7 @@ import {
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, FlaskConical, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
 
@@ -17,6 +17,8 @@ const HUB_ICONS = {
   BookOpen,
   Calculator,
   FlaskConical,
+  Briefcase,
+  Landmark,
 };
 
 function findByNames(subjects: Subject[], names: string[]): Subject[] {
@@ -127,7 +129,7 @@ export function SubjectsPage() {
 
       {/* Top: 3 featured hub cards */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         variants={container}
       >
         {FEATURED_HUBS.map((hub) => {

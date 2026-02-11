@@ -5,7 +5,7 @@ Definitive, hard-coded GCSE Maths backbone for the app. Clean, complete list spl
 - **Foundation Tier:** Paper 1 (Non-calculator), Paper 2 (Calculator), Paper 3 (Calculator)
 - **Higher Tier:** Paper 1 (Non-calculator), Paper 2 (Calculator), Paper 3 (Calculator)
 
-~180 questions total (≈30 per paper per tier): full coverage, mastery-based repetition, fast iteration.
+~359 questions total (Foundation 105, Higher 240): full coverage, mastery-based repetition, fast iteration.
 
 ---
 
@@ -23,9 +23,9 @@ Questions are grouped so you can run:
 
 | Quiz | Tier | Paper | Question IDs | Count |
 |------|------|-------|--------------|-------|
-| Foundation Paper 1 | Foundation | 1 | F1-01 – F1-26 | 26 |
-| Foundation Paper 2 | Foundation | 2 | F2-01 – F2-14 | 14 |
-| Foundation Paper 3 | Foundation | 3 | F3-01 – F3-08 | 8 |
+| Foundation Paper 1 | Foundation | 1 | F1-01 – F1-30 | 30 |
+| Foundation Paper 2 | Foundation | 2 | F2-01 – F2-35 | 35 |
+| Foundation Paper 3 | Foundation | 3 | F3-01 – F3-40 | 40 |
 | Higher Paper 1 | Higher | 1 | H1-01 – H1-80 | 80 |
 | Higher Paper 2 | Higher | 2 | H2-01 – H2-80 | 80 |
 | Higher Paper 3 | Higher | 3 | H3-01 – H3-80 | 80 |
@@ -38,12 +38,13 @@ Topics are the main content areas below. Each row is one topic quiz: the listed 
 |-------|------|-------|--------------|-------|
 | Number & Arithmetic | Foundation | 1 | F1-01 – F1-10 | 10 |
 | Algebra | Foundation | 1 | F1-11 – F1-17 | 7 |
-| Graphs & Geometry | Foundation | 1 | F1-18 – F1-26 | 9 |
+| Graphs & Geometry | Foundation | 1 | F1-18 – F1-30 | 13 |
 | Number | Foundation | 2 | F2-01 – F2-05 | 5 |
 | Algebra & Graphs | Foundation | 2 | F2-06 – F2-08 | 3 |
 | Geometry & Measures | Foundation | 2 | F2-09 – F2-12 | 4 |
 | Statistics | Foundation | 2 | F2-13 – F2-14 | 2 |
-| Foundation Paper 3 (mixed) | Foundation | 3 | F3-01 – F3-08 | 8 |
+| Foundation Paper 2 (mixed practice) | Foundation | 2 | F2-15 – F2-35 | 21 |
+| Foundation Paper 3 (mixed) | Foundation | 3 | F3-01 – F3-40 | 40 |
 | Number & Indices | Higher | 1 | H1-01 – H1-12 | 12 |
 | Algebra: Manipulation | Higher | 1 | H1-13 – H1-32 | 20 |
 | Graphs & Coordinates | Higher | 1 | H1-33 – H1-45 | 13 |
@@ -68,11 +69,13 @@ Units are finer groupings within a topic for short, focused practice.
 | BIDMAS, integers, four operations | Number & Arithmetic (F1) | F1-01 – F1-04 | 4 |
 | Fractions & ratio | Number & Arithmetic (F1) | F1-05 – F1-10 | 6 |
 | Expressions & equations | Algebra (F1) | F1-11 – F1-17 | 7 |
-| Coordinates, tables, angles, shape, probability, stats | Graphs & Geometry (F1) | F1-18 – F1-26 | 9 |
+| Coordinates, tables, angles, shape, probability, stats | Graphs & Geometry (F1) | F1-18 – F1-30 | 13 |
 | Percentages, standard form, bounds, estimation | Number (F2) | F2-01 – F2-05 | 5 |
 | Straight-line graphs | Algebra & Graphs (F2) | F2-06 – F2-08 | 3 |
 | Circle, volume, bearings | Geometry & Measures (F2) | F2-09 – F2-12 | 4 |
 | Scatter, pie chart | Statistics (F2) | F2-13 – F2-14 | 2 |
+| Mixed practice (number, algebra, geometry, statistics) | Foundation Paper 2 (mixed) | F2-15 – F2-35 | 21 |
+| Foundation Paper 3 (mixed problem solving) | Foundation Paper 3 (mixed) | F3-01 – F3-40 | 40 |
 | Number & indices (BIDMAS, SF, surds, HCF/LCM) | Number & Indices (H1) | H1-01 – H1-12 | 12 |
 | Algebra manipulation (expand, factorise, solve, nth term) | Algebra (H1) | H1-13 – H1-32 | 20 |
 | Graphs & coordinates (gradient, quadratic, transform) | Graphs & Coordinates (H1) | H1-33 – H1-45 | 13 |
@@ -134,6 +137,10 @@ Units are finer groupings within a topic for short, focused practice.
 | F1-24 | Bag has 5 red, 3 blue, 2 green. Find P(blue) | fill | none |
 | F1-25 | Find the mean of the data from the frequency table. | numeric | none |
 | F1-26 | Read the frequency for each category from the bar chart. | numeric | barChart |
+| F1-27 | Area of trapezium (parallel 6 cm, 10 cm; height 5 cm) | numeric | none |
+| F1-28 | Find the mode of 3, 5, 5, 7, 5, 8 | numeric | none |
+| F1-29 | Order from smallest to largest: 0.4, 0.35, 0.09, 0.5 | short | none |
+| F1-30 | Work out (−3) × (−4) | numeric | none |
 
 ---
 
@@ -173,6 +180,32 @@ Units are finer groupings within a topic for short, focused practice.
 | F2-13 | Describe correlation and identify outlier | short | scatterPlot |
 | F2-14 | Find the fraction of the circle represented by the shaded sector. | numeric | pieChart |
 
+**Foundation Paper 2 (mixed practice)**
+
+| ID | Prompt | Type | Diagram |
+|----|--------|------|---------|
+| F2-15 | Decrease £240 by 15%. Find the new amount. | numeric | none |
+| F2-16 | Write 0.00078 in standard form | fill | none |
+| F2-17 | A length is 12.4 cm to 1 dp. Write the upper bound. | numeric | none |
+| F2-18 | Complete the table for y = 3x − 2 when x = 0, 1, 2, 3 | tableFill | none |
+| F2-19 | Find the equation of the line with gradient 4 that passes through (0, 5). | expression | none |
+| F2-20 | Solve 1.5x + 4 = 10 | numeric | none |
+| F2-21 | Cylinder radius 5 cm, height 8 cm. Find volume (πr²h). | numeric | none |
+| F2-22 | Area of triangle, base 10 cm, height 6 cm | numeric | none |
+| F2-23 | From the bar chart, which category has the highest frequency? | short | barChart |
+| F2-24 | Find the median of 3, 7, 8, 10, 12 | numeric | none |
+| F2-25 | Bag has 2 red and 5 blue counters. Find P(red). | fill | none |
+| F2-26 | Write 45000 in standard form | fill | none |
+| F2-27 | Price £50 to £57.50. Find percentage increase | numeric | none |
+| F2-28 | Draw the line y = −x + 3 for x from 0 to 3 | graphPlot | coordinateGrid |
+| F2-29 | Solve 2(x + 5) = 24 | numeric | none |
+| F2-30 | Volume of cylinder r=3 cm, h=10 cm (in terms of π) | expression | none |
+| F2-31 | Square perimeter 20 cm. Find area | numeric | none |
+| F2-32 | Mean of 12, 15, 18, 20, 25 | numeric | none |
+| F2-33 | Two dice. P(total score is 7) | fill | none |
+| F2-34 | Simplify 7 − 2(3x − 1) | expression | none |
+| F2-35 | Pie chart sector 90°. What fraction? | numeric | none |
+
 ---
 
 ### 📙 FOUNDATION — PAPER 3 (CALCULATOR)
@@ -189,8 +222,40 @@ Mixed skills, problem solving. Examples:
 | F3-06 | Mean from grouped table | numeric |
 | F3-07 | Interpret distance-time graph | short |
 | F3-08 | Ratio + percentage combined problem | numeric |
+| F3-09 | Convert 2.5 hours into minutes | numeric |
+| F3-10 | Recipe for 4 uses 300 g flour; flour for 10 people | numeric |
+| F3-11 | Simplify 5a + 3b − 2a + 4b | expression |
+| F3-12 | Expand 3(2x − 5) | expression |
+| F3-13 | Solve 4x + 7 = 31 | numeric |
+| F3-14 | Share £90 in the ratio 2 : 3 : 4 | multiNumeric |
+| F3-15 | TV £320, reduced by 25%. Sale price | numeric |
+| F3-16 | Perimeter of rectangle 12 m by 7 m | numeric |
+| F3-17 | Triangle angles 40° and 85°. Third angle | numeric |
+| F3-18 | First five multiples of 9 | short |
+| F3-19 | Write 3/5 as a decimal | numeric |
+| F3-20 | Find 15% of 80 | numeric |
+| F3-21 | Evaluate 2³ + 4² | numeric |
+| F3-22 | P(rolling a 4) on a dice | fill |
+| F3-23 | Range of 4, 9, 2, 12, 7 | numeric |
+| F3-24 | Estimate 19.7 × 4.2 | numeric |
+| F3-25 | Factorise 8x + 12 | expression |
+| F3-26 | Solve 3x − 5 > 10 | short |
+| F3-27 | Train 120 miles in 2 hours. Average speed mph | numeric |
+| F3-28 | Write 0.35 as a fraction in simplest form | expression |
+| F3-29 | Mean of 5 numbers is 12; sum of 4 is 45. Fifth number | numeric |
+| F3-30 | Shape translated by (3, −2). Describe transformation | short |
+| F3-31 | Find 2/3 of 99 | numeric |
+| F3-32 | Solve 5 − 2x = 11 | numeric |
+| F3-33 | Map scale 1 : 25000; road 4 cm on map. Real length in km | numeric |
+| F3-34 | List all the factors of 24 | short |
+| F3-35 | Increase 80 by 35% | numeric |
+| F3-36 | Next two terms: 5, 8, 11, 14, … | multiNumeric |
+| F3-37 | Right-angled triangle sides 6 cm, 8 cm. Hypotenuse | numeric |
+| F3-38 | Work out 2.4 ÷ 0.06 | numeric |
+| F3-39 | Three coins flipped. P(all three heads) | fill |
+| F3-40 | Box 6×5×4 cm. Surface area in cm² | numeric |
 
-≈30 mixed questions total for Paper 3.
+40 mixed questions total for Paper 3.
 
 ---
 
@@ -397,7 +462,7 @@ Engine must support:
 ## ✅ SUMMARY
 
 - **Quiz modes:** Full paper quiz (all questions for one paper), topic quiz (one curriculum topic), unit quiz (one sub-topic). See [Quiz modes](#-quiz-modes--full-paper-topic--unit) above for ID ranges.
-- **Foundation:** Paper 1 (F1-01–F1-26), Paper 2 (F2-01–F2-14), Paper 3 (F3-01–F3-08+)
+- **Foundation:** Paper 1 (F1-01–F1-30), Paper 2 (F2-01–F2-35), Paper 3 (F3-01–F3-40)
 - **Higher:** Paper 1 (H1-01–H1-80, 80 golden), Paper 2 (H2-01–H2-80, 80 golden), Paper 3 (H3-01–H3-80, 80 golden)
 - **Calculator:** Paper 1 = no; Paper 2 & 3 = yes
 - **Total:** ~250+ questions (Foundation + Higher Papers 1–3), full GCSE coverage, ready to build

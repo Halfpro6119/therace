@@ -2,21 +2,45 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, CheckCircle, Sparkles, FileText } from 'lucide-react';
 import { getLanguageTaskById } from '../../config/englishLanguageTasks';
+import {
+  getLanguageReadingTaskById,
+  isLanguageReadingTaskId,
+  getReadingTaskMaxMarks,
+} from '../../config/englishLanguageReadingTasks';
 import { storage } from '../../utils/storage';
 import { SelfMarkAnnotator } from '../../components/english/SelfMarkAnnotator';
 import type { EnglishMarkResult, SelfMarkAnnotations } from '../../types/englishCampus';
 
-const BANDS = ['Level 1 (1–5)', 'Level 2 (6–10)', 'Level 3 (11–15)', 'Level 4 (16–20)', 'Level 5 (21–24)'];
+const BANDS_WRITING = ['Level 1 (1–5)', 'Level 2 (6–10)', 'Level 3 (11–15)', 'Level 4 (16–20)', 'Level 5 (21–24)'];
+const BANDS_READING_8 = ['Level 1 (1–2)', 'Level 2 (3–4)', 'Level 3 (5–6)', 'Level 4 (7–8)'];
+const BANDS_READING_12 = ['Level 1 (1–3)', 'Level 2 (4–6)', 'Level 3 (7–9)', 'Level 4 (10–12)'];
 
 export function EnglishLanguageResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { draftId?: string; taskId?: string; content?: string; checklistTicks?: Record<string, boolean> } | undefined;
+  const state = location.state as {
+    draftId?: string;
+    taskId?: string;
+    content?: string;
+    checklistTicks?: Record<string, boolean>;
+    isReading?: boolean;
+  } | undefined;
   const draftId = state?.draftId;
   const taskId = state?.taskId ?? storage.getEnglishDraftById(state?.draftId ?? '')?.taskId;
   const existingDraft = draftId && draftId !== 'new' ? storage.getEnglishDraftById(draftId) : null;
   const content = state?.content ?? existingDraft?.content ?? '';
-  const task = taskId ? getLanguageTaskById(taskId) : existingDraft ? getLanguageTaskById(existingDraft.taskId) : null;
+  const writingTask = taskId ? getLanguageTaskById(taskId) : existingDraft ? getLanguageTaskById(existingDraft.taskId) : null;
+  const readingTask =
+    (!writingTask && taskId && isLanguageReadingTaskId(taskId)
+      ? getLanguageReadingTaskById(taskId)
+      : null) ??
+    (!writingTask && existingDraft && isLanguageReadingTaskId(existingDraft.taskId)
+      ? getLanguageReadingTaskById(existingDraft.taskId)
+      : null);
+  const task = writingTask ?? readingTask;
+  const isReading = !!readingTask;
+  const maxMarks = isReading ? getReadingTaskMaxMarks(task.id) : 40;
+  const BANDS = isReading ? (maxMarks === 12 ? BANDS_READING_12 : BANDS_READING_8) : BANDS_WRITING;
 
   const [mode, setMode] = useState<'choose' | 'self' | 'ai'>('choose');
   const [selfBand, setSelfBand] = useState('');
@@ -46,7 +70,7 @@ export function EnglishLanguageResultPage() {
     const result: EnglishMarkResult = {
       bandLevel: selfBand,
       marks: undefined,
-      maxMarks: 40,
+      maxMarks,
       strengths: [],
       targets: reflection?.trim() ? [reflection.trim()] : [],
       isSelfMark: true,
@@ -64,7 +88,7 @@ export function EnglishLanguageResultPage() {
       draft = {
         id: `draft-${task.id}-${Date.now()}`,
         taskId: task.id,
-        taskTitle: task.title,
+        taskTitle: writingTask ? writingTask.title : (task as { prompt: string }).prompt,
         paper: task.paper,
         content,
         wordCount: content.trim().split(/\s+/).filter(Boolean).length,
@@ -84,7 +108,7 @@ export function EnglishLanguageResultPage() {
     storage.setEnglishContinue({
       type: 'language',
       taskId: task.id,
-      label: task.title,
+      label: writingTask ? writingTask.title : (task as { prompt: string }).prompt,
       updatedAt: new Date().toISOString(),
     });
     setSaved(true);
@@ -95,22 +119,35 @@ export function EnglishLanguageResultPage() {
 
   const handleAISimulate = () => {
     if (!task) return;
-    const result: EnglishMarkResult = {
-      bandLevel: 'Level 4 (16–20)',
-      marks: 18,
-      maxMarks: 40,
-      aoBreakdown: [
-        { ao: 'AO5', level: 'Level 4', comment: 'Clear structure; some ambitious vocabulary' },
-        { ao: 'AO6', level: 'Level 3', comment: 'Generally accurate; a few punctuation errors' },
-      ],
-      strengths: ['Clear paragraphing', 'Engaging opening', 'Good range of vocabulary'],
-      targets: ['Embed quotations where relevant', 'Use more structural shifts', 'Check apostrophes'],
-      rewriteSuggestions: [
-        'Upgrade your opening sentence to a single-word or short fragment for impact.',
-        'Add one clear structural shift (e.g. time jump or focus shift) in the middle.',
-      ],
-      isSelfMark: false,
-    };
+    const result: EnglishMarkResult = isReading
+      ? {
+          bandLevel: maxMarks === 12 ? 'Level 4 (10–12)' : 'Level 4 (7–8)',
+          marks: maxMarks === 12 ? 10 : 7,
+          maxMarks,
+          aoBreakdown: [
+            { ao: 'AO2', level: 'Level 4', comment: 'Clear analysis of methods and effects' },
+            { ao: 'AO4', level: 'Level 3', comment: 'Supported judgement where required' },
+          ],
+          strengths: ['Focused on the question', 'Relevant evidence', 'Clear explanation'],
+          targets: ['Link methods to effect more explicitly', 'Add alternative reading where appropriate'],
+          isSelfMark: false,
+        }
+      : {
+          bandLevel: 'Level 4 (16–20)',
+          marks: 18,
+          maxMarks: 40,
+          aoBreakdown: [
+            { ao: 'AO5', level: 'Level 4', comment: 'Clear structure; some ambitious vocabulary' },
+            { ao: 'AO6', level: 'Level 3', comment: 'Generally accurate; a few punctuation errors' },
+          ],
+          strengths: ['Clear paragraphing', 'Engaging opening', 'Good range of vocabulary'],
+          targets: ['Embed quotations where relevant', 'Use more structural shifts', 'Check apostrophes'],
+          rewriteSuggestions: [
+            'Upgrade your opening sentence to a single-word or short fragment for impact.',
+            'Add one clear structural shift (e.g. time jump or focus shift) in the middle.',
+          ],
+          isSelfMark: false,
+        };
     const drafts = storage.getEnglishDrafts();
     const draft = draftId && draftId !== 'new'
       ? drafts.find(d => d.id === draftId)
@@ -120,11 +157,11 @@ export function EnglishLanguageResultPage() {
       setSavedDraftId(draft.id);
     }
     storage.setEnglishLastScore({ bandLevel: result.bandLevel, marks: result.marks, maxMarks: result.maxMarks });
-    storage.setEnglishTargets({ targets: result.targets, updatedAt: new Date().toISOString() });
+    storage.setEnglishTargets(result.targets ?? []);
     storage.setEnglishContinue({
       type: 'language',
       taskId: task.id,
-      label: task.title,
+      label: writingTask ? writingTask.title : (task as { prompt: string }).prompt,
       updatedAt: new Date().toISOString(),
     });
     setLastAIResult(result);
@@ -262,7 +299,7 @@ export function EnglishLanguageResultPage() {
           <ChevronLeft size={24} style={{ color: 'rgb(var(--text))' }} />
         </button>
         <h1 className="text-xl font-bold" style={{ color: 'rgb(var(--text))' }}>
-          Self-mark: {task.title}
+          Self-mark: {writingTask ? writingTask.title : (task as { prompt: string }).prompt}
         </h1>
       </div>
 
@@ -282,7 +319,7 @@ export function EnglishLanguageResultPage() {
 
       <div className="rounded-xl border p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
         <label className="block font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>
-          Choose your band (AO5 Content & Organisation, 24 marks)
+          {isReading ? `Choose your band (Section A, ${maxMarks} marks)` : 'Choose your band (AO5 Content & Organisation, 24 marks)'}
         </label>
         <div className="flex flex-wrap gap-2">
           {BANDS.map(band => (

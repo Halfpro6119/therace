@@ -3,8 +3,10 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, CheckSquare, FileText, BookOpen, PanelRightOpen, Highlighter, ListOrdered } from 'lucide-react';
 import { getLanguageTaskById } from '../../config/englishLanguageTasks';
 import { getExaminerPackForTask } from '../../config/englishExaminerPackData';
+import { getLanguageReadingTaskById } from '../../config/englishLanguageReadingTasks';
+import { getReadingPackForTask } from '../../config/englishLanguageReadingPackData';
 import { storage } from '../../utils/storage';
-import type { EnglishWritingDraft, EnglishChecklistItem } from '../../types/englishCampus';
+import type { EnglishWritingDraft, EnglishChecklistItem, EnglishLanguageReadingTask } from '../../types/englishCampus';
 
 const QUICK_CHECKLIST: EnglishChecklistItem[] = [
   { id: 'c1', label: 'Clear opening / hook', ao: 'AO5' },
@@ -37,7 +39,10 @@ function countParagraphs(text: string): number {
 export function EnglishWritingWorkspacePage() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const task = taskId ? getLanguageTaskById(taskId) : null;
+  const writingTask = taskId ? getLanguageTaskById(taskId) : null;
+  const readingTask = taskId && !writingTask ? getLanguageReadingTaskById(taskId) : null;
+  const task = writingTask ?? readingTask;
+  const isReading = !!readingTask;
 
   const [content, setContent] = useState('');
   const [startTime] = useState(() => Date.now());
@@ -54,7 +59,11 @@ export function EnglishWritingWorkspacePage() {
   const location = useLocation();
   const reopenDraftId = (location.state as { reopenDraftId?: string } | undefined)?.reopenDraftId;
 
-  const examinerPack = task ? getExaminerPackForTask(task.id) : undefined;
+  const examinerPack = task
+    ? isReading
+      ? getReadingPackForTask(task.id)
+      : getExaminerPackForTask(task.id)
+    : undefined;
   const checklist = useMemo(
     () => examinerPack?.checklistItems ?? QUICK_CHECKLIST,
     [examinerPack]
@@ -91,10 +100,11 @@ export function EnglishWritingWorkspacePage() {
   const saveDraft = useCallback(() => {
     if (!task) return;
     const id = draftId ?? `draft-${task.id}-${Date.now()}`;
+    const taskTitle = writingTask ? writingTask.title : (task as EnglishLanguageReadingTask).prompt;
     const draft: EnglishWritingDraft = {
       id,
       taskId: task.id,
-      taskTitle: task.title,
+      taskTitle,
       paper: task.paper,
       content,
       wordCount,
@@ -112,10 +122,11 @@ export function EnglishWritingWorkspacePage() {
   const saveDraftAsNewSnapshot = useCallback(() => {
     if (!task) return;
     const newId = `draft-${task.id}-${Date.now()}`;
+    const taskTitle = writingTask ? writingTask.title : (task as EnglishLanguageReadingTask).prompt;
     const draft: EnglishWritingDraft = {
       id: newId,
       taskId: task.id,
-      taskTitle: task.title,
+      taskTitle,
       paper: task.paper,
       content,
       wordCount,
@@ -137,7 +148,9 @@ export function EnglishWritingWorkspacePage() {
   const handleSubmit = () => {
     saveDraft();
     storage.updateEnglishWritingStreak();
-    navigate('/english-campus/language/result', { state: { draftId: draftId ?? 'new', taskId: task?.id, content, checklistTicks } });
+    navigate('/english-campus/language/result', {
+      state: { draftId: draftId ?? 'new', taskId: task?.id, content, checklistTicks, isReading },
+    });
   };
 
   if (!task) {
@@ -179,10 +192,10 @@ export function EnglishWritingWorkspacePage() {
         </button>
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-bold truncate" style={{ color: 'rgb(var(--text))' }}>
-            {task.title}
+            {writingTask ? writingTask.title : (task as EnglishLanguageReadingTask).prompt}
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Paper {task.paper} • {task.type} • {task.timeRecommendationMins} mins recommended
+            Paper {task.paper} • {task.type} • {isReading ? '~12–15' : (task as { timeRecommendationMins?: number }).timeRecommendationMins ?? 45} mins recommended
           </p>
         </div>
         {showViewMarking && draftId && (
@@ -204,9 +217,9 @@ export function EnglishWritingWorkspacePage() {
         style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
       >
         <p className="font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>
-          {task.prompt}
+          {writingTask ? writingTask.prompt : (task as EnglishLanguageReadingTask).prompt}
         </p>
-        {task.imageUrl && (
+        {'imageUrl' in task && task.imageUrl && (
           <figure className="mt-3">
             <img
               src={task.imageUrl}
@@ -216,12 +229,12 @@ export function EnglishWritingWorkspacePage() {
             />
           </figure>
         )}
-        {task.stimulus && (
+        {'stimulus' in task && task.stimulus && (
           <p className="text-sm mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
             {task.stimulus}
           </p>
         )}
-        {task.audiencePurpose && (
+        {'audiencePurpose' in task && task.audiencePurpose && (
           <p className="text-xs mt-2" style={{ color: 'rgb(var(--muted))' }}>
             Audience & purpose: {task.audiencePurpose}
           </p>
@@ -354,7 +367,7 @@ export function EnglishWritingWorkspacePage() {
                   Mark scheme
                 </h3>
                 <p className="text-sm whitespace-pre-line" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {examinerPack?.markSchemeDetail ?? task.markSchemeSummary}
+                  {examinerPack?.markSchemeDetail ?? ('markSchemeSummary' in task ? task.markSchemeSummary : '')}
                 </p>
                 {examinerPack?.stepByStepMethod && (
                   <div className="mt-3 pt-3 border-t" style={{ borderColor: 'rgb(var(--border))' }}>

@@ -57,6 +57,16 @@ import { ScienceLabEquationLabPage } from './pages/science/ScienceLabEquationLab
 import { ScienceLabMisconceptionLabPage } from './pages/science/ScienceLabMisconceptionLabPage';
 import { ScienceLabFlashcardPage } from './pages/science/ScienceLabFlashcardPage';
 import { ScienceLabQuickCheckPage } from './pages/science/ScienceLabQuickCheckPage';
+import { ScienceLabTopicsPage } from './pages/science/ScienceLabTopicsPage';
+import { BusinessHubHomePage } from './pages/business/BusinessHubHomePage';
+import { BusinessHubUnitPage } from './pages/business/BusinessHubUnitPage';
+import { BusinessHubTopicsPage } from './pages/business/BusinessHubTopicsPage';
+import { BusinessHubConceptLabPage } from './pages/business/BusinessHubConceptLabPage';
+import { BusinessHubFlashcardPage } from './pages/business/BusinessHubFlashcardPage';
+import { BusinessHubQuickCheckPage } from './pages/business/BusinessHubQuickCheckPage';
+import { BusinessHubCaseStudyPage } from './pages/business/BusinessHubCaseStudyPage';
+import { BusinessHubCalculationLabPage } from './pages/business/BusinessHubCalculationLabPage';
+import { BusinessHubEvaluationPage } from './pages/business/BusinessHubEvaluationPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -204,6 +214,8 @@ function App() {
                 <Route path="/science-lab" element={<ScienceLabHomePage />} />
                 <Route path="/science-lab/subjects" element={<ScienceLabSubjectPage />} />
                 <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
+                <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/flashcard" element={<ScienceLabFlashcardPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ScienceLabConceptLabPage />} />
@@ -212,6 +224,15 @@ function App() {
                 <Route path="/science-lab/:subject/:paper/:tier/practical" element={<ScienceLabPracticalLabPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/equation" element={<ScienceLabEquationLabPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/misconception" element={<ScienceLabMisconceptionLabPage />} />
+                <Route path="/business-hub" element={<BusinessHubHomePage />} />
+                <Route path="/business-hub/unit/:unitId" element={<BusinessHubUnitPage />} />
+                <Route path="/business-hub/unit/:unitId/topics" element={<BusinessHubTopicsPage />} />
+                <Route path="/business-hub/unit/:unitId/concept" element={<BusinessHubConceptLabPage />} />
+                <Route path="/business-hub/unit/:unitId/flashcard" element={<BusinessHubFlashcardPage />} />
+                <Route path="/business-hub/unit/:unitId/quick-check" element={<BusinessHubQuickCheckPage />} />
+                <Route path="/business-hub/unit/:unitId/case-study" element={<BusinessHubCaseStudyPage />} />
+                <Route path="/business-hub/unit/:unitId/calculations" element={<BusinessHubCalculationLabPage />} />
+                <Route path="/business-hub/unit/:unitId/evaluation" element={<BusinessHubEvaluationPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />

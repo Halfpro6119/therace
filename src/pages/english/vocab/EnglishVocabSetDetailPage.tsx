@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { vocabApi } from '../../../utils/vocab';
+import { storage } from '../../../utils/storage';
 import type { VocabSet, VocabWord } from '../../../types/vocab';
 
 const LENGTHS = [10, 20, 40] as const;
@@ -43,7 +44,14 @@ export function EnglishVocabSetDetailPage() {
   }, [setId]);
 
   const startSession = () => {
-    if (!setId) return;
+    if (!setId || !set) return;
+    storage.setEnglishContinue({
+      type: 'vocab',
+      label: `Vocab: ${set.name}`,
+      updatedAt: new Date().toISOString(),
+      vocabSetIds: [setId],
+      vocabLength: selectedLength === 'mastery_sprint' ? undefined : selectedLength,
+    });
     navigate('/english-campus/vocab/session', {
       state: {
         setIds: [setId],

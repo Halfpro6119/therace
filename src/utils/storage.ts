@@ -17,6 +17,12 @@ import type {
   TopicMastery,
   ConfidenceLevel,
 } from '../types/scienceLab';
+import type {
+  BusinessTopicProgress,
+  BusinessFlashcardMastery,
+  BusinessUnitId,
+  BusinessConfidenceLevel,
+} from '../types/businessHub';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -41,6 +47,9 @@ const STORAGE_KEYS = {
   SCIENCE_LAB_SESSIONS: 'grade9sprint_science_lab_sessions',
   SCIENCE_LAB_FLASHCARD_MASTERY: 'grade9sprint_science_lab_flashcard_mastery',
   SCIENCE_LAB_TOPIC_MASTERY: 'grade9sprint_science_lab_topic_mastery',
+  // Business Hub
+  BUSINESS_HUB_TOPIC_PROGRESS: 'grade9sprint_business_hub_topic_progress',
+  BUSINESS_HUB_FLASHCARD_MASTERY: 'grade9sprint_business_hub_flashcard_mastery',
 };
 
 /**
@@ -599,6 +608,142 @@ export const storage = {
     }, 0);
 
     return Math.round(totalMastery / topicFlashcards.length);
+  },
+
+  // —— Business Hub ——
+  getBusinessTopicProgress: (): Record<string, BusinessTopicProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.BUSINESS_HUB_TOPIC_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getBusinessTopicProgressByKey: (unitId: BusinessUnitId, topicId: string): BusinessTopicProgress | undefined => {
+    const key = `${unitId}-${topicId}`;
+    return storage.getBusinessTopicProgress()[key];
+  },
+  updateBusinessTopicProgress: (progress: BusinessTopicProgress): void => {
+    const all = storage.getBusinessTopicProgress();
+    const key = `${progress.unitId}-${progress.topicId}`;
+    progress.lastUpdated = new Date().toISOString();
+    all[key] = progress;
+    localStorage.setItem(STORAGE_KEYS.BUSINESS_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+  getBusinessFlashcardMastery: (): Record<string, BusinessFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.BUSINESS_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateBusinessFlashcardMastery: (termId: string, confidenceLevel: BusinessConfidenceLevel): void => {
+    const all = storage.getBusinessFlashcardMastery();
+    const existing = all[termId] || {
+      termId,
+      confidenceLevel: 1 as BusinessConfidenceLevel,
+      timesViewed: 0,
+      timesConfident: 0,
+      lastViewed: '',
+      masteryPercent: 0,
+    };
+    existing.timesViewed += 1;
+    existing.lastViewed = new Date().toISOString();
+    existing.confidenceLevel = confidenceLevel;
+    if (confidenceLevel === 3) existing.timesConfident += 1;
+    const confidenceWeight = confidenceLevel === 3 ? 0.7 : confidenceLevel === 2 ? 0.4 : 0.1;
+    const consistencyWeight = Math.min(existing.timesConfident / 3, 0.3);
+    existing.masteryPercent = Math.min(100, Math.round((confidenceWeight + consistencyWeight) * 100));
+    all[termId] = existing;
+    localStorage.setItem(STORAGE_KEYS.BUSINESS_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+  calculateBusinessTopicFlashcardMastery: (unitId: BusinessUnitId, topicId: string, termIds: string[]): number => {
+    const mastery = storage.getBusinessFlashcardMastery();
+    if (termIds.length === 0) return 0;
+    const total = termIds.reduce((sum, id) => sum + (mastery[id]?.masteryPercent ?? 0), 0);
+    return Math.round(total / termIds.length);
+  },
+
+  /** Mark all topics in unit as case study completed (call when user finishes Case Study flow). */
+  markUnitCaseStudyCompleted: (unitId: BusinessUnitId, topicIds: string[]): void => {
+    const all = storage.getBusinessTopicProgress();
+    const now = new Date().toISOString();
+    topicIds.forEach((topicId) => {
+      const key = `${unitId}-${topicId}`;
+      const existing = all[key];
+      all[key] = {
+        unitId,
+        topicId,
+        flashcardMasteryPercent: existing?.flashcardMasteryPercent ?? 0,
+        quickCheckPassed: existing?.quickCheckPassed ?? false,
+        caseStudyCompleted: true,
+        calculationsCompleted: existing?.calculationsCompleted ?? false,
+        evaluationCompleted: existing?.evaluationCompleted ?? false,
+        lastUpdated: now,
+      };
+    });
+    localStorage.setItem(STORAGE_KEYS.BUSINESS_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+
+  /** Mark all topics in unit as calculations completed (call when user finishes Calculation Lab flow). */
+  markUnitCalculationsCompleted: (unitId: BusinessUnitId, topicIds: string[]): void => {
+    const all = storage.getBusinessTopicProgress();
+    const now = new Date().toISOString();
+    topicIds.forEach((topicId) => {
+      const key = `${unitId}-${topicId}`;
+      const existing = all[key];
+      all[key] = {
+        unitId,
+        topicId,
+        flashcardMasteryPercent: existing?.flashcardMasteryPercent ?? 0,
+        quickCheckPassed: existing?.quickCheckPassed ?? false,
+        caseStudyCompleted: existing?.caseStudyCompleted ?? false,
+        calculationsCompleted: true,
+        evaluationCompleted: existing?.evaluationCompleted ?? false,
+        lastUpdated: now,
+      };
+    });
+    localStorage.setItem(STORAGE_KEYS.BUSINESS_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+
+  /** Mark all topics in unit as evaluation completed (call when user finishes Evaluation flow). */
+  markUnitEvaluationCompleted: (unitId: BusinessUnitId, topicIds: string[]): void => {
+    const all = storage.getBusinessTopicProgress();
+    const now = new Date().toISOString();
+    topicIds.forEach((topicId) => {
+      const key = `${unitId}-${topicId}`;
+      const existing = all[key];
+      all[key] = {
+        unitId,
+        topicId,
+        flashcardMasteryPercent: existing?.flashcardMasteryPercent ?? 0,
+        quickCheckPassed: existing?.quickCheckPassed ?? false,
+        caseStudyCompleted: existing?.caseStudyCompleted ?? false,
+        calculationsCompleted: existing?.calculationsCompleted ?? false,
+        evaluationCompleted: true,
+        lastUpdated: now,
+      };
+    });
+    localStorage.setItem(STORAGE_KEYS.BUSINESS_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+
+  /** Quick Check: count topics in unit that have passed. */
+  getBusinessUnitQuickCheckSummary: (unitId: BusinessUnitId, topicIds: string[]): { passed: number; total: number } => {
+    const all = storage.getBusinessTopicProgress();
+    const total = topicIds.length;
+    const passed = topicIds.filter((topicId) => all[`${unitId}-${topicId}`]?.quickCheckPassed).length;
+    return { passed, total };
+  },
+
+  /** Case Study Lab unlocked when at least one topic in unit has quickCheckPassed. */
+  isBusinessCaseStudyUnlocked: (unitId: BusinessUnitId, topicIds: string[]): boolean => {
+    const { passed } = storage.getBusinessUnitQuickCheckSummary(unitId, topicIds);
+    return passed > 0;
+  },
+
+  /** Calculations unlocked when at least one topic has caseStudyCompleted. */
+  isBusinessCalculationsUnlocked: (unitId: BusinessUnitId, topicIds: string[]): boolean => {
+    const all = storage.getBusinessTopicProgress();
+    return topicIds.some((topicId) => all[`${unitId}-${topicId}`]?.caseStudyCompleted);
+  },
+
+  /** Evaluation unlocked when at least one topic has calculationsCompleted. */
+  isBusinessEvaluationUnlocked: (unitId: BusinessUnitId, topicIds: string[]): boolean => {
+    const all = storage.getBusinessTopicProgress();
+    return topicIds.some((topicId) => all[`${unitId}-${topicId}`]?.calculationsCompleted);
   },
 };
 

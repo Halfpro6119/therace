@@ -1,8 +1,14 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Lightbulb, AlertTriangle, ArrowRight } from 'lucide-react';
-import { getConceptsBySubject } from '../../config/scienceLabData';
+import { ChevronLeft, Lightbulb, AlertTriangle, ArrowRight, FileQuestion, FlaskConical, Calculator } from 'lucide-react';
+import {
+  getConceptsBySubject,
+  getConceptsByTopic,
+  getQuestionsByFilters,
+  getPracticalsBySubject,
+  getEquationsBySubject,
+} from '../../config/scienceLabData';
 import type { ScienceSubject } from '../../types/scienceLab';
 
 export function ScienceLabConceptLabPage() {
@@ -16,11 +22,17 @@ export function ScienceLabConceptLabPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const concepts = getConceptsBySubject(normalizedSubject);
+  const [searchParams] = useSearchParams();
+  const topicFilter = searchParams.get('topic') ?? undefined;
+  const concepts = topicFilter
+    ? getConceptsByTopic(normalizedSubject, topicFilter)
+    : getConceptsBySubject(normalizedSubject);
   const selectedConcept = concepts.find(c => c.id === selectedConceptId);
 
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}`);
+    const base = `/science-lab/${subject?.toLowerCase()}/${paper}/${tier?.toLowerCase()}`;
+    const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+    navigate(base + query);
   };
 
   return (
@@ -172,6 +184,86 @@ export function ScienceLabConceptLabPage() {
                   </div>
                 </div>
               )}
+
+              {/* Related content */}
+              {(() => {
+                const paperNum = paper ? parseInt(paper) : 1;
+                const tierValue = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : 'Higher';
+                const relatedQuestions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue, selectedConcept.topic);
+                const topicLower = selectedConcept.topic.toLowerCase();
+                const relatedPracticals = getPracticalsBySubject(normalizedSubject).filter(p =>
+                  topicLower.split(/[\s,&]+/).some(word => word.length > 2 && p.title.toLowerCase().includes(word))
+                );
+                const relatedEquations = getEquationsBySubject(normalizedSubject).filter(e => e.topic === selectedConcept.topic);
+                const hasRelated = relatedQuestions.length > 0 || relatedPracticals.length > 0 || relatedEquations.length > 0;
+                if (!hasRelated) return null;
+                return (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3" style={{ color: 'rgb(var(--text))' }}>
+                      Related content
+                    </h3>
+                    <div className="space-y-3">
+                      {relatedQuestions.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const base = `/science-lab/${subject?.toLowerCase()}/${paper}/${tier?.toLowerCase()}/question`;
+                            const query = `?topic=${encodeURIComponent(selectedConcept.topic)}`;
+                            navigate(base + query);
+                          }}
+                          className="w-full flex items-center gap-3 p-4 rounded-lg border text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                          style={{ borderColor: 'rgb(var(--border))' }}
+                        >
+                          <FileQuestion size={24} className="text-purple-500 flex-shrink-0" />
+                          <div>
+                            <p className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>Question Lab</p>
+                            <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{relatedQuestions.length} question{relatedQuestions.length !== 1 ? 's' : ''} on {selectedConcept.topic}</p>
+                          </div>
+                          <ArrowRight size={18} style={{ color: 'rgb(var(--text-secondary))' }} />
+                        </button>
+                      )}
+                      {relatedPracticals.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const base = `/science-lab/${subject?.toLowerCase()}/${paper}/${tier?.toLowerCase()}/practical`;
+                            const query = `?topic=${encodeURIComponent(selectedConcept.topic)}`;
+                            navigate(base + query);
+                          }}
+                          className="w-full flex items-center gap-3 p-4 rounded-lg border text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                          style={{ borderColor: 'rgb(var(--border))' }}
+                        >
+                          <FlaskConical size={24} className="text-green-500 flex-shrink-0" />
+                          <div>
+                            <p className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>Practical Lab</p>
+                            <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{relatedPracticals.length} practical{relatedPracticals.length !== 1 ? 's' : ''} related</p>
+                          </div>
+                          <ArrowRight size={18} style={{ color: 'rgb(var(--text-secondary))' }} />
+                        </button>
+                      )}
+                      {relatedEquations.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const base = `/science-lab/${subject?.toLowerCase()}/${paper}/${tier?.toLowerCase()}/equation`;
+                            const query = `?topic=${encodeURIComponent(selectedConcept.topic)}`;
+                            navigate(base + query);
+                          }}
+                          className="w-full flex items-center gap-3 p-4 rounded-lg border text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                          style={{ borderColor: 'rgb(var(--border))' }}
+                        >
+                          <Calculator size={24} className="text-purple-500 flex-shrink-0" />
+                          <div>
+                            <p className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>Equation Lab</p>
+                            <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{relatedEquations.length} equation{relatedEquations.length !== 1 ? 's' : ''} for {selectedConcept.topic}</p>
+                          </div>
+                          <ArrowRight size={18} style={{ color: 'rgb(var(--text-secondary))' }} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </motion.section>

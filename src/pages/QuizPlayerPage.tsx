@@ -126,6 +126,8 @@ export function QuizPlayerPage() {
   const quizPromptsRef = useRef<any[]>([]);
   // Ref for "already answered" check in real-time effect – avoids effect re-running on every answeredPrompts change (new Set each time)
   const answeredPromptsRef = useRef<Set<string>>(new Set());
+  /** Marks awarded per prompt (for accurate total marks on results). */
+  const marksByPromptRef = useRef<Map<string, number>>(new Map());
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [quizStartTime] = useState(Date.now());
@@ -225,10 +227,11 @@ export function QuizPlayerPage() {
     return () => { cancelled = true; };
   }, [quizId, isFixItMode]);
 
-  // Reset solved/answered refs when starting a new quiz run
+  // Reset solved/answered/marks refs when starting a new quiz run
   useEffect(() => {
     solvedPromptsRef.current = new Set();
     answeredPromptsRef.current = new Set();
+    marksByPromptRef.current = new Map();
   }, [quizId, quizStartTime]);
 
   // Always keep the latest prompt list in a ref (interval callbacks can otherwise capture an older empty array)
@@ -498,6 +501,7 @@ export function QuizPlayerPage() {
       setShowFeedback(true);
       answeredPromptsRef.current.add(currentPrompt.id);
       setAnsweredPrompts(prev => new Set([...prev, currentPrompt.id]));
+      marksByPromptRef.current.set(currentPrompt.id, result.marksAwarded);
 
       // ====================================================================
       // STEP 3: UPDATE COMBO, PLAY SOUNDS, SHOW ANIMATIONS
@@ -583,6 +587,10 @@ export function QuizPlayerPage() {
     const timeTakenSec = Math.floor((Date.now() - quizStartTime) / 1000);
     const accuracyPct = totalCount > 0 ? (correctIds.size / totalCount) * 100 : 0;
 
+    const totalMarksAvailable = latestPrompts.reduce((sum: number, p: any) => sum + (p.marks ?? 1), 0);
+    let totalMarksAwarded = 0;
+    marksByPromptRef.current.forEach((m) => { totalMarksAwarded += m; });
+
     const attemptId = `${quizId}-${quizStartTime}-${Date.now()}`;
 
     // Persist attempt in the shape that ResultsPage expects (see src/types/index.ts Attempt)
@@ -595,6 +603,7 @@ export function QuizPlayerPage() {
       missedPromptIds: missedIds,
       timeTakenSec,
       accuracyPct,
+      ...(totalMarksAvailable > 0 && { marksAwarded: totalMarksAwarded, totalMarks: totalMarksAvailable }),
     };
 
     try {

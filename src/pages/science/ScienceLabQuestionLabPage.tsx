@@ -1,10 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, FileQuestion, CheckCircle, XCircle, Calculator, Lock, ArrowRight } from 'lucide-react';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
 import { getFlashcardsByFilters } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
+import { gradeScienceAnswer } from '../../utils/scienceGrading';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
 export function ScienceLabQuestionLabPage() {
@@ -24,7 +25,9 @@ export function ScienceLabQuestionLabPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue);
+  const [searchParams] = useSearchParams();
+  const topicFilter = searchParams.get('topic') ?? undefined;
+  const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
   const currentQuestion = questions[currentQuestionIndex];
 
   // Check if quiz is unlocked (flashcard mastery >= 70% and quick check passed)
@@ -50,31 +53,24 @@ export function ScienceLabQuestionLabPage() {
 
     setTopicMastery(masteryMap);
     
-    // Quiz is unlocked if at least one topic is unlocked, or if no topics have been studied yet (first time)
+    // Quiz is unlocked only when at least one topic has passed flashcards (≥70%) and quick check
     const hasUnlockedTopic = Object.values(masteryMap).some(m => m.unlocked);
-    const hasNoMastery = Object.values(masteryMap).every(m => m.mastery === 0);
-    setQuizUnlocked(hasUnlockedTopic || hasNoMastery);
+    setQuizUnlocked(hasUnlockedTopic);
   }, [normalizedSubject, paperNum, tierValue, questions]);
 
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}`);
+    navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
   };
 
   const handleSubmit = () => {
     if (!currentQuestion) return;
-    
-    // Simple answer checking (in production, use proper grading logic)
-    const normalizedAnswer = userAnswer.trim().toLowerCase();
-    const correctAnswers = Array.isArray(currentQuestion.correctAnswer)
-      ? currentQuestion.correctAnswer.map(a => a.trim().toLowerCase())
-      : [currentQuestion.correctAnswer.trim().toLowerCase()];
-    
-    const correct = correctAnswers.some(ca => normalizedAnswer === ca || normalizedAnswer.includes(ca));
-    setIsCorrect(correct);
+
+    const result = gradeScienceAnswer(currentQuestion, userAnswer);
+    setIsCorrect(result.correct);
     setShowFeedback(true);
 
     // Update mastery (only increases on correct)
-    if (correct) {
+    if (result.correct) {
       // In a real implementation, track concept mastery based on question topic
       // storage.updateConceptMastery(normalizedSubject, conceptId, true);
     }
@@ -312,7 +308,19 @@ export function ScienceLabQuestionLabPage() {
                 <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {isCorrect ? currentQuestion.feedback.correct : currentQuestion.feedback.incorrect}
                 </p>
-                <p className="text-xs italic" style={{ color: 'rgb(var(--text-secondary))' }}>
+                {!isCorrect && (
+                  <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>
+                      Model answer:
+                    </p>
+                    <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {Array.isArray(currentQuestion.correctAnswer)
+                        ? currentQuestion.correctAnswer[0]
+                        : currentQuestion.correctAnswer}
+                    </p>
+                  </div>
+                )}
+                <p className="text-xs italic mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {currentQuestion.feedback.ideaReference}
                 </p>
               </div>

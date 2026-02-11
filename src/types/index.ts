@@ -129,6 +129,10 @@ export interface Attempt {
   missedPromptIds: string[];
   timeTakenSec: number;
   accuracyPct: number;
+  /** Total marks awarded (when quiz uses per-question marks). */
+  marksAwarded?: number;
+  /** Total marks available for the quiz (sum of prompt.marks). */
+  totalMarks?: number;
 }
 
 export type MasteryLevel = 0 | 1 | 2 | 3 | 4;

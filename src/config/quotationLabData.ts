@@ -1111,7 +1111,9 @@ export function getQuotationLabQuotesByTheme(themeId: QuotationLabThemeId): Quot
 const TASK_TO_STRATEGIC_QUOTES: Record<string, string[]> = {
   // Ozymandias — power
   'P-S01': ['Ozy-1', 'OZY-POW-01', 'OZY-TIME-01'],
-  // Macbeth — guilt
+  // Macbeth — ambition (extract)
+  'M-01': ['M-amb-1', 'MAC-AMB-01', 'M-amb-2'],
+  // Macbeth — guilt (whole play)
   'M-03': ['M-guilt-1', 'MAC-GUILT-01', 'MAC-GUILT-02'],
   // Exposure & Bayonet Charge — conflict
   'P-C02': ['Exp-1', 'EXP-CON-01', 'BC-FEAR-01'],

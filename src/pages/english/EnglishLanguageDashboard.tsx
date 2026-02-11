@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, FileText, History, Grid3X3, Play } from 'lucide-react';
+import { ChevronLeft, FileText, History, Grid3X3, Play, BookOpen, PenLine } from 'lucide-react';
 import { getLanguageTasksByPaper, getLanguageTaskById } from '../../config/englishLanguageTasks';
+import {
+  getLanguageReadingTasksByPaper,
+  getLanguageReadingTaskById,
+} from '../../config/englishLanguageReadingTasks';
 import { storage } from '../../utils/storage';
 import { motion } from 'framer-motion';
+
+export type LanguageSection = 'reading' | 'writing';
 
 export function EnglishLanguageDashboard() {
   const navigate = useNavigate();
   const [paper, setPaper] = useState<1 | 2>(1);
+  const [section, setSection] = useState<LanguageSection>('writing');
   const [showTaskList, setShowTaskList] = useState(false);
   const drafts = storage.getEnglishDrafts();
-  const tasks = getLanguageTasksByPaper(paper);
+  const writingTasks = getLanguageTasksByPaper(paper);
+  const readingTasks = getLanguageReadingTasksByPaper(paper);
+  const tasks = section === 'reading' ? readingTasks : writingTasks;
 
   const handleStartTask = (taskId: string) => {
+    const label =
+      section === 'reading'
+        ? getLanguageReadingTaskById(taskId)?.prompt ?? 'Reading task'
+        : getLanguageTaskById(taskId)?.title ?? 'Writing task';
     storage.setEnglishContinue({
       type: 'language',
       taskId,
-      label: getLanguageTaskById(taskId)?.title ?? 'Writing task',
+      label,
       updatedAt: new Date().toISOString(),
     });
     navigate(`/english-campus/language/task/${taskId}`);
@@ -77,8 +90,43 @@ export function EnglishLanguageDashboard() {
             Paper 2
           </button>
         </div>
+        <span className="text-sm font-medium ml-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Section:
+        </span>
+        <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'rgb(var(--border))' }}>
+          <button
+            type="button"
+            onClick={() => setSection('reading')}
+            className={`px-4 py-2 text-sm font-semibold flex items-center gap-1.5 ${section === 'reading' ? 'text-white' : ''}`}
+            style={
+              section === 'reading'
+                ? { background: 'var(--gradient-primary)' }
+                : { background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }
+            }
+          >
+            <BookOpen size={16} />
+            Section A (Reading)
+          </button>
+          <button
+            type="button"
+            onClick={() => setSection('writing')}
+            className={`px-4 py-2 text-sm font-semibold flex items-center gap-1.5 ${section === 'writing' ? 'text-white' : ''}`}
+            style={
+              section === 'writing'
+                ? { background: 'var(--gradient-primary)' }
+                : { background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }
+            }
+          >
+            <PenLine size={16} />
+            Section B (Writing)
+          </button>
+        </div>
         <p className="text-xs w-full" style={{ color: 'rgb(var(--muted))' }}>
-          {paper === 1 ? 'Creative: description & narrative' : 'Transactional: speech, article, letter, leaflet, report'}
+          {section === 'reading'
+            ? 'Analysis, comparison, evaluation – 8 or 12 marks, ~12–15 mins'
+            : paper === 1
+              ? 'Creative: description & narrative'
+              : 'Transactional: speech, article, letter, leaflet, report'}
         </p>
       </div>
 
@@ -103,7 +151,7 @@ export function EnglishLanguageDashboard() {
                 Start a task
               </h2>
               <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Choose from the task bank (Paper {paper})
+                {section === 'reading' ? 'Section A reading tasks' : 'Section B writing tasks'} (Paper {paper})
               </p>
             </div>
           </div>
@@ -123,10 +171,10 @@ export function EnglishLanguageDashboard() {
                   >
                     <div>
                       <p className="font-medium" style={{ color: 'rgb(var(--text))' }}>
-                        {task.title}
+                        {section === 'reading' ? (task as { prompt: string }).prompt : (task as { title: string }).title}
                       </p>
-                      <p className="text-xs capitalize" style={{ color: 'rgb(var(--muted))' }}>
-                        {task.type} • {task.timeRecommendationMins} mins
+                      <p className="text-xs" style={{ color: 'rgb(var(--muted))' }}>
+                        {task.type} • {section === 'reading' ? '~15 mins' : `${(task as { timeRecommendationMins?: number }).timeRecommendationMins ?? 45} mins`}
                       </p>
                     </div>
                     <Play size={18} style={{ color: 'rgb(var(--accent))' }} />
@@ -170,7 +218,7 @@ export function EnglishLanguageDashboard() {
         </button>
       </motion.section>
 
-      {/* Skills heatmap placeholder */}
+      {/* Skills heatmap – coming soon */}
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -187,22 +235,8 @@ export function EnglishLanguageDashboard() {
           </h2>
         </div>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          AO5/AO6 coverage and technique strengths will appear here as you complete and mark more tasks.
+          AO coverage and technique strengths will appear here as you complete and mark more tasks. <strong>Coming soon.</strong>
         </p>
-        <div className="mt-3 flex gap-2 flex-wrap">
-          {['AO5 Content', 'AO5 Structure', 'AO6 SPaG', 'Vocabulary'].map((label, i) => (
-            <span
-              key={label}
-              className="px-3 py-1 rounded-full text-xs font-medium"
-              style={{
-                background: `rgb(var(--surface-2))`,
-                color: 'rgb(var(--text-secondary))',
-              }}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
       </motion.section>
     </div>
   );

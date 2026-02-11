@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, RotateCcw, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { getFlashcardsByFilters } from '../../config/scienceLabFlashcards';
@@ -14,6 +14,7 @@ export function ScienceLabFlashcardPage() {
   const [viewedCards, setViewedCards] = useState<Set<string>>(new Set());
   const [viewStartTime, setViewStartTime] = useState<number>(Date.now());
   const [minViewTime] = useState(2000); // 2 seconds minimum
+  const [sessionComplete, setSessionComplete] = useState(false);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? parseInt(paper) as SciencePaper : 1;
@@ -24,7 +25,9 @@ export function ScienceLabFlashcardPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const flashcards = getFlashcardsByFilters(normalizedSubject, paperNum, tierValue);
+  const [searchParams] = useSearchParams();
+  const topicFilter = searchParams.get('topic') ?? undefined;
+  const flashcards = getFlashcardsByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
   const currentCard = flashcards[currentIndex];
 
   useEffect(() => {
@@ -35,7 +38,9 @@ export function ScienceLabFlashcardPage() {
   }, [currentIndex]);
 
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
+    const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
+    const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+    navigate(base + query);
   };
 
   const handleFlip = () => {
@@ -60,20 +65,22 @@ export function ScienceLabFlashcardPage() {
     if (currentIndex < flashcards.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // All cards viewed - calculate topic mastery
-      const topic = currentCard.topic;
-      const topicFlashcards = flashcards.filter(f => f.topic === topic);
-      const mastery = storage.calculateTopicFlashcardMastery(
-        normalizedSubject,
-        paperNum,
-        tierValue,
-        topic,
-        topicFlashcards.map(f => f.id)
-      );
-      storage.updateTopicMastery(normalizedSubject, paperNum, tierValue, topic, mastery);
+      // All cards viewed - calculate topic mastery for ALL topics touched in this session
+      const topicsInSession = new Set(flashcards.map(f => f.topic));
+      topicsInSession.forEach((topic) => {
+        const topicFlashcards = flashcards.filter(f => f.topic === topic);
+        const mastery = storage.calculateTopicFlashcardMastery(
+          normalizedSubject,
+          paperNum,
+          tierValue,
+          topic,
+          topicFlashcards.map(f => f.id)
+        );
+        storage.updateTopicMastery(normalizedSubject, paperNum, tierValue, topic, mastery);
+      });
 
-      // Navigate to quick check or back
-      navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/quick-check`);
+      // Show completion modal/state - user chooses: Quick Check or Return to modes
+      setSessionComplete(true);
     }
   };
 
@@ -88,6 +95,52 @@ export function ScienceLabFlashcardPage() {
       setCurrentIndex(currentIndex - 1);
     }
   };
+
+  // Session complete: show choice to proceed to Quick Check or return to modes
+  if (sessionComplete) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8">
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl p-6 sm:p-8 border shadow-sm"
+          style={{
+            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            borderColor: 'transparent',
+          }}
+        >
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Session Complete!</h1>
+          <p className="text-white/90 text-sm sm:text-base mb-6">
+            You've reviewed all {flashcards.length} flashcards. What would you like to do next?
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/quick-check`;
+                const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+                navigate(base + query);
+              }}
+              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition bg-white/20 hover:bg-white/30"
+            >
+              Proceed to Quick Check →
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
+                const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+                navigate(base + query);
+              }}
+              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition bg-white/20 hover:bg-white/30"
+            >
+              Return to Lab Modes
+            </button>
+          </div>
+        </motion.section>
+      </div>
+    );
+  }
 
   if (!currentCard) {
     return (

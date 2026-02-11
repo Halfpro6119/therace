@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
+import { ChevronLeft, CheckCircle, XCircle, ArrowRight, BookOpen } from 'lucide-react';
 import { getQuickChecksByFilters } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier, ScienceQuickCheck } from '../../types/scienceLab';
@@ -24,7 +24,9 @@ export function ScienceLabQuickCheckPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const quickChecks = getQuickChecksByFilters(normalizedSubject, paperNum, tierValue);
+  const [searchParams] = useSearchParams();
+  const topicFilter = searchParams.get('topic') ?? undefined;
+  const quickChecks = getQuickChecksByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
   const currentCheck = quickChecks[currentIndex];
 
   useEffect(() => {
@@ -36,7 +38,9 @@ export function ScienceLabQuickCheckPage() {
   }, [currentIndex, currentCheck]);
 
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
+    const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
+    const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+    navigate(base + query);
   };
 
   const handleAnswerSelect = (answer: string) => {
@@ -97,7 +101,9 @@ export function ScienceLabQuickCheckPage() {
       setCurrentIndex(currentIndex + 1);
     } else {
       // All quick checks completed - navigate to quiz
-      navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`);
+      const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`;
+      const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
+      navigate(base + query);
     }
   };
 
@@ -167,7 +173,7 @@ export function ScienceLabQuickCheckPage() {
           </h2>
         </div>
 
-        {currentCheck.type === 'multipleChoice' && (
+        {(currentCheck.type === 'multipleChoice' || currentCheck.type === 'trueFalse') && (
           <div className="space-y-3">
             {currentCheck.options?.map((option, idx) => (
               <button
@@ -276,6 +282,25 @@ export function ScienceLabQuickCheckPage() {
                 <p className="text-xs italic" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {currentCheck.feedback.ideaReference}
                 </p>
+                {!isCorrect && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/flashcard`;
+                      const query = currentCheck.topic ? `?topic=${encodeURIComponent(currentCheck.topic)}` : '';
+                      navigate(base + query);
+                    }}
+                    className="mt-3 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition border"
+                    style={{
+                      background: 'rgb(var(--surface))',
+                      borderColor: 'rgb(var(--border))',
+                      color: 'rgb(var(--text))',
+                    }}
+                  >
+                    <BookOpen size={16} />
+                    Review this topic in Flashcards
+                  </button>
+                )}
               </div>
             </div>
 

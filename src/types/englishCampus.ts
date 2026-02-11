@@ -98,6 +98,9 @@ export interface EnglishContinueState {
   draftId?: string;
   label: string;
   updatedAt: string;
+  /** For vocab: set IDs to resume a session */
+  vocabSetIds?: string[];
+  vocabLength?: 10 | 20 | 40 | 'mastery_sprint';
 }
 
 /** Checklist item id and label for Top Band coverage */

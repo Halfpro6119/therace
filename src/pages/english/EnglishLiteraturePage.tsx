@@ -1,23 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, BookOpen, GitCompare, Eye, Library, Quote, FileText } from 'lucide-react';
+import { ChevronLeft, BookOpen, Eye, Library, Quote, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SECTIONS = [
   {
     id: 'poetry',
     title: 'Seen Poetry (Anthology)',
-    description: 'P-S01 Ozymandias, P-S03 Kamikaze, P-C02 Exposure/Bayonet Charge, P-C03 Checking Out Me History/Kamikaze',
+    description: 'Single poem & comparison – P-S01 Ozymandias, P-S03 Kamikaze, P-C02 Exposure/Bayonet Charge, P-C03 Checking Out Me History/Kamikaze. Both poems in every paragraph.',
     path: '/english-campus/literature/poetry',
     icon: BookOpen,
     color: '#EC4899',
-  },
-  {
-    id: 'compare',
-    title: 'Compare poems',
-    description: 'Full GuidePost: power, conflict, identity – both poems in every paragraph',
-    path: '/english-campus/literature/poetry',
-    icon: GitCompare,
-    color: '#8B5CF6',
   },
   {
     id: 'unseen',
