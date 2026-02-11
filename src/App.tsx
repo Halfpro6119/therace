@@ -121,6 +121,17 @@ import { HealthHubInvestigationPage } from './pages/health/HealthHubInvestigatio
 import { HealthHubCareValuesPage } from './pages/health/HealthHubCareValuesPage';
 import { HealthHubQuestionLabPage } from './pages/health/HealthHubQuestionLabPage';
 import { HealthHubRevisionMapPage } from './pages/health/HealthHubRevisionMapPage';
+import { ComputeLabHomePage } from './pages/compute/ComputeLabHomePage';
+import { ComputeLabUnitPage } from './pages/compute/ComputeLabUnitPage';
+import { ComputeLabTopicsPage } from './pages/compute/ComputeLabTopicsPage';
+import { ComputeLabConceptLabPage } from './pages/compute/ComputeLabConceptLabPage';
+import { ComputeLabFlashcardPage } from './pages/compute/ComputeLabFlashcardPage';
+import { ComputeLabQuickCheckPage } from './pages/compute/ComputeLabQuickCheckPage';
+import { ComputeLabAlgorithmLabPage } from './pages/compute/ComputeLabAlgorithmLabPage';
+import { ComputeLabCalculationLabPage } from './pages/compute/ComputeLabCalculationLabPage';
+import { ComputeLabLogicLabPage } from './pages/compute/ComputeLabLogicLabPage';
+import { ComputeLabSqlLabPage } from './pages/compute/ComputeLabSqlLabPage';
+import { ComputeLabQuestionLabPage } from './pages/compute/ComputeLabQuestionLabPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle

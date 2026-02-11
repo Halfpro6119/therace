@@ -41,7 +41,9 @@ export function GeographyHubOptionSelectPage() {
       const [a, b] = saved.physicalLandscapes;
       if (a === b) {
         const other = PHYSICAL_LANDSCAPE_OPTIONS.find((o) => o.id !== a)?.id ?? 'river';
-        setSelection({ ...saved, physicalLandscapes: [a, other] });
+        const fixed = { ...saved, physicalLandscapes: [a, other] as [PhysicalLandscapeId, PhysicalLandscapeId] };
+        setSelection(fixed);
+        storage.setGeographyOptionSelection(fixed);
       } else {
         setSelection(saved);
       }
@@ -49,7 +51,12 @@ export function GeographyHubOptionSelectPage() {
   }, []);
 
   const handleSave = () => {
-    storage.setGeographyOptionSelection(selection);
+    let toSave = selection;
+    if (selection.physicalLandscapes[0] === selection.physicalLandscapes[1]) {
+      const other = PHYSICAL_LANDSCAPE_OPTIONS.find((o) => o.id !== selection.physicalLandscapes[0])?.id ?? 'river';
+      toSave = { ...selection, physicalLandscapes: [selection.physicalLandscapes[0], other] };
+    }
+    storage.setGeographyOptionSelection(toSave);
     navigate('/geography-hub');
   };
 
@@ -74,6 +81,9 @@ export function GeographyHubOptionSelectPage() {
   };
 
   const landscape2Options = PHYSICAL_LANDSCAPE_OPTIONS.filter((o) => o.id !== selection.physicalLandscapes[0]);
+  const secondLandscape = landscape2Options.some((o) => o.id === selection.physicalLandscapes[1])
+    ? selection.physicalLandscapes[1]
+    : landscape2Options[0]?.id ?? 'river';
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -131,7 +141,7 @@ export function GeographyHubOptionSelectPage() {
               <div>
                 <span className="text-xs block mb-1" style={{ color: 'rgb(var(--text-secondary))' }}>Second</span>
                 <select
-                  value={selection.physicalLandscapes[1]}
+                  value={secondLandscape}
                   onChange={(e) => setLandscape2(e.target.value as PhysicalLandscapeId)}
                   className="w-full rounded-lg border px-3 py-2 text-sm"
                   style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}

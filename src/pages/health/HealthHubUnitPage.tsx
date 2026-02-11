@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Lightbulb, BookOpen, Target, FileText, Search, MessageSquare, PenLine, ChevronRight, List, Lock, Zap, Calendar } from 'lucide-react';
+import { ChevronLeft, Lightbulb, BookOpen, Target, FileText, Search, MessageSquare, PenLine, ChevronRight, Lock, Zap, Calendar } from 'lucide-react';
 import { getUnitById } from '../../config/healthHubData';
 import { storage } from '../../utils/storage';
 import type { HealthUnitId } from '../../types/healthHub';

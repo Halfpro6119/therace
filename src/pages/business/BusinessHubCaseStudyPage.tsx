@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle } from 'lucide-react';
-import { getUnitById, getCaseStudiesByUnit } from '../../config/businessHubData';
+import { getUnitById, getCaseStudiesByUnit, getCalculationsByUnit } from '../../config/businessHubData';
 import { storage } from '../../utils/storage';
 import type { BusinessUnitId } from '../../types/businessHub';
 
@@ -87,7 +87,8 @@ export function BusinessHubCaseStudyPage() {
       setQuestionIndex(0);
     } else {
       storage.markUnitCaseStudyCompleted(unit.id, unit.topics.map((t) => t.id));
-      navigate(`/business-hub/unit/${unit.id}/calculations`);
+      const hasCalculations = getCalculationsByUnit(unit.id).length > 0;
+      navigate(hasCalculations ? `/business-hub/unit/${unit.id}/calculations` : `/business-hub/unit/${unit.id}/evaluation`);
     }
   };
   const handlePrevQuestion = () => {
@@ -309,7 +310,7 @@ export function BusinessHubCaseStudyPage() {
             onClick={handleNextQuestion}
             className="flex items-center gap-1 px-6 py-2 rounded-lg font-semibold bg-amber-500 text-white hover:bg-amber-600"
           >
-            {currentCase && questionIndex < currentCase.questions.length - 1 ? 'Next question' : caseIndex < caseStudies.length - 1 ? 'Next case' : 'Finish → Calculations'}
+            {currentCase && questionIndex < currentCase.questions.length - 1 ? 'Next question' : caseIndex < caseStudies.length - 1 ? 'Next case' : getCalculationsByUnit(unit.id).length > 0 ? 'Finish → Calculations' : 'Finish → Evaluation'}
             <ChevronRight size={18} />
           </button>
         </div>

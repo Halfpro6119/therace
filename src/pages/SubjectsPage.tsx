@@ -9,7 +9,7 @@ import {
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
 
@@ -23,6 +23,7 @@ const HUB_ICONS = {
   BookHeart,
   Heart,
   Cpu,
+  Brain,
 };
 
 function findByNames(subjects: Subject[], names: string[]): Subject[] {
