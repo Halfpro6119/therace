@@ -19,6 +19,7 @@ export function HistoryHubHomePage() {
     { id: 'interpretation', title: 'Interpretation lab', description: 'How convincing? How far agree?', icon: FileQuestion, path: '/history-hub/interpretation-lab' },
     { id: 'question-lab', title: 'Question lab', description: 'Describe, explain, account, essay', icon: FileQuestion, path: '/history-hub/question-lab' },
     { id: 'revision-map', title: 'Revision map', description: 'Your options and progress', icon: Map, path: '/history-hub/revision-map' },
+    { id: 'historic-environment', title: 'Historic environment', description: 'British depth site + context (Paper 2)', icon: Landmark, path: '/history-hub/historic-environment' },
   ];
 
   return (

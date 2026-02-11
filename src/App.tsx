@@ -67,6 +67,16 @@ import { BusinessHubQuickCheckPage } from './pages/business/BusinessHubQuickChec
 import { BusinessHubCaseStudyPage } from './pages/business/BusinessHubCaseStudyPage';
 import { BusinessHubCalculationLabPage } from './pages/business/BusinessHubCalculationLabPage';
 import { BusinessHubEvaluationPage } from './pages/business/BusinessHubEvaluationPage';
+import { HistoryHubHomePage } from './pages/history/HistoryHubHomePage';
+import { HistoryHubOptionSelectPage } from './pages/history/HistoryHubOptionSelectPage';
+import { HistoryHubTimelinePage } from './pages/history/HistoryHubTimelinePage';
+import { HistoryHubFlashcardPage } from './pages/history/HistoryHubFlashcardPage';
+import { HistoryHubConceptCardsPage } from './pages/history/HistoryHubConceptCardsPage';
+import { HistoryHubQuickCheckPage } from './pages/history/HistoryHubQuickCheckPage';
+import { HistoryHubInterpretationLabPage } from './pages/history/HistoryHubInterpretationLabPage';
+import { HistoryHubQuestionLabPage } from './pages/history/HistoryHubQuestionLabPage';
+import { HistoryHubRevisionMapPage } from './pages/history/HistoryHubRevisionMapPage';
+import { HistoryHubHistoricEnvironmentPage } from './pages/history/HistoryHubHistoricEnvironmentPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -233,6 +243,16 @@ function App() {
                 <Route path="/business-hub/unit/:unitId/case-study" element={<BusinessHubCaseStudyPage />} />
                 <Route path="/business-hub/unit/:unitId/calculations" element={<BusinessHubCalculationLabPage />} />
                 <Route path="/business-hub/unit/:unitId/evaluation" element={<BusinessHubEvaluationPage />} />
+                <Route path="/history-hub" element={<HistoryHubHomePage />} />
+                <Route path="/history-hub/option-select" element={<HistoryHubOptionSelectPage />} />
+                <Route path="/history-hub/timeline" element={<HistoryHubTimelinePage />} />
+                <Route path="/history-hub/key-terms" element={<HistoryHubFlashcardPage />} />
+                <Route path="/history-hub/concept-cards" element={<HistoryHubConceptCardsPage />} />
+                <Route path="/history-hub/quick-check" element={<HistoryHubQuickCheckPage />} />
+                <Route path="/history-hub/interpretation-lab" element={<HistoryHubInterpretationLabPage />} />
+                <Route path="/history-hub/question-lab" element={<HistoryHubQuestionLabPage />} />
+                <Route path="/history-hub/revision-map" element={<HistoryHubRevisionMapPage />} />
+                <Route path="/history-hub/historic-environment" element={<HistoryHubHistoricEnvironmentPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />
