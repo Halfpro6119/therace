@@ -210,7 +210,7 @@ export function ResultsPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-4xl mx-auto space-y-6"
+      className="max-w-4xl mx-auto space-y-4 sm:space-y-6"
     >
       {showXPPopup && <XPPopup xp={xpGained} type="quiz" position="center" />}
 
@@ -253,7 +253,7 @@ export function ResultsPage() {
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="card-elevated p-8 relative overflow-hidden"
+        className="card-elevated p-4 sm:p-6 md:p-8 relative overflow-hidden"
       >
         <div
           className="absolute inset-0 opacity-10"
@@ -265,24 +265,24 @@ export function ResultsPage() {
         />
 
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2" style={{ color: 'rgb(var(--text))' }}>
                 {accuracyPercent === 100 ? 'Perfect Run!' : beatsTarget ? 'Elite Finish!' : 'Run Complete!'}
               </h1>
-              <p className="text-lg" style={{ color: 'rgb(var(--text-secondary))' }}>
+              <p className="text-sm sm:text-base md:text-lg truncate" style={{ color: 'rgb(var(--text-secondary))' }}>
                 {quiz.title}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               {isNewPB && (
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', delay: 0.3 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-xs sm:text-sm"
                 >
-                  <Award size={20} />
+                  <Award size={16} className="sm:w-5 sm:h-5" />
                   <span>NEW PB!</span>
                 </motion.div>
               )}
@@ -290,23 +290,23 @@ export function ResultsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="card p-4"
+              className="card p-3 sm:p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Trophy size={18} style={{ color: 'rgb(var(--accent))' }} />
-                <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Accuracy</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <Trophy size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: 'rgb(var(--accent))' }} />
+                <span className="text-xs sm:text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Accuracy</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+              <div className="flex items-baseline gap-1.5 sm:gap-2">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                   {accuracyPercent}%
                 </p>
                 {accuracyDelta !== 0 && (
-                  <span className={`text-sm font-semibold ${accuracyDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-xs sm:text-sm font-semibold ${accuracyDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {formatDelta(accuracyDelta)}
                   </span>
                 )}
@@ -317,17 +317,17 @@ export function ResultsPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.25 }}
-              className="card p-4"
+              className="card p-3 sm:p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle size={18} style={{ color: 'rgb(var(--success))' }} />
-                <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Correct</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <CheckCircle size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: 'rgb(var(--success))' }} />
+                <span className="text-xs sm:text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Correct</span>
               </div>
-              <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                 {attempt.correctPromptIds.length}/{totalCount}
               </p>
               {showMarks && (
-                <p className="text-sm mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                <p className="text-xs sm:text-sm mt-0.5 sm:mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {attempt.marksAwarded}/{attempt.totalMarks} marks
                 </p>
               )}
@@ -337,18 +337,18 @@ export function ResultsPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="card p-4"
+              className="card p-3 sm:p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Clock size={18} style={{ color: 'rgb(var(--text-secondary))' }} />
-                <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Time</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <Clock size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: 'rgb(var(--text-secondary))' }} />
+                <span className="text-xs sm:text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Time</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <p className={`text-3xl font-bold font-mono stat-number ${beatsTarget ? 'text-green-600' : ''}`} style={{ color: beatsTarget ? 'rgb(var(--success))' : 'rgb(var(--text))' }}>
+              <div className="flex items-baseline gap-1.5 sm:gap-2">
+                <p className={`text-xl sm:text-2xl md:text-3xl font-bold font-mono stat-number ${beatsTarget ? 'text-green-600' : ''}`} style={{ color: beatsTarget ? 'rgb(var(--success))' : 'rgb(var(--text))' }}>
                   {formatTime(timeTaken)}
                 </p>
                 {timeDelta !== 0 && (
-                  <span className={`text-sm font-semibold ${timeDelta < 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-xs sm:text-sm font-semibold ${timeDelta < 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {formatDelta(timeDelta, true)}
                   </span>
                 )}
@@ -359,13 +359,13 @@ export function ResultsPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.35 }}
-              className="card p-4"
+              className="card p-3 sm:p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Target size={18} style={{ color: 'rgb(var(--warning))' }} />
-                <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Target</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <Target size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: 'rgb(var(--warning))' }} />
+                <span className="text-xs sm:text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>Target</span>
               </div>
-              <p className="text-3xl font-bold font-mono stat-number" style={{ color: beatsTarget ? 'rgb(var(--success))' : 'rgb(var(--text))' }}>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold font-mono stat-number" style={{ color: beatsTarget ? 'rgb(var(--success))' : 'rgb(var(--text))' }}>
                 {formatTime(grade9Target)}
               </p>
             </motion.div>
@@ -377,15 +377,15 @@ export function ResultsPage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4"
       >
         <motion.button
           onClick={handleRetry}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-primary py-5 text-lg font-bold flex items-center justify-center gap-3 shadow-lg"
+          className="btn-primary py-4 sm:py-5 text-base sm:text-lg font-bold flex items-center justify-center gap-2 sm:gap-3 shadow-lg min-h-[52px]"
         >
-          <RefreshCw size={22} />
+          <RefreshCw size={20} className="sm:w-[22px] sm:h-[22px]" />
           <span>RUN IT BACK</span>
         </motion.button>
 
@@ -394,9 +394,9 @@ export function ResultsPage() {
             onClick={() => navigate(`/quiz/${quiz.id}?mode=fixit`)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="btn-secondary py-5 flex items-center justify-center gap-3 font-semibold"
+            className="btn-secondary py-4 sm:py-5 flex items-center justify-center gap-2 sm:gap-3 font-semibold min-h-[52px]"
           >
-            <Wrench size={20} />
+            <Wrench size={18} className="sm:w-5 sm:h-5" />
             <span>Fix-It Drill</span>
           </motion.button>
         )}
@@ -405,9 +405,9 @@ export function ResultsPage() {
           onClick={() => setShowShareModal(true)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-secondary py-5 flex items-center justify-center gap-3 font-semibold"
+          className="btn-secondary py-4 sm:py-5 flex items-center justify-center gap-2 sm:gap-3 font-semibold min-h-[52px]"
         >
-          <Share2 size={20} />
+          <Share2 size={18} className="sm:w-5 sm:h-5" />
           <span>Share</span>
         </motion.button>
       </motion.div>

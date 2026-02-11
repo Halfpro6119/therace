@@ -95,31 +95,31 @@ export function SubjectsPage() {
 
   return (
     <motion.div
-      className="max-w-7xl mx-auto space-y-12"
+      className="max-w-7xl mx-auto space-y-6 sm:space-y-8 md:space-y-12"
       initial="hidden"
       animate="show"
       variants={container}
     >
       {/* Page header */}
       <motion.div
-        className="flex items-center gap-4"
+        className="flex items-center gap-3 sm:gap-4"
         variants={item}
       >
         <div
-          className="p-3 rounded-xl"
+          className="p-2.5 sm:p-3 rounded-xl flex-shrink-0"
           style={{ background: 'rgb(var(--accent) / 0.1)' }}
         >
-          <BookOpen size={32} style={{ color: 'rgb(var(--accent))' }} />
+          <BookOpen size={24} className="sm:w-8 sm:h-8" style={{ color: 'rgb(var(--accent))' }} />
         </div>
-        <div>
+        <div className="min-w-0">
           <h1
-            className="text-3xl md:text-4xl font-bold tracking-tight"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight"
             style={{ color: 'rgb(var(--text))' }}
           >
             Your Subjects
           </h1>
           <p
-            className="mt-1 text-base"
+            className="mt-0.5 sm:mt-1 text-sm sm:text-base"
             style={{ color: 'rgb(var(--text-secondary))' }}
           >
             Choose a subject to start practicing
@@ -129,7 +129,7 @@ export function SubjectsPage() {
 
       {/* Top: 3 featured hub cards */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         variants={container}
       >
         {FEATURED_HUBS.map((hub) => {
@@ -138,31 +138,31 @@ export function SubjectsPage() {
             <motion.div
               key={hub.id}
               variants={item}
-              className="rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+              className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
               style={{
                 background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
                 borderColor: `${hub.accentColor}30`,
               }}
             >
               <div
-                className="flex items-center gap-3 mb-4 pb-3"
+                className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
                 style={{ borderBottom: '1px solid rgb(var(--border))' }}
               >
                 <div
-                  className="p-2.5 rounded-xl"
+                  className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
                   style={{ background: `${hub.accentColor}15` }}
                 >
-                  <HubIcon size={24} style={{ color: hub.accentColor }} />
+                  <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h2
-                    className="text-lg font-bold"
+                    className="text-base sm:text-lg font-bold truncate"
                     style={{ color: 'rgb(var(--text))' }}
                   >
                     {hub.title}
                   </h2>
                   <p
-                    className="text-sm"
+                    className="text-xs sm:text-sm truncate"
                     style={{ color: 'rgb(var(--text-secondary))' }}
                   >
                     {hub.subtitle}
@@ -172,7 +172,7 @@ export function SubjectsPage() {
               <button
                 type="button"
                 onClick={() => navigate(hub.hubPath)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
                 style={{
                   background: hub.accentColor,
                   boxShadow: `0 2px 8px ${hub.accentColor}40`,
@@ -190,19 +190,19 @@ export function SubjectsPage() {
       {chosenSubjects.length > 0 && (
         <motion.section variants={container}>
           <motion.div
-            className="flex items-center gap-3 mb-4"
+            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
             variants={item}
           >
-            <BookMarked size={22} style={{ color: 'rgb(var(--accent))' }} />
+            <BookMarked size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'rgb(var(--accent))' }} />
             <h2
-              className="text-xl font-bold"
+              className="text-lg sm:text-xl font-bold"
               style={{ color: 'rgb(var(--text))' }}
             >
               Chosen Subjects
             </h2>
           </motion.div>
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
             variants={container}
           >
             {chosenSubjects.map((subject) => {
@@ -221,19 +221,19 @@ export function SubjectsPage() {
       {languageSubjects.length > 0 && (
         <motion.section variants={container}>
           <motion.div
-            className="flex items-center gap-3 mb-4"
+            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
             variants={item}
           >
-            <Languages size={22} style={{ color: 'rgb(var(--accent))' }} />
+            <Languages size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'rgb(var(--accent))' }} />
             <h2
-              className="text-xl font-bold"
+              className="text-lg sm:text-xl font-bold"
               style={{ color: 'rgb(var(--text))' }}
             >
               Languages
             </h2>
           </motion.div>
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6"
             variants={container}
           >
             {languageSubjects.map((subject) => {
@@ -251,7 +251,7 @@ export function SubjectsPage() {
       {/* Quick Tips card */}
       <motion.div
         variants={item}
-        className="rounded-2xl p-6 border-l-4"
+        className="rounded-2xl p-4 sm:p-6 border-l-4"
         style={{
           background: 'rgb(var(--surface))',
           borderColor: 'rgb(var(--accent))',
@@ -262,30 +262,30 @@ export function SubjectsPage() {
           boxShadow: 'var(--shadow-sm)',
         }}
       >
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
           <div
-            className="p-2 rounded-lg"
+            className="p-1.5 sm:p-2 rounded-lg"
             style={{ background: 'rgb(var(--accent) / 0.1)' }}
           >
-            <Lightbulb size={20} style={{ color: 'rgb(var(--accent))' }} />
+            <Lightbulb size={18} className="sm:w-5 sm:h-5" style={{ color: 'rgb(var(--accent))' }} />
           </div>
           <h2
-            className="text-xl font-bold"
+            className="text-lg sm:text-xl font-bold"
             style={{ color: 'rgb(var(--text))' }}
           >
             Quick Tips
           </h2>
         </div>
-        <ul className="space-y-3" style={{ color: 'rgb(var(--text-secondary))' }}>
-          <li className="flex items-start gap-3">
+        <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base" style={{ color: 'rgb(var(--text-secondary))' }}>
+          <li className="flex items-start gap-2 sm:gap-3">
             <span className="text-blue-500 font-bold shrink-0">•</span>
             <span>Start with topics you find challenging to build confidence</span>
           </li>
-          <li className="flex items-start gap-3">
+          <li className="flex items-start gap-2 sm:gap-3">
             <span className="text-green-500 font-bold shrink-0">•</span>
             <span>Practice daily to maintain your streak and improve retention</span>
           </li>
-          <li className="flex items-start gap-3">
+          <li className="flex items-start gap-2 sm:gap-3">
             <span className="text-purple-500 font-bold shrink-0">•</span>
             <span>Aim for Grade 9 Speed mastery to prove exam readiness</span>
           </li>

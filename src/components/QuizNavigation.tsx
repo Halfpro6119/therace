@@ -47,40 +47,40 @@ export function QuizNavigation({
   const isLastQuestion = currentIndex === totalQuestions - 1;
 
   return (
-    <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-gray-200">
+    <div className="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
       {/* Question Counter + optional marks & difficulty */}
-      <div className="text-center text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+      <div className="text-center text-xs sm:text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
         Question {currentIndex + 1} of {totalQuestions}
         {totalMarks != null && totalMarks > 0 && (
-          <span> • {totalMarks} marks</span>
+          <span className="hidden xs:inline"> • {totalMarks} marks</span>
         )}
         {difficulty != null && difficulty >= 1 && difficulty <= 5 && (
-          <span> • Difficulty {difficulty}/5</span>
+          <span className="hidden sm:inline"> • Difficulty {difficulty}/5</span>
         )}
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
         {/* Previous Button */}
         <button
           onClick={onPrevious}
           disabled={!canGoBack || isSubmitting}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-gray-300 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg border-2 border-gray-300 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium min-h-[44px] min-w-[44px]"
           title="Go to previous question"
         >
-          <ChevronLeft size={20} />
-          <span className="hidden sm:inline">Previous</span>
+          <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline text-sm">Previous</span>
         </button>
 
         {/* Skip Button */}
         <button
           onClick={onSkip}
           disabled={isSubmitting}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-orange-300 hover:border-orange-400 text-orange-700 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg border-2 border-orange-300 hover:border-orange-400 text-orange-700 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium min-h-[44px] min-w-[44px]"
           title="Skip this question and move to the next"
         >
-          <SkipForward size={20} />
-          <span className="hidden sm:inline">Skip</span>
+          <SkipForward size={18} className="sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline text-sm">Skip</span>
         </button>
 
         {/* FIXED: Submit Button (shown when no feedback yet) */}
@@ -88,10 +88,10 @@ export function QuizNavigation({
           <button
             onClick={onSubmit}
             disabled={isSubmitting || submitDisabled}
-            className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex-1 px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base min-h-[44px]"
             title={submitDisabled ? 'Provide an answer to submit' : 'Submit your answer'}
           >
-            {isSubmitting ? 'Checking...' : 'Submit Answer'}
+            {isSubmitting ? 'Checking...' : 'Submit'}
           </button>
         )}
 
@@ -100,10 +100,10 @@ export function QuizNavigation({
           <button
             onClick={onNext}
             disabled={isSubmitting}
-            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex-1 px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base min-h-[44px]"
             title="Continue to next question"
           >
-            {isLastQuestion ? 'Finish Quiz' : 'Continue'}
+            {isLastQuestion ? 'Finish' : 'Continue'}
           </button>
         )}
 
@@ -112,19 +112,19 @@ export function QuizNavigation({
           <button
             onClick={onNext}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-gray-300 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg border-2 border-gray-300 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium min-h-[44px] min-w-[44px]"
             title="Go to next question"
           >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight size={20} />
+            <span className="hidden sm:inline text-sm">Next</span>
+            <ChevronRight size={18} className="sm:w-5 sm:h-5" />
           </button>
         )}
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2">
+      <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
         <div
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+          className="bg-blue-600 h-1.5 sm:h-2 rounded-full transition-all duration-300"
           style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
         />
       </div>

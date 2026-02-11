@@ -54,34 +54,38 @@ export function AppShell({ children }: AppShellProps) {
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Daily Challenge - hidden on mobile */}
             <button
               onClick={() => navigate('/quiz/daily-challenge-1')}
-              className="hidden sm:flex items-center gap-2 btn-primary text-sm px-4 py-2"
+              className="hidden md:flex items-center gap-2 btn-primary text-sm px-4 py-2"
             >
               <Zap size={16} />
               <span>Daily Challenge</span>
             </button>
 
+            {/* Streak - always visible but compact */}
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg min-h-[40px]"
               style={{ background: 'rgb(var(--surface-2))' }}
             >
               <StreakFlame streak={streak.currentStreakDays} size="sm" />
             </div>
 
+            {/* XP Badge - responsive text */}
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg font-semibold text-sm text-white"
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg font-semibold text-xs sm:text-sm text-white min-h-[40px]"
               style={{ background: 'var(--gradient-primary)' }}
             >
-              <span>Lv {profile.level}</span>
-              <span className="opacity-75">•</span>
-              <span>{profile.xpTotal} XP</span>
+              <span className="whitespace-nowrap">Lv {profile.level}</span>
+              <span className="hidden xs:inline opacity-75">•</span>
+              <span className="hidden xs:inline whitespace-nowrap">{profile.xpTotal} XP</span>
             </div>
 
+            {/* Theme toggle - always visible */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg transition-all hover:scale-105"
+              className="p-2 rounded-lg transition-all hover:scale-105 min-h-[40px] min-w-[40px] flex items-center justify-center"
               style={{
                 background: 'rgb(var(--surface-2))',
                 color: 'rgb(var(--text))'
@@ -144,7 +148,7 @@ export function AppShell({ children }: AppShellProps) {
         className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass border-t pb-[env(safe-area-inset-bottom,0)]"
         style={{ borderColor: 'rgb(var(--border))' }}
       >
-        <div className="h-16 min-h-[4rem] grid grid-cols-5 gap-1 px-2 py-2 flex items-center">
+        <div className="h-16 min-h-[4rem] grid grid-cols-4 gap-1 px-2 sm:px-4 py-2">
           {navItems.map(item => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -154,13 +158,14 @@ export function AppShell({ children }: AppShellProps) {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 whileTap={{ scale: 0.95 }}
-                className="flex flex-col items-center justify-center gap-0.5 rounded-lg transition-all py-1"
+                className="flex flex-col items-center justify-center gap-0.5 rounded-xl transition-all py-2 min-h-[48px]"
                 style={{
-                  color: active ? 'rgb(var(--accent))' : 'rgb(var(--text-secondary))'
+                  color: active ? 'rgb(var(--accent))' : 'rgb(var(--text-secondary))',
+                  background: active ? 'rgb(var(--accent) / 0.1)' : 'transparent'
                 }}
               >
                 <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-                <span className={`text-[11px] sm:text-xs font-semibold ${active ? 'font-bold' : ''}`}>{item.label}</span>
+                <span className={`text-[10px] sm:text-xs font-medium ${active ? 'font-semibold' : ''}`}>{item.label}</span>
               </motion.button>
             );
           })}

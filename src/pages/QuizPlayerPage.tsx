@@ -686,41 +686,41 @@ export function QuizPlayerPage() {
         className="fixed inset-0 z-50 overflow-auto quiz-player-bg"
         style={{ background: 'rgb(var(--bg))' }}
       >
-        <div className="max-w-7xl mx-auto p-4 md:p-6 min-h-screen flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 py-4 md:p-6 min-h-screen flex items-center justify-center">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="card-elevated p-8 md:p-12 max-w-2xl w-full"
+            className="card-elevated p-5 sm:p-8 md:p-12 max-w-2xl w-full"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight" style={{ color: 'rgb(var(--text))' }}>
               {isFixItMode ? 'Fix-It Drill' : quiz.title}
             </h1>
-            <p className="text-lg mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
               {quizPrompts.length} questions • {untimedMode ? 'No time limit' : `${formatTime(timeRemaining)} time limit`}
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="card p-6">
-                <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Questions</p>
-                <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
+              <div className="card p-4 sm:p-6">
+                <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Questions</p>
+                <p className="text-2xl sm:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                   {quizPrompts.length}
                 </p>
               </div>
-              <div className="card p-6">
-                <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Time Limit</p>
-                <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+              <div className="card p-4 sm:p-6">
+                <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Time Limit</p>
+                <p className="text-2xl sm:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                   {untimedMode ? '∞' : formatTime(timeRemaining)}
                 </p>
               </div>
-              <div className="card p-6">
-                <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Total Marks</p>
-                <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+              <div className="card p-4 sm:p-6">
+                <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Total Marks</p>
+                <p className="text-2xl sm:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                   {quizPrompts.reduce((sum, p) => sum + (p.marks || 1), 0)}
                 </p>
               </div>
-              <div className="card p-6 sm:col-span-2">
-                <p className="text-sm font-medium mb-2 text-gradient-elite">Grade 9 Target</p>
-                <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
+              <div className="card p-4 sm:p-6">
+                <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-gradient-elite">Grade 9</p>
+                <p className="text-2xl sm:text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                   {formatTime(quiz.grade9TargetSec)}
                 </p>
               </div>
@@ -776,16 +776,16 @@ export function QuizPlayerPage() {
       className="fixed inset-0 z-50 overflow-auto quiz-player-bg"
       style={{ background: 'rgb(var(--bg))' }}
     >
-      <div className="max-w-7xl mx-auto p-4 md:p-6 min-h-screen">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 md:py-6 min-h-screen">
         {/* HEADER WITH PROGRESS BAR */}
         <motion.div
           initial={{ y: -20 }}
           animate={{ y: 0 }}
-          className="card mb-6 sticky top-4 z-10"
+          className="card mb-4 sm:mb-6 sticky top-2 sm:top-4 z-10"
         >
           <div className="relative">
             {/* PROGRESS BAR */}
-            <div className="absolute top-0 left-0 right-0 h-2 bg-gray-200 dark:bg-gray-700 rounded-t-xl overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 sm:h-2 bg-gray-200 dark:bg-gray-700 rounded-t-xl overflow-hidden">
               <motion.div
                 className="h-full"
                 style={{
@@ -798,7 +798,7 @@ export function QuizPlayerPage() {
               {[25, 50, 75, 100].map((milestone) => (
                 <div
                   key={milestone}
-                  className="absolute top-0 bottom-0 w-1"
+                  className="absolute top-0 bottom-0 w-0.5 sm:w-1"
                   style={{
                     left: `${milestone}%`,
                     background: progressPercentage >= milestone ? 'white' : 'rgba(255,255,255,0.3)',
@@ -808,8 +808,8 @@ export function QuizPlayerPage() {
             </div>
 
             {/* HEADER CONTENT */}
-            <div className="p-4 pt-6 flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="p-3 sm:p-4 pt-4 sm:pt-6 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -823,36 +823,37 @@ export function QuizPlayerPage() {
                     });
                     if (confirmed) navigate(-1);
                   }}
-                  className="p-2 rounded-lg transition-colors hover:bg-opacity-10"
+                  className="p-2 rounded-lg transition-colors hover:bg-opacity-10 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
                   style={{ color: 'rgb(var(--text))' }}
                 >
-                  <X size={24} />
+                  <X size={22} />
                 </motion.button>
-                <div>
-                  <h2 className="font-bold" style={{ color: 'rgb(var(--text))' }}>
+                <div className="min-w-0">
+                  <h2 className="font-bold text-sm sm:text-base truncate" style={{ color: 'rgb(var(--text))' }}>
                     {isFixItMode ? 'Fix-It Drill' : quiz.title}
                   </h2>
-                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    {solvedPrompts.size} / {quizPrompts.length} • {Math.round(progressPercentage)}%
+                  <p className="text-xs sm:text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    {solvedPrompts.size}/{quizPrompts.length} • {Math.round(progressPercentage)}%
                   </p>
                 </div>
               </div>
 
               {/* RIGHT SIDE CONTROLS */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
                 {!focusMode && (
                   <>
                     {speedrunMode && (
-                      <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <Zap size={16} className="text-yellow-600" />
                         <span className="text-xs font-bold text-yellow-600">SPEEDRUN</span>
                       </div>
                     )}
 
                     {untimedMode ? (
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-xl bg-gray-100 dark:bg-gray-800" style={{ color: 'rgb(var(--text-secondary))' }}>
-                        <Clock size={20} />
-                        <span>No limit</span>
+                      <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-mono font-bold text-sm sm:text-xl bg-gray-100 dark:bg-gray-800" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        <Clock size={16} className="sm:w-5 sm:h-5" />
+                        <span className="hidden xs:inline">No limit</span>
+                        <span className="xs:hidden">∞</span>
                       </div>
                     ) : (
                       <motion.div
@@ -860,14 +861,14 @@ export function QuizPlayerPage() {
                           scale: timeRemaining < 30 ? [1, 1.05, 1] : 1
                         }}
                         transition={{ repeat: timeRemaining < 30 ? Infinity : 0, duration: 1 }}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-xl"
+                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-mono font-bold text-sm sm:text-xl"
                         style={{
                           background: timeRemaining < 30 ? 'rgb(var(--danger) / 0.1)' : 'rgb(var(--accent) / 0.1)',
                           color: timeRemaining < 30 ? 'rgb(var(--danger))' : 'rgb(var(--accent))',
                           fontVariantNumeric: 'tabular-nums',
                         }}
                       >
-                        <Clock size={20} />
+                        <Clock size={16} className="sm:w-5 sm:h-5" />
                         <span>{formatTime(timeRemaining)}</span>
                       </motion.div>
                     )}
@@ -886,7 +887,7 @@ export function QuizPlayerPage() {
                         setToolkitOpen(true);
                       }
                     }}
-                    className={`p-2 rounded-lg transition-colors ${
+                    className={`p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
                       toolkitOpen
                         ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -894,21 +895,21 @@ export function QuizPlayerPage() {
                     style={{ color: toolkitOpen ? undefined : 'rgb(var(--text))' }}
                     title="Maths Keyboard (powers, roots, symbols)"
                   >
-                    <Keyboard size={20} />
+                    <Keyboard size={18} className="sm:w-5 sm:h-5" />
                   </motion.button>
                 )}
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center">
                   {currentPrompt && !showFeedback && (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleGiveUp}
-                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors text-orange-600 dark:text-orange-400 text-sm font-medium"
+                      className="flex items-center justify-center gap-1 px-2 sm:px-2.5 py-2 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors text-orange-600 dark:text-orange-400 text-sm font-medium min-h-[44px]"
                       title="Give up and see the answer"
                     >
                       <Flag size={18} />
-                      <span className="hidden sm:inline">Give up</span>
+                      <span className="hidden md:inline">Give up</span>
                     </motion.button>
                   )}
                   <div className="relative">
@@ -916,10 +917,10 @@ export function QuizPlayerPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setShowSettings(!showSettings)}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                       style={{ color: 'rgb(var(--text))' }}
                     >
-                      <Settings size={20} />
+                      <Settings size={18} className="sm:w-5 sm:h-5" />
                     </motion.button>
 
                   <AnimatePresence>
@@ -1022,7 +1023,7 @@ export function QuizPlayerPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className={`card-elevated p-8 md:p-12 relative ${
+                className={`card-elevated p-4 sm:p-6 md:p-8 lg:p-12 relative ${
                   feedbackAnimation === 'correct' ? 'quiz-correct-pulse' : ''
                 } ${feedbackAnimation === 'wrong' ? 'quiz-wrong-shake' : ''}`}
               >
@@ -1044,7 +1045,7 @@ export function QuizPlayerPage() {
                 {/* QUESTION CONTENT */}
                 <div className="mb-8">
                   {isMathsSubject && (
-                    <div className="mb-4 flex items-center gap-3 flex-wrap">
+                    <div className="mb-4 flex items-center gap-2 sm:gap-3 flex-wrap">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -1052,7 +1053,7 @@ export function QuizPlayerPage() {
                           setToolkitOpenWithTab('keyboard');
                           setToolkitOpen(true);
                         }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors shadow-md"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors shadow-md min-h-[44px]"
                         style={{
                           background: 'rgb(var(--accent) / 0.15)',
                           color: 'rgb(var(--accent))',
@@ -1061,25 +1062,25 @@ export function QuizPlayerPage() {
                         title="Maths Keyboard (powers, roots, symbols)"
                       >
                         <Keyboard size={18} />
-                        <span className="text-sm font-medium">Maths Keyboard</span>
+                        <span className="text-xs sm:text-sm font-medium">Keyboard</span>
                       </motion.button>
                       {calculatorAllowed && (
                         <>
-                          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                             <Wrench size={16} className="text-blue-600 dark:text-blue-400" />
                             <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                              Calculator Available
+                              Calculator OK
                             </span>
                           </div>
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setCalculatorModalOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+                            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md min-h-[44px]"
                             title="Open Calculator"
                           >
                             <Calculator size={18} />
-                            <span className="text-sm font-medium">Calculator</span>
+                            <span className="text-xs sm:text-sm font-medium">Calc</span>
                           </motion.button>
                         </>
                       )}
@@ -1099,7 +1100,7 @@ export function QuizPlayerPage() {
                     )
                   )}
 
-                  <h3 className="text-2xl md:text-3xl font-bold" style={{ color: 'rgb(var(--text))' }}>
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-snug" style={{ color: 'rgb(var(--text))' }}>
                     {currentPrompt?.question ?? ""}
                   </h3>
 

@@ -41,7 +41,7 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
       <ProfileHeaderCard
         profile={profile}
         streak={streak}
@@ -50,31 +50,31 @@ export function ProfilePage() {
 
       <button
         onClick={() => navigate('/profile/subjects')}
-        className="w-full rounded-3xl p-8 transition-all hover:scale-[1.02]"
+        className="w-full rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 transition-all hover:scale-[1.01] sm:hover:scale-[1.02] active:scale-[0.99] min-h-[72px]"
         style={{ background: 'rgb(var(--surface))' }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-4 rounded-2xl" style={{ background: 'rgba(var(--accent), 0.1)' }}>
-              <BarChart3 size={32} style={{ color: 'rgb(var(--accent))' }} />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl flex-shrink-0" style={{ background: 'rgba(var(--accent), 0.1)' }}>
+              <BarChart3 size={24} className="sm:w-8 sm:h-8" style={{ color: 'rgb(var(--accent))' }} />
             </div>
-            <div className="text-left">
-              <h2 className="text-2xl font-black mb-1" style={{ color: 'rgb(var(--text))' }}>
+            <div className="text-left min-w-0">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black mb-0.5 sm:mb-1 truncate" style={{ color: 'rgb(var(--text))' }}>
                 Subject Breakdown
               </h2>
-              <p className="text-base font-semibold" style={{ color: 'rgb(var(--text-secondary))' }}>
-                View detailed analytics for each subject
+              <p className="text-sm sm:text-base font-semibold truncate" style={{ color: 'rgb(var(--text-secondary))' }}>
+                View detailed analytics
               </p>
             </div>
           </div>
-          <ArrowRight size={32} style={{ color: 'rgb(var(--accent))' }} />
+          <ArrowRight size={24} className="sm:w-8 sm:h-8 flex-shrink-0" style={{ color: 'rgb(var(--accent))' }} />
         </div>
       </button>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
         <StreakWidget streak={streak} attempts={attempts} />
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <MasteryProgressCard
             masteryStates={masteryStates}
             profile={profile}
