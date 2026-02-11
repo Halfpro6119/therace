@@ -10,7 +10,7 @@ export interface SubjectHub {
   /** Subject names to show in this hub (matched against DB subject.name) */
   subjectNames: string[];
   /** Lucide icon name for hub styling */
-  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark' | 'Globe';
+  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark' | 'Globe' | 'BookHeart' | 'Heart';
   /** Accent hex for tint (e.g. #0EA5E9 for English, #3B82F6 for Maths, #22C55E for Science) */
   accentColor: string;
   /** Path to dedicated hub page */
@@ -78,6 +78,15 @@ export const FEATURED_HUBS: SubjectHub[] = [
     accentColor: '#0D9488',
     hubPath: '/geography-hub',
   },
+  {
+    id: 'religious-studies',
+    title: 'Religious Studies Hub',
+    subtitle: 'AQA GCSE Religious Studies A 8062 – Beliefs, themes & exam practice',
+    subjectNames: ['Religious Studies'],
+    icon: 'BookHeart',
+    accentColor: '#7C3AED',
+    hubPath: '/religious-studies-hub',
+  },
 ];
 
 /** Order for chosen subjects section. (Geography has dedicated Geography Hub.) */
@@ -85,7 +94,6 @@ export const CHOSEN_SUBJECT_NAMES: string[] = [
   'Computer Science',
   'Health and Social Studies',
   'Psychology',
-  'Religious Studies',
 ];
 
 /** Languages section. */

@@ -77,6 +77,9 @@ const STORAGE_KEYS = {
   RS_HUB_OPTIONS: 'grade9sprint_rs_hub_options',
   RS_HUB_FLASHCARD_MASTERY: 'grade9sprint_rs_hub_flashcard_mastery',
   RS_HUB_PART_PROGRESS: 'grade9sprint_rs_hub_part_progress',
+  GEOGRAPHY_HUB_OPTIONS: 'grade9sprint_geography_hub_options',
+  GEOGRAPHY_HUB_SECTION_PROGRESS: 'grade9sprint_geography_hub_section_progress',
+  GEOGRAPHY_HUB_FLASHCARD_MASTERY: 'grade9sprint_geography_hub_flashcard_mastery',
 };
 
 /**
