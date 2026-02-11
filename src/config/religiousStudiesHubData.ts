@@ -6,6 +6,7 @@
 import type {
   ReligionId,
   ThemeId,
+  ReligiousStudiesOptionSelection,
   ReligionMeta,
   ThemeMeta,
   BeliefConcept,
@@ -375,10 +376,15 @@ export const SHORT_ANSWER_ITEMS: ShortAnswerItem[] = [
   { id: 'sa-isl-4', religionId: 'islam', marks: 4, question: 'Explain two contrasting beliefs about the importance of prayer in Islam.', modelAnswer: 'One belief: Sunni Muslims pray five times daily as an obligation; it is the second pillar and central to faith. Another belief: Shi\'a Muslims also pray five times but may combine some prayers; both stress that prayer maintains a direct link with God.', markScheme: 'Two contrasting beliefs with development.' },
   { id: 'sa-thA-1', themeId: 'A', marks: 1, question: 'Give one religious belief about marriage.', modelAnswer: 'Marriage is a sacred covenant between a man and a woman.' },
   { id: 'sa-thA-4', themeId: 'A', marks: 4, question: 'Explain two contrasting religious beliefs about contraception.', modelAnswer: 'One belief: Catholic Christians teach that artificial contraception is wrong because it blocks the natural purpose of sex (procreation) and goes against God\'s design. Another belief: Many Protestant Christians believe contraception is acceptable when used responsibly within marriage to plan family size and care for existing children.', markScheme: 'Two contrasting beliefs with development.' },
-  // Buddhism, Judaism, Sikhism
+  // Buddhism, Judaism, Sikhism, Hinduism, Catholic Christianity
   { id: 'sa-bud-1', religionId: 'buddhism', marks: 1, question: 'Give one of the Four Noble Truths.', modelAnswer: 'Suffering (dukkha) exists.' },
+  { id: 'sa-bud-2', religionId: 'buddhism', marks: 2, question: 'Give two of the Three Marks of Existence.', modelAnswer: 'Anicca (impermanence), anatta (no fixed self), dukkha (unsatisfactoriness).', markScheme: '1 mark per belief.' },
   { id: 'sa-jud-1', religionId: 'judaism', marks: 1, question: 'Give one belief about the Covenant in Judaism.', modelAnswer: 'God made a covenant with Abraham/the Israelites at Sinai.' },
+  { id: 'sa-jud-2', religionId: 'judaism', marks: 2, question: 'Give two beliefs about Shabbat in Judaism.', modelAnswer: 'Rest from work; remembering creation; covenant sign.', markScheme: '1 mark per belief.' },
   { id: 'sa-sik-1', religionId: 'sikhism', marks: 1, question: 'Give one belief about God in Sikhism.', modelAnswer: 'God is one, creator, timeless (from Mool Mantra).' },
+  { id: 'sa-sik-2', religionId: 'sikhism', marks: 2, question: 'Give two Sikh beliefs about equality.', modelAnswer: 'All humans are equal; langar demonstrates equality; sewa (service) to all.', markScheme: '1 mark per belief.' },
+  { id: 'sa-hin-1', religionId: 'hinduism', marks: 1, question: 'Give one Hindu belief about Brahman.', modelAnswer: 'Brahman is ultimate reality; can be nirguna or saguna.' },
+  { id: 'sa-cath-1', religionId: 'catholic-christianity', marks: 1, question: 'Give one Catholic belief about the sacraments.', modelAnswer: 'Sacraments are outward signs of inward grace.' },
   // Themes B–F
   { id: 'sa-thB-1', themeId: 'B', marks: 1, question: 'Give one religious belief about the sanctity of life.', modelAnswer: 'Human life is sacred because it is created by God.' },
   { id: 'sa-thB-4', themeId: 'B', marks: 4, question: 'Explain two contrasting religious beliefs about abortion.', modelAnswer: 'One belief: Catholics teach that abortion is always wrong because life begins at conception and is sacred. Another belief: Some Christians allow abortion in limited circumstances (e.g. risk to mother).', markScheme: 'Two contrasting beliefs with development.' },
@@ -438,6 +444,42 @@ export const EXTENDED_WRITING_PROMPTS: ExtendedWritingPrompt[] = [
     guidance: 'In your answer you should refer to religious and non-religious views.',
     religionsToRefer: ['Christianity', 'Islam'],
     modelAnswer: 'One view: Catholics and many Christians oppose the death penalty; all life is sacred; rehabilitation is possible. Another view: Some Muslims and Christians support it for serious crimes; retribution and deterrence. Evaluation: Sanctity of life vs justice and retribution. Conclusion: No single religious view; tradition and interpretation vary.',
+  },
+  {
+    id: 'ew-bud-1',
+    religionId: 'buddhism',
+    statement: '"The Eightfold Path is the most important Buddhist teaching." Evaluate this statement.',
+    guidance: 'In your answer you should refer to Buddhism.',
+    modelAnswer: 'One view: The Eightfold Path is central – it is the fourth Noble Truth and the practical way to end suffering. Another view: The Four Noble Truths provide the framework; without understanding dukkha, the path lacks meaning. Evaluation: Both are interconnected; the path puts the truths into practice. Conclusion: The Eightfold Path is essential but part of a whole.',
+  },
+  {
+    id: 'ew-cath-1',
+    religionId: 'catholic-christianity',
+    statement: '"The seven sacraments are the most important part of Catholic life." Evaluate this statement.',
+    guidance: 'In your answer you should refer to Catholic Christianity.',
+    modelAnswer: 'One view: The sacraments mark key moments (baptism, Eucharist, marriage, etc.) and channel God\'s grace. Another view: Prayer and the Mass are central; sacraments are one expression. Evaluation: Sacraments structure Catholic life; they are both important. Conclusion: The sacraments are fundamental to Catholic identity.',
+  },
+  {
+    id: 'ew-jud-1',
+    religionId: 'judaism',
+    statement: '"The Covenant is the most important belief in Judaism." Evaluate this statement.',
+    guidance: 'In your answer you should refer to Judaism.',
+    modelAnswer: 'One view: The Covenant defines the relationship between God and Israel; the Torah flows from it. Another view: Mitzvot and practice are equally important; belief without action is incomplete. Evaluation: Covenant and mitzvot are interconnected. Conclusion: The Covenant is foundational but practice matters too.',
+  },
+  {
+    id: 'ew-thC-1',
+    themeId: 'C',
+    statement: '"The Design argument proves that God exists." Evaluate this statement.',
+    guidance: 'In your answer you should refer to religious and non-religious views.',
+    modelAnswer: 'One view: The universe exhibits order and purpose; therefore a designer (God) exists. Another view: Evolution explains apparent design; the argument commits the "who designed the designer?" fallacy. Evaluation: The argument is intuitive but not conclusive. Conclusion: It supports belief but does not prove God\'s existence.',
+  },
+  {
+    id: 'ew-thF-1',
+    themeId: 'F',
+    statement: '"Religious believers should give all their wealth to the poor." Evaluate this statement.',
+    guidance: 'In your answer you should refer to Christianity and one other religion.',
+    religionsToRefer: ['Christianity', 'Islam'],
+    modelAnswer: 'One view: Jesus taught "sell what you have and give to the poor"; radical generosity. Another view: Stewardship and responsible giving; not necessarily giving everything. Evaluation: Religions emphasise charity but differ on extent. Conclusion: Generosity is valued; practical application varies.',
   },
 ];
 

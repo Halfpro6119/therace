@@ -319,6 +319,17 @@ function App() {
                 <Route path="/geography-hub/fieldwork-lab" element={<GeographyHubFieldworkLabPage />} />
                 <Route path="/geography-hub/question-lab" element={<GeographyHubQuestionLabPage />} />
                 <Route path="/geography-hub/revision-map" element={<GeographyHubRevisionMapPage />} />
+                <Route path="/religious-studies-hub" element={<ReligiousStudiesHubHomePage />} />
+                <Route path="/religious-studies-hub/option-select" element={<ReligiousStudiesHubOptionSelectPage />} />
+                <Route path="/religious-studies-hub/belief-lab" element={<ReligiousStudiesHubBeliefLabPage />} />
+                <Route path="/religious-studies-hub/flashcards" element={<ReligiousStudiesHubFlashcardPage />} />
+                <Route path="/religious-studies-hub/contrasting-views" element={<ReligiousStudiesHubContrastingViewsPage />} />
+                <Route path="/religious-studies-hub/quick-check" element={<ReligiousStudiesHubQuickCheckPage />} />
+                <Route path="/religious-studies-hub/short-answer-lab" element={<ReligiousStudiesHubShortAnswerPage />} />
+                <Route path="/religious-studies-hub/extended-writing-lab" element={<ReligiousStudiesHubExtendedWritingPage />} />
+                <Route path="/religious-studies-hub/philosophical-arguments" element={<ReligiousStudiesHubPhilosophicalArgumentsPage />} />
+                <Route path="/religious-studies-hub/textual-studies" element={<ReligiousStudiesHubTextualStudiesPage />} />
+                <Route path="/religious-studies-hub/revision-map" element={<ReligiousStudiesHubRevisionMapPage />} />
                 <Route path="/psychology-hub" element={<PsychologyHubHomePage />} />
                 <Route path="/psychology-hub/option-select" element={<PsychologyHubOptionSelectPage />} />
                 <Route path="/psychology-hub/concept-lab" element={<PsychologyHubConceptLabPage />} />
