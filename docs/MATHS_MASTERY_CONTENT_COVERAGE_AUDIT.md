@@ -125,6 +125,8 @@ Foundation was extended beyond the initial full-coverage target to give more pra
 
 **Spec updates:** Topic `f1-graphs-geometry` extended to F1-30; `f2-mixed` to F2-35; `f3-mixed` to F3-40. Corresponding units updated. `GOLDEN_MATHS_QUESTION_LIST.md` and this audit updated.
 
+**Difficulty and marks (implemented):** Maths Mastery now uses difficulty grading and accurate marks. Each golden question has an optional difficulty 1–5 (default by tier: Foundation 2, Higher 3), stored in `prompt.meta.difficulty` when seeding; default marks are 1 for most types and 2 for proofShort, multiNumeric, tableFill, dragMatch. Quiz shows total marks and per-question difficulty when set; marks awarded are tracked and persisted on the attempt; the results page shows "X/Y marks" alongside accuracy and correct count.
+
 **Possible future improvements (not yet done):**
 
 - **F2 curriculum topics:** Number (5), Algebra & Graphs (3), Geometry (4), Statistics (2) are still thin for topic-only quizzes. Adding questions directly into those bands would require renumbering or new contiguous blocks (e.g. F2-36–F2-40 for Statistics).

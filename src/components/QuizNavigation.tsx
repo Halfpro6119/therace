@@ -23,6 +23,10 @@ interface QuizNavigationProps {
   showSubmitButton: boolean;
   /** When true, Submit is disabled (e.g. empty answer). */
   submitDisabled?: boolean;
+  /** Total marks for the quiz (e.g. Maths). Shown as "• X marks" when set. */
+  totalMarks?: number;
+  /** Difficulty 1–5 for current question (e.g. from prompt.meta.difficulty). Shown when set. */
+  difficulty?: number;
 }
 
 export function QuizNavigation({
@@ -37,14 +41,22 @@ export function QuizNavigation({
   hasAnswered,
   showSubmitButton,
   submitDisabled = false,
+  totalMarks,
+  difficulty,
 }: QuizNavigationProps) {
   const isLastQuestion = currentIndex === totalQuestions - 1;
 
   return (
     <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-gray-200">
-      {/* Question Counter */}
-      <div className="text-center text-sm text-gray-600">
+      {/* Question Counter + optional marks & difficulty */}
+      <div className="text-center text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
         Question {currentIndex + 1} of {totalQuestions}
+        {totalMarks != null && totalMarks > 0 && (
+          <span> • {totalMarks} marks</span>
+        )}
+        {difficulty != null && difficulty >= 1 && difficulty <= 5 && (
+          <span> • Difficulty {difficulty}/5</span>
+        )}
       </div>
 
       {/* Navigation Buttons */}

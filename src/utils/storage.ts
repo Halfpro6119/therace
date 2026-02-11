@@ -23,6 +23,13 @@ import type {
   BusinessUnitId,
   BusinessConfidenceLevel,
 } from '../types/businessHub';
+import type {
+  HistoryOptionSelection,
+  HistoryPartProgress,
+  HistoryFlashcardMastery,
+  HistoryConfidenceLevel,
+  HistoryFactorEssayDraft,
+} from '../types/historyHub';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -50,6 +57,11 @@ const STORAGE_KEYS = {
   // Business Hub
   BUSINESS_HUB_TOPIC_PROGRESS: 'grade9sprint_business_hub_topic_progress',
   BUSINESS_HUB_FLASHCARD_MASTERY: 'grade9sprint_business_hub_flashcard_mastery',
+  // History Hub
+  HISTORY_HUB_OPTIONS: 'grade9sprint_history_hub_options',
+  HISTORY_HUB_PART_PROGRESS: 'grade9sprint_history_hub_part_progress',
+  HISTORY_HUB_FLASHCARD_MASTERY: 'grade9sprint_history_hub_flashcard_mastery',
+  HISTORY_HUB_FACTOR_ESSAY_DRAFTS: 'grade9sprint_history_hub_factor_essay_drafts',
 };
 
 /**
@@ -744,6 +756,49 @@ export const storage = {
   isBusinessEvaluationUnlocked: (unitId: BusinessUnitId, topicIds: string[]): boolean => {
     const all = storage.getBusinessTopicProgress();
     return topicIds.some((topicId) => all[`${unitId}-${topicId}`]?.calculationsCompleted);
+  },
+
+  // —— History Hub ——
+  getHistoryOptionSelection: (): HistoryOptionSelection | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.HISTORY_HUB_OPTIONS);
+    return data ? JSON.parse(data) : null;
+  },
+  setHistoryOptionSelection: (selection: HistoryOptionSelection): void => {
+    localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_OPTIONS, JSON.stringify(selection));
+  },
+  getHistoryPartProgress: (): Record<string, HistoryPartProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.HISTORY_HUB_PART_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getHistoryPartProgressByKey: (optionKey: string, partId: string): HistoryPartProgress | undefined => {
+    const key = `${optionKey}-${partId}`;
+    return storage.getHistoryPartProgress()[key];
+  },
+  updateHistoryPartProgress: (progress: HistoryPartProgress): void => {
+    const all = storage.getHistoryPartProgress();
+    const key = `${progress.optionKey}-${progress.partId}`;
+    all[key] = progress;
+    localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_PART_PROGRESS, JSON.stringify(all));
+  },
+  getHistoryFlashcardMastery: (): Record<string, HistoryFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.HISTORY_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateHistoryFlashcardMastery: (termId: string, optionKey: string, partId: string, confidence: HistoryConfidenceLevel): void => {
+    const all = storage.getHistoryFlashcardMastery();
+    all[termId] = { termId, optionKey, partId, confidence, lastSeen: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+  getHistoryFactorEssayDraft: (questionId: string): HistoryFactorEssayDraft | undefined => {
+    const data = localStorage.getItem(STORAGE_KEYS.HISTORY_HUB_FACTOR_ESSAY_DRAFTS);
+    const map: Record<string, HistoryFactorEssayDraft> = data ? JSON.parse(data) : {};
+    return map[questionId];
+  },
+  setHistoryFactorEssayDraft: (draft: HistoryFactorEssayDraft): void => {
+    const data = localStorage.getItem(STORAGE_KEYS.HISTORY_HUB_FACTOR_ESSAY_DRAFTS);
+    const map: Record<string, HistoryFactorEssayDraft> = data ? JSON.parse(data) : {};
+    map[draft.questionId] = { ...draft, updatedAt: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_FACTOR_ESSAY_DRAFTS, JSON.stringify(map));
   },
 };
 

@@ -1172,6 +1172,8 @@ export function QuizPlayerPage() {
                   hasAnswered={answeredPrompts.has(currentPrompt.id)}
                   showSubmitButton={!showFeedback}
                   submitDisabled={!hasMinimalResponse(currentInput, currentPrompt?.type ?? 'short')}
+                  totalMarks={quizPrompts.reduce((s, p) => s + (p.marks ?? 1), 0)}
+                  difficulty={currentPrompt?.meta?.difficulty as number | undefined}
                 />
               </motion.div>
             </AnimatePresence>

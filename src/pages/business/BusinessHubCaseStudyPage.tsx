@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle } from 'lucide-react';
 import { getUnitById, getCaseStudiesByUnit } from '../../config/businessHubData';
 import { storage } from '../../utils/storage';
 import type { BusinessUnitId } from '../../types/businessHub';
 
 const HERO_GRADIENT = 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)';
+
+interface UserAnswer {
+  answer: string;
+  marks: number | null;
+}
 
 export function BusinessHubCaseStudyPage() {
   const navigate = useNavigate();
@@ -14,11 +19,54 @@ export function BusinessHubCaseStudyPage() {
   const [caseIndex, setCaseIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<Record<string, UserAnswer>>({});
 
   const unit = unitId ? getUnitById(unitId as BusinessUnitId) : undefined;
   const caseStudies = unit ? getCaseStudiesByUnit(unit.id) : [];
   const currentCase = caseStudies[caseIndex];
   const currentQuestion = currentCase?.questions[questionIndex];
+  const currentUserAnswer = currentQuestion ? userAnswers[currentQuestion.id] : undefined;
+
+  // Load saved answers from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(`business_case_study_answers_${unitId}`);
+    if (saved) {
+      try {
+        setUserAnswers(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load saved answers', e);
+      }
+    }
+  }, [unitId]);
+
+  // Save answers to localStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(userAnswers).length > 0) {
+      localStorage.setItem(`business_case_study_answers_${unitId}`, JSON.stringify(userAnswers));
+    }
+  }, [userAnswers, unitId]);
+
+  const handleAnswerChange = (questionId: string, answer: string) => {
+    setUserAnswers(prev => ({
+      ...prev,
+      [questionId]: {
+        ...prev[questionId],
+        answer,
+        marks: prev[questionId]?.marks ?? null,
+      },
+    }));
+  };
+
+  const handleMarksChange = (questionId: string, marks: number) => {
+    setUserAnswers(prev => ({
+      ...prev,
+      [questionId]: {
+        ...prev[questionId],
+        answer: prev[questionId]?.answer ?? '',
+        marks,
+      },
+    }));
+  };
 
   if (!unit) {
     return (
@@ -114,6 +162,72 @@ export function BusinessHubCaseStudyPage() {
             <hr style={{ borderColor: 'rgb(var(--border))' }} />
             <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Question {questionIndex + 1} of {currentCase.questions.length} · {currentQuestion.marks} marks</p>
             <p className="text-lg font-medium" style={{ color: 'rgb(var(--text))' }}>{currentQuestion.question}</p>
+            
+            {/* User answer input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>
+                Your answer
+              </label>
+              <textarea
+                value={currentUserAnswer?.answer ?? ''}
+                onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+                placeholder="Type your answer here..."
+                className="w-full min-h-[120px] p-3 rounded-lg border text-sm resize-y"
+                style={{ 
+                  background: 'rgb(var(--surface))', 
+                  borderColor: 'rgb(var(--border))',
+                  color: 'rgb(var(--text))',
+                }}
+              />
+            </div>
+
+            {/* Marks selector */}
+            {currentUserAnswer?.answer && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>
+                  How many marks did you get? (out of {currentQuestion.marks})
+                </label>
+                <select
+                  value={currentUserAnswer.marks ?? ''}
+                  onChange={(e) => handleMarksChange(currentQuestion.id, parseInt(e.target.value) || 0)}
+                  className="px-4 py-2 rounded-lg border text-sm"
+                  style={{ 
+                    background: 'rgb(var(--surface))', 
+                    borderColor: 'rgb(var(--border))',
+                    color: 'rgb(var(--text))',
+                  }}
+                >
+                  <option value="">Select marks...</option>
+                  {Array.from({ length: currentQuestion.marks + 1 }, (_, i) => (
+                    <option key={i} value={i}>
+                      {i} mark{i !== 1 ? 's' : ''}
+                    </option>
+                  ))}
+                </select>
+                {currentUserAnswer.marks !== null && (
+                  <div className="flex items-center gap-2 text-sm">
+                    {currentUserAnswer.marks === currentQuestion.marks ? (
+                      <>
+                        <CheckCircle2 size={16} className="text-green-600 dark:text-green-400" />
+                        <span className="text-green-600 dark:text-green-400 font-medium">Full marks!</span>
+                      </>
+                    ) : currentUserAnswer.marks >= currentQuestion.marks * 0.5 ? (
+                      <>
+                        <CheckCircle2 size={16} className="text-amber-600 dark:text-amber-400" />
+                        <span className="text-amber-600 dark:text-amber-400 font-medium">Good effort</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle size={16} className="text-red-600 dark:text-red-400" />
+                        <span className="text-red-600 dark:text-red-400 font-medium">Keep practicing</span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Show model answer button */}
             {!revealAnswer ? (
               <button
                 type="button"
@@ -127,17 +241,49 @@ export function BusinessHubCaseStudyPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-lg p-4 border space-y-2"
-                  style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgb(var(--border))' }}
+                  className="space-y-4"
                 >
-                  <p className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>Model answer</p>
-                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{currentQuestion.modelAnswer}</p>
+                  {/* Comparison view */}
+                  {currentUserAnswer?.answer && (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="rounded-lg p-4 border" style={{ background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgb(var(--border))' }}>
+                        <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Your answer</p>
+                        <p className="text-sm whitespace-pre-wrap" style={{ color: 'rgb(var(--text-secondary))' }}>
+                          {currentUserAnswer.answer || '(No answer entered)'}
+                        </p>
+                        {currentUserAnswer.marks !== null && (
+                          <p className="text-xs mt-2 font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+                            Marks: {currentUserAnswer.marks} / {currentQuestion.marks}
+                          </p>
+                        )}
+                      </div>
+                      <div className="rounded-lg p-4 border" style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgb(var(--border))' }}>
+                        <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Model answer</p>
+                        <p className="text-sm whitespace-pre-wrap" style={{ color: 'rgb(var(--text-secondary))' }}>
+                          {currentQuestion.modelAnswer}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Model answer only view (if no user answer) */}
+                  {!currentUserAnswer?.answer && (
+                    <div className="rounded-lg p-4 border space-y-2" style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgb(var(--border))' }}>
+                      <p className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>Model answer</p>
+                      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{currentQuestion.modelAnswer}</p>
+                    </div>
+                  )}
+
+                  {/* Mark scheme */}
                   {currentQuestion.markScheme?.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--text-secondary))' }}>Mark scheme</p>
-                      <ul className="text-xs space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    <div className="rounded-lg p-4 border" style={{ background: 'rgba(245, 158, 11, 0.05)', borderColor: 'rgb(var(--border))' }}>
+                      <p className="text-xs font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Mark scheme</p>
+                      <ul className="text-xs space-y-1" style={{ color: 'rgb(var(--text-secondary))' }}>
                         {currentQuestion.markScheme.map((m, i) => (
-                          <li key={i}>{m.marks} mark(s): {m.idea}</li>
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="font-medium text-amber-600 dark:text-amber-400">{m.marks} mark{m.marks !== 1 ? 's' : ''}:</span>
+                            <span>{m.idea}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>

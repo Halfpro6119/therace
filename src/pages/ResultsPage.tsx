@@ -164,6 +164,7 @@ export function ResultsPage() {
   const grade9Target = quiz.grade9TargetSec;
   const beatsTarget = timeTaken <= grade9Target;
   const xpGained = attempt.correctPromptIds.length * 5;
+  const showMarks = attempt.totalMarks != null && attempt.totalMarks > 0 && attempt.marksAwarded != null;
 
   const isNewPB = masteryState?.bestTimeSec === timeTaken || masteryState?.bestAccuracyPct === accuracyPercent;
 
@@ -325,6 +326,11 @@ export function ResultsPage() {
               <p className="text-3xl font-bold stat-number" style={{ color: 'rgb(var(--text))' }}>
                 {attempt.correctPromptIds.length}/{totalCount}
               </p>
+              {showMarks && (
+                <p className="text-sm mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {attempt.marksAwarded}/{attempt.totalMarks} marks
+                </p>
+              )}
             </motion.div>
 
             <motion.div
