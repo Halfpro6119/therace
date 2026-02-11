@@ -248,9 +248,9 @@ const STUDY_EVALUATOR: PsychologyStudyEvaluatorPrompt[] = [
 // ============================================================================
 
 const ISSUES_DEBATES: PsychologyIssuesDebatesPrompt[] = [
-  { id: 'id-id1', issueId: 'nature-nurture', prompt: 'Discuss the nature-nurture debate in relation to attachment.', modelAnswer: 'Nature: Bowlby – innate, critical period; Lorenz imprinting. Nurture: Learning theory – reinforcement. Interactionist: Diathesis-stress; genes + environment.' },
-  { id: 'id-id2', issueId: 'freewill-determinism', prompt: 'How does determinism apply to the behaviourist approach?', modelAnswer: 'Environmental determinism – behaviour determined by reinforcement history. No free will; we are products of our environment.' },
-  { id: 'id-id3', issueId: 'gender-culture', prompt: 'Discuss cultural bias in attachment research.', modelAnswer: 'Ainsworth\'s Strange Situation may be culturally specific (individualist). Van Ijzendoorn found variations. Ethnocentrism – Western norms applied.' },
+  { id: 'id-id1', issueId: 'nature-nurture', prompt: 'Discuss the nature-nurture debate in relation to attachment.', modelAnswer: 'Nature: Bowlby – innate, critical period; Lorenz imprinting. Nurture: Learning theory – reinforcement. Interactionist: Diathesis-stress; genes + environment.', applyToTopicIds: ['attachment'] },
+  { id: 'id-id2', issueId: 'freewill-determinism', prompt: 'How does determinism apply to the behaviourist approach?', modelAnswer: 'Environmental determinism – behaviour determined by reinforcement history. No free will; we are products of our environment.', applyToTopicIds: ['approaches'] },
+  { id: 'id-id3', issueId: 'gender-culture', prompt: 'Discuss cultural bias in attachment research.', modelAnswer: 'Ainsworth\'s Strange Situation may be culturally specific (individualist). Van Ijzendoorn found variations. Ethnocentrism – Western norms applied.', applyToTopicIds: ['attachment'] },
 ];
 
 // ============================================================================
@@ -305,11 +305,11 @@ export function getKeyTermsForTopic(topicId: string): PsychologyKeyTerm[] {
   return KEY_TERMS.filter((t) => t.topicId === topicId);
 }
 
-/** Combined studies + terms for flashcard mode */
-export function getFlashcardItemsForTopic(topicId: string): Array<PsychologyKeyStudy | PsychologyKeyTerm> {
-  const studies = KEY_STUDIES.filter((s) => s.topicId === topicId).map((s) => ({ ...s, _type: 'study' as const }));
-  const terms = KEY_TERMS.filter((t) => t.topicId === topicId).map((t) => ({ ...t, _type: 'term' as const }));
-  return [...studies, ...terms] as Array<PsychologyKeyStudy | PsychologyKeyTerm>;
+/** Combined studies + terms for flashcard mode. Studies have researcher/aim/procedure/findings; terms have term/definition. */
+export function getFlashcardItemsForTopic(topicId: string): Array<{ item: PsychologyKeyStudy | PsychologyKeyTerm; type: 'study' | 'term' }> {
+  const studies = KEY_STUDIES.filter((s) => s.topicId === topicId).map((s) => ({ item: s, type: 'study' as const }));
+  const terms = KEY_TERMS.filter((t) => t.topicId === topicId).map((t) => ({ item: t, type: 'term' as const }));
+  return [...studies, ...terms];
 }
 
 export function getQuickChecksForTopic(topicId: string): PsychologyQuickCheckItem[] {

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Lightbulb, BookOpen, Target, FileText, Calculator, MessageSquare, ChevronRight, List, Lock, Zap } from 'lucide-react';
-import { getUnitById } from '../../config/businessHubData';
+import { getUnitById, getCalculationsByUnit } from '../../config/businessHubData';
 import { storage } from '../../utils/storage';
 import type { BusinessUnitId } from '../../types/businessHub';
 
@@ -29,7 +29,15 @@ export function BusinessHubUnitPage() {
   const quickCheckSummary = unit ? storage.getBusinessUnitQuickCheckSummary(unit.id, topicIds) : { passed: 0, total: 0 };
   const caseStudyUnlocked = unit ? storage.isBusinessCaseStudyUnlocked(unit.id, topicIds) : false;
   const calculationsUnlocked = unit ? storage.isBusinessCalculationsUnlocked(unit.id, topicIds) : false;
-  const evaluationUnlocked = unit ? storage.isBusinessEvaluationUnlocked(unit.id, topicIds) : false;
+  const hasCalculations = unit ? getCalculationsByUnit(unit.id).length > 0 : false;
+  const allProgress = unit ? storage.getBusinessTopicProgress() : {};
+  const anyCaseStudyDone = unit && topicIds.some((tid) => allProgress[`${unit.id}-${tid}`]?.caseStudyCompleted);
+  const anyCalcDone = unit && topicIds.some((tid) => allProgress[`${unit.id}-${tid}`]?.calculationsCompleted);
+  const evaluationUnlocked = unit
+    ? hasCalculations
+      ? anyCalcDone
+      : anyCaseStudyDone
+    : false;
 
   const recommendedStep = useMemo(() => {
     if (!unit) return null;

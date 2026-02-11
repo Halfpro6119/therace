@@ -99,6 +99,10 @@ const STORAGE_KEYS = {
   // Compute Lab
   COMPUTE_LAB_TOPIC_PROGRESS: 'grade9sprint_compute_lab_topic_progress',
   COMPUTE_LAB_FLASHCARD_MASTERY: 'grade9sprint_compute_lab_flashcard_mastery',
+  // Psychology Hub
+  PSYCHOLOGY_HUB_OPTIONS: 'grade9sprint_psychology_hub_options',
+  PSYCHOLOGY_HUB_TOPIC_PROGRESS: 'grade9sprint_psychology_hub_topic_progress',
+  PSYCHOLOGY_HUB_FLASHCARD_MASTERY: 'grade9sprint_psychology_hub_flashcard_mastery',
 };
 
 /**
@@ -995,6 +999,93 @@ export const storage = {
       };
     });
     localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+
+  // —— Compute Lab ——
+  getComputeTopicProgress: (): Record<string, ComputeTopicProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.COMPUTE_LAB_TOPIC_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getComputeTopicProgressByKey: (unitId: ComputeUnitId, topicId: string): ComputeTopicProgress | undefined => {
+    const key = `${unitId}-${topicId}`;
+    return storage.getComputeTopicProgress()[key];
+  },
+  updateComputeTopicProgress: (progress: ComputeTopicProgress): void => {
+    const all = storage.getComputeTopicProgress();
+    const key = `${progress.unitId}-${progress.topicId}`;
+    progress.lastUpdated = new Date().toISOString();
+    all[key] = progress;
+    localStorage.setItem(STORAGE_KEYS.COMPUTE_LAB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+  getComputeFlashcardMastery: (): Record<string, ComputeFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.COMPUTE_LAB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateComputeFlashcardMastery: (termId: string, confidenceLevel: ComputeConfidenceLevel): void => {
+    const all = storage.getComputeFlashcardMastery();
+    const existing = all[termId] || {
+      termId,
+      confidenceLevel: 1 as ComputeConfidenceLevel,
+      timesViewed: 0,
+      timesConfident: 0,
+      lastViewed: '',
+      masteryPercent: 0,
+    };
+    existing.timesViewed += 1;
+    existing.lastViewed = new Date().toISOString();
+    existing.confidenceLevel = confidenceLevel;
+    if (confidenceLevel === 3) existing.timesConfident += 1;
+    const confidenceWeight = confidenceLevel === 3 ? 0.7 : confidenceLevel === 2 ? 0.4 : 0.1;
+    const consistencyWeight = Math.min(existing.timesConfident / 3, 0.3);
+    existing.masteryPercent = Math.min(100, Math.round((confidenceWeight + consistencyWeight) * 100));
+    all[termId] = existing;
+    localStorage.setItem(STORAGE_KEYS.COMPUTE_LAB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+  calculateComputeTopicFlashcardMastery: (unitId: ComputeUnitId, topicId: string, termIds: string[]): number => {
+    const mastery = storage.getComputeFlashcardMastery();
+    if (termIds.length === 0) return 0;
+    const total = termIds.reduce((sum, id) => sum + (mastery[id]?.masteryPercent ?? 0), 0);
+    return Math.round(total / termIds.length);
+  },
+  getComputeUnitQuickCheckSummary: (unitId: ComputeUnitId, topicIds: string[]): { passed: number; total: number } => {
+    const all = storage.getComputeTopicProgress();
+    const total = topicIds.length;
+    const passed = topicIds.filter((topicId) => all[`${unitId}-${topicId}`]?.quickCheckPassed).length;
+    return { passed, total };
+  },
+  isComputeAlgorithmLabUnlocked: (unitId: ComputeUnitId, topicIds: string[]): boolean => {
+    const { passed } = storage.getComputeUnitQuickCheckSummary(unitId, topicIds);
+    return passed > 0;
+  },
+
+  // —— Psychology Hub ——
+  getPsychologyOptionSelection: (): PsychologyOptionSelection | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.PSYCHOLOGY_HUB_OPTIONS);
+    return data ? JSON.parse(data) : null;
+  },
+  setPsychologyOptionSelection: (selection: PsychologyOptionSelection): void => {
+    localStorage.setItem(STORAGE_KEYS.PSYCHOLOGY_HUB_OPTIONS, JSON.stringify(selection));
+  },
+  getPsychologyTopicProgress: (): Record<string, PsychologyTopicProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.PSYCHOLOGY_HUB_TOPIC_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getPsychologyTopicProgressByKey: (topicId: string): PsychologyTopicProgress | undefined => {
+    return storage.getPsychologyTopicProgress()[topicId];
+  },
+  updatePsychologyTopicProgress: (progress: PsychologyTopicProgress): void => {
+    const all = storage.getPsychologyTopicProgress();
+    all[progress.topicId] = progress;
+    localStorage.setItem(STORAGE_KEYS.PSYCHOLOGY_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+  getPsychologyFlashcardMastery: (): Record<string, PsychologyFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.PSYCHOLOGY_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updatePsychologyFlashcardMastery: (itemId: string, topicId: string, itemType: 'study' | 'term', confidence: PsychologyConfidenceLevel): void => {
+    const all = storage.getPsychologyFlashcardMastery();
+    all[itemId] = { itemId, topicId: topicId as PsychologyFlashcardMastery['topicId'], itemType, confidence, lastSeen: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.PSYCHOLOGY_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
   },
 };
 

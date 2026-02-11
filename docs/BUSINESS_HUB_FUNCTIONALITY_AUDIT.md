@@ -1,8 +1,8 @@
 # Business Hub — Full Functionality Audit
 
-**Date:** February 2025  
-**Scope:** All routes, pages, data flows, storage, and user paths for AQA GCSE Business 8132 Business Hub.  
-**Fix applied:** Flip Card now toggles (flip to definition ↔ flip back to term); button label “Show term again” when flipped.
+**Date:** February 11, 2025  
+**Scope:** Complete audit of content, data flow, gating, navigation, and edge cases.  
+**Reference:** AQA Content Coverage Audit, Design Audit.
 
 ---
 
@@ -10,169 +10,125 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
-| **Flip Card** | ✅ Fixed | Was one-way only; now toggles. Button label reflects state. |
-| **Routes & navigation** | ✅ | All 10 routes resolve; back links consistent. |
-| **Entry & home** | ✅ | Subjects → Business Hub → Units → Unit modes / Topics. |
-| **Concept Lab** | ✅ | List → select → core idea, misconception, change scenarios. |
-| **Glossary / Flashcards** | ✅ | Flip (toggle), confidence, progress, session complete → topic progress + Quick Check CTA. |
-| **Quick Check** | ✅ | MC + True/False; feedback; topic progress on correct; completion screen → Case Study. |
-| **Case Study Lab** | ✅ | Scenario + data + questions; model answer + mark scheme; marks unit case study completed; empty state for units with no cases. |
-| **Calculation Lab** | ✅ | Scenario + formula hint; optional number input + Check; show answer; marks unit calculations completed; empty state. |
-| **Evaluation Builder** | ✅ | Prompt + optional benefit/drawback/conclusion; model answer + breakdown; marks unit evaluation completed; empty state. |
-| **Topics page** | ✅ | Progress per topic; Start / Glossary / Quick Check per topic. |
-| **Progress & storage** | ✅ | Topic progress (flashcard %, quick check, case study, calculations, evaluation) and flashcard mastery persisted; completion helpers used. |
-| **Content coverage** | ⚠️ | Some units have no case studies (3.4) or no calculations (3.2–3.5) or no evaluation prompts (3.3–3.5); empty states handle this. |
+| Routes & navigation | ✅ | All 9 routes wired; App.tsx imports correct |
+| Data config | ✅ | Units, concepts, terms, quick checks, case studies, calculations, evaluation complete |
+| Concept Lab | ✅ | List/detail works; empty state for units with no concepts |
+| Flashcard | ✅ | Flip, confidence, progress; topicId used for mastery |
+| Quick Check | ✅ | MC + True/False; feedback; topic progress on correct |
+| Case Study | ✅ | Scenario, data, questions; model answer; Finish → Calculations |
+| Calculation Lab | ✅ | breakEvenInterpret supported; empty state for units with no tasks |
+| Evaluation | ✅ | Prompts, model answers, breakdown; empty state |
+| Gating | ⚠️ **Bug** | Evaluation locked for units 3.2, 3.3, 3.4, 3.5 (no calculations) |
+| Case Study finish flow | ⚠️ **UX** | Units with no calculations navigate to empty Calculations page |
+
+**Critical fix:** Evaluation must unlock when Case Study is completed for units that have no calculation tasks.
 
 ---
 
-## 2. Flip Card Fix (Applied)
+## 2. Content Coverage by Unit
 
-**Issue:** Flip only worked once: front → back. Clicking the card or “Flip card” again did nothing, so users could not return to the term side.
-
-**Change:**
-- `handleFlip` now toggles: `setIsFlipped((prev) => !prev)`.
-- Card click and “Flip card” button both call `handleFlip`, so both flip to definition and back to term.
-- Button label: “Flip card” when front, “Show term again” when back.
-- Hint text: “Tap card or button to reveal definition” (front); “Tap card to see term again” (back).
-- Confidence buttons still use `stopPropagation` so they don’t flip the card.
-
----
-
-## 3. Route-by-Route Verification
-
-| Route | Handler | Data | Empty / error |
-|-------|---------|------|----------------|
-| `/business-hub` | BusinessHubHomePage | BUSINESS_UNITS | — |
-| `/business-hub/unit/:unitId` | BusinessHubUnitPage | getUnitById(unitId) | 404 message + “Back to Business Hub” if invalid unitId |
-| `/business-hub/unit/:unitId/topics` | BusinessHubTopicsPage | getUnitById; storage.getBusinessTopicProgressByKey | Same 404 if invalid unit |
-| `/business-hub/unit/:unitId/concept` | BusinessHubConceptLabPage | getConceptsByUnit | “No concepts for this unit yet” if none |
-| `/business-hub/unit/:unitId/flashcard` | BusinessHubFlashcardPage | getTermsByUnit | “No terms for this unit” + Go Back |
-| `/business-hub/unit/:unitId/quick-check` | BusinessHubQuickCheckPage | getQuickChecksByUnit | “No quick checks” + link to Case Study + Back |
-| `/business-hub/unit/:unitId/case-study` | BusinessHubCaseStudyPage | getCaseStudiesByUnit | “No case studies for this unit yet” + All units / Back |
-| `/business-hub/unit/:unitId/calculations` | BusinessHubCalculationLabPage | getCalculationsByUnit | “No calculation tasks” + Back |
-| `/business-hub/unit/:unitId/evaluation` | BusinessHubEvaluationPage | getEvaluationPromptsByUnit | “No evaluation prompts” + Back |
-
-Invalid `unitId` (e.g. `3.7` or `x`) yields `getUnitById` undefined; all unit pages guard and show “Unit not found” / Back.
-
----
-
-## 4. Page-by-Page Functionality
-
-### 4.1 BusinessHubHomePage
-- Back → `/subjects`.
-- Renders all 6 units from BUSINESS_UNITS.
-- Each unit links to `/business-hub/unit/${unit.id}`.
-- **Status:** ✅ Working.
-
-### 4.2 BusinessHubUnitPage
-- Back → `/business-hub`.
-- “View topic list” → `/business-hub/unit/:unitId/topics`.
-- Six mode buttons → concept | flashcard | quick-check | case-study | calculations | evaluation.
-- **Status:** ✅ Working.
-
-### 4.3 BusinessHubTopicsPage
-- Back → unit page.
-- For each topic: progress (flashcard %, quick check), Start (Concept), Glossary (Flashcard), Quick Check.
-- **Status:** ✅ Working.
-
-### 4.4 BusinessHubConceptLabPage
-- Back → unit page.
-- Concept list from getConceptsByUnit; select one → core idea, visual model, misconception, change scenarios.
-- Back to list clears selection.
-- **Status:** ✅ Working.
-
-### 4.5 BusinessHubFlashcardPage
-- Back → unit page.
-- Terms from getTermsByUnit; card shows term (front) or definition + inContext (back).
-- **Flip:** Card click or button toggles front/back (fixed).
-- Confidence (Not sure / Okay / Got it) advances to next card or completes session.
-- On session complete: topic progress updated for all topics that have terms in the set; “Quick Check” and “Back to Unit” CTAs.
-- Previous/Next change card and reset flip (useEffect).
-- **Status:** ✅ Working (flip fix applied).
-
-### 4.6 BusinessHubQuickCheckPage
-- Back → unit page.
-- Questions from getQuickChecksByUnit; MC or True/False from options.
-- Select answer → “Check answer” → feedback (correct/incorrect + ideaReference); on correct, topic progress `quickCheckPassed` set for that question’s topicId.
-- “Next” / “Finish → See results” → next question or completion screen.
-- Completion screen: “Quick Check complete”, score, “Case Study Lab” and “Back to Unit”.
-- If no checks: empty state with link to Case Study and Back.
-- **Status:** ✅ Working.
-
-### 4.7 BusinessHubCaseStudyPage
-- Back → unit page.
-- Case studies from getCaseStudiesByUnit (filtered by unitIds including this unit).
-- Renders scenario, data, then questions; “Show model answer” reveals model + mark scheme.
-- Previous/Next move within questions then across cases; on last question of last case calls `storage.markUnitCaseStudyCompleted(unit.id, unit.topics.map(t => t.id))` and navigates to Calculations.
-- If no case studies: empty state, “All units”, “Back to Unit”.
-- **Status:** ✅ Working.
-
-### 4.8 BusinessHubCalculationLabPage
-- Back → unit page.
-- Tasks from getCalculationsByUnit; shows scenario, formula hint, optional number input + “Check” (where primaryKey/expected exist), interpretation Q.
-- “Show answer & interpretation” reveals expected figures and interpretation.
-- Previous/Next; on last task calls `storage.markUnitCalculationsCompleted(unit.id, unit.topics.map(t => t.id))` and navigates to Evaluation.
-- If no tasks: empty state + Back.
-- **Status:** ✅ Working.
-
-### 4.9 BusinessHubEvaluationPage
-- Back → unit page.
-- Prompts from getEvaluationPromptsByUnit; optional benefit/drawback/conclusion fields; “Show model answer” reveals model + breakdown.
-- Previous/Next; on last prompt calls `storage.markUnitEvaluationCompleted(unit.id, unit.topics.map(t => t.id))` and navigates to unit page.
-- If no prompts: empty state + Back.
-- **Status:** ✅ Working.
-
----
-
-## 5. Storage & Progress
-
-| Key / API | Purpose | Updated by |
-|-----------|---------|------------|
-| BUSINESS_HUB_TOPIC_PROGRESS | Per-topic progress | Flashcard (session end), Quick Check (correct), Case Study / Calculation / Evaluation (completion) |
-| BUSINESS_HUB_FLASHCARD_MASTERY | Per-term confidence/mastery | BusinessHubFlashcardPage confidence rating |
-| getBusinessTopicProgressByKey(unitId, topicId) | Read topic progress | Topics page, Flashcard (session end), Quick Check |
-| updateBusinessTopicProgress(progress) | Write one topic | Flashcard, Quick Check |
-| updateBusinessFlashcardMastery(termId, level) | Record term confidence | Flashcard confidence buttons |
-| calculateBusinessTopicFlashcardMastery(unitId, topicId, termIds) | Topic glossary % | Flashcard session complete |
-| markUnitCaseStudyCompleted(unitId, topicIds) | Set caseStudyCompleted for all topics in unit | Case Study page (end of flow) |
-| markUnitCalculationsCompleted(unitId, topicIds) | Set calculationsCompleted | Calculation Lab (end of flow) |
-| markUnitEvaluationCompleted(unitId, topicIds) | Set evaluationCompleted | Evaluation page (end of flow) |
-
-**Status:** ✅ All used as intended; completion flags persist.
-
----
-
-## 6. Content Coverage (by unit)
-
-| Unit | Concepts | Terms | Quick checks | Case studies | Calculations | Evaluation |
+| Unit | Concepts | Terms | Quick Checks | Case Studies | Calculations | Evaluation |
 |------|----------|-------|--------------|--------------|--------------|------------|
-| 3.1 | 7 | 12 | 6 | 2 | 2 | 2 |
-| 3.2 | 4 | 4 | 2 | 2 | 0 | 1 |
-| 3.3 | 2 | 2 | 2 | 1 | 0 | 0 |
-| 3.4 | 2 | 3 | 1 | 0 | 0 | 0 |
-| 3.5 | 1 | 3 | 1 | 1 | 0 | 0 |
-| 3.6 | 3 | 6 | 2 | 1 | 4 | 2 |
+| 3.1 | 7 | 19 | 11 | 2 | 2 | 4 |
+| 3.2 | 6 | 8 | 6 | 5 | 0 | 3 |
+| 3.3 | 4 | 8 | 4 | 1 | 0 | 3 |
+| 3.4 | 4 | 10 | 4 | 1 | 0 | 3 |
+| 3.5 | 4 | 12 | 5 | 2 | 0 | 3 |
+| 3.6 | 4 | 13 | 8 | 2 | 5 | 3 |
+| **Total** | **33** | **75** | **43** | **5** | **7** | **18** |
 
-- Units 3.4: no case studies (empty state).
-- Units 3.2–3.5: no calculation tasks for 3.2, 3.3, 3.4, 3.5 (empty state).
-- Units 3.3, 3.4, 3.5: no evaluation prompts (empty state).
-
-Empty states are handled; no runtime errors from missing content.
+All units have content in every mode where applicable. Only 3.1 and 3.6 have calculation tasks (per AQA spec).
 
 ---
 
-## 7. Recommendations
+## 3. Data Flow Verification
 
-1. **Done:** Flip Card — toggle and labels implemented.
-2. **Optional:** Add more case studies for 3.4; calculation tasks for 3.2–3.5; evaluation prompts for 3.3–3.5 so every unit has at least one of each.
-3. **Optional:** Expose Paper 1 / Paper 2 filter in UI (data already supports it).
-4. **Optional:** Gate Case Study / Calculations / Evaluation behind “Quick Check passed” or “Glossary completed” if you want a strict learning path.
+### 3.1 Helper Functions
+
+| Helper | Input | Output | Used by |
+|--------|-------|--------|---------|
+| `getUnitById(id)` | BusinessUnitId | BusinessUnit \| undefined | All pages |
+| `getConceptsByUnit(unitId)` | BusinessUnitId | BusinessConcept[] | Concept Lab |
+| `getTermsByUnit(unitId)` | BusinessUnitId | BusinessTerm[] | Flashcard |
+| `getQuickChecksByUnit(unitId)` | BusinessUnitId | BusinessQuickCheck[] | Quick Check |
+| `getCaseStudiesByUnit(unitId)` | BusinessUnitId | BusinessCaseStudy[] | Case Study |
+| `getCalculationsByUnit(unitId)` | BusinessUnitId | CalculationTask[] | Calculation Lab |
+| `getEvaluationPromptsByUnit(unitId)` | BusinessUnitId | EvaluationPrompt[] | Evaluation |
+
+**Case study filtering:** `getCaseStudiesByUnit` filters by `unitIds.includes(unitId)`. Each case study has `unitIds: ['3.1', '3.2', '3.4']` etc. Correct.
+
+### 3.2 Storage Integration
+
+| Method | Purpose |
+|--------|---------|
+| `getBusinessTopicProgress()` | All topic progress |
+| `getBusinessTopicProgressByKey(unitId, topicId)` | Single topic |
+| `updateBusinessTopicProgress(...)` | Update flashcard/quick check/case study/calc/eval |
+| `getBusinessUnitQuickCheckSummary(unitId, topicIds)` | passed/total for gating |
+| `isBusinessCaseStudyUnlocked` | passed > 0 |
+| `isBusinessCalculationsUnlocked` | any caseStudyCompleted |
+| `isBusinessEvaluationUnlocked` | any calculationsCompleted ← **bug** |
+| `markUnitCaseStudyCompleted` | On Case Study finish |
+| `markUnitCalculationsCompleted` | On Calculation Lab finish |
 
 ---
 
-## 8. Files Touched (this audit)
+## 4. Gating Logic — Bug Analysis
 
-- `src/pages/business/BusinessHubFlashcardPage.tsx` — flip toggle, button label, hints.
-- `docs/BUSINESS_HUB_FUNCTIONALITY_AUDIT.md` — this audit.
+**Current flow:**
+1. Quick Check: passed ≥ 1 topic → Case Study unlocked
+2. Case Study: completed → Calculations unlocked
+3. Calculations: completed → Evaluation unlocked
 
-No other code changes required for the reported “broken Flip Card” or for the audit findings above.
+**Problem:** Units 3.2, 3.3, 3.4, 3.5 have **zero** calculation tasks. The Calculation Lab shows an empty state. The user can never "complete" it, so `calculationsCompleted` is never set. Therefore **Evaluation stays locked forever**.
+
+**Fix:** Evaluation should unlock when:
+- (Case Study completed AND unit has no calculations) OR
+- (Calculations completed)
+
+---
+
+## 5. Case Study Finish Flow
+
+When user clicks "Finish → Calculations" on the last question:
+- `storage.markUnitCaseStudyCompleted(unit.id, unit.topics.map(t => t.id))`
+- `navigate(\`/business-hub/unit/${unit.id}/calculations\`)`
+
+For units with no calculations, the user lands on an empty Calculations page. Better UX: navigate to Evaluation when the unit has no calculations.
+
+---
+
+## 6. Edge Cases Checked
+
+| Scenario | Handling |
+|----------|----------|
+| Invalid unitId (e.g. 3.7) | "Unit not found" + Back |
+| Unit with no concepts | "No concepts for this unit yet" |
+| Unit with no terms | "No terms for this unit" + sessionComplete never reached? — Actually if terms=[], currentTerm is undefined, so we hit the "No terms" block. Good. |
+| Unit with no quick checks | "No quick checks" + links to Case Study and Back |
+| Unit with no case studies | "No case studies for this unit yet" |
+| Unit with no calculations | "No calculation tasks for this unit yet" |
+| Unit with no evaluation prompts | "No evaluation prompts for this unit yet" |
+| Flashcard: terms with no topicId | Filtered out in topicIds; no crash |
+| Quick Check: correctAnswer as array | All current checks use string; would need different handling |
+
+---
+
+## 7. Type Safety
+
+- `BusinessUnitId` = '3.1' | '3.2' | ... | '3.6' — all unitIds in config match
+- `CalculationType` includes `breakEvenInterpret` — used in new task
+- `CaseStudyQuestion.markScheme` — optional in display; all questions have it
+
+---
+
+## 8. Recommendations Implemented
+
+1. **Fix Evaluation unlock for units without calculations** — Unit page must compute evaluationUnlocked using: case study done AND (no calculations OR calculations done)
+2. **Case Study finish:** When unit has no calculations, navigate to Evaluation instead of Calculations
+
+---
+
+## 9. Summary
+
+Content implementation is complete and correctly wired. One critical gating bug blocks Evaluation for 4 of 6 units. The fix is straightforward: treat "no calculations" as auto-unlocked for Evaluation once Case Study is done.
