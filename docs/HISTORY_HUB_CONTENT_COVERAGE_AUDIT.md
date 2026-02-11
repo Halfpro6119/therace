@@ -95,23 +95,23 @@
 
 - [x] Option metadata (all 16 options)
 - [x] Period AB (Germany) — existed before audit
-- [ ] Period AA (America 1840–1895)
-- [ ] Period AC (Russia)
-- [ ] Period AD (America 1920–1973)
-- [ ] Wider world BA (WW1)
-- [ ] Wider world BB (Inter-war)
-- [ ] Wider world BC (Cold War)
-- [ ] Wider world BD (Asia)
-- [ ] Wider world BE (Gulf & Afghanistan)
-- [ ] Thematic AA (Health)
-- [ ] Thematic BB (Power)
-- [ ] Thematic AC (Migration)
-- [ ] British depth BA (Norman)
-- [ ] British depth BB (Edward I)
-- [ ] British depth BC (Elizabethan)
-- [ ] British depth BD (Restoration)
-- [ ] Source Lab page and route
-- [ ] Historic environment content (4 sites)
+- [x] Period AA (America 1840–1895)
+- [x] Period AC (Russia)
+- [x] Period AD (America 1920–1973)
+- [x] Wider world BA (WW1)
+- [x] Wider world BB (Inter-war)
+- [x] Wider world BC (Cold War)
+- [x] Wider world BD (Asia)
+- [x] Wider world BE (Gulf & Afghanistan)
+- [x] Thematic AA (Health)
+- [x] Thematic BB (Power)
+- [x] Thematic AC (Migration)
+- [x] British depth BA (Norman)
+- [x] British depth BB (Edward I)
+- [x] British depth BC (Elizabethan)
+- [x] British depth BD (Restoration)
+- [x] Source Lab page and route
+- [x] Historic environment content (12 sites for 2026–2028)
 
 ---
 

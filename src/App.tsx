@@ -78,6 +78,37 @@ import { HistoryHubInterpretationLabPage } from './pages/history/HistoryHubInter
 import { HistoryHubQuestionLabPage } from './pages/history/HistoryHubQuestionLabPage';
 import { HistoryHubRevisionMapPage } from './pages/history/HistoryHubRevisionMapPage';
 import { HistoryHubHistoricEnvironmentPage } from './pages/history/HistoryHubHistoricEnvironmentPage';
+import { GeographyHubHomePage } from './pages/geography/GeographyHubHomePage';
+import { GeographyHubOptionSelectPage } from './pages/geography/GeographyHubOptionSelectPage';
+import { GeographyHubConceptLabPage } from './pages/geography/GeographyHubConceptLabPage';
+import { GeographyHubFlashcardPage } from './pages/geography/GeographyHubFlashcardPage';
+import { GeographyHubQuickCheckPage } from './pages/geography/GeographyHubQuickCheckPage';
+import { GeographyHubSkillsLabPage } from './pages/geography/GeographyHubSkillsLabPage';
+import { GeographyHubIssueLabPage } from './pages/geography/GeographyHubIssueLabPage';
+import { GeographyHubFieldworkLabPage } from './pages/geography/GeographyHubFieldworkLabPage';
+import { GeographyHubQuestionLabPage } from './pages/geography/GeographyHubQuestionLabPage';
+import { GeographyHubRevisionMapPage } from './pages/geography/GeographyHubRevisionMapPage';
+import { ReligiousStudiesHubHomePage } from './pages/religious-studies/ReligiousStudiesHubHomePage';
+import { ReligiousStudiesHubOptionSelectPage } from './pages/religious-studies/ReligiousStudiesHubOptionSelectPage';
+import { ReligiousStudiesHubBeliefLabPage } from './pages/religious-studies/ReligiousStudiesHubBeliefLabPage';
+import { ReligiousStudiesHubFlashcardPage } from './pages/religious-studies/ReligiousStudiesHubFlashcardPage';
+import { ReligiousStudiesHubContrastingViewsPage } from './pages/religious-studies/ReligiousStudiesHubContrastingViewsPage';
+import { ReligiousStudiesHubQuickCheckPage } from './pages/religious-studies/ReligiousStudiesHubQuickCheckPage';
+import { ReligiousStudiesHubShortAnswerPage } from './pages/religious-studies/ReligiousStudiesHubShortAnswerPage';
+import { ReligiousStudiesHubExtendedWritingPage } from './pages/religious-studies/ReligiousStudiesHubExtendedWritingPage';
+import { ReligiousStudiesHubPhilosophicalArgumentsPage } from './pages/religious-studies/ReligiousStudiesHubPhilosophicalArgumentsPage';
+import { ReligiousStudiesHubTextualStudiesPage } from './pages/religious-studies/ReligiousStudiesHubTextualStudiesPage';
+import { ReligiousStudiesHubRevisionMapPage } from './pages/religious-studies/ReligiousStudiesHubRevisionMapPage';
+import { PsychologyHubHomePage } from './pages/psychology/PsychologyHubHomePage';
+import { PsychologyHubOptionSelectPage } from './pages/psychology/PsychologyHubOptionSelectPage';
+import { PsychologyHubConceptLabPage } from './pages/psychology/PsychologyHubConceptLabPage';
+import { PsychologyHubKeyStudiesPage } from './pages/psychology/PsychologyHubKeyStudiesPage';
+import { PsychologyHubQuickCheckPage } from './pages/psychology/PsychologyHubQuickCheckPage';
+import { PsychologyHubStudyEvaluatorPage } from './pages/psychology/PsychologyHubStudyEvaluatorPage';
+import { PsychologyHubIssuesDebatesPage } from './pages/psychology/PsychologyHubIssuesDebatesPage';
+import { PsychologyHubResearchMethodsPage } from './pages/psychology/PsychologyHubResearchMethodsPage';
+import { PsychologyHubQuestionLabPage } from './pages/psychology/PsychologyHubQuestionLabPage';
+import { PsychologyHubRevisionMapPage } from './pages/psychology/PsychologyHubRevisionMapPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -255,6 +286,26 @@ function App() {
                 <Route path="/history-hub/question-lab" element={<HistoryHubQuestionLabPage />} />
                 <Route path="/history-hub/revision-map" element={<HistoryHubRevisionMapPage />} />
                 <Route path="/history-hub/historic-environment" element={<HistoryHubHistoricEnvironmentPage />} />
+                <Route path="/geography-hub" element={<GeographyHubHomePage />} />
+                <Route path="/geography-hub/option-select" element={<GeographyHubOptionSelectPage />} />
+                <Route path="/geography-hub/concept-lab" element={<GeographyHubConceptLabPage />} />
+                <Route path="/geography-hub/flashcard" element={<GeographyHubFlashcardPage />} />
+                <Route path="/geography-hub/quick-check" element={<GeographyHubQuickCheckPage />} />
+                <Route path="/geography-hub/skills-lab" element={<GeographyHubSkillsLabPage />} />
+                <Route path="/geography-hub/issue-lab" element={<GeographyHubIssueLabPage />} />
+                <Route path="/geography-hub/fieldwork-lab" element={<GeographyHubFieldworkLabPage />} />
+                <Route path="/geography-hub/question-lab" element={<GeographyHubQuestionLabPage />} />
+                <Route path="/geography-hub/revision-map" element={<GeographyHubRevisionMapPage />} />
+                <Route path="/psychology-hub" element={<PsychologyHubHomePage />} />
+                <Route path="/psychology-hub/option-select" element={<PsychologyHubOptionSelectPage />} />
+                <Route path="/psychology-hub/concept-lab" element={<PsychologyHubConceptLabPage />} />
+                <Route path="/psychology-hub/key-studies" element={<PsychologyHubKeyStudiesPage />} />
+                <Route path="/psychology-hub/quick-check" element={<PsychologyHubQuickCheckPage />} />
+                <Route path="/psychology-hub/study-evaluator" element={<PsychologyHubStudyEvaluatorPage />} />
+                <Route path="/psychology-hub/issues-debates" element={<PsychologyHubIssuesDebatesPage />} />
+                <Route path="/psychology-hub/research-methods" element={<PsychologyHubResearchMethodsPage />} />
+                <Route path="/psychology-hub/question-lab" element={<PsychologyHubQuestionLabPage />} />
+                <Route path="/psychology-hub/revision-map" element={<PsychologyHubRevisionMapPage />} />
                 <Route path="/results/:attemptId" element={<ResultsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />

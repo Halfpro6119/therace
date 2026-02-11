@@ -19,6 +19,8 @@ function getPrimaryExpectedKey(task: CalculationTask): string | null {
   if (e.arrPercent != null) return 'arrPercent';
   if (e.grossProfit != null) return 'grossProfit';
   if (e.marginPercent != null) return 'marginPercent';
+  if (e.breakEvenOutput != null) return 'breakEvenOutput';
+  if (e.marginOfSafety != null) return 'marginOfSafety';
   return Object.keys(e)[0] ?? null;
 }
 
@@ -99,6 +101,7 @@ export function BusinessHubCalculationLabPage() {
     unitCost: 'Unit cost',
     cashFlow: 'Cash flow',
     averageRateOfReturn: 'Average rate of return',
+    breakEvenInterpret: 'Break-even interpretation',
     grossProfitMargin: 'Gross profit margin',
     netProfitMargin: 'Net profit margin',
   };

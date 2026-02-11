@@ -257,3 +257,22 @@ AQA expects students to use business terminology correctly. Terms from the spec 
 | **Total** | **19/29** | **28/130** | **16/120** | **7/15** | **6/7** | **5/18** |
 
 **Conclusion:** The Business Hub covers the structure of the specification but needs substantial content expansion to ensure students are fully prepared for every topic AQA will test. The highest-impact work is: concepts for uncovered sub-topics, break-even interpretation, essential glossary terms, and case studies for HR and Marketing/Finance.
+
+---
+
+## 8. Implementation Status (February 2025)
+
+**All audit recommendations have been implemented:**
+
+| Content Type | Before | After |
+|--------------|--------|-------|
+| Concepts | 24 | 33 |
+| Glossary terms | 28 | 75 |
+| Quick checks | 17 | 43 |
+| Case studies | 2 | 5 |
+| Calculation tasks | 6 | 7 (incl. break-even interpretation) |
+| Evaluation prompts | 5 | 18 |
+
+- **Concepts added:** 3.2.4 Globalisation, 3.2.5 Legislation, 3.3.2 Procurement, 3.3.4 Customer service, 3.4.3 Motivation, 3.4.4 Training, 3.5.1–3.5.3 (Identifying customers, Segmentation, Market research), 3.6.3 Break-even and financial calculations.
+- **Case studies added:** BakeRight Ltd (Paper 1, HR focus), StyleCo Fashion (Paper 2, Marketing), PrintPro Ltd (Paper 2, Finance).
+- **Calculation Lab:** break-even interpretation task and UI support added.

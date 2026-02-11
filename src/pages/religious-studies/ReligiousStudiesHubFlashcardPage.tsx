@@ -11,7 +11,6 @@ export function ReligiousStudiesHubFlashcardPage() {
   const navigate = useNavigate();
   const selection = storage.getRSOptionSelection();
   const cards = selection ? getScriptureCardsForSelection(selection) : [];
-  const [filter, setFilter] = useState<'all' | 'religion' | 'theme'>('all');
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 

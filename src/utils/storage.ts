@@ -41,6 +41,18 @@ import type {
   GeographyFlashcardMastery,
   GeographyConfidenceLevel,
 } from '../types/geographyHub';
+import type {
+  HealthUnitId,
+  HealthTopicProgress,
+  HealthFlashcardMastery,
+  HealthConfidenceLevel,
+} from '../types/healthHub';
+import type {
+  ComputeUnitId,
+  ComputeTopicProgress,
+  ComputeFlashcardMastery,
+  ComputeConfidenceLevel,
+} from '../types/computeLab';
 
 const STORAGE_KEYS = {
   ATTEMPTS: 'grade9sprint_attempts',
@@ -80,6 +92,13 @@ const STORAGE_KEYS = {
   GEOGRAPHY_HUB_OPTIONS: 'grade9sprint_geography_hub_options',
   GEOGRAPHY_HUB_SECTION_PROGRESS: 'grade9sprint_geography_hub_section_progress',
   GEOGRAPHY_HUB_FLASHCARD_MASTERY: 'grade9sprint_geography_hub_flashcard_mastery',
+  // Health Hub
+  HEALTH_HUB_AWARD: 'grade9sprint_health_hub_award',
+  HEALTH_HUB_TOPIC_PROGRESS: 'grade9sprint_health_hub_topic_progress',
+  HEALTH_HUB_FLASHCARD_MASTERY: 'grade9sprint_health_hub_flashcard_mastery',
+  // Compute Lab
+  COMPUTE_LAB_TOPIC_PROGRESS: 'grade9sprint_compute_lab_topic_progress',
+  COMPUTE_LAB_FLASHCARD_MASTERY: 'grade9sprint_compute_lab_flashcard_mastery',
 };
 
 /**
@@ -874,6 +893,108 @@ export const storage = {
     const all = storage.getGeographyFlashcardMastery();
     all[termId] = { termId, sectionId: sectionId as GeographyFlashcardMastery['sectionId'], confidence, lastSeen: Date.now() };
     localStorage.setItem(STORAGE_KEYS.GEOGRAPHY_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+
+  // —— Health Hub ——
+  getHealthHubAward: (): 'single' | 'double' | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.HEALTH_HUB_AWARD);
+    return data === 'single' || data === 'double' ? data : null;
+  },
+  setHealthHubAward: (award: 'single' | 'double'): void => {
+    localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_AWARD, award);
+  },
+  getHealthTopicProgress: (): Record<string, HealthTopicProgress> => {
+    const data = localStorage.getItem(STORAGE_KEYS.HEALTH_HUB_TOPIC_PROGRESS);
+    return data ? JSON.parse(data) : {};
+  },
+  getHealthTopicProgressByKey: (unitId: HealthUnitId, topicId: string): HealthTopicProgress | undefined => {
+    const key = `${unitId}-${topicId}`;
+    return storage.getHealthTopicProgress()[key];
+  },
+  updateHealthTopicProgress: (progress: HealthTopicProgress): void => {
+    const all = storage.getHealthTopicProgress();
+    const key = `${progress.unitId}-${progress.topicId}`;
+    progress.lastUpdated = new Date().toISOString();
+    all[key] = progress;
+    localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+  getHealthFlashcardMastery: (): Record<string, HealthFlashcardMastery> => {
+    const data = localStorage.getItem(STORAGE_KEYS.HEALTH_HUB_FLASHCARD_MASTERY);
+    return data ? JSON.parse(data) : {};
+  },
+  updateHealthFlashcardMastery: (termId: string, confidenceLevel: HealthConfidenceLevel): void => {
+    const all = storage.getHealthFlashcardMastery();
+    const existing = all[termId] || {
+      termId,
+      confidenceLevel: 1 as HealthConfidenceLevel,
+      timesViewed: 0,
+      timesConfident: 0,
+      lastViewed: '',
+      masteryPercent: 0,
+    };
+    existing.timesViewed += 1;
+    existing.lastViewed = new Date().toISOString();
+    existing.confidenceLevel = confidenceLevel;
+    if (confidenceLevel === 3) existing.timesConfident += 1;
+    const confidenceWeight = confidenceLevel === 3 ? 0.7 : confidenceLevel === 2 ? 0.4 : 0.1;
+    const consistencyWeight = Math.min(existing.timesConfident / 3, 0.3);
+    existing.masteryPercent = Math.min(100, Math.round((confidenceWeight + consistencyWeight) * 100));
+    all[termId] = existing;
+    localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_FLASHCARD_MASTERY, JSON.stringify(all));
+  },
+  calculateHealthTopicFlashcardMastery: (unitId: HealthUnitId, topicId: string, termIds: string[]): number => {
+    const mastery = storage.getHealthFlashcardMastery();
+    if (termIds.length === 0) return 0;
+    const total = termIds.reduce((sum, id) => sum + (mastery[id]?.masteryPercent ?? 0), 0);
+    return Math.round(total / termIds.length);
+  },
+  getHealthUnitQuickCheckSummary: (unitId: HealthUnitId, topicIds: string[]): { passed: number; total: number } => {
+    const all = storage.getHealthTopicProgress();
+    const total = topicIds.length;
+    const passed = topicIds.filter((topicId) => all[`${unitId}-${topicId}`]?.quickCheckPassed).length;
+    return { passed, total };
+  },
+  isHealthCaseStudyUnlocked: (unitId: HealthUnitId, topicIds: string[]): boolean => {
+    const { passed } = storage.getHealthUnitQuickCheckSummary(unitId, topicIds);
+    return passed > 0;
+  },
+  markHealthUnitCaseStudyCompleted: (unitId: HealthUnitId, topicIds: string[]): void => {
+    const all = storage.getHealthTopicProgress();
+    const now = new Date().toISOString();
+    topicIds.forEach((topicId) => {
+      const key = `${unitId}-${topicId}`;
+      const existing = all[key];
+      all[key] = {
+        unitId,
+        topicId,
+        flashcardMasteryPercent: existing?.flashcardMasteryPercent ?? 0,
+        quickCheckPassed: existing?.quickCheckPassed ?? false,
+        caseStudyCompleted: true,
+        investigationCompleted: existing?.investigationCompleted ?? false,
+        questionLabCompleted: existing?.questionLabCompleted ?? false,
+        lastUpdated: now,
+      };
+    });
+    localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_TOPIC_PROGRESS, JSON.stringify(all));
+  },
+  markHealthUnitInvestigationCompleted: (unitId: HealthUnitId, topicIds: string[]): void => {
+    const all = storage.getHealthTopicProgress();
+    const now = new Date().toISOString();
+    topicIds.forEach((topicId) => {
+      const key = `${unitId}-${topicId}`;
+      const existing = all[key];
+      all[key] = {
+        unitId,
+        topicId,
+        flashcardMasteryPercent: existing?.flashcardMasteryPercent ?? 0,
+        quickCheckPassed: existing?.quickCheckPassed ?? false,
+        caseStudyCompleted: existing?.caseStudyCompleted ?? false,
+        investigationCompleted: true,
+        questionLabCompleted: existing?.questionLabCompleted ?? false,
+        lastUpdated: now,
+      };
+    });
+    localStorage.setItem(STORAGE_KEYS.HEALTH_HUB_TOPIC_PROGRESS, JSON.stringify(all));
   },
 };
 
