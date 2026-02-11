@@ -463,13 +463,6 @@ export const HISTORY_INTERPRETATION_SETS: HistoryInterpretationSet[] = [
 // ============================================================================
 
 export const HISTORY_QUESTION_LAB_ITEMS: HistoryQuestionLabItem[] = [
-  { id: 'AB-ql1', optionKey: PERIOD_AB, partId: 'AB-1', questionType: 'describe', question: 'Describe two key features of the Treaty of Versailles.', markSchemeSummary: '2 × (feature + supporting detail). AO1.' },
-  { id: 'AB-ql2', optionKey: PERIOD_AB, partId: 'AB-1', questionType: 'explain', question: 'In what ways were Germans affected by hyperinflation in 1923? Explain your answer.', markSchemeSummary: 'AO1 + AO2. Explain ways (e.g. savings wiped out, wages paid daily, barter) with knowledge.' },
-  { id: 'AB-ql3', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'account', question: 'Write an account of how Hitler became Chancellor in January 1933.', markSchemeSummary: 'Narrative account showing cause/consequence. AO1 + AO2.' },
-  { id: 'AB-ql4', optionKey: PERIOD_AB, partId: 'AB-2', questionType: 'essay', question: '"The main reason Hitler was able to establish a dictatorship by 1934 was the Enabling Act." How far do you agree?', markSchemeSummary: 'Essay with judgement; consider Enabling Act and other factors (e.g. Reichstag Fire, Night of the Long Knives, terror, propaganda). AO1 + AO2.' },
-];
-
-export const HISTORY_QUESTION_LAB_ITEMS: HistoryQuestionLabItem[] = [
   ...GERMANY_QUESTION_LAB,
   ...PERIOD_AA_QUESTION_LAB,
   ...PERIOD_AC_QUESTION_LAB,
