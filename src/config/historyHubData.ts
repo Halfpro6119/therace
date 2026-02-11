@@ -13,6 +13,7 @@ import {
   type HistoryQuickCheckItem,
   type HistoryInterpretationSet,
   type HistoryQuestionLabItem,
+  type HistorySourceSet,
 } from '../types/historyHub';
 
 // ============================================================================
@@ -307,6 +308,20 @@ export function getQuickChecksForOption(optionKey: string, partId?: string): His
 
 export function getInterpretationSetsForOption(optionKey: string, partId?: string): HistoryInterpretationSet[] {
   let list = HISTORY_INTERPRETATION_SETS.filter(s => s.optionKey === optionKey);
+  if (partId) list = list.filter(s => s.partId === partId);
+  return list;
+}
+
+// ============================================================================
+// SOURCE SETS (Paper 1 Section B, Paper 2 Section A – wider world depth & thematic)
+// ============================================================================
+
+export const HISTORY_SOURCE_SETS: HistorySourceSet[] = [
+  // Wider world & thematic content added below
+];
+
+export function getSourceSetsForOption(optionKey: string, partId?: string): HistorySourceSet[] {
+  let list = HISTORY_SOURCE_SETS.filter(s => s.optionKey === optionKey);
   if (partId) list = list.filter(s => s.partId === partId);
   return list;
 }

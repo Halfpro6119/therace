@@ -73,6 +73,7 @@ import { HistoryHubTimelinePage } from './pages/history/HistoryHubTimelinePage';
 import { HistoryHubFlashcardPage } from './pages/history/HistoryHubFlashcardPage';
 import { HistoryHubConceptCardsPage } from './pages/history/HistoryHubConceptCardsPage';
 import { HistoryHubQuickCheckPage } from './pages/history/HistoryHubQuickCheckPage';
+import { HistoryHubSourceLabPage } from './pages/history/HistoryHubSourceLabPage';
 import { HistoryHubInterpretationLabPage } from './pages/history/HistoryHubInterpretationLabPage';
 import { HistoryHubQuestionLabPage } from './pages/history/HistoryHubQuestionLabPage';
 import { HistoryHubRevisionMapPage } from './pages/history/HistoryHubRevisionMapPage';
@@ -249,6 +250,7 @@ function App() {
                 <Route path="/history-hub/key-terms" element={<HistoryHubFlashcardPage />} />
                 <Route path="/history-hub/concept-cards" element={<HistoryHubConceptCardsPage />} />
                 <Route path="/history-hub/quick-check" element={<HistoryHubQuickCheckPage />} />
+                <Route path="/history-hub/source-lab" element={<HistoryHubSourceLabPage />} />
                 <Route path="/history-hub/interpretation-lab" element={<HistoryHubInterpretationLabPage />} />
                 <Route path="/history-hub/question-lab" element={<HistoryHubQuestionLabPage />} />
                 <Route path="/history-hub/revision-map" element={<HistoryHubRevisionMapPage />} />

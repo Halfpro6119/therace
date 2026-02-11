@@ -1,0 +1,77 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
+import { storage } from '../../utils/storage';
+import { getHistoryOptionsForSelection, getSourceSetsForOption } from '../../config/historyHubData';
+
+const ACCENT = '#B45309';
+
+/** Source Lab applies to wider world depth & thematic options only (Paper 1B, Paper 2A) */
+function getSourceLabOptions(selection: { periodStudy: string; widerWorldDepth: string; thematic: string; britishDepth: string } | null) {
+  if (!selection) return [];
+  const options = getHistoryOptionsForSelection(selection);
+  return options.filter((o) => o.section === 'widerWorldDepth' || o.section === 'thematic');
+}
+
+export function HistoryHubSourceLabPage() {
+  const navigate = useNavigate();
+  const selection = storage.getHistoryOptionSelection();
+  const options = getSourceLabOptions(selection);
+  const [optionKey, setOptionKey] = useState(options[0]?.optionKey ?? '');
+  const [partId, setPartId] = useState('');
+  const [setIndex, setSetIndex] = useState(0);
+
+  const sets = getSourceSetsForOption(optionKey, partId || undefined);
+  const set = sets[setIndex];
+
+  if (!selection) {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
+        <button type="button" onClick={() => navigate('/history-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <button type="button" onClick={() => navigate('/history-hub')} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+        <ChevronLeft size={18} /> Back to History Hub
+      </button>
+      <h1 className="text-xl font-bold" style={{ color: 'rgb(var(--text))' }}>Source lab (AO3)</h1>
+      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+        Practise &quot;how useful&quot; and source analysis for Paper 1 Section B and Paper 2 Section A.
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <select value={optionKey} onChange={(e) => { setOptionKey(e.target.value); setPartId(''); setSetIndex(0); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
+          {options.map((o) => <option key={o.optionKey} value={o.optionKey}>{o.title}</option>)}
+        </select>
+        {options.find((o) => o.optionKey === optionKey)?.parts.length ? (
+          <select value={partId} onChange={(e) => { setPartId(e.target.value); setSetIndex(0); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
+            <option value="">All parts</option>
+            {options.find((o) => o.optionKey === optionKey)?.parts.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+          </select>
+        ) : null}
+      </div>
+
+      {options.length === 0 ? (
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Source Lab applies to your wider world depth and thematic options. Select options that include these.</p>
+      ) : sets.length === 0 ? (
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No source sets for this option yet.</p>
+      ) : set ? (
+        <div className="rounded-2xl border p-6 space-y-6" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
+          {set.sources.map((src) => (
+            <div key={src.id} className="rounded-lg border p-4" style={{ borderColor: 'rgb(var(--border))' }}>
+              <p className="text-xs uppercase tracking-wide mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>{src.type}</p>
+              <p className="text-sm mb-2" style={{ color: 'rgb(var(--text))' }}>{src.content}</p>
+              {src.provenance && <p className="text-xs italic" style={{ color: 'rgb(var(--text-secondary))' }}>{src.provenance}</p>}
+            </div>
+          ))}
+          <p className="font-medium" style={{ color: 'rgb(var(--text))' }}>{set.question}</p>
+          <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{set.markSchemeSummary}</p>
+        </div>
+      ) : null}
+    </div>
+  );
+}

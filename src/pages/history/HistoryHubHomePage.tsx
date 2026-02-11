@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Landmark, Clock, BookOpen, Lightbulb, Target, FileQuestion, Map } from 'lucide-react';
+import { ChevronLeft, Landmark, Clock, BookOpen, Lightbulb, Target, FileQuestion, Map, FileText } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getHistoryOptionsForSelection } from '../../config/historyHubData';
 
@@ -16,7 +16,8 @@ export function HistoryHubHomePage() {
     { id: 'key-terms', title: 'Key terms & flashcards', description: 'Dates, people, terms', icon: BookOpen, path: '/history-hub/key-terms' },
     { id: 'concept', title: 'Concept cards', description: 'Cause, consequence, change', icon: Lightbulb, path: '/history-hub/concept-cards' },
     { id: 'quick-check', title: 'Quick check', description: 'Micro-assessments', icon: Target, path: '/history-hub/quick-check' },
-    { id: 'interpretation', title: 'Interpretation lab', description: 'How convincing? How far agree?', icon: FileQuestion, path: '/history-hub/interpretation-lab' },
+    { id: 'source-lab', title: 'Source lab', description: 'How useful? Source analysis (AO3)', icon: FileText, path: '/history-hub/source-lab' },
+    { id: 'interpretation', title: 'Interpretation lab', description: 'How convincing? How far agree? (AO4)', icon: FileQuestion, path: '/history-hub/interpretation-lab' },
     { id: 'question-lab', title: 'Question lab', description: 'Describe, explain, account, essay', icon: FileQuestion, path: '/history-hub/question-lab' },
     { id: 'revision-map', title: 'Revision map', description: 'Your options and progress', icon: Map, path: '/history-hub/revision-map' },
     { id: 'historic-environment', title: 'Historic environment', description: 'British depth site + context (Paper 2)', icon: Landmark, path: '/history-hub/historic-environment' },
