@@ -184,6 +184,7 @@ import { StudyPathProvider } from './contexts/StudyPathContext';
 import { CommandPalette } from './components/CommandPalette';
 import { ScrollToTop } from './components/ScrollToTop';
 import { initializeQuestionRegistry } from './utils/questionRegistry';
+import { seedAllMathsContent } from './config/seedAllMathsContent';
 
 function AdminRouteFallback() {
   return (
@@ -196,6 +197,13 @@ function AdminRouteFallback() {
 function App() {
   useEffect(() => {
     initializeQuestionRegistry();
+  }, []);
+
+  // Auto-seed all maths content on startup (idempotent; no user action required)
+  useEffect(() => {
+    seedAllMathsContent().catch((err) => {
+      console.warn('[seedAllMathsContent]', err instanceof Error ? err.message : err);
+    });
   }, []);
 
   return (

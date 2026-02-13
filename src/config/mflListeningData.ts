@@ -67,6 +67,42 @@ const FRENCH_LISTENING: MflListeningTask[] = [
       { id: 'q3', type: 'short', question: 'What does the speaker think everyone must do?', correctAnswer: 'make an effort / protect environment' },
     ],
   },
+  {
+    id: 'fr-l6',
+    themeId: 'identity',
+    tier: 'foundation',
+    transcript: 'J\'aime beaucoup Noël. C\'est ma fête préférée. Nous décorons le sapin et mangeons ensemble. Je reçois des cadeaux de ma famille. L\'année dernière j\'ai eu un vélo.',
+    transcriptEn: 'I really like Christmas. It\'s my favourite celebration. We decorate the tree and eat together. I receive presents from my family. Last year I got a bike.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'What is the speaker\'s favourite celebration?', correctAnswer: 'Christmas / Noël' },
+      { id: 'q2', type: 'short', question: 'What do they do together?', correctAnswer: 'decorate tree, eat / décorer, manger' },
+      { id: 'q3', type: 'short', question: 'What did the speaker receive last year?', correctAnswer: 'bike / vélo' },
+    ],
+  },
+  {
+    id: 'fr-l7',
+    themeId: 'future',
+    tier: 'foundation',
+    transcript: 'Je vais passer mon examen de français la semaine prochaine. Je révise tous les soirs. Mon professeur dit que je fais des progrès. J\'espère avoir une bonne note.',
+    transcriptEn: 'I am going to take my French exam next week. I revise every evening. My teacher says I am making progress. I hope to get a good grade.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'When is the exam?', correctAnswer: 'next week / semaine prochaine' },
+      { id: 'q2', type: 'short', question: 'When does the speaker revise?', correctAnswer: 'every evening / tous les soirs' },
+      { id: 'q3', type: 'short', question: 'What does the teacher say?', correctAnswer: 'making progress / fait des progrès' },
+    ],
+  },
+  {
+    id: 'fr-l8',
+    themeId: 'local-national-global',
+    tier: 'foundation',
+    transcript: 'L\'été dernier nous avons voyagé en Italie. Nous avons visité Rome et Florence. Les monuments sont magnifiques. La nourriture était délicieuse. Je voudrais y retourner.',
+    transcriptEn: 'Last summer we travelled to Italy. We visited Rome and Florence. The monuments are magnificent. The food was delicious. I would like to go back.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'Where did they travel?', correctAnswer: 'Italy / Italie' },
+      { id: 'q2', type: 'short', question: 'Which cities did they visit?', correctAnswer: 'Rome and Florence' },
+      { id: 'q3', type: 'short', question: 'What does the speaker want to do?', correctAnswer: 'go back / retourner' },
+    ],
+  },
 ];
 
 const SPANISH_LISTENING: MflListeningTask[] = [
@@ -128,6 +164,42 @@ const SPANISH_LISTENING: MflListeningTask[] = [
       { id: 'q1', type: 'short', question: 'What problem is mentioned?', correctAnswer: 'global warming / calentamiento global' },
       { id: 'q2', type: 'short', question: 'What should we do?', correctAnswer: 'recycle more, use public transport' },
       { id: 'q3', type: 'short', question: 'What else is important?', correctAnswer: 'reduce plastic consumption' },
+    ],
+  },
+  {
+    id: 'es-l6',
+    themeId: 'identity',
+    tier: 'foundation',
+    transcript: 'Me encanta la Navidad. Es mi fiesta favorita. Decoramos el árbol y comemos juntos. Recibo regalos de mi familia. El año pasado recibí una bicicleta.',
+    transcriptEn: 'I love Christmas. It\'s my favourite celebration. We decorate the tree and eat together. I receive presents from my family. Last year I got a bike.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'What is the speaker\'s favourite celebration?', correctAnswer: 'Christmas / Navidad' },
+      { id: 'q2', type: 'short', question: 'What do they do together?', correctAnswer: 'decorate tree, eat' },
+      { id: 'q3', type: 'short', question: 'What did the speaker receive last year?', correctAnswer: 'bike / bicicleta' },
+    ],
+  },
+  {
+    id: 'es-l7',
+    themeId: 'future',
+    tier: 'foundation',
+    transcript: 'Voy a hacer mi examen de español la semana que viene. Repaso todas las noches. Mi profesor dice que hago progresos. Espero sacar una buena nota.',
+    transcriptEn: 'I am going to take my Spanish exam next week. I revise every evening. My teacher says I am making progress. I hope to get a good grade.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'When is the exam?', correctAnswer: 'next week' },
+      { id: 'q2', type: 'short', question: 'When does the speaker revise?', correctAnswer: 'every evening / todas las noches' },
+      { id: 'q3', type: 'short', question: 'What does the teacher say?', correctAnswer: 'making progress / hace progresos' },
+    ],
+  },
+  {
+    id: 'es-l8',
+    themeId: 'local-national-global',
+    tier: 'foundation',
+    transcript: 'El verano pasado viajamos a Italia. Visitamos Roma y Florencia. Los monumentos son magníficos. La comida estaba deliciosa. Me gustaría volver.',
+    transcriptEn: 'Last summer we travelled to Italy. We visited Rome and Florence. The monuments are magnificent. The food was delicious. I would like to go back.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'Where did they travel?', correctAnswer: 'Italy / Italia' },
+      { id: 'q2', type: 'short', question: 'Which cities did they visit?', correctAnswer: 'Rome and Florence' },
+      { id: 'q3', type: 'short', question: 'What does the speaker want to do?', correctAnswer: 'go back / volver' },
     ],
   },
 ];

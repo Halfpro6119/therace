@@ -41,6 +41,27 @@ const FRENCH_ROLE_PLAYS: MflRolePlayPrompt[] = [
     prompts: ['Say what you are looking for', 'Ask the price', 'Say it\'s too expensive'],
     modelResponses: ['Je cherche un cadeau pour ma sœur.', 'C\'est combien?', 'C\'est trop cher.'],
   },
+  {
+    id: 'fr-rp6',
+    themeId: 'future',
+    scenario: 'You are at the doctor\'s. Explain your symptoms.',
+    prompts: ['Say what is wrong', 'Say how long you have felt ill', 'Ask for medicine'],
+    modelResponses: ['J\'ai mal à la tête et mal à la gorge.', 'Depuis trois jours.', 'Pouvez-vous me donner des médicaments?'],
+  },
+  {
+    id: 'fr-rp7',
+    themeId: 'local-national-global',
+    scenario: 'You are lost. Ask for directions.',
+    prompts: ['Say where you want to go', 'Ask if it is far', 'Thank the person'],
+    modelResponses: ['Je cherche la gare.', 'C\'est loin?', 'Merci beaucoup!'],
+  },
+  {
+    id: 'fr-rp8',
+    themeId: 'identity',
+    scenario: 'You are at a friend\'s birthday party.',
+    prompts: ['Say happy birthday', 'Say what you have brought', 'Ask when they will open the presents'],
+    modelResponses: ['Joyeux anniversaire!', 'Je t\'ai apporté un cadeau.', 'Quand est-ce qu\'on ouvre les cadeaux?'],
+  },
 ];
 
 const SPANISH_ROLE_PLAYS: MflRolePlayPrompt[] = [
@@ -79,6 +100,27 @@ const SPANISH_ROLE_PLAYS: MflRolePlayPrompt[] = [
     prompts: ['Say what you are looking for', 'Ask the price', 'Say it\'s too expensive'],
     modelResponses: ['Busco un regalo para mi hermana.', '¿Cuánto cuesta?', 'Es demasiado caro.'],
   },
+  {
+    id: 'es-rp6',
+    themeId: 'future',
+    scenario: 'You are at the doctor\'s. Explain your symptoms.',
+    prompts: ['Say what is wrong', 'Say how long you have felt ill', 'Ask for medicine'],
+    modelResponses: ['Tengo dolor de cabeza y dolor de garganta.', 'Desde hace tres días.', '¿Puede darme medicamentos?'],
+  },
+  {
+    id: 'es-rp7',
+    themeId: 'local-national-global',
+    scenario: 'You are lost. Ask for directions.',
+    prompts: ['Say where you want to go', 'Ask if it is far', 'Thank the person'],
+    modelResponses: ['Busco la estación.', '¿Está lejos?', '¡Muchas gracias!'],
+  },
+  {
+    id: 'es-rp8',
+    themeId: 'identity',
+    scenario: 'You are at a friend\'s birthday party.',
+    prompts: ['Say happy birthday', 'Say what you have brought', 'Ask when they will open the presents'],
+    modelResponses: ['¡Feliz cumpleaños!', 'Te he traído un regalo.', '¿Cuándo abrimos los regalos?'],
+  },
 ];
 
 const FRENCH_PHOTO_CARDS: MflPhotoCard[] = [
@@ -103,6 +145,20 @@ const FRENCH_PHOTO_CARDS: MflPhotoCard[] = [
     questions: ['Qu\'est-ce qui se passe sur la photo?', 'Où sont les élèves?', 'Qu\'est-ce qu\'ils font?', 'Tu aimes ton collège?'],
     modelAnswers: ['Les élèves sont en cours.', 'Ils sont dans une salle de classe.', 'Ils écoutent le professeur et prennent des notes.', 'Oui, j\'aime mon collège car les professeurs sont sympas.'],
   },
+  {
+    id: 'fr-pc4',
+    themeId: 'identity',
+    tier: 'foundation',
+    questions: ['Qu\'est-ce qu\'on voit sur la photo?', 'Où sont-ils?', 'Qu\'est-ce qu\'ils mangent?', 'Tu aimes manger au restaurant?'],
+    modelAnswers: ['On voit des gens qui mangent au restaurant.', 'Ils sont dans un restaurant.', 'Ils mangent des plats et boivent.', 'Oui, j\'aime manger au restaurant avec ma famille.'],
+  },
+  {
+    id: 'fr-pc5',
+    themeId: 'local-national-global',
+    tier: 'higher',
+    questions: ['Décris cette photo.', 'Quel est le problème environnemental?', 'Que peuvent faire les gens?', 'Tu fais du recyclage?'],
+    modelAnswers: ['La photo montre de la pollution ou des déchets.', 'La pollution / les déchets.', 'Ils peuvent recycler et réduire la consommation.', 'Oui, je recycle le plastique et le papier.'],
+  },
 ];
 
 const SPANISH_PHOTO_CARDS: MflPhotoCard[] = [
@@ -126,6 +182,20 @@ const SPANISH_PHOTO_CARDS: MflPhotoCard[] = [
     tier: 'foundation',
     questions: ['¿Qué pasa en la foto?', '¿Dónde están los alumnos?', '¿Qué hacen?', '¿Te gusta tu instituto?'],
     modelAnswers: ['Los alumnos están en clase.', 'Están en un aula.', 'Escuchan al profesor y toman apuntes.', 'Sí, me gusta mi instituto porque los profesores son simpáticos.'],
+  },
+  {
+    id: 'es-pc4',
+    themeId: 'identity',
+    tier: 'foundation',
+    questions: ['¿Qué se ve en la foto?', '¿Dónde están?', '¿Qué comen?', '¿Te gusta comer en el restaurante?'],
+    modelAnswers: ['Se ve gente comiendo en un restaurante.', 'Están en un restaurante.', 'Comen platos y beben.', 'Sí, me gusta comer en el restaurante con mi familia.'],
+  },
+  {
+    id: 'es-pc5',
+    themeId: 'local-national-global',
+    tier: 'higher',
+    questions: ['Describe esta foto.', '¿Cuál es el problema medioambiental?', '¿Qué pueden hacer las personas?', '¿Reciclas?'],
+    modelAnswers: ['La foto muestra contaminación o basura.', 'La contaminación / la basura.', 'Pueden reciclar y reducir el consumo.', 'Sí, reciclo plástico y papel.'],
   },
 ];
 

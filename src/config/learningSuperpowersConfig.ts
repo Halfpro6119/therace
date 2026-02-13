@@ -702,6 +702,36 @@ const ENGLISH_MISTAKES: MistakeItem[] = [
     whyItsWrong: 'AO2 requires analysis of how language/structure creates meaning and effect — not just labelling.',
     correctApproach: 'Identify technique, then explain what it does and why it matters. Effect and meaning are key.',
   },
+  {
+    wrongAnswer: 'Long quotations show I know the text',
+    whyStudentsThinkThis: 'More quote = more evidence.',
+    whyItsWrong: 'Examiners reward short, embedded quotations. Long block quotes waste words and often lack focus.',
+    correctApproach: "Use 2–4 word embedded quotes. Integrate into your sentence: Macbeth's 'vaulting ambition' suggests...",
+  },
+  {
+    wrongAnswer: 'Context should be a separate paragraph at the end',
+    whyStudentsThinkThis: 'We learn context for AO3, so we add it in.',
+    whyItsWrong: 'Bolted-on context feels forced. Top bands weave context naturally into analysis.',
+    correctApproach: 'Weave context when it illuminates the point. "Jacobean audiences would have seen ambition as..." — one sentence, linked to your analysis.',
+  },
+  {
+    wrongAnswer: 'Retelling the plot counts as analysis',
+    whyStudentsThinkThis: 'I need to show I understand what happens.',
+    whyItsWrong: 'Examiners want analysis of how and why, not what happens. Plot summary gains few marks.',
+    correctApproach: 'Assume the examiner knows the text. Focus on methods, effects, and meaning. One brief reference to events is enough.',
+  },
+  {
+    wrongAnswer: 'Comparison means writing about Poem A then Poem B separately',
+    whyStudentsThinkThis: 'It\'s easier to structure poem by poem.',
+    whyItsWrong: 'Top bands compare in every paragraph — "Similarly...", "In contrast...", "Whereas X does Y, Z does..."',
+    correctApproach: 'Compare continuously. Each paragraph should discuss both poems and draw a comparison.',
+  },
+  {
+    wrongAnswer: 'More paragraphs = better answer',
+    whyStudentsThinkThis: 'Longer answers get more marks.',
+    whyItsWrong: 'Quality over quantity. Four well-developed paragraphs beat eight thin ones. Each paragraph needs a clear point and analysis.',
+    correctApproach: 'Plan 3–4 substantial paragraphs. Each: point, short quote, analysis, effect. Develop each fully.',
+  },
 ];
 
 const MATHS_MISTAKES: MistakeItem[] = [

@@ -73,6 +73,8 @@ export interface ScienceQuestion {
     /** Reference to the idea, not just the answer */
     ideaReference: string;
   };
+  /** True if suitable for Combined Science (shorter, synoptic style) */
+  combinedScience?: boolean;
 }
 
 /**

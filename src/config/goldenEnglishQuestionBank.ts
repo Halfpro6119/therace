@@ -246,20 +246,26 @@ export const LANGUAGE_PAPER_2_WRITING: GoldenEnglishWritingTask[] = [
 
 export const LITERATURE_POETRY_SEEN_SINGLE: EnglishLiteraturePoetrySeenSingle[] = [
   { id: 'P-S01', poem: 'Ozymandias', prompt: 'How does the poet present power in Ozymandias?', focus: 'power', markSchemeSummary: 'AO2: Analyse language, form, structure. AO1: Respond to theme.' },
+  { id: 'P-S02', poem: 'London', prompt: 'How does the poet present power in London?', focus: 'power', markSchemeSummary: 'AO2/AO1. Language and structure; power and oppression.' },
   { id: 'P-S03', poem: 'Kamikaze', prompt: 'How does the poet present memory in Kamikaze?', focus: 'memory', markSchemeSummary: 'AO2/AO1. Language and structure; memory and perspective.' },
+  { id: 'P-S04', poem: 'Remains', prompt: 'How does the poet present the effects of conflict in Remains?', focus: 'conflict, trauma', markSchemeSummary: 'AO2/AO1. Language and structure; psychological impact of war.' },
 ];
 
 // ---------- POETRY — SEEN: Comparison ----------
 
 export const LITERATURE_POETRY_SEEN_COMPARISON: EnglishLiteraturePoetrySeenComparison[] = [
+  { id: 'P-C01', poemA: 'Ozymandias', poemB: 'London', prompt: 'Compare how power is presented in Ozymandias and London.', focus: 'power', markSchemeSummary: 'AO3/AO2. Sustained comparison of power and oppression.' },
   { id: 'P-C02', poemA: 'Exposure', poemB: 'Bayonet Charge', prompt: 'Compare how conflict is presented in Exposure and Bayonet Charge.', focus: 'conflict', markSchemeSummary: 'AO3/AO2. Sustained comparison of writers’ ideas and methods.' },
   { id: 'P-C03', poemA: 'Checking Out Me History', poemB: 'Kamikaze', prompt: 'Compare how identity is explored in Checking Out Me History and Kamikaze.', focus: 'identity', markSchemeSummary: 'AO3/AO2. Identity and perspective across both poems.' },
+  { id: 'P-C04', poemA: 'War Photographer', poemB: 'Remains', prompt: 'Compare how the writers present the effects of conflict in War Photographer and Remains.', focus: 'conflict, trauma', markSchemeSummary: 'AO3/AO2. Sustained comparison of psychological impact of war.' },
 ];
 
 // ---------- UNSEEN POETRY ----------
 
 export const LITERATURE_UNSEEN_POETRY: EnglishLiteratureUnseenPoetry[] = [
+  { id: 'UP-01', type: 'analysis', prompt: "How does the poet use language and structure to present the speaker's feelings?", focus: 'language and structure, feelings', markSchemeSummary: 'AO2. Methods and effects.' },
   { id: 'UP-02', type: 'analysis', prompt: 'How does the poet use language and structure to create a sense of tension?', focus: 'language and structure, tension', markSchemeSummary: 'AO2. Methods and effects.' },
+  { id: 'UP-C01', type: 'comparison', prompt: 'Compare how the poets present nature in both poems.', focus: 'nature', markSchemeSummary: 'AO3/AO2. Comparison of presentation of nature.' },
   { id: 'UP-C02', type: 'comparison', prompt: 'Compare how imagery is used in both poems.', focus: 'imagery', markSchemeSummary: 'AO3/AO2. Comparison of use of imagery.' },
 ];
 

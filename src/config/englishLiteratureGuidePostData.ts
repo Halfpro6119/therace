@@ -68,6 +68,50 @@ Contextually, Shelley's Romantic beliefs emphasised the supremacy of nature over
   }
 );
 
+// ----- P-S02: London — How does the poet present power? -----
+const P_S02: EnglishExaminerPackTask = pack(
+  [
+    { id: 'P-S02-1', label: 'I define what power means in this poem before analysing it.', ao: 'AO1' },
+    { id: 'P-S02-2', label: 'I keep my focus on power throughout every paragraph.', ao: 'AO1' },
+    { id: 'P-S02-3', label: 'I use short, embedded quotations to support my ideas.', ao: 'AO1' },
+    { id: 'P-S02-4', label: 'I analyse how language choices reveal attitudes to power.', ao: 'AO2' },
+    { id: 'P-S02-5', label: "I analyse how structure reinforces the poem's message about power.", ao: 'AO2' },
+    { id: 'P-S02-6', label: 'I comment on repetition and its effect.', ao: 'AO2' },
+    { id: 'P-S02-7', label: 'I explain how imagery presents power as oppressive.', ao: 'AO2' },
+    { id: 'P-S02-8', label: 'I weave Romantic context naturally into my analysis.', ao: 'AO3' },
+    { id: 'P-S02-9', label: "I link power to Blake's criticism of institutions.", ao: 'AO3' },
+    { id: 'P-S02-10', label: 'I explore power as control and restriction.', ao: 'AO1' },
+    { id: 'P-S02-11', label: "I include an alternative interpretation of power's effects.", ao: 'AO1' },
+    { id: 'P-S02-12', label: 'I write with a critical, confident voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses sustain a clear argument about power as oppression and control, selecting short, precise quotations. Weak responses retell the poem or describe power without analysis.
+
+AO2 (12): Top-band answers analyse language, imagery, structure and form with clear purpose. Weak answers list techniques or ignore structure.
+
+AO3 (6): Context is woven in naturally, showing Blake's Romantic beliefs and criticism of institutions. Weak responses bolt on context.
+
+Weak: narrative summary, long quotations, technique spotting, bolted-on context.`,
+  `Step 1 (2 min): Define power (oppression, control, institutional).
+Step 2 (5 min): Select three ideas (institutional power, suffering, restriction).
+Step 3 (5 min): Choose one quotation per idea.
+Step 4 (30 min): Write three analytical paragraphs plus introduction.
+Step 5 (5 min): Upgrade by tightening quotations and adding alternative interpretation.`,
+  {
+    grade4: `In London, Blake presents power as something that controls and hurts people. The poem describes people who are suffering because of the way society is run. Words like "charter'd" suggest that everything is controlled and restricted.
+
+The repetition of words shows how power affects everyone. Blake shows that power is used to limit freedom and cause pain.`,
+    grade6: `Blake presents power in London as oppressive and widespread. The repeated use of "charter'd" suggests that even natural things like the Thames are controlled by institutions. Power is shown through the suffering of different groups in society.
+
+The structure of the poem reinforces this: each stanza reveals another aspect of oppression. Blake criticises the church, the monarchy and marriage as institutions that restrict and harm people.`,
+    grade8: `Blake presents power as institutional and oppressive in London. The systematic repetition of "charter'd" and "mark" suggests that power leaves its imprint on everything—even nature. Power is not personal but structural, affecting the weak and vulnerable.
+
+Contextually, Blake's Romantic beliefs led him to criticise the institutions of his time. The poem presents power as something that restricts freedom and causes suffering, with the speaker bearing witness to its effects.`,
+    grade9: `Blake presents power in London as systemic and inescapable. The deliberate repetition of "charter'd" and "mark" suggests that power permeates every aspect of life, controlling even the natural world. Power is presented as institutional—embodied in the church, monarchy and marriage—rather than personal.
+
+Structurally, the poem's relentless rhythm mirrors the inescapability of oppression. Contextually, Blake's Romantic critique of Enlightenment rationality and institutional control shapes the poem. Alternatively, the speaker's "mark" may suggest complicity—the observer is also marked by the system they describe.`,
+  }
+);
+
 // ----- P-S03: Kamikaze — How does the poet present memory? -----
 const P_S03: EnglishExaminerPackTask = pack(
   [
@@ -117,6 +161,50 @@ Garland suggests that memory can preserve humanity but also enforce cruel social
 However, memory also becomes a form of punishment. The family's silence shows that the pilot is remembered not as a survivor but as a failure. Structurally, the fragmented narrative reflects how memory is filtered and reshaped by perspective.
 
 Contextually, cultural expectations surrounding honour intensify this rejection. An alternative interpretation is that memory preserves moral truth, even if society chooses to punish those who act upon it.`,
+  }
+);
+
+// ----- P-C01: Ozymandias & London — Compare power -----
+const P_C01: EnglishExaminerPackTask = pack(
+  [
+    { id: 'P-C01-1', label: 'I define power clearly before comparing the poems.', ao: 'AO1' },
+    { id: 'P-C01-2', label: 'I compare both poems in every paragraph.', ao: 'AO1' },
+    { id: 'P-C01-3', label: 'I use short embedded quotations from both poems.', ao: 'AO1' },
+    { id: 'P-C01-4', label: 'I analyse how language presents power.', ao: 'AO2' },
+    { id: 'P-C01-5', label: 'I analyse how structure reflects attitudes to power.', ao: 'AO2' },
+    { id: 'P-C01-6', label: 'I compare the role of time and decay.', ao: 'AO2' },
+    { id: 'P-C01-7', label: 'I explore power as temporary vs ongoing.', ao: 'AO1' },
+    { id: 'P-C01-8', label: 'I weave contextual understanding naturally.', ao: 'AO3' },
+    { id: 'P-C01-9', label: 'I explain how both poets criticise power.', ao: 'AO3' },
+    { id: 'P-C01-10', label: 'I include evaluative comparison.', ao: 'AO1' },
+    { id: 'P-C01-11', label: 'I include alternative interpretations.', ao: 'AO1' },
+    { id: 'P-C01-12', label: 'I write with a critical comparative voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses compare power conceptually, sustaining focus and using precise quotations. Weak responses describe power without analysis.
+
+AO2 (12): Top-band answers analyse language and structure comparatively. Weak answers list techniques.
+
+AO3 (6): Context woven (Romantic critique of tyranny and institutions). Weak bolted on.
+
+Weak: poem-by-poem structure, narrative retelling, vague comparison.`,
+  `Step 1 (2 min): Define power (political, institutional, temporary).
+Step 2 (5 min): Select three shared ideas.
+Step 3 (5 min): Choose one quotation per poem per idea.
+Step 4 (30 min): Write three comparative paragraphs.
+Step 5 (5 min): Upgrade by sharpening comparison.`,
+  {
+    grade4: `Both Ozymandias and London present power as something negative. In Ozymandias, the ruler's power has been destroyed over time. In London, power is shown through the suffering of ordinary people.
+
+Both poets show that power can cause harm and that it does not last forever.`,
+    grade6: `Both poems present power critically. In Ozymandias, Shelley shows power as temporary—the ruler's statue is ruined. In London, Blake shows power as ongoing oppression affecting everyone.
+
+The main difference is that Ozymandias focuses on power that has ended, while London shows power that continues to harm. Both poets suggest that power is problematic.`,
+    grade8: `Both poems present power as destructive, but in different ways. Ozymandias shows power as temporary and self-defeating—the ruler's arrogance is undermined by time and decay. London shows power as ongoing and institutional, affecting the weak.
+
+Structurally, Shelley uses a framed narrative to distance us from Ozymandias; Blake uses repetition to show power's reach. Both Romantic poets criticise systems of control.`,
+    grade9: `Both poems present power as flawed, but they explore different dimensions. Ozymandias shows power as performative and temporary—the ruler's claims are undermined by the ruined statue. London shows power as systemic and ongoing, with institutions controlling and harming people.
+
+Contextually, both Romantic poets critique authority. Shelley targets tyranny and legacy; Blake targets church, monarchy and social structures. Alternatively, Ozymandias may suggest that even failed power leaves a moral lesson, while London suggests no escape from oppression.`,
   }
 );
 
@@ -221,6 +309,181 @@ Both poets show identity as deeply connected to social control.`,
 In Kamikaze, identity is shaped by collective judgement rather than personal truth. The pilot's survival redefines him as dishonourable, and silence becomes a tool of control. Structurally, Garland's detached narration reflects how identity is stripped away through social rejection.
 
 Contextually, both poets critique systems that define individuals by ideology. However, while Agard presents identity as reclaimable through resistance, Garland presents identity as fragile, shaped by memory and communal values rather than individual choice.`,
+  }
+);
+
+// ----- P-C04: War Photographer & Remains — Compare effects of conflict -----
+const P_C04: EnglishExaminerPackTask = pack(
+  [
+    { id: 'P-C04-1', label: 'I define the effects of conflict clearly before comparing.', ao: 'AO1' },
+    { id: 'P-C04-2', label: 'I compare both poems in every paragraph.', ao: 'AO1' },
+    { id: 'P-C04-3', label: 'I use short embedded quotations from both poems.', ao: 'AO1' },
+    { id: 'P-C04-4', label: 'I analyse how language presents trauma.', ao: 'AO2' },
+    { id: 'P-C04-5', label: 'I analyse how structure reflects psychological impact.', ao: 'AO2' },
+    { id: 'P-C04-6', label: 'I compare the role of memory and guilt.', ao: 'AO2' },
+    { id: 'P-C04-7', label: 'I explore distance vs direct experience.', ao: 'AO1' },
+    { id: 'P-C04-8', label: 'I weave contextual understanding naturally.', ao: 'AO3' },
+    { id: 'P-C04-9', label: 'I explain how both poets present lasting effects.', ao: 'AO3' },
+    { id: 'P-C04-10', label: 'I include evaluative comparison.', ao: 'AO1' },
+    { id: 'P-C04-11', label: 'I include alternative interpretations.', ao: 'AO1' },
+    { id: 'P-C04-12', label: 'I write with a critical comparative voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses compare effects of conflict conceptually. Weak responses describe events without analysis.
+
+AO2 (12): Top-band answers analyse language and structure comparatively. Weak answers list techniques.
+
+AO3 (6): Context woven (war, trauma, media). Weak bolted on.
+
+Weak: poem-by-poem structure, narrative retelling, vague comparison.`,
+  `Step 1 (2 min): Define effects of conflict (trauma, guilt, memory).
+Step 2 (5 min): Select three shared ideas.
+Step 3 (5 min): Choose one quotation per poem per idea.
+Step 4 (30 min): Write three comparative paragraphs.
+Step 5 (5 min): Upgrade by sharpening comparison.`,
+  {
+    grade4: `Both War Photographer and Remains show how conflict affects people. In War Photographer, the photographer is affected by what he has seen. In Remains, the soldier is haunted by a memory.
+
+Both poems show that conflict has lasting effects on those involved.`,
+    grade6: `Both poems present the psychological effects of conflict. War Photographer shows the photographer struggling with the distance between war zones and home. Remains shows a soldier unable to escape a traumatic memory.
+
+Both poets use structure to reflect the ongoing impact of conflict. The effects are shown as lasting and difficult to escape.`,
+    grade8: `Both poems explore the lasting psychological effects of conflict. War Photographer contrasts the photographer's safe home with the war zones he documents, showing how trauma travels. Remains uses repetition and fragmented structure to mirror the soldier's inability to forget.
+
+Both poets present conflict as something that cannot be left behind. The distance in War Photographer and the immediacy in Remains create different but complementary explorations of trauma.`,
+    grade9: `Both poems present conflict as leaving psychological scars that cannot be erased. War Photographer explores the guilt of witnessing without acting, while Remains explores the guilt of direct participation. Structurally, both use repetition and fragmentation to reflect the persistence of trauma.
+
+Contextually, Duffy and Armitage both engage with modern conflict. Alternatively, War Photographer may suggest that mediation creates its own form of distance, while Remains suggests that direct experience creates a different kind of guilt—both equally inescapable.`,
+  }
+);
+
+// ----- P-S04: Remains — How does the poet present the effects of conflict? -----
+const P_S04: EnglishExaminerPackTask = pack(
+  [
+    { id: 'P-S04-1', label: 'I define the effects of conflict before analysing.', ao: 'AO1' },
+    { id: 'P-S04-2', label: 'I maintain focus on effects throughout every paragraph.', ao: 'AO1' },
+    { id: 'P-S04-3', label: 'I use short, embedded quotations to support my ideas.', ao: 'AO1' },
+    { id: 'P-S04-4', label: 'I analyse how language presents trauma and guilt.', ao: 'AO2' },
+    { id: 'P-S04-5', label: 'I analyse how structure reflects psychological impact.', ao: 'AO2' },
+    { id: 'P-S04-6', label: 'I explore the shift from action to memory.', ao: 'AO2' },
+    { id: 'P-S04-7', label: 'I link effects to identity and conscience.', ao: 'AO1' },
+    { id: 'P-S04-8', label: 'I weave contextual understanding naturally.', ao: 'AO3' },
+    { id: 'P-S04-9', label: 'I explain how the poem presents lasting trauma.', ao: 'AO1' },
+    { id: 'P-S04-10', label: 'I include an alternative interpretation.', ao: 'AO1' },
+    { id: 'P-S04-11', label: 'I avoid narrative retelling.', ao: 'AO1' },
+    { id: 'P-S04-12', label: 'I write with a critical, evaluative voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses sustain a clear argument about trauma and guilt. Weak responses retell events.
+
+AO2 (12): Top-band answers analyse language and structure with purpose. Weak answers list techniques.
+
+AO3 (6): Context woven (modern conflict, PTSD). Weak bolted on.
+
+Weak: narrative summary, long quotations, technique spotting.`,
+  `Step 1 (2 min): Define effects (trauma, guilt, memory).
+Step 2 (5 min): Select three ideas (immediate, repressed, inescapable).
+Step 3 (5 min): Choose one quotation per idea.
+Step 4 (30 min): Write three analytical paragraphs plus introduction.
+Step 5 (5 min): Upgrade by adding alternative interpretation.`,
+  {
+    grade4: `In Remains, Armitage presents the effects of conflict through a soldier who cannot forget what he did. The soldier is haunted by a memory of killing someone. He repeats that the memory is always there.
+
+The poem shows that conflict has lasting effects on those who take part.`,
+    grade6: `Armitage presents the effects of conflict as psychological and lasting. The soldier cannot escape the memory of the shooting. Repetition and the conversational tone show how the memory keeps returning.
+
+The poem suggests that conflict affects people long after the event. Guilt and trauma are shown as inescapable.`,
+    grade8: `Armitage presents the effects of conflict as traumatic and inescapable. The poem's structure—moving between past and present—mirrors the soldier's inability to leave the memory behind. Repetition of "probably armed, possibly not" shows guilt and doubt.
+
+The conversational tone contrasts with the horror of the content, suggesting that trauma becomes normalised yet never resolved. Armitage presents conflict as leaving permanent psychological scars.`,
+    grade9: `Armitage presents the effects of conflict as psychologically permanent. The poem's fragmented structure and repetition reflect the soldier's inability to process or escape the memory. "Probably armed, possibly not" becomes a refrain of unresolved guilt.
+
+Contextually, the poem engages with modern warfare and PTSD. Alternatively, the poem may suggest that moral ambiguity—not knowing whether the victim was armed—intensifies trauma, as the soldier can never justify his actions to himself.`,
+  }
+);
+
+// ----- UP-01: Unseen single — speaker's feelings -----
+const UP_01: EnglishExaminerPackTask = pack(
+  [
+    { id: 'UP-01-1', label: 'I establish a clear interpretation of feelings before analysing.', ao: 'AO1' },
+    { id: 'UP-01-2', label: 'I keep the focus on feelings throughout my response.', ao: 'AO1' },
+    { id: 'UP-01-3', label: 'I select short, embedded quotations that reveal feelings.', ao: 'AO1' },
+    { id: 'UP-01-4', label: 'I analyse how word choices convey emotion.', ao: 'AO2' },
+    { id: 'UP-01-5', label: 'I analyse imagery linked directly to feelings.', ao: 'AO2' },
+    { id: 'UP-01-6', label: 'I explore how structure reflects emotional state.', ao: 'AO2' },
+    { id: 'UP-01-7', label: 'I analyse how tone shifts or develops.', ao: 'AO2' },
+    { id: 'UP-01-8', label: 'I show how feelings develop across the poem.', ao: 'AO1' },
+    { id: 'UP-01-9', label: 'I avoid narrative retelling.', ao: 'AO1' },
+    { id: 'UP-01-10', label: 'I include an alternative interpretation.', ao: 'AO1' },
+    { id: 'UP-01-11', label: 'I write with a confident, analytical voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses offer a clear, sustained interpretation of feelings. Weak responses paraphrase the poem.
+
+AO2 (12): Top-band answers analyse language and structure with purpose. Weak answers list techniques.
+
+AO3 is not assessed in unseen poetry.
+
+Weak: narrative summary, vague comments, technique spotting.`,
+  `Step 1 (2 min): Define the dominant feeling(s).
+Step 2 (5 min): Identify where feelings are strongest and how they develop.
+Step 3 (5 min): Select 3 quotations (early, middle, end).
+Step 4 (30 min): Write introduction + 3 analytical paragraphs.
+Step 5 (5 min): Upgrade by tightening focus and adding alternative reading.`,
+  {
+    grade4: `The poet presents the speaker's feelings through the language used. Words and images help the reader understand how the speaker feels. The structure of the poem may also show changes in feeling.
+
+Overall, the poet uses language and structure to convey the speaker's emotional state.`,
+    grade6: `The poet presents feelings through careful language choices. Imagery and word choice create a clear sense of the speaker's emotional state. The structure may reflect how feelings develop or change.
+
+Together, language and structure help the reader understand the speaker's feelings.`,
+    grade8: `The poet uses both language and structure to convey the speaker's feelings. Word choice and imagery create a vivid sense of emotional state. Structural choices—such as line length or stanza breaks—may reflect shifts in feeling.
+
+The poet controls what is revealed and when, shaping the reader's understanding of the speaker's emotional journey.`,
+    grade9: `The poet presents the speaker's feelings through deliberate control of language and structure. Imagery and word choice create a sustained emotional effect. Structural choices may reflect the development or complexity of feeling.
+
+An alternative interpretation may reveal conflicting or layered emotions. The poet's methods work together to create a coherent but potentially nuanced emotional portrait.`,
+  }
+);
+
+// ----- UP-C01: Unseen comparison — nature -----
+const UP_C01: EnglishExaminerPackTask = pack(
+  [
+    { id: 'UP-C01-1', label: 'I compare both poems in every paragraph.', ao: 'AO1' },
+    { id: 'UP-C01-2', label: 'I define the role of nature before analysing.', ao: 'AO1' },
+    { id: 'UP-C01-3', label: 'I select short quotations from both poems.', ao: 'AO1' },
+    { id: 'UP-C01-4', label: 'I analyse how nature is presented in poem one.', ao: 'AO2' },
+    { id: 'UP-C01-5', label: 'I analyse how nature is presented in poem two.', ao: 'AO2' },
+    { id: 'UP-C01-6', label: 'I compare the effects of nature directly.', ao: 'AO2' },
+    { id: 'UP-C01-7', label: 'I explore similarities and differences.', ao: 'AO1' },
+    { id: 'UP-C01-8', label: 'I analyse rather than describe.', ao: 'AO2' },
+    { id: 'UP-C01-9', label: 'I maintain focus on nature throughout.', ao: 'AO1' },
+    { id: 'UP-C01-10', label: 'I use comparative connectives accurately.', ao: 'AO1' },
+    { id: 'UP-C01-11', label: 'I include evaluative comparison.', ao: 'AO1' },
+    { id: 'UP-C01-12', label: 'I write with a confident comparative voice.', ao: 'AO1' },
+  ],
+  `AO1 (12): Top-band responses compare nature continuously. Weak responses discuss poems separately.
+
+AO2 (12): Top-band answers analyse presentation of nature with precision. Weak answers describe images without analysis.
+
+AO3 is not assessed in unseen poetry.
+
+Weak: poem-by-poem structure, narrative description, vague comparison.`,
+  `Step 1 (2 min): Identify how nature is presented in each poem.
+Step 2 (5 min): Decide one key similarity and one difference.
+Step 3 (5 min): Select one quotation per poem per idea.
+Step 4 (30 min): Write comparative paragraphs.
+Step 5 (5 min): Upgrade by sharpening evaluative language.`,
+  {
+    grade4: `Both poems use nature to help the reader understand the poem. In the first poem, nature might show how the speaker feels. In the second poem, nature might have a different role.
+
+Both poets use nature to communicate their ideas.`,
+    grade6: `Both poems present nature in different ways. In the first poem, nature might reflect the speaker's feelings or create atmosphere. In the second poem, nature might have a different purpose.
+
+Comparing the two shows how nature can be used for different effects.`,
+    grade8: `Both poets use nature to shape meaning, but their focus differs. In the first poem, nature may establish mood or reflect inner state. In the second, nature may function differently—as threat, comfort, or symbol.
+
+The comparison shows how nature can serve different purposes depending on the poet's intention.`,
+    grade9: `Both poets use nature as a central method for shaping meaning, yet they deploy it for different effects. In the first poem, nature may anchor meaning in the physical world or reflect psychological state. In the second, nature may function symbolically or contrastingly.
+
+The comparison reveals how nature can either ground meaning in experience or elevate it into abstract reflection, depending on the poet's purpose.`,
   }
 );
 
@@ -696,10 +959,16 @@ Contextually, the Inspector embodies the voice of conscience and social justice.
 // ----- Export -----
 const GUIDE_POST_BY_TASK_ID: Record<string, EnglishExaminerPackTask> = {
   'P-S01': P_S01,
+  'P-S02': P_S02,
   'P-S03': P_S03,
+  'P-S04': P_S04,
+  'P-C01': P_C01,
   'P-C02': P_C02,
   'P-C03': P_C03,
+  'P-C04': P_C04,
+  'UP-01': UP_01,
   'UP-02': UP_02,
+  'UP-C01': UP_C01,
   'UP-C02': UP_C02,
   'M-01': M_01,
   'M-03': M_03,

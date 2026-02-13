@@ -67,6 +67,31 @@ const FRENCH_WRITING: MflWritingTask[] = [
       grade9: 'Les problèmes environnementaux comme le réchauffement climatique, la pollution plastique et la déforestation m\'inquiètent énormément. Personnellement, je recycle rigoureusement, j\'utilise les transports en commun et je réduis ma consommation. Les jeunes peuvent faire du volontariat, participer à des manifestations pour le climat et sensibiliser leur entourage. Bien que la situation soit grave, je reste optimiste car je vois de plus en plus de jeunes s\'engager. Nous devons agir maintenant pour protéger notre planète.',
     },
   },
+  {
+    id: 'fr-w6',
+    type: '40word',
+    themeId: 'identity',
+    tier: 'foundation',
+    prompt: 'Écris environ 40 mots. Tu dois inclure:',
+    bullets: ['Ta fête préférée', 'Ce que tu fais ce jour-là', 'Pourquoi tu aimes cette fête', 'Un souvenir'],
+    modelAnswers: {
+      grade4: 'Ma fête préférée est Noël. Je mange avec ma famille. J\'aime les cadeaux. L\'année dernière j\'ai eu un vélo.',
+      grade6: 'Ma fête préférée est Noël. Nous décorons le sapin et mangeons ensemble. J\'adore recevoir des cadeaux. L\'année dernière j\'ai eu un vélo.',
+      grade8: 'Ma fête préférée est Noël. Nous décorons le sapin, mangeons en famille et échangeons des cadeaux. J\'aime l\'ambiance. L\'année dernière j\'ai reçu un vélo.',
+    },
+  },
+  {
+    id: 'fr-w7',
+    type: '90word',
+    themeId: 'identity',
+    tier: 'foundation',
+    prompt: 'Écris environ 90 mots. Tu dois inclure:',
+    bullets: ['Tes loisirs préférés', 'Avec qui tu les fais', 'Ce que tu as fait le weekend dernier', 'Ce que tu vas faire le weekend prochain'],
+    modelAnswers: {
+      grade6: 'J\'aime le sport et la musique. Je joue au football avec mes amis. Le weekend dernier j\'ai regardé un film. Le weekend prochain je vais au cinéma.',
+      grade8: 'J\'adore le sport et la musique. Je joue au football avec mes amis au parc. Le weekend dernier j\'ai regardé un film au cinéma. Le weekend prochain je vais faire du vélo avec ma famille.',
+    },
+  },
 ];
 
 const SPANISH_WRITING: MflWritingTask[] = [
@@ -130,6 +155,31 @@ const SPANISH_WRITING: MflWritingTask[] = [
     modelAnswers: {
       grade8: 'El calentamiento global y la contaminación me preocupan mucho. Reciclo, uso el transporte público y evito el plástico. Los jóvenes pueden hacer voluntariado, participar en manifestaciones y sensibilizar a los demás. Soy optimista pero debemos actuar ahora.',
       grade9: 'Los problemas medioambientales como el calentamiento global, la contaminación por plásticos y la deforestación me preocupan enormemente. Personalmente, reciclo rigurosamente, uso el transporte público y reduzco mi consumo. Los jóvenes pueden hacer voluntariado, participar en manifestaciones por el clima y sensibilizar a su entorno. Aunque la situación es grave, sigo siendo optimista porque veo a más jóvenes comprometerse. Debemos actuar ahora para proteger nuestro planeta.',
+    },
+  },
+  {
+    id: 'es-w6',
+    type: '40word',
+    themeId: 'identity',
+    tier: 'foundation',
+    prompt: 'Escribe aproximadamente 40 palabras. Debes incluir:',
+    bullets: ['Tu fiesta favorita', 'Qué haces ese día', 'Por qué te gusta', 'Un recuerdo'],
+    modelAnswers: {
+      grade4: 'Mi fiesta favorita es la Navidad. Como con mi familia. Me gustan los regalos. El año pasado recibí una bicicleta.',
+      grade6: 'Mi fiesta favorita es la Navidad. Decoramos el árbol y comemos juntos. Me encanta recibir regalos. El año pasado recibí una bicicleta.',
+      grade8: 'Mi fiesta favorita es la Navidad. Decoramos el árbol, comemos en familia e intercambiamos regalos. Me gusta el ambiente. El año pasado recibí una bicicleta.',
+    },
+  },
+  {
+    id: 'es-w7',
+    type: '90word',
+    themeId: 'identity',
+    tier: 'foundation',
+    prompt: 'Escribe aproximadamente 90 palabras. Debes incluir:',
+    bullets: ['Tus hobbies favoritos', 'Con quién los haces', 'Qué hiciste el fin de semana pasado', 'Qué vas a hacer el próximo fin de semana'],
+    modelAnswers: {
+      grade6: 'Me gusta el deporte y la música. Juego al fútbol con mis amigos. El fin de semana pasado vi una película. El próximo fin de semana voy al cine.',
+      grade8: 'Me encanta el deporte y la música. Juego al fútbol con mis amigos en el parque. El fin de semana pasado vi una película en el cine. El próximo fin de semana voy a montar en bici con mi familia.',
     },
   },
 ];

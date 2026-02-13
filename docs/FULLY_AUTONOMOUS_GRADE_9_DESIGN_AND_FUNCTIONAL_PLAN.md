@@ -2210,7 +2210,7 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 | **Religious Studies** | ✅ Meets targets | 60+ scripture cards, 30+ contrasting views, 80+ quick checks, 5 philosophical arguments |
 | **Business** | ✅ Meets targets | 130+ glossary terms, 120+ quick checks, 5+ case studies, evaluation prompts |
 | **Health** | ✅ Expanded | 22 concepts, 80+ terms, 50+ quick checks, 4+ case studies; Units 3–4 content present |
-| **Languages** | ✅ In progress | French 200+ words, Spanish 150+ words; vocabulary mode implemented |
+| **Languages** | ✅ Expanded | French 500+ words, Spanish 480+ words; Vocabulary, Grammar (20 concepts), Listening (8 tasks), Reading (8 tasks), Writing (7 tasks), Speaking (8 role-play, 5 photo cards), Translation (20 each direction) |
 
 ### Implemented (Feb 2025 — Content Implementation Phase)
 
@@ -2218,15 +2218,15 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 |---------|--------|---------|
 | **Geography** | +31 key terms, +15 quick checks | Toward 300+ terms, 120+ quick checks; nh-kt25–app-kt10, nh-qc13–app-qc7 |
 | **Business** | +3 case studies | NewPhone Ltd (penetration pricing), BuildCo Ltd (procurement), ServiceFirst Ltd (customer service); total 18 |
-| **French** | +48 vocabulary items | savoir, pouvoir, venir, faire, climate change, skills, etc.; total ~320 |
-| **Spanish** | +45 vocabulary items | saber, poder, venir, hacer, cambio climático, etc.; total ~310 |
+| **French** | +180 vocab, +10 grammar, +3 listening/reading, +2 writing, +3 role-play, +2 photo cards, +20 translation | Total ~500 vocab, 20 grammar, 8 listening, 8 reading, 7 writing, 8 role-play, 5 photo cards, 34 translation |
+| **Spanish** | +171 vocab, +10 grammar, +3 listening/reading, +2 writing, +3 role-play, +2 photo cards, +20 translation | Total ~480 vocab, 20 grammar, 8 listening, 8 reading, 7 writing, 8 role-play, 5 photo cards, 34 translation |
 | **Health** | +9 terms (Units 3–4) | Evaluation, intervention, target audience, health inequality, risk factor, etc. |
 | **Biology** | +1 stretch concept | Bioaccumulation/biomagnification (Grade 9 Ecology) |
 
 ### Remaining (Content & Future)
 
 - **Geography** — Key terms ~230; target 300+ (further expansion possible)
-- **French/Spanish** — Expand to 1,200+ (Foundation) / 1,700+ (Higher) words; add Grammar, Listening, Reading, Writing, Speaking, Translation modes
+- **French/Spanish** — Expand to 1,200+ (Foundation) / 1,700+ (Higher) words; all modes (Grammar, Listening, Reading, Writing, Speaking, Translation) implemented with proof-of-concept content
 - **Compute Lab** — Per-unit content density to implementation plan targets
 - **Further Maths & Statistics** — Build or remove from scope
 - **Diagrams** — 50+ new diagrams per §22
@@ -2450,7 +2450,7 @@ Subject-specific creative methods are documented in each subject's section (§4.
 | 2 | Writing tasks | 10 | ✅ | |
 | 3 | Examiner packs | All tasks | ✅ | |
 | 4 | Grade 9 model answers | 2–3 per task | Partial | Add where missing |
-| 5 | Mistake Museum | Common writing/reading errors | Partial | |
+| 5 | Mistake Museum | Common writing/reading errors | ✅ | 7 items: vocab, AO2, quotes, context, plot, comparison, paragraphs |
 | 6 | Dual-Code Flip | Structure diagrams, AO mapping | Partial | |
 
 ---
@@ -2460,8 +2460,8 @@ Subject-specific creative methods are documented in each subject's section (§4.
 | # | Content Task | Target | Status | Notes |
 |---|--------------|--------|--------|-------|
 | 1 | Set texts | Macbeth, ACC, J&H, AIC | ✅ | |
-| 2 | Poetry tasks | 6+ | ✅ | Add 4–6 more |
-| 3 | GuidePost packs | All tasks | ✅ | |
+| 2 | Poetry tasks | 10+ | ✅ | 4 seen single, 4 seen comparison, 4 unseen (P-S02, P-S04, P-C01, P-C04, UP-01, UP-C01) |
+| 3 | GuidePost packs | All tasks | ✅ | 20 Literature tasks with full packs |
 | 4 | Optional texts | 2–3 (R&J, P&P, etc.) | ❌ | P2 expansion |
 | 5 | Memory Palace | Key quotes, themes | Partial | |
 | 6 | Compare & Contrast | Characters, themes | Partial | |

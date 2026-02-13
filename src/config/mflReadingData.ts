@@ -61,6 +61,39 @@ const FRENCH_READING: MflReadingTask[] = [
       { id: 'q3', type: 'short', question: 'What do many young people do?', correctAnswer: 'volunteering / volontariat' },
     ],
   },
+  {
+    id: 'fr-r6',
+    themeId: 'identity',
+    tier: 'foundation',
+    text: 'Mon anniversaire est en mars. J\'ai invité tous mes amis. Nous allons faire une fête à la maison. Ma mère va préparer un gâteau au chocolat. J\'adore le chocolat!',
+    questions: [
+      { id: 'q1', type: 'short', question: 'When is the birthday?', correctAnswer: 'March / mars' },
+      { id: 'q2', type: 'short', question: 'Where will the party be?', correctAnswer: 'at home / à la maison' },
+      { id: 'q3', type: 'short', question: 'What will the mother prepare?', correctAnswer: 'chocolate cake / gâteau au chocolat' },
+    ],
+  },
+  {
+    id: 'fr-r7',
+    themeId: 'local-national-global',
+    tier: 'foundation',
+    text: 'Pour aller au centre-ville, prenez le bus numéro 12. Il part de la gare toutes les dix minutes. Le trajet dure environ quinze minutes. Le billet coûte deux euros.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'Which bus goes to the town centre?', correctAnswer: 'number 12 / numéro 12' },
+      { id: 'q2', type: 'short', question: 'How often does it leave?', correctAnswer: 'every ten minutes' },
+      { id: 'q3', type: 'short', question: 'How much does the ticket cost?', correctAnswer: 'two euros' },
+    ],
+  },
+  {
+    id: 'fr-r8',
+    themeId: 'future',
+    tier: 'foundation',
+    text: 'Je voudrais devenir professeur de français. J\'aime les langues et j\'aime aider les autres. Après l\'université, je vais faire une formation. Mon père est aussi professeur.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'What job does the speaker want?', correctAnswer: 'French teacher / professeur de français' },
+      { id: 'q2', type: 'short', question: 'What will they do after university?', correctAnswer: 'training / formation' },
+      { id: 'q3', type: 'short', question: 'What does the father do?', correctAnswer: 'teacher / professeur' },
+    ],
+  },
 ];
 
 const SPANISH_READING: MflReadingTask[] = [
@@ -118,6 +151,39 @@ const SPANISH_READING: MflReadingTask[] = [
       { id: 'q1', type: 'short', question: 'What affects our planet?', correctAnswer: 'global warming / calentamiento global' },
       { id: 'q2', type: 'short', question: 'What should we do?', correctAnswer: 'recycle, use public transport, reduce energy' },
       { id: 'q3', type: 'short', question: 'What do many young people do?', correctAnswer: 'volunteering / voluntariado' },
+    ],
+  },
+  {
+    id: 'es-r6',
+    themeId: 'identity',
+    tier: 'foundation',
+    text: 'Mi cumpleaños es en marzo. He invitado a todos mis amigos. Vamos a hacer una fiesta en casa. Mi madre va a preparar un pastel de chocolate. ¡Me encanta el chocolate!',
+    questions: [
+      { id: 'q1', type: 'short', question: 'When is the birthday?', correctAnswer: 'March / marzo' },
+      { id: 'q2', type: 'short', question: 'Where will the party be?', correctAnswer: 'at home / en casa' },
+      { id: 'q3', type: 'short', question: 'What will the mother prepare?', correctAnswer: 'chocolate cake / pastel de chocolate' },
+    ],
+  },
+  {
+    id: 'es-r7',
+    themeId: 'local-national-global',
+    tier: 'foundation',
+    text: 'Para ir al centro, tome el autobús número 12. Sale de la estación cada diez minutos. El viaje dura unos quince minutos. El billete cuesta dos euros.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'Which bus goes to the town centre?', correctAnswer: 'number 12 / número 12' },
+      { id: 'q2', type: 'short', question: 'How often does it leave?', correctAnswer: 'every ten minutes' },
+      { id: 'q3', type: 'short', question: 'How much does the ticket cost?', correctAnswer: 'two euros' },
+    ],
+  },
+  {
+    id: 'es-r8',
+    themeId: 'future',
+    tier: 'foundation',
+    text: 'Me gustaría ser profesor de español. Me gustan los idiomas y me gusta ayudar a los demás. Después de la universidad voy a hacer una formación. Mi padre también es profesor.',
+    questions: [
+      { id: 'q1', type: 'short', question: 'What job does the speaker want?', correctAnswer: 'Spanish teacher / profesor de español' },
+      { id: 'q2', type: 'short', question: 'What will they do after university?', correctAnswer: 'training / formación' },
+      { id: 'q3', type: 'short', question: 'What does the father do?', correctAnswer: 'teacher / profesor' },
     ],
   },
 ];
