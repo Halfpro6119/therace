@@ -176,6 +176,22 @@ const CONCEPTS: PsychologyConceptCard[] = [
     coreIdea: 'Physical and psychological dependence. Tolerance: need more. Withdrawal: symptoms when stopped.',
     keyStudies: 'Biological: dopamine reward. Social learning: modelling.',
   },
+  // Memory – stretch
+  { id: 'mem-c4', topicId: 'memory', title: 'Retrieval failure', coreIdea: 'Forgetting due to absence of retrieval cues. Encoding specificity: recall is better when context at encoding matches context at retrieval.', keyStudies: 'Tulving: context-dependent and state-dependent forgetting.', misconception: 'All forgetting is decay – retrieval failure shows cues matter.' },
+  { id: 'mem-c5', topicId: 'memory', title: 'Cognitive interview', coreIdea: 'Technique to improve eyewitness recall: context reinstatement, report everything, reverse order, change perspective. Reduces leading questions.', keyStudies: 'Geiselman: CI increases accurate recall without increasing errors.', misconception: 'CI always improves accuracy – it can increase confabulation if misused.' },
+  // Perception – stretch
+  { id: 'per-c3', topicId: 'perception', title: 'Visual illusions', coreIdea: 'Illusions (e.g. Ponzo, Müller-Lyer) show that perception can be fooled. Gregory: misinterpreted depth cues. Gibson: illusions are artificial.', keyStudies: 'Used to test constructivist vs direct theories.', misconception: 'Illusions prove perception is always wrong – they show how it usually works.' },
+  // Development – stretch
+  { id: 'dev-c3', topicId: 'development', title: 'Vygotsky\'s zone of proximal development', coreIdea: 'ZPD: what a child can do with help vs alone. Scaffolding: support from expert. Social context shapes development.', keyStudies: 'Contrast with Piaget: Vygotsky emphasised social learning.', misconception: 'Piaget and Vygotsky agreed – they differed on role of social context.' },
+  // Research methods – stretch
+  { id: 'rm-c3', topicId: 'research-methods', title: 'Experimental design', coreIdea: 'Independent groups, repeated measures, matched pairs. Each has pros and cons for controlling extraneous variables.', keyStudies: 'Random allocation reduces bias in independent groups.', misconception: 'Repeated measures always better – order effects can occur.' },
+  { id: 'rm-c4', topicId: 'research-methods', title: 'Ethics in research', coreIdea: 'Informed consent, right to withdraw, confidentiality, debriefing, protection from harm. BPS guidelines.', keyStudies: 'Milgram raised ethical questions; modern studies must follow guidelines.', misconception: 'Ethics only matter in lab studies – all research needs ethical consideration.' },
+  // Social influence – stretch
+  { id: 'si-c3', topicId: 'social-influence', title: 'Social impact theory', coreIdea: 'Latané: impact depends on strength, immediacy, number. More people = more impact but each extra person adds less.', keyStudies: 'Explains conformity and obedience in groups.', misconception: 'More people always means more conformity – diminishing returns.' },
+  // Brain – stretch
+  { id: 'bn-c3', topicId: 'brain-neuropsychology', title: 'Plasticity', coreIdea: 'Brain can reorganise after damage. New neural pathways form. Use-dependent.', keyStudies: 'Recovery from stroke; London taxi drivers\' hippocampi.', misconception: 'Brain is fixed in adulthood – plasticity continues throughout life.' },
+  // Psychological problems – stretch
+  { id: 'pp-c3', topicId: 'psychological-problems', title: 'Phobias', coreIdea: 'Irrational fear. Classical conditioning: association. Operant: avoidance reinforced. Treatments: systematic desensitisation, flooding.', keyStudies: 'Watson & Rayner: Little Albert. Behavioural explanation.', misconception: 'Phobias are always from direct experience – can be learned indirectly.' },
 ];
 
 // ============================================================================
@@ -193,6 +209,12 @@ const KEY_STUDIES: PsychologyKeyStudy[] = [
   { id: 'si-s2', topicId: 'social-influence', researcher: 'Milgram (1963)', aim: 'To test obedience to authority.', procedure: 'Participants "shocked" a learner (confederate) for wrong answers.', findings: '65% gave 450V. Proximity, location, uniform affected obedience.', conclusion: 'Situational factors explain obedience.' },
   { id: 'bn-s1', topicId: 'brain-neuropsychology', researcher: 'Broca (1861)', aim: 'To identify brain regions for speech.', procedure: 'Studied patient with speech damage.', findings: 'Damage to left frontal lobe (Broca\'s area) caused speech loss.', conclusion: 'Localisation of speech production.' },
   { id: 'bn-s2', topicId: 'brain-neuropsychology', researcher: 'Sperry (1968)', aim: 'To study split-brain patients.', procedure: 'Participants with severed corpus callosum; stimuli to left or right visual field.', findings: 'Left hemisphere: language. Right: spatial. Each hemisphere processes independently.', conclusion: 'Hemispheric specialisation.' },
+  { id: 'mem-s3', topicId: 'memory', researcher: 'Baddeley (1966)', aim: 'To test coding in STM and LTM.', procedure: 'Participants recalled word lists; acoustic vs semantic similarity.', findings: 'STM: acoustic confusion. LTM: semantic confusion.', conclusion: 'STM and LTM have different coding.' },
+  { id: 'mem-s4', topicId: 'memory', researcher: 'Geiselman et al. (1985)', aim: 'To test the cognitive interview.', procedure: 'Witnesses used CI vs standard interview; accuracy measured.', findings: 'CI increased correct recall without increasing errors.', conclusion: 'CI improves eyewitness testimony.' },
+  { id: 'dev-s3', topicId: 'development', researcher: 'Vygotsky (1978)', aim: 'To study role of social context in development.', procedure: 'Observed children learning with adults; ZPD concept.', findings: 'Learning occurs in ZPD with scaffolding.', conclusion: 'Social interaction drives cognitive development.' },
+  { id: 'si-s3', topicId: 'social-influence', researcher: 'Moscovici (1969)', aim: 'To test minority influence.', procedure: 'Minority gave consistent wrong answers; did majority conform?', findings: 'Consistent minority can influence majority.', conclusion: 'Minority influence requires consistency.' },
+  { id: 'pp-s1', topicId: 'psychological-problems', researcher: 'Beck (1967)', aim: 'To explain depression cognitively.', procedure: 'Identified negative triad and cognitive distortions.', findings: 'Depressed people have negative views of self, world, future.', conclusion: 'Cognitive theory of depression.' },
+  { id: 'pp-s2', topicId: 'psychological-problems', researcher: 'Watson & Rayner (1920)', aim: 'To show phobias can be conditioned.', procedure: 'Little Albert: paired loud noise with white rat.', findings: 'Albert developed fear of rat (and similar stimuli).', conclusion: 'Phobias can be learned through classical conditioning.' },
 ];
 
 // ============================================================================
@@ -244,6 +266,37 @@ const QUICK_CHECKS: PsychologyQuickCheckItem[] = [
   { id: 'bn-qc2', topicId: 'brain-neuropsychology', type: 'shortAnswer', question: 'Which brain area is associated with speech production?', correctAnswer: 'Broca\'s area', feedback: { correct: 'Correct.', incorrect: 'Broca\'s area (left frontal lobe).' } },
   { id: 'pp-qc1', topicId: 'psychological-problems', type: 'multipleChoice', question: 'Which therapy uses gradual exposure and relaxation for phobias?', options: ['Flooding', 'CBT', 'Systematic desensitisation', 'Drug therapy'], correctAnswer: 'Systematic desensitisation', feedback: { correct: 'Correct.', incorrect: 'Systematic desensitisation – hierarchy + relaxation.' } },
   { id: 'pp-qc2', topicId: 'psychological-problems', type: 'shortAnswer', question: 'What is Beck\'s negative triad?', correctAnswer: 'Negative views of self, world, and future', feedback: { correct: 'Correct.', incorrect: 'Beck: negative views of self, world, and future.' } },
+  // Memory – expanded
+  { id: 'mem-qc5', topicId: 'memory', type: 'trueFalse', question: 'Encoding specificity suggests recall is better when context matches.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Encoding specificity: context at encoding should match at retrieval.' } },
+  { id: 'mem-qc6', topicId: 'memory', type: 'multipleChoice', question: 'Which part of the working memory model coordinates other components?', options: ['Phonological loop', 'Central executive', 'Visuo-spatial sketchpad', 'Episodic buffer'], correctAnswer: 'Central executive', feedback: { correct: 'Correct.', incorrect: 'Central executive coordinates the other components.' } },
+  { id: 'mem-qc7', topicId: 'memory', type: 'shortAnswer', question: 'What is the cognitive interview?', correctAnswer: 'technique to improve eyewitness recall', feedback: { correct: 'Correct.', incorrect: 'CI uses context reinstatement, report everything, reverse order, change perspective.' } },
+  // Perception – expanded
+  { id: 'per-qc3', topicId: 'perception', type: 'trueFalse', question: 'Gibson believed perception is direct and does not need past experience.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Gibson: we pick up information directly from the environment.' } },
+  { id: 'per-qc4', topicId: 'perception', type: 'multipleChoice', question: 'Visual illusions support which theory?', options: ['Gibson\'s direct theory', 'Gregory\'s constructivist theory', 'Both equally', 'Neither'], correctAnswer: 'Gregory\'s constructivist theory', feedback: { correct: 'Correct.', incorrect: 'Gregory: illusions show we use context and can be fooled.' } },
+  // Development – expanded
+  { id: 'dev-qc3', topicId: 'development', type: 'shortAnswer', question: 'What does ZPD stand for?', correctAnswer: 'zone of proximal development', feedback: { correct: 'Correct.', incorrect: 'Zone of Proximal Development – Vygotsky.' } },
+  { id: 'dev-qc4', topicId: 'development', type: 'multipleChoice', question: 'Who emphasised social context in development?', options: ['Piaget', 'Vygotsky', 'Dweck', 'Freud'], correctAnswer: 'Vygotsky', feedback: { correct: 'Correct.', incorrect: 'Vygotsky emphasised social interaction and ZPD.' } },
+  { id: 'dev-qc5', topicId: 'development', type: 'trueFalse', question: 'A fixed mindset believes ability can be developed.', correctAnswer: 'false', feedback: { correct: 'Correct – fixed mindset says ability is fixed.', incorrect: 'Fixed mindset: ability is fixed. Growth: can be developed.' } },
+  // Research methods – expanded
+  { id: 'rm-qc3', topicId: 'research-methods', type: 'multipleChoice', question: 'What is an extraneous variable?', options: ['The IV', 'The DV', 'A variable that could affect the DV', 'The hypothesis'], correctAnswer: 'A variable that could affect the DV', feedback: { correct: 'Correct.', incorrect: 'Extraneous variables should be controlled.' } },
+  { id: 'rm-qc4', topicId: 'research-methods', type: 'shortAnswer', question: 'What does DV stand for?', correctAnswer: 'dependent variable', feedback: { correct: 'Correct.', incorrect: 'Dependent variable – the outcome measured.' } },
+  { id: 'rm-qc5', topicId: 'research-methods', type: 'multipleChoice', question: 'Which design has the same participants in all conditions?', options: ['Independent groups', 'Repeated measures', 'Matched pairs', 'Random'], correctAnswer: 'Repeated measures', feedback: { correct: 'Correct.', incorrect: 'Repeated measures: same participants in each condition.' } },
+  { id: 'rm-qc6', topicId: 'research-methods', type: 'trueFalse', question: 'Random sampling gives everyone an equal chance of being selected.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Random sampling: all have equal chance.' } },
+  // Social influence – expanded
+  { id: 'si-qc4', topicId: 'social-influence', type: 'multipleChoice', question: 'What percentage of Milgram\'s participants gave 450V?', options: ['25%', '45%', '65%', '85%'], correctAnswer: '65%', feedback: { correct: 'Correct.', incorrect: '65% administered the full 450V.' } },
+  { id: 'si-qc5', topicId: 'social-influence', type: 'shortAnswer', question: 'What is normative social influence?', correctAnswer: 'conforming to be liked or accepted', feedback: { correct: 'Correct.', incorrect: 'Normative: conform to fit in with the group.' } },
+  { id: 'si-qc6', topicId: 'social-influence', type: 'trueFalse', question: 'Minority influence requires consistency.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Moscovici: consistent minority can influence majority.' } },
+  // Language – expanded
+  { id: 'ltc-qc2', topicId: 'language-thought-communication', type: 'trueFalse', question: 'Ekman identified six basic emotions recognised across cultures.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Ekman: six basic emotions are universal.' } },
+  { id: 'ltc-qc3', topicId: 'language-thought-communication', type: 'multipleChoice', question: 'What is non-verbal communication?', options: ['Written words', 'Body language and facial expression', 'Spoken language', 'Sign language only'], correctAnswer: 'Body language and facial expression', feedback: { correct: 'Correct.', incorrect: 'NVC includes body language, facial expression, eye contact.' } },
+  // Brain – expanded
+  { id: 'bn-qc3', topicId: 'brain-neuropsychology', type: 'multipleChoice', question: 'Which area is associated with language comprehension?', options: ['Broca\'s area', 'Wernicke\'s area', 'Cerebellum', 'Brain stem'], correctAnswer: 'Wernicke\'s area', feedback: { correct: 'Correct.', incorrect: 'Wernicke\'s area: comprehension. Broca\'s: production.' } },
+  { id: 'bn-qc4', topicId: 'brain-neuropsychology', type: 'shortAnswer', question: 'What is synaptic transmission?', correctAnswer: 'neurotransmitters cross synapse', feedback: { correct: 'Correct.', incorrect: 'Neurotransmitters cross the synaptic gap.' } },
+  { id: 'bn-qc5', topicId: 'brain-neuropsychology', type: 'trueFalse', question: 'Brain plasticity means the brain can reorganise after damage.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Plasticity: brain can form new pathways.' } },
+  // Psychological problems – expanded
+  { id: 'pp-qc3', topicId: 'psychological-problems', type: 'multipleChoice', question: 'What is systematic desensitisation?', options: ['Flooding', 'Gradual exposure with relaxation', 'Drug therapy', 'CBT only'], correctAnswer: 'Gradual exposure with relaxation', feedback: { correct: 'Correct.', incorrect: 'SD: hierarchy + relaxation; gradual exposure.' } },
+  { id: 'pp-qc4', topicId: 'psychological-problems', type: 'shortAnswer', question: 'What neurotransmitter is linked to depression?', correctAnswer: 'serotonin', feedback: { correct: 'Correct.', incorrect: 'Low serotonin is associated with depression.' } },
+  { id: 'pp-qc5', topicId: 'psychological-problems', type: 'trueFalse', question: 'Addiction involves tolerance and withdrawal.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Tolerance: need more. Withdrawal: symptoms when stopped.' } },
 ];
 
 // ============================================================================
@@ -264,9 +317,9 @@ const STUDY_EVALUATOR: PsychologyStudyEvaluatorPrompt[] = [
 // ============================================================================
 
 const ISSUES_DEBATES: PsychologyIssuesDebatesPrompt[] = [
-  { id: 'id-1', issueId: 'nature-nurture', prompt: 'Discuss the nature-nurture debate in relation to development.', modelAnswer: 'Nature: Piaget – stages are biological. Nurture: Vygotsky – social context. Interactionist: Dweck – mindset can be shaped by praise.' },
-  { id: 'id-2', issueId: 'ethics', prompt: 'Discuss ethical issues in Milgram\'s obedience study.', modelAnswer: 'Deception: participants thought shocks were real. Distress: some showed extreme stress. Right to withdraw: experimenter urged them to continue. No informed consent.' },
-  { id: 'id-3', issueId: 'applications', prompt: 'How can psychology be applied to improve eyewitness testimony?', modelAnswer: 'Cognitive interview: context reinstatement, report everything, reverse order, change perspective. Reduces leading questions. Police training.' },
+  { id: 'id-1', issueId: 'nature-nurture', prompt: 'Discuss the nature-nurture debate in relation to development.', modelAnswer: 'Nature: Piaget – stages are biological. Nurture: Vygotsky – social context. Interactionist: Dweck – mindset can be shaped by praise.', applyToTopicIds: ['development'] },
+  { id: 'id-2', issueId: 'ethics', prompt: 'Discuss ethical issues in Milgram\'s obedience study.', modelAnswer: 'Deception: participants thought shocks were real. Distress: some showed extreme stress. Right to withdraw: experimenter urged them to continue. No informed consent.', applyToTopicIds: ['social-influence'] },
+  { id: 'id-3', issueId: 'applications', prompt: 'How can psychology be applied to improve eyewitness testimony?', modelAnswer: 'Cognitive interview: context reinstatement, report everything, reverse order, change perspective. Reduces leading questions. Police training.', applyToTopicIds: ['memory'] },
 ];
 
 // ============================================================================
@@ -299,6 +352,18 @@ const QUESTION_LAB: PsychologyQuestionLabItem[] = [
   { id: 'bn-ql2', topicId: 'brain-neuropsychology', questionType: 'outline', question: 'Outline synaptic transmission.', markSchemeSummary: 'Neurotransmitters cross synapse; excitation or inhibition.' },
   { id: 'pp-ql1', topicId: 'psychological-problems', questionType: 'short', question: 'Outline one explanation for depression.', markSchemeSummary: 'Beck: negative triad. Ellis: ABC. Biological: serotonin.' },
   { id: 'pp-ql2', topicId: 'psychological-problems', questionType: 'short', question: 'Describe one treatment for phobias.', markSchemeSummary: 'Systematic desensitisation or flooding. CBT.' },
+  { id: 'mem-ql4', topicId: 'memory', questionType: 'outline', question: 'Outline the cognitive interview.', markSchemeSummary: 'Context reinstatement, report everything, reverse order, change perspective.' },
+  { id: 'mem-ql5', topicId: 'memory', questionType: 'short', question: 'Explain retrieval failure as an explanation for forgetting.', markSchemeSummary: 'Absence of cues; encoding specificity.' },
+  { id: 'per-ql2', topicId: 'perception', questionType: 'short', question: 'How do visual illusions support Gregory\'s theory?', markSchemeSummary: 'We use context; can be fooled; past experience affects interpretation.' },
+  { id: 'dev-ql3', topicId: 'development', questionType: 'short', question: 'Outline Vygotsky\'s zone of proximal development.', markSchemeSummary: 'ZPD: what child can do with help. Scaffolding. Social learning.' },
+  { id: 'rm-ql2', topicId: 'research-methods', questionType: 'short', question: 'Explain one ethical issue in psychological research.', markSchemeSummary: 'Informed consent, deception, right to withdraw, protection from harm.' },
+  { id: 'rm-ql3', topicId: 'research-methods', questionType: 'outline', question: 'Outline the difference between independent groups and repeated measures design.', markSchemeSummary: 'Independent: different participants. Repeated: same participants. Pros and cons.' },
+  { id: 'si-ql3', topicId: 'social-influence', questionType: 'short', question: 'Outline minority influence.', markSchemeSummary: 'Moscovici: consistent minority can influence. Consistency key.' },
+  { id: 'si-ql4', topicId: 'social-influence', questionType: 'short', question: 'Explain one situational factor that affects obedience.', markSchemeSummary: 'Proximity, location, uniform, legitimacy of authority.' },
+  { id: 'ltc-ql2', topicId: 'language-thought-communication', questionType: 'short', question: 'Describe non-verbal communication.', markSchemeSummary: 'Body language, facial expression, eye contact. Ekman: universal emotions.' },
+  { id: 'bn-ql3', topicId: 'brain-neuropsychology', questionType: 'short', question: 'Explain brain plasticity.', markSchemeSummary: 'Brain reorganises; new pathways; recovery from damage.' },
+  { id: 'pp-ql3', topicId: 'psychological-problems', questionType: 'outline', question: 'Outline the behavioural explanation of phobias.', markSchemeSummary: 'Classical conditioning: Watson & Rayner. Operant: avoidance reinforced.' },
+  { id: 'pp-ql4', topicId: 'psychological-problems', questionType: 'short', question: 'Describe one treatment for depression.', markSchemeSummary: 'CBT: challenges negative triad. Drug therapy: SSRIs.' },
 ];
 
 // ============================================================================

@@ -74,6 +74,48 @@ const GEOGRAPHY_CONCEPTS: GeographyConcept[] = [
   { id: 'food-1', sectionId: 'human-food', title: 'Food security', coreIdea: 'Food security means reliable access to sufficient nutritious food. Factors affecting supply include climate, technology, pests, water, conflict and poverty. Strategies include irrigation, biotechnology, urban farming and reducing waste.', changeScenario: 'How does conflict affect food supply?', misconception: 'Producing more food solves hunger – distribution and access are key.' },
   { id: 'water-1', sectionId: 'human-water', title: 'Water security', coreIdea: 'Water security depends on availability, quality and access. Factors include climate, geology, pollution and infrastructure. Strategies include dams, transfers, desalination, conservation and recycling.', changeScenario: 'What are the disadvantages of large-scale water transfer?', misconception: 'Water is unlimited – many regions face stress or scarcity.' },
   { id: 'energy-1', sectionId: 'human-energy', title: 'Energy security', coreIdea: 'Energy demand is rising with development and population. Supply depends on physical factors, cost, technology and politics. Renewable sources (wind, solar, hydro) and efficiency can reduce dependence on fossil fuels.', changeScenario: 'Why might a country choose nuclear over renewables?', misconception: 'Renewables are always better – each has trade-offs (e.g. intermittency, land use).' },
+  // Natural hazards – stretch
+  { id: 'nh-5', sectionId: 'physical-natural-hazards', title: 'Pacific Ring of Fire', coreIdea: 'The Pacific Ring of Fire is a belt around the Pacific Ocean where most earthquakes and volcanoes occur, due to subduction and collision at destructive and conservative plate margins.', changeScenario: 'Why is Japan at high tectonic risk?', misconception: 'Ring of Fire is a single fault line – it is a zone of many plate boundaries.' },
+  { id: 'nh-6', sectionId: 'physical-natural-hazards', title: 'Hazard management cycle', coreIdea: 'Hazard management involves preparedness (planning, drills), response (rescue, aid), recovery (rebuilding) and mitigation (reducing future risk).', changeScenario: 'Which stage is most cost-effective for reducing deaths?', misconception: 'Response alone is enough – preparedness saves more lives.' },
+  // Ecosystems – stretch
+  { id: 'eco-2', sectionId: 'physical-ecosystems', title: 'Biodiversity and interdependence', coreIdea: 'Biodiversity is the variety of life. Species depend on each other (predator-prey, pollination). Loss of one species can cascade through the ecosystem.', changeScenario: 'Why does loss of bees affect food production?', misconception: 'One species loss does not matter – ecosystems are interconnected.' },
+  { id: 'eco-3', sectionId: 'physical-ecosystems', title: 'Small-scale ecosystem', coreIdea: 'A small-scale ecosystem (e.g. pond, hedgerow) has producers, consumers, decomposers and abiotic factors. Changes to one component affect the whole.', changeScenario: 'What happens if fertiliser runs into a pond?', misconception: 'Ecosystems are self-contained – external inputs cause eutrophication.' },
+  // Rainforests – stretch
+  { id: 'rf-2', sectionId: 'physical-rainforests', title: 'Rainforest nutrient cycle', coreIdea: 'Most nutrients are in the biomass, not the soil. When trees are felled, nutrients are lost. The nutrient cycle is rapid due to high temperatures and rainfall.', changeScenario: 'Why does cleared rainforest land become infertile quickly?', misconception: 'Rainforest soil is rich – nutrients are in the vegetation.' },
+  { id: 'rf-3', sectionId: 'physical-rainforests', title: 'Sustainable management', coreIdea: 'Strategies include selective logging, replanting, ecotourism, debt-for-nature swaps, and international agreements (e.g. FSC certification).', changeScenario: 'How does ecotourism reduce deforestation pressure?', misconception: 'Stopping all logging is the only solution – sustainable use can work.' },
+  // Desert – stretch
+  { id: 'ds-2', sectionId: 'physical-desert', title: 'Thar Desert case study', coreIdea: 'The Thar Desert (India/Pakistan) has opportunities: irrigation (Indira Gandhi Canal), mining (gypsum, limestone), solar power, tourism. Challenges: water scarcity, extreme temperatures.', changeScenario: 'What are the environmental costs of the Indira Gandhi Canal?', misconception: 'Deserts are useless – they have significant economic potential.' },
+  // Cold – stretch
+  { id: 'cl-2', sectionId: 'physical-cold', title: 'Svalbard case study', coreIdea: 'Svalbard (Norway) has opportunities: coal mining, fishing, research, tourism. Challenges: extreme cold, permafrost, inaccessibility. Conservation vs development conflicts.', changeScenario: 'Why is tourism growing in Svalbard?', misconception: 'Cold environments have no economic value.' },
+  // UK – stretch
+  { id: 'uk-2', sectionId: 'physical-uk-overview', title: 'UK geology and relief', coreIdea: 'UK geology: older igneous and metamorphic rocks in north/west (hard, resistant); younger sedimentary in south/east (softer). Relief reflects rock type and glacial history.', changeScenario: 'Why are the Pennines a watershed?', misconception: 'Geology does not affect relief – it strongly influences landscape.' },
+  // Coastal – stretch
+  { id: 'coast-2', sectionId: 'physical-coastal', title: 'Coastal management strategies', coreIdea: 'Hard engineering: sea walls, groynes, rock armour – resist erosion but expensive, can cause erosion elsewhere. Soft: beach nourishment, managed retreat – work with natural processes.', changeScenario: 'Why might managed retreat be chosen over a sea wall?', misconception: 'Hard engineering is always best – soft can be more sustainable.' },
+  { id: 'coast-3', sectionId: 'physical-coastal', title: 'Holderness Coast case study', coreIdea: 'Holderness (Yorkshire) has fastest erosion in Europe (1–2 m/year). Soft boulder clay, destructive waves. Mappleton defences protect village but increase erosion south.', changeScenario: 'Why does defending one area increase erosion elsewhere?', misconception: 'Coastal defences protect the whole coast – they can displace erosion.' },
+  // River – stretch
+  { id: 'river-2', sectionId: 'physical-river', title: 'Somerset Levels flood case study', coreIdea: '2014 floods: prolonged rainfall, low-lying land, rivers not dredged. Impacts: homes, farms, roads. Management: dredging, flood relief channel, sustainable drainage.', changeScenario: 'Why did the Somerset Levels flood in 2014?', misconception: 'Floods are purely natural – human decisions affect risk.' },
+  { id: 'river-3', sectionId: 'physical-river', title: 'River long profile', coreIdea: 'Upper course: steep, V-valley, waterfalls. Middle: gentler, meanders. Lower: flat, flood plain, levees, delta. Erosion dominates upper; deposition lower.', changeScenario: 'Where would you expect the fastest flow?', misconception: 'Rivers flow at constant speed – gradient and channel shape affect velocity.' },
+  // Glacial – stretch
+  { id: 'glac-2', sectionId: 'physical-glacial', title: 'Lake District case study', coreIdea: 'Lake District: glaciated upland with corries, arêtes, ribbon lakes (e.g. Windermere). Land use conflicts: tourism vs farming vs conservation vs quarrying.', changeScenario: 'What conflicts exist in the Lake District?', misconception: 'Glaciated areas are only for tourism.' },
+  // Urban – stretch
+  { id: 'urb-2', sectionId: 'human-urban', title: 'Rio de Janeiro case study (LIC/NEE)', coreIdea: 'Rio: opportunities (jobs, healthcare, education) but challenges (favelas, crime, pollution, traffic). Favela Bairro improved housing; Olympic regeneration had mixed results.', changeScenario: 'Why do favelas develop on steep slopes?', misconception: 'Urban growth is always negative – cities can drive development.' },
+  { id: 'urb-3', sectionId: 'human-urban', title: 'Bristol case study (UK city)', coreIdea: 'Bristol: migration (from Poland, Somalia), regeneration (Harbourside), inequality (deprived areas vs affluent suburbs), sustainability (cycling, green spaces).', changeScenario: 'How has migration changed Bristol?', misconception: 'UK cities do not have inequality – deprivation exists in all cities.' },
+  { id: 'urb-4', sectionId: 'human-urban', title: 'Urban change in the UK', coreIdea: 'UK cities face: population change, migration, deindustrialisation, regeneration, inequality. Counter-urbanisation and suburbanisation have shaped the urban landscape.', changeScenario: 'Why do people move from cities to rural areas?', misconception: 'Urbanisation only means growth – some UK cities have declined.' },
+  // Economic – stretch
+  { id: 'econ-2', sectionId: 'human-economic', title: 'Nigeria case study (NEE)', coreIdea: 'Nigeria: oil economy, TNCs (Shell), industrial development (Lagos), uneven development (north vs south), aid, environmental issues (Niger Delta).', changeScenario: 'Why is development uneven in Nigeria?', misconception: 'Oil wealth automatically leads to development – governance matters.' },
+  { id: 'econ-3', sectionId: 'human-economic', title: 'Aid and development', coreIdea: 'Types: bilateral, multilateral, NGO. Advantages: infrastructure, emergency relief. Disadvantages: debt, dependency, corruption. Fairtrade and microfinance are alternatives.', changeScenario: 'When might aid do more harm than good?', misconception: 'All aid is helpful – it can create dependency.' },
+  // Resource – stretch
+  { id: 'res-2', sectionId: 'human-resource-overview', title: 'UK resource mix', coreIdea: 'UK: imports 40% of food, 50% of energy. Water: surplus north, deficit south-east. Strategies: reduce waste, increase efficiency, diversify supply.', changeScenario: 'Why does the UK import so much food?', misconception: 'The UK is self-sufficient – it relies on imports.' },
+  // Food – stretch
+  { id: 'food-2', sectionId: 'human-food', title: 'Famine and food distribution', coreIdea: 'Famines often caused by distribution failure, not absolute shortage. Conflict, poverty, infrastructure limit access. Solutions: local production, fair trade, reducing waste.', changeScenario: 'Why do famines occur when food exists?', misconception: 'Famine means no food – often it is about access.' },
+  // Water – stretch
+  { id: 'water-2', sectionId: 'human-water', title: 'Water conflict', coreIdea: 'Transboundary rivers (Nile, Colorado) can cause conflict. Upstream dams affect downstream. Solutions: treaties, joint management, efficiency.', changeScenario: 'Why might Ethiopia building a dam concern Egypt?', misconception: 'Water is only a local issue – it has geopolitical dimensions.' },
+  // Energy – stretch
+  { id: 'energy-2', sectionId: 'human-energy', title: 'UK energy mix', coreIdea: 'UK: declining fossil fuels, growing renewables (wind, solar). Nuclear provides base load. Fracking debated. Energy security depends on diversity and efficiency.', changeScenario: 'Why is the UK investing in offshore wind?', misconception: 'One energy source can meet all needs – mix is essential.' },
+  // Issue evaluation
+  { id: 'app-1', sectionId: 'app-issue-evaluation', title: 'Pre-release resource analysis', coreIdea: 'Paper 3 issue evaluation: analyse pre-release booklet (maps, data, stakeholder views). Make a decision and justify with evidence. Consider social, economic, environmental factors.', changeScenario: 'How would you weigh economic benefits against environmental costs?', misconception: 'There is one correct answer – evaluation requires balanced judgement.' },
+  // Fieldwork
+  { id: 'app-2', sectionId: 'app-fieldwork', title: 'Geographical enquiry', coreIdea: 'Enquiry process: question, hypothesis, method, data collection, presentation, analysis, conclusion, evaluation. Physical and human enquiries; contrasting locations.', changeScenario: 'Why is it important to evaluate your method?', misconception: 'Data speaks for itself – methodology affects validity.' },
 ];
 
 export function getConceptsForSections(sectionIds: GeographySectionId[]): GeographyConcept[] {
@@ -119,6 +161,156 @@ const GEOGRAPHY_KEY_TERMS: GeographyKeyTerm[] = [
   { id: 'food-kt1', sectionId: 'human-food', term: 'Food security', definition: 'Reliable access to sufficient nutritious food.', inContext: 'Affected by supply, distribution and access.' },
   { id: 'water-kt1', sectionId: 'human-water', term: 'Water transfer', definition: 'Moving water from areas of surplus to areas of deficit.', inContext: 'Example: schemes from wet north to dry south in UK.' },
   { id: 'energy-kt1', sectionId: 'human-energy', term: 'Carbon footprint', definition: 'Total greenhouse gas emissions caused by an individual or activity.', inContext: 'Reduced by efficiency and renewable energy.' },
+  // Natural hazards – expanded
+  { id: 'nh-kt7', sectionId: 'physical-natural-hazards', term: 'Constructive margin', definition: 'Plate boundary where plates move apart; magma rises; new crust forms.', inContext: 'Mid-Atlantic Ridge; shield volcanoes.' },
+  { id: 'nh-kt8', sectionId: 'physical-natural-hazards', term: 'Destructive margin', definition: 'Plate boundary where oceanic plate subducts under continental; volcanoes and earthquakes.', inContext: 'Pacific Ring of Fire; composite volcanoes.' },
+  { id: 'nh-kt9', sectionId: 'physical-natural-hazards', term: 'Conservative margin', definition: 'Plate boundary where plates slide past each other; earthquakes but no volcanoes.', inContext: 'San Andreas Fault.' },
+  { id: 'nh-kt10', sectionId: 'physical-natural-hazards', term: 'Secondary effect', definition: 'Indirect impact of a hazard (e.g. disease, unemployment, mental health).', inContext: 'Often worse in LICs due to weak infrastructure.' },
+  { id: 'nh-kt11', sectionId: 'physical-natural-hazards', term: 'Immediate response', definition: 'Short-term action after a hazard (rescue, shelter, medical aid).', inContext: 'First 48–72 hours critical.' },
+  { id: 'nh-kt12', sectionId: 'physical-natural-hazards', term: 'Coriolis effect', definition: 'Deflection of winds due to Earth\'s rotation; causes tropical storms to spin.', inContext: 'Explains storm rotation direction.' },
+  { id: 'nh-kt13', sectionId: 'physical-natural-hazards', term: 'Vulnerability', definition: 'How susceptible a population is to hazard impact.', inContext: 'Higher in LICs due to poor housing, infrastructure.' },
+  { id: 'nh-kt14', sectionId: 'physical-natural-hazards', term: 'Capacity to cope', definition: 'Ability of a population to respond to and recover from a hazard.', inContext: 'HICs have greater capacity.' },
+  // Ecosystems – expanded
+  { id: 'eco-kt4', sectionId: 'physical-ecosystems', term: 'Decomposer', definition: 'Organism that breaks down dead matter and returns nutrients to soil.', inContext: 'Bacteria, fungi.' },
+  { id: 'eco-kt5', sectionId: 'physical-ecosystems', term: 'Nutrient cycling', definition: 'Movement of nutrients through ecosystem (plants → animals → decomposers → soil).', inContext: 'Essential for ecosystem function.' },
+  { id: 'eco-kt6', sectionId: 'physical-ecosystems', term: 'Biodiversity', definition: 'Variety of life in an ecosystem.', inContext: 'Higher in tropical rainforests.' },
+  { id: 'eco-kt7', sectionId: 'physical-ecosystems', term: 'Abiotic', definition: 'Non-living factor (temperature, light, water, soil).', inContext: 'Contrast with biotic (living).' },
+  { id: 'eco-kt8', sectionId: 'physical-ecosystems', term: 'Biotic', definition: 'Living component of ecosystem.', inContext: 'Plants, animals, microorganisms.' },
+  // Rainforests – expanded
+  { id: 'rf-kt4', sectionId: 'physical-rainforests', term: 'Clear-felling', definition: 'Removing all trees from an area.', inContext: 'Less sustainable than selective logging.' },
+  { id: 'rf-kt5', sectionId: 'physical-rainforests', term: 'Slash and burn', definition: 'Clearing land by cutting and burning vegetation.', inContext: 'Subsistence farming method.' },
+  { id: 'rf-kt6', sectionId: 'physical-rainforests', term: 'Sustainable management', definition: 'Using resources so they are available for future generations.', inContext: 'FSC, ecotourism, replanting.' },
+  { id: 'rf-kt7', sectionId: 'physical-rainforests', term: 'Canopy', definition: 'Upper layer of rainforest where most wildlife lives.', inContext: 'Dense layer of tree tops.' },
+  { id: 'rf-kt8', sectionId: 'physical-rainforests', term: 'Liana', definition: 'Woody vine that grows up trees in rainforest.', inContext: 'Part of rainforest structure.' },
+  // Desert – expanded
+  { id: 'ds-kt2', sectionId: 'physical-desert', term: 'Irrigation', definition: 'Artificial supply of water for agriculture.', inContext: 'Indira Gandhi Canal in Thar Desert.' },
+  { id: 'ds-kt3', sectionId: 'physical-desert', term: 'Oasis', definition: 'Fertile area in desert where water is available.', inContext: 'Supports settlement and farming.' },
+  { id: 'ds-kt4', sectionId: 'physical-desert', term: 'Mineral extraction', definition: 'Mining of minerals (e.g. oil, gas, gypsum).', inContext: 'Desert development opportunity.' },
+  // Cold – expanded
+  { id: 'cl-kt2', sectionId: 'physical-cold', term: 'Tundra', definition: 'Cold, treeless biome with permafrost.', inContext: 'Alaska, northern Canada, Siberia.' },
+  { id: 'cl-kt3', sectionId: 'physical-cold', term: 'Conservation', definition: 'Protecting environment from damage.', inContext: 'Balanced with development in cold environments.' },
+  { id: 'cl-kt4', sectionId: 'physical-cold', term: 'Wilderness', definition: 'Undisturbed natural area.', inContext: 'Valued for conservation; conflicts with development.' },
+  // UK – expanded
+  { id: 'uk-kt3', sectionId: 'physical-uk-overview', term: 'Relief', definition: 'Shape of the land (height and steepness).', inContext: 'UK has varied relief.' },
+  { id: 'uk-kt4', sectionId: 'physical-uk-overview', term: 'Watershed', definition: 'High ground separating river drainage basins.', inContext: 'Pennines are UK watershed.' },
+  { id: 'uk-kt5', sectionId: 'physical-uk-overview', term: 'Drainage basin', definition: 'Area of land drained by a river and its tributaries.', inContext: 'Thames, Severn, etc.' },
+  // Coastal – expanded
+  { id: 'coast-kt4', sectionId: 'physical-coastal', term: 'Hydraulic action', definition: 'Erosion by force of water against rock.', inContext: 'Waves compress air in cracks.' },
+  { id: 'coast-kt5', sectionId: 'physical-coastal', term: 'Abrasion', definition: 'Erosion by material carried by waves scraping rock.', inContext: 'Sand and pebbles act like sandpaper.' },
+  { id: 'coast-kt6', sectionId: 'physical-coastal', term: 'Attrition', definition: 'Rocks hitting each other and breaking into smaller pieces.', inContext: 'Rounds and reduces sediment size.' },
+  { id: 'coast-kt7', sectionId: 'physical-coastal', term: 'Wave-cut notch', definition: 'Hollow at base of cliff formed by erosion.', inContext: 'Cliff retreats; platform exposed.' },
+  { id: 'coast-kt8', sectionId: 'physical-coastal', term: 'Spit', definition: 'Extended beach of deposited material projecting into sea.', inContext: 'Formed by longshore drift.' },
+  { id: 'coast-kt9', sectionId: 'physical-coastal', term: 'Soft engineering', definition: 'Working with natural processes (beach nourishment, managed retreat).', inContext: 'Often more sustainable than hard.' },
+  { id: 'coast-kt10', sectionId: 'physical-coastal', term: 'Beach nourishment', definition: 'Adding sand to beach to replace eroded material.', inContext: 'Soft engineering strategy.' },
+  // River – expanded
+  { id: 'river-kt3', sectionId: 'physical-river', term: 'Discharge', definition: 'Volume of water passing a point per second (m³/s).', inContext: 'Shown on hydrograph.' },
+  { id: 'river-kt4', sectionId: 'physical-river', term: 'Lag time', definition: 'Delay between peak rainfall and peak discharge.', inContext: 'Shorter in urban areas.' },
+  { id: 'river-kt5', sectionId: 'physical-river', term: 'Meander', definition: 'Bend in river; erosion on outside, deposition on inside.', inContext: 'Middle and lower course.' },
+  { id: 'river-kt6', sectionId: 'physical-river', term: 'Ox-bow lake', definition: 'Cut-off meander forming a crescent-shaped lake.', inContext: 'Formed when meander neck is cut through.' },
+  { id: 'river-kt7', sectionId: 'physical-river', term: 'Flood plain', definition: 'Flat area beside river that floods when river overflows.', inContext: 'Deposition in lower course.' },
+  { id: 'river-kt8', sectionId: 'physical-river', term: 'Levee', definition: 'Natural embankment beside river formed by deposition during floods.', inContext: 'Raised banks.' },
+  { id: 'river-kt9', sectionId: 'physical-river', term: 'Dredging', definition: 'Removing sediment from river bed to increase capacity.', inContext: 'Flood management strategy.' },
+  // Glacial – expanded
+  { id: 'glac-kt3', sectionId: 'physical-glacial', term: 'Abrasion (glacial)', definition: 'Glacial erosion by rock embedded in ice scraping bedrock.', inContext: 'Creates striations.' },
+  { id: 'glac-kt4', sectionId: 'physical-glacial', term: 'Plucking', definition: 'Glacial erosion where ice freezes to rock and pulls it away.', inContext: 'Common in jointed rock.' },
+  { id: 'glac-kt5', sectionId: 'physical-glacial', term: 'Arête', definition: 'Sharp ridge between two corries.', inContext: 'Formed by glacial erosion.' },
+  { id: 'glac-kt6', sectionId: 'physical-glacial', term: 'Ribbon lake', definition: 'Long, narrow lake in glacial trough.', inContext: 'E.g. Windermere.' },
+  { id: 'glac-kt7', sectionId: 'physical-glacial', term: 'Till', definition: 'Unsorted material deposited directly by glacier.', inContext: 'Contrast with sorted outwash.' },
+  { id: 'glac-kt8', sectionId: 'physical-glacial', term: 'Erratic', definition: 'Boulder transported and deposited by glacier.', inContext: 'Different rock type from local.' },
+  // Urban – expanded
+  { id: 'urb-kt4', sectionId: 'human-urban', term: 'Urbanisation', definition: 'Increase in proportion of people living in urban areas.', inContext: 'Global trend, especially in LICs/NEEs.' },
+  { id: 'urb-kt5', sectionId: 'human-urban', term: 'Rural-urban migration', definition: 'Movement of people from countryside to cities.', inContext: 'Push and pull factors.' },
+  { id: 'urb-kt6', sectionId: 'human-urban', term: 'Squatter settlement', definition: 'Informal housing built without permission.', inContext: 'Favelas, shanty towns.' },
+  { id: 'urb-kt7', sectionId: 'human-urban', term: 'Greenfield site', definition: 'Land not previously built on.', inContext: 'Contrast with brownfield.' },
+  { id: 'urb-kt8', sectionId: 'human-urban', term: 'Regeneration', definition: 'Improving run-down urban areas.', inContext: 'Harbourside Bristol, Olympic Park London.' },
+  { id: 'urb-kt9', sectionId: 'human-urban', term: 'Inequality', definition: 'Difference in wealth and opportunity between groups.', inContext: 'Exists within and between cities.' },
+  { id: 'urb-kt10', sectionId: 'human-urban', term: 'Counter-urbanisation', definition: 'Movement of people from cities to rural areas.', inContext: 'UK trend; commuting, retirement.' },
+  // Economic – expanded
+  { id: 'econ-kt4', sectionId: 'human-economic', term: 'GNI', definition: 'Gross National Income – total income of a country.', inContext: 'Measure of development.' },
+  { id: 'econ-kt5', sectionId: 'human-economic', term: 'LIC', definition: 'Low-income country.', inContext: 'E.g. Ethiopia, Nepal.' },
+  { id: 'econ-kt6', sectionId: 'human-economic', term: 'NEE', definition: 'Newly emerging economy – rapidly industrialising.', inContext: 'E.g. Nigeria, Brazil, India.' },
+  { id: 'econ-kt7', sectionId: 'human-economic', term: 'HIC', definition: 'High-income country.', inContext: 'E.g. UK, USA, Japan.' },
+  { id: 'econ-kt8', sectionId: 'human-economic', term: 'Fairtrade', definition: 'Trading system ensuring fair prices for producers.', inContext: 'Reduces development gap.' },
+  { id: 'econ-kt9', sectionId: 'human-economic', term: 'Debt relief', definition: 'Cancelling or reducing debt owed by poor countries.', inContext: 'Development strategy.' },
+  { id: 'econ-kt10', sectionId: 'human-economic', term: 'Industrial development', definition: 'Growth of manufacturing sector.', inContext: 'NEEs often industrialise rapidly.' },
+  // Resource – expanded
+  { id: 'res-kt2', sectionId: 'human-resource-overview', term: 'Water surplus', definition: 'Area where water supply exceeds demand.', inContext: 'UK north and west.' },
+  { id: 'res-kt3', sectionId: 'human-resource-overview', term: 'Water deficit', definition: 'Area where water demand exceeds supply.', inContext: 'UK south-east.' },
+  { id: 'res-kt4', sectionId: 'human-resource-overview', term: 'Sustainability', definition: 'Meeting needs without compromising future generations.', inContext: 'Key concept in resource management.' },
+  // Food – expanded
+  { id: 'food-kt2', sectionId: 'human-food', term: 'Irrigation (food)', definition: 'Artificial water supply for crops.', inContext: 'Increases yield but can cause salinisation.' },
+  { id: 'food-kt3', sectionId: 'human-food', term: 'Biotechnology', definition: 'Using living organisms to improve crops.', inContext: 'GM crops, drought resistance.' },
+  { id: 'food-kt4', sectionId: 'human-food', term: 'Urban farming', definition: 'Growing food in cities.', inContext: 'Reduces food miles; limited scale.' },
+  // Water – expanded
+  { id: 'water-kt2', sectionId: 'human-water', term: 'Desalination', definition: 'Removing salt from seawater to produce fresh water.', inContext: 'Expensive; used in Middle East.' },
+  { id: 'water-kt3', sectionId: 'human-water', term: 'Water stress', definition: 'When demand approaches supply.', inContext: 'Many regions face stress.' },
+  { id: 'water-kt4', sectionId: 'human-water', term: 'Water scarcity', definition: 'Lack of sufficient water.', inContext: 'Physical or economic.' },
+  // Energy – expanded
+  { id: 'energy-kt2', sectionId: 'human-energy', term: 'Renewable energy', definition: 'Energy from sources that replenish (solar, wind, hydro).', inContext: 'Sustainable; intermittency issues.' },
+  { id: 'energy-kt3', sectionId: 'human-energy', term: 'Fossil fuel', definition: 'Coal, oil, gas – formed from ancient organic matter.', inContext: 'Finite; cause climate change.' },
+  { id: 'energy-kt4', sectionId: 'human-energy', term: 'Nuclear power', definition: 'Energy from nuclear fission.', inContext: 'Base load; radioactive waste.' },
+  { id: 'energy-kt5', sectionId: 'human-energy', term: 'Intermittency', definition: 'Renewables not always available (e.g. wind, sun).', inContext: 'Challenge for grid stability.' },
+  // Fieldwork
+  { id: 'app-kt1', sectionId: 'app-fieldwork', term: 'Hypothesis', definition: 'Testable statement for geographical enquiry.', inContext: 'E.g. "Velocity increases downstream."' },
+  { id: 'app-kt2', sectionId: 'app-fieldwork', term: 'Primary data', definition: 'Data collected by researcher.', inContext: 'Fieldwork measurements.' },
+  { id: 'app-kt3', sectionId: 'app-fieldwork', term: 'Secondary data', definition: 'Data collected by others.', inContext: 'Census, maps.' },
+  { id: 'app-kt4', sectionId: 'app-fieldwork', term: 'Systematic sampling', definition: 'Sampling at regular intervals.', inContext: 'Transect across beach.' },
+  { id: 'app-kt5', sectionId: 'app-fieldwork', term: 'Random sampling', definition: 'Each location has equal chance of selection.', inContext: 'Reduces bias.' },
+  // Additional key terms for 300+ target
+  { id: 'nh-kt15', sectionId: 'physical-natural-hazards', term: 'Epicentre', definition: 'Point on Earth\'s surface directly above the focus of an earthquake.', inContext: 'Where shaking is often strongest.' },
+  { id: 'nh-kt16', sectionId: 'physical-natural-hazards', term: 'Richter scale', definition: 'Scale measuring earthquake magnitude (logarithmic).', inContext: 'Each unit = 10× more energy.' },
+  { id: 'nh-kt17', sectionId: 'physical-natural-hazards', term: 'Tsunami', definition: 'Giant sea wave caused by underwater earthquake or landslide.', inContext: 'Can travel across oceans.' },
+  { id: 'eco-kt9', sectionId: 'physical-ecosystems', term: 'Interdependence', definition: 'Species depending on each other for survival.', inContext: 'Removing one affects others.' },
+  { id: 'eco-kt10', sectionId: 'physical-ecosystems', term: 'Eutrophication', definition: 'Excess nutrients cause algal bloom; oxygen depletion; fish die.', inContext: 'Often from fertiliser runoff.' },
+  { id: 'rf-kt9', sectionId: 'physical-rainforests', term: 'Evapotranspiration', definition: 'Water lost from plants and soil to atmosphere.', inContext: 'Rainforests recycle much water.' },
+  { id: 'rf-kt10', sectionId: 'physical-rainforests', term: 'FSC', definition: 'Forest Stewardship Council – certification for sustainable timber.', inContext: 'Ensures responsible logging.' },
+  { id: 'coast-kt11', sectionId: 'physical-coastal', term: 'Fetch', definition: 'Distance of open water over which wind blows.', inContext: 'Longer fetch = larger waves.' },
+  { id: 'coast-kt12', sectionId: 'physical-coastal', term: 'Constructive wave', definition: 'Gentle wave that deposits material; builds beaches.', inContext: 'Contrast with destructive.' },
+  { id: 'coast-kt13', sectionId: 'physical-coastal', term: 'Destructive wave', definition: 'Steep wave that erodes; removes beach material.', inContext: 'Strong backwash.' },
+  { id: 'river-kt10', sectionId: 'physical-river', term: 'Drainage basin', definition: 'Area of land drained by a river and its tributaries.', inContext: 'Watershed marks boundary.' },
+  { id: 'river-kt11', sectionId: 'physical-river', term: 'Infiltration', definition: 'Water soaking into the soil.', inContext: 'Reduced by impermeable surfaces.' },
+  { id: 'river-kt12', sectionId: 'physical-river', term: 'Surface runoff', definition: 'Water flowing over the ground surface.', inContext: 'Increases with urbanisation.' },
+  { id: 'glac-kt9', sectionId: 'physical-glacial', term: 'Glacial trough', definition: 'U-shaped valley carved by glacier.', inContext: 'Contrast with V-shaped river valley.' },
+  { id: 'glac-kt10', sectionId: 'physical-glacial', term: 'Truncated spur', definition: 'Valley side cut off by glacier.', inContext: 'Former interlocking spur.' },
+  { id: 'urb-kt11', sectionId: 'human-urban', term: 'Deindustrialisation', definition: 'Decline of manufacturing industry.', inContext: 'UK cities since 1970s.' },
+  { id: 'urb-kt12', sectionId: 'human-urban', term: 'Suburbanisation', definition: 'Growth of suburbs; people moving from inner city.', inContext: 'Commuter settlements.' },
+  { id: 'econ-kt11', sectionId: 'human-economic', term: 'Microfinance', definition: 'Small loans to poor people; alternative to aid.', inContext: 'Grameen Bank model.' },
+  { id: 'econ-kt12', sectionId: 'human-economic', term: 'Intermediate technology', definition: 'Appropriate technology for local conditions.', inContext: 'Not always high-tech.' },
+  { id: 'res-kt5', sectionId: 'human-resource-overview', term: 'Energy mix', definition: 'Proportion of different energy sources used.', inContext: 'UK: declining fossil, growing renewable.' },
+  { id: 'res-kt6', sectionId: 'human-resource-overview', term: 'Energy security', definition: 'Reliable access to affordable energy.', inContext: 'Affected by supply and demand.' },
+  // More key terms toward 300+
+  { id: 'nh-kt18', sectionId: 'physical-natural-hazards', term: 'Focus', definition: 'Point underground where earthquake originates.', inContext: 'Epicentre is directly above.' },
+  { id: 'nh-kt19', sectionId: 'physical-natural-hazards', term: 'Subduction', definition: 'Oceanic plate sinking under continental plate at destructive margin.', inContext: 'Creates deep ocean trenches and volcanoes.' },
+  { id: 'nh-kt20', sectionId: 'physical-natural-hazards', term: 'Composite volcano', definition: 'Steep-sided volcano at destructive margin; explosive eruptions.', inContext: 'E.g. Mount St Helens.' },
+  { id: 'nh-kt21', sectionId: 'physical-natural-hazards', term: 'Shield volcano', definition: 'Gentle-sloped volcano at constructive margin; lava flows.', inContext: 'E.g. Mauna Loa.' },
+  { id: 'eco-kt11', sectionId: 'physical-ecosystems', term: 'Food chain', definition: 'Linear sequence of energy transfer (producer → consumer).', inContext: 'Simpler than food web.' },
+  { id: 'eco-kt12', sectionId: 'physical-ecosystems', term: 'Biomass', definition: 'Total mass of living organisms in an area.', inContext: 'Rainforest has high biomass.' },
+  { id: 'rf-kt11', sectionId: 'physical-rainforests', term: 'Biomass (rainforest)', definition: 'Where most nutrients are stored in rainforest.', inContext: 'Soil is nutrient-poor.' },
+  { id: 'rf-kt12', sectionId: 'physical-rainforests', term: 'Debt-for-nature swap', definition: 'Country\'s debt reduced in exchange for conservation.', inContext: 'Sustainable management strategy.' },
+  { id: 'coast-kt14', sectionId: 'physical-coastal', term: 'Bay', definition: 'Indentation in coast where soft rock erodes faster.', inContext: 'Headlands and bays form from differential erosion.' },
+  { id: 'coast-kt15', sectionId: 'physical-coastal', term: 'Headland', definition: 'Resistant rock projecting into sea.', inContext: 'Erodes more slowly than bays.' },
+  { id: 'coast-kt16', sectionId: 'physical-coastal', term: 'Stack', definition: 'Isolated pillar of rock left when arch collapses.', inContext: 'Old Harry Rocks, Dorset.' },
+  { id: 'coast-kt17', sectionId: 'physical-coastal', term: 'Groyne', definition: 'Wooden or rock barrier at right angles to coast.', inContext: 'Traps sediment; can cause erosion downdrift.' },
+  { id: 'river-kt13', sectionId: 'physical-river', term: 'Tributary', definition: 'Smaller river joining a larger one.', inContext: 'Part of drainage basin.' },
+  { id: 'river-kt14', sectionId: 'physical-river', term: 'Confluence', definition: 'Point where two rivers meet.', inContext: 'Tributary joins main river.' },
+  { id: 'river-kt15', sectionId: 'physical-river', term: 'Waterfall', definition: 'Steep drop where hard rock overlies soft.', inContext: 'Upper course feature.' },
+  { id: 'river-kt16', sectionId: 'physical-river', term: 'Gorge', definition: 'Steep-sided valley formed as waterfall retreats.', inContext: 'Cheddar Gorge.' },
+  { id: 'glac-kt11', sectionId: 'physical-glacial', term: 'Pyramidal peak', definition: 'Sharp mountain summit where three or more corries meet.', inContext: 'Matterhorn-type peak.' },
+  { id: 'glac-kt12', sectionId: 'physical-glacial', term: 'Drumlin', definition: 'Elongated hill of glacial till; streamlined shape.', inContext: 'Indicates ice flow direction.' },
+  { id: 'urb-kt13', sectionId: 'human-urban', term: 'Push factor', definition: 'Reason for leaving a place (e.g. unemployment, poverty).', inContext: 'Rural-urban migration.' },
+  { id: 'urb-kt14', sectionId: 'human-urban', term: 'Pull factor', definition: 'Reason for moving to a place (e.g. jobs, education).', inContext: 'Rural-urban migration.' },
+  { id: 'urb-kt15', sectionId: 'human-urban', term: 'Informal economy', definition: 'Unofficial, unregulated economic activity.', inContext: 'Common in squatter settlements.' },
+  { id: 'econ-kt13', sectionId: 'human-economic', term: 'Bilateral aid', definition: 'Aid from one country to another.', inContext: 'UK to India.' },
+  { id: 'econ-kt14', sectionId: 'human-economic', term: 'NGO', definition: 'Non-governmental organisation.', inContext: 'Oxfam, WaterAid provide aid.' },
+  { id: 'econ-kt15', sectionId: 'human-economic', term: 'Remittance', definition: 'Money sent home by migrants.', inContext: 'Important for some LICs.' },
+  { id: 'food-kt5', sectionId: 'human-food', term: 'Famine', definition: 'Severe food shortage causing widespread hunger and death.', inContext: 'Often distribution failure, not absolute shortage.' },
+  { id: 'food-kt6', sectionId: 'human-food', term: 'Food waste', definition: 'Food lost or thrown away.', inContext: 'Reducing waste improves food security.' },
+  { id: 'water-kt5', sectionId: 'human-water', term: 'Reservoir', definition: 'Artificial lake storing water.', inContext: 'Dams create reservoirs.' },
+  { id: 'water-kt6', sectionId: 'human-water', term: 'Transboundary river', definition: 'River flowing through more than one country.', inContext: 'Nile, Colorado – potential conflict.' },
+  { id: 'energy-kt6', sectionId: 'human-energy', term: 'Base load', definition: 'Minimum constant demand for electricity.', inContext: 'Nuclear and coal often provide base load.' },
+  { id: 'energy-kt7', sectionId: 'human-energy', term: 'Offshore wind', definition: 'Wind turbines in the sea.', inContext: 'UK has large capacity.' },
+  { id: 'app-kt6', sectionId: 'app-fieldwork', term: 'Stratified sampling', definition: 'Sampling proportionally from different groups.', inContext: 'E.g. by land use type.' },
+  { id: 'app-kt7', sectionId: 'app-fieldwork', term: 'Transect', definition: 'Line along which samples are taken.', inContext: 'Beach profile, vegetation.' },
 ];
 
 export function getKeyTermsForSections(sectionIds: GeographySectionId[]): GeographyKeyTerm[] {
@@ -148,6 +340,100 @@ const GEOGRAPHY_QUICK_CHECKS: GeographyQuickCheckItem[] = [
   { id: 'food-qc1', sectionId: 'human-food', type: 'shortAnswer', question: 'What does food security mean?', correctAnswer: ['reliable access to sufficient nutritious food', 'access to enough food', 'enough food'], feedback: { correct: 'Correct.', incorrect: 'Food security means reliable access to sufficient nutritious food.' } },
   { id: 'water-qc1', sectionId: 'human-water', type: 'multipleChoice', question: 'Which is a strategy to increase water supply?', options: ['Flood plain zoning', 'Water transfer', 'Managed retreat', 'Beach nourishment'], correctAnswer: 'Water transfer', feedback: { correct: 'Correct.', incorrect: 'Water transfer moves water from surplus to deficit areas.' } },
   { id: 'energy-qc1', sectionId: 'human-energy', type: 'trueFalse', question: 'Renewable energy sources will never run out.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Renewables (solar, wind, hydro) are replenished naturally.' } },
+  // Natural hazards – 3–5 per sub-topic
+  { id: 'nh-qc4', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'At which plate margin does subduction occur?', options: ['Constructive', 'Destructive', 'Conservative', 'All margins'], correctAnswer: 'Destructive', feedback: { correct: 'Correct.', incorrect: 'Subduction occurs at destructive margins where oceanic plate goes under continental.' } },
+  { id: 'nh-qc5', sectionId: 'physical-natural-hazards', type: 'trueFalse', question: 'The Pacific Ring of Fire has the most earthquakes and volcanoes.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'The Ring of Fire is the most tectonically active zone on Earth.' } },
+  { id: 'nh-qc6', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'Name one type of climate change mitigation.', correctAnswer: ['renewable energy', 'afforestation', 'carbon capture', 'international agreements'], feedback: { correct: 'Correct.', incorrect: 'Mitigation includes renewable energy, afforestation, carbon capture, international agreements.' } },
+  { id: 'nh-qc7', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'What increases hazard risk?', options: ['Living in a safe area', 'Good infrastructure', 'High population in hazard zone', 'Emergency planning'], correctAnswer: 'High population in hazard zone', feedback: { correct: 'Correct.', incorrect: 'More people exposed = higher risk.' } },
+  // Ecosystems
+  { id: 'eco-qc2', sectionId: 'physical-ecosystems', type: 'trueFalse', question: 'Biodiversity is higher in tropical rainforests than in the UK.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Tropical rainforests have the highest biodiversity on Earth.' } },
+  { id: 'eco-qc3', sectionId: 'physical-ecosystems', type: 'shortAnswer', question: 'What is an abiotic factor?', correctAnswer: ['temperature', 'light', 'water', 'soil', 'non-living'], feedback: { correct: 'Correct.', incorrect: 'Abiotic = non-living (temperature, light, water, soil).' } },
+  { id: 'eco-qc4', sectionId: 'physical-ecosystems', type: 'multipleChoice', question: 'What happens if a top predator is removed from a food web?', options: ['Nothing', 'Prey numbers increase', 'Prey numbers decrease', 'Decomposers increase'], correctAnswer: 'Prey numbers increase', feedback: { correct: 'Correct.', incorrect: 'Without predation, prey populations can grow.' } },
+  // Rainforests
+  { id: 'rf-qc2', sectionId: 'physical-rainforests', type: 'multipleChoice', question: 'Where are most nutrients in a rainforest?', options: ['In the soil', 'In the biomass (plants)', 'In the water', 'In the air'], correctAnswer: 'In the biomass (plants)', feedback: { correct: 'Correct.', incorrect: 'Most nutrients are in the vegetation; soil is thin and nutrient-poor.' } },
+  { id: 'rf-qc3', sectionId: 'physical-rainforests', type: 'trueFalse', question: 'Ecotourism can help reduce deforestation.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Ecotourism provides income from intact forest, giving incentive to conserve.' } },
+  { id: 'rf-qc4', sectionId: 'physical-rainforests', type: 'shortAnswer', question: 'Name one cause of deforestation.', correctAnswer: ['logging', 'farming', 'roads', 'mining', 'cattle ranching'], feedback: { correct: 'Correct.', incorrect: 'Causes include logging, farming, roads, mining, cattle ranching.' } },
+  // Desert
+  { id: 'ds-qc2', sectionId: 'physical-desert', type: 'multipleChoice', question: 'Which desert has the Indira Gandhi Canal?', options: ['Sahara', 'Thar', 'Kalahari', 'Atacama'], correctAnswer: 'Thar', feedback: { correct: 'Correct.', incorrect: 'The Indira Gandhi Canal irrigates the Thar Desert.' } },
+  { id: 'ds-qc3', sectionId: 'physical-desert', type: 'trueFalse', question: 'Hot deserts have no economic value.', correctAnswer: 'false', feedback: { correct: 'Correct.', incorrect: 'Deserts have minerals, energy, farming (with irrigation), tourism.' } },
+  // Cold
+  { id: 'cl-qc2', sectionId: 'physical-cold', type: 'shortAnswer', question: 'Name one cold environment case study.', correctAnswer: ['svalbard', 'alaska', 'antarctica', 'siberia'], feedback: { correct: 'Correct.', incorrect: 'Case studies include Svalbard, Alaska, Antarctica.' } },
+  { id: 'cl-qc3', sectionId: 'physical-cold', type: 'multipleChoice', question: 'What is a challenge for building in cold environments?', options: ['Too much rain', 'Permafrost', 'Too hot', 'Hurricanes'], correctAnswer: 'Permafrost', feedback: { correct: 'Correct.', incorrect: 'Permafrost thaws and causes ground to shift, damaging buildings.' } },
+  // UK
+  { id: 'uk-qc2', sectionId: 'physical-uk-overview', type: 'trueFalse', question: 'The Pennines form a watershed in England.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'The Pennines separate east-flowing and west-flowing rivers.' } },
+  { id: 'uk-qc3', sectionId: 'physical-uk-overview', type: 'shortAnswer', question: 'Where are the UK lowlands?', correctAnswer: ['south', 'east', 'south and east'], feedback: { correct: 'Correct.', incorrect: 'Lowlands are in the south and east of the UK.' } },
+  // Coastal
+  { id: 'coast-qc2', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'Which erosion process involves rocks hitting each other?', options: ['Hydraulic action', 'Abrasion', 'Attrition', 'Solution'], correctAnswer: 'Attrition', feedback: { correct: 'Correct.', incorrect: 'Attrition is when rocks in the water hit each other and break up.' } },
+  { id: 'coast-qc3', sectionId: 'physical-coastal', type: 'trueFalse', question: 'Managed retreat is a form of soft engineering.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Managed retreat works with natural processes.' } },
+  { id: 'coast-qc4', sectionId: 'physical-coastal', type: 'shortAnswer', question: 'Which UK coastline has the fastest erosion in Europe?', correctAnswer: ['holderness', 'holderness coast', 'yorkshire'], feedback: { correct: 'Correct.', incorrect: 'The Holderness Coast erodes 1–2 m per year.' } },
+  { id: 'coast-qc5', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'What coastal landform is formed by longshore drift?', options: ['Cliff', 'Spit', 'Wave-cut platform', 'Cave'], correctAnswer: 'Spit', feedback: { correct: 'Correct.', incorrect: 'Spits are formed by longshore drift depositing material.' } },
+  // River
+  { id: 'river-qc2', sectionId: 'physical-river', type: 'multipleChoice', question: 'What does lag time measure?', options: ['River length', 'Delay between rainfall and peak discharge', 'Flood depth', 'Water temperature'], correctAnswer: 'Delay between rainfall and peak discharge', feedback: { correct: 'Correct.', incorrect: 'Lag time is the delay between peak rainfall and peak discharge.' } },
+  { id: 'river-qc3', sectionId: 'physical-river', type: 'shortAnswer', question: 'Name one soft engineering flood management strategy.', correctAnswer: ['flood plain zoning', 'afforestation', 'wetlands', 'washlands'], feedback: { correct: 'Correct.', incorrect: 'Soft strategies include flood plain zoning, afforestation, wetlands.' } },
+  { id: 'river-qc4', sectionId: 'physical-river', type: 'trueFalse', question: 'The Somerset Levels flooded in 2014.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Prolonged rainfall caused major flooding in winter 2013–14.' } },
+  { id: 'river-qc5', sectionId: 'physical-river', type: 'multipleChoice', question: 'Where does deposition mainly occur in a river?', options: ['Upper course', 'Where velocity drops', 'At the source', 'In the watershed'], correctAnswer: 'Where velocity drops', feedback: { correct: 'Correct.', incorrect: 'Deposition occurs when the river loses energy (velocity drops).' } },
+  // Glacial
+  { id: 'glac-qc2', sectionId: 'physical-glacial', type: 'shortAnswer', question: 'What shape is an arête?', correctAnswer: ['ridge', 'sharp ridge', 'narrow ridge'], feedback: { correct: 'Correct.', incorrect: 'An arête is a sharp ridge between two corries.' } },
+  { id: 'glac-qc3', sectionId: 'physical-glacial', type: 'multipleChoice', question: 'Which UK area is a glaciated upland?', options: ['London', 'Lake District', 'Norfolk', 'Kent'], correctAnswer: 'Lake District', feedback: { correct: 'Correct.', incorrect: 'The Lake District has corries, arêtes and ribbon lakes.' } },
+  { id: 'glac-qc4', sectionId: 'physical-glacial', type: 'trueFalse', question: 'Plucking is a type of glacial erosion.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Plucking occurs when ice freezes to rock and pulls it away.' } },
+  // Urban
+  { id: 'urb-qc2', sectionId: 'human-urban', type: 'shortAnswer', question: 'Name an LIC/NEE city case study.', correctAnswer: ['rio', 'rio de janeiro', 'mumbai', 'lagos'], feedback: { correct: 'Correct.', incorrect: 'Rio de Janeiro, Mumbai, Lagos are common case studies.' } },
+  { id: 'urb-qc3', sectionId: 'human-urban', type: 'multipleChoice', question: 'What is a favela?', options: ['Shopping centre', 'Informal settlement', 'Office block', 'Park'], correctAnswer: 'Informal settlement', feedback: { correct: 'Correct.', incorrect: 'Favelas are informal settlements (slums) in Brazilian cities.' } },
+  { id: 'urb-qc4', sectionId: 'human-urban', type: 'trueFalse', question: 'Bristol has experienced regeneration.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Harbourside and other areas have been regenerated.' } },
+  { id: 'urb-qc5', sectionId: 'human-urban', type: 'shortAnswer', question: 'What is counter-urbanisation?', correctAnswer: ['movement from city to countryside', 'moving to rural areas', 'leaving cities'], feedback: { correct: 'Correct.', incorrect: 'Counter-urbanisation is movement from cities to rural areas.' } },
+  // Economic
+  { id: 'econ-qc2', sectionId: 'human-economic', type: 'shortAnswer', question: 'What does NEE stand for?', correctAnswer: ['newly emerging economy', 'newly emerging economies'], feedback: { correct: 'Correct.', incorrect: 'NEE = Newly Emerging Economy.' } },
+  { id: 'econ-qc3', sectionId: 'human-economic', type: 'multipleChoice', question: 'Which is a development strategy?', options: ['Deforestation', 'Fairtrade', 'Pollution', 'War'], correctAnswer: 'Fairtrade', feedback: { correct: 'Correct.', incorrect: 'Fairtrade ensures producers get fair prices.' } },
+  { id: 'econ-qc4', sectionId: 'human-economic', type: 'trueFalse', question: 'Nigeria is an NEE.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Nigeria is a newly emerging economy with oil and industrial growth.' } },
+  { id: 'econ-qc5', sectionId: 'human-economic', type: 'shortAnswer', question: 'What does TNC stand for?', correctAnswer: ['transnational corporation', 'transnational company'], feedback: { correct: 'Correct.', incorrect: 'TNC = Transnational Corporation.' } },
+  // Resource
+  { id: 'res-qc2', sectionId: 'human-resource-overview', type: 'trueFalse', question: 'The UK imports a significant proportion of its food.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'The UK imports around 40% of its food.' } },
+  { id: 'res-qc3', sectionId: 'human-resource-overview', type: 'multipleChoice', question: 'What does food miles measure?', options: ['Food weight', 'Distance food travels', 'Food cost', 'Food temperature'], correctAnswer: 'Distance food travels', feedback: { correct: 'Correct.', incorrect: 'Food miles = distance from producer to consumer.' } },
+  // Food
+  { id: 'food-qc2', sectionId: 'human-food', type: 'multipleChoice', question: 'What affects food supply?', options: ['Only climate', 'Climate, conflict, technology, water', 'Only technology', 'Only water'], correctAnswer: 'Climate, conflict, technology, water', feedback: { correct: 'Correct.', incorrect: 'Many factors: climate, conflict, technology, water, pests.' } },
+  { id: 'food-qc3', sectionId: 'human-food', type: 'trueFalse', question: 'Producing more food always solves hunger.', correctAnswer: 'false', feedback: { correct: 'Correct.', incorrect: 'Distribution and access are often the problem, not total supply.' } },
+  // Water
+  { id: 'water-qc2', sectionId: 'human-water', type: 'shortAnswer', question: 'Name one strategy to increase water supply.', correctAnswer: ['dam', 'reservoir', 'water transfer', 'desalination'], feedback: { correct: 'Correct.', incorrect: 'Strategies include dams, water transfer, desalination.' } },
+  { id: 'water-qc3', sectionId: 'human-water', type: 'multipleChoice', question: 'What is desalination?', options: ['Filtering water', 'Removing salt from seawater', 'Storing water', 'Transporting water'], correctAnswer: 'Removing salt from seawater', feedback: { correct: 'Correct.', incorrect: 'Desalination removes salt to produce fresh water.' } },
+  // Energy
+  { id: 'energy-qc2', sectionId: 'human-energy', type: 'shortAnswer', question: 'Name one renewable energy source.', correctAnswer: ['wind', 'solar', 'hydro', 'tidal', 'geothermal'], feedback: { correct: 'Correct.', incorrect: 'Renewables include wind, solar, hydro, tidal, geothermal.' } },
+  { id: 'energy-qc3', sectionId: 'human-energy', type: 'trueFalse', question: 'Wind power is intermittent.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Wind does not always blow; supply varies.' } },
+  { id: 'energy-qc4', sectionId: 'human-energy', type: 'multipleChoice', question: 'What is a disadvantage of nuclear power?', options: ['No emissions', 'Radioactive waste', 'Always available', 'Cheap to build'], correctAnswer: 'Radioactive waste', feedback: { correct: 'Correct.', incorrect: 'Nuclear produces long-lived radioactive waste.' } },
+  // Issue evaluation
+  { id: 'app-qc1', sectionId: 'app-issue-evaluation', type: 'trueFalse', question: 'Issue evaluation requires considering social, economic and environmental factors.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Balanced evaluation considers all three.' } },
+  { id: 'app-qc2', sectionId: 'app-issue-evaluation', type: 'multipleChoice', question: 'What is the pre-release booklet used for?', options: ['Revision only', 'Paper 3 issue evaluation', 'Fieldwork', 'Map skills'], correctAnswer: 'Paper 3 issue evaluation', feedback: { correct: 'Correct.', incorrect: 'Pre-release is for the Paper 3 issue evaluation.' } },
+  // Fieldwork
+  { id: 'app-qc3', sectionId: 'app-fieldwork', type: 'shortAnswer', question: 'What is a hypothesis in geography?', correctAnswer: ['testable statement', 'prediction', 'question to test'], feedback: { correct: 'Correct.', incorrect: 'A hypothesis is a testable statement for enquiry.' } },
+  { id: 'app-qc4', sectionId: 'app-fieldwork', type: 'trueFalse', question: 'Primary data is collected by the researcher.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Primary data = data you collect yourself.' } },
+  // Additional quick checks for 120+ target
+  { id: 'nh-qc8', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'What is the epicentre?', options: ['The focus of an earthquake', 'Point on surface above the focus', 'A type of volcano', 'A tsunami'], correctAnswer: 'Point on surface above the focus', feedback: { correct: 'Correct.', incorrect: 'Epicentre is directly above the focus.' } },
+  { id: 'nh-qc9', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'What scale measures earthquake magnitude?', correctAnswer: ['richter', 'richter scale'], feedback: { correct: 'Correct.', incorrect: 'The Richter scale measures magnitude.' } },
+  { id: 'eco-qc5', sectionId: 'physical-ecosystems', type: 'trueFalse', question: 'Eutrophication can cause fish to die.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Excess nutrients cause oxygen depletion.' } },
+  { id: 'rf-qc5', sectionId: 'physical-rainforests', type: 'multipleChoice', question: 'What does FSC certify?', options: ['Food safety', 'Sustainable timber', 'Water quality', 'Energy'], correctAnswer: 'Sustainable timber', feedback: { correct: 'Correct.', incorrect: 'FSC = Forest Stewardship Council.' } },
+  { id: 'coast-qc6', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'What is fetch?', options: ['Wave height', 'Distance of open water wind blows over', 'Beach width', 'Cliff height'], correctAnswer: 'Distance of open water wind blows over', feedback: { correct: 'Correct.', incorrect: 'Fetch affects wave size.' } },
+  { id: 'river-qc6', sectionId: 'physical-river', type: 'trueFalse', question: 'Urbanisation increases infiltration.', correctAnswer: 'false', feedback: { correct: 'Correct – impermeable surfaces reduce it.', incorrect: 'Urbanisation reduces infiltration.' } },
+  { id: 'glac-qc5', sectionId: 'physical-glacial', type: 'shortAnswer', question: 'What shape is a glacial trough?', correctAnswer: ['u-shaped', 'u shaped'], feedback: { correct: 'Correct.', incorrect: 'Glaciers create U-shaped valleys.' } },
+  { id: 'urb-qc6', sectionId: 'human-urban', type: 'multipleChoice', question: 'What is deindustrialisation?', options: ['Growth of industry', 'Decline of manufacturing', 'Urban growth', 'Migration'], correctAnswer: 'Decline of manufacturing', feedback: { correct: 'Correct.', incorrect: 'Deindustrialisation = manufacturing decline.' } },
+  { id: 'econ-qc6', sectionId: 'human-economic', type: 'shortAnswer', question: 'What is microfinance?', correctAnswer: ['small loans', 'loans to poor', 'micro loans'], feedback: { correct: 'Correct.', incorrect: 'Microfinance = small loans to poor people.' } },
+  { id: 'res-qc4', sectionId: 'human-resource-overview', type: 'multipleChoice', question: 'What is energy security?', options: ['Cheap energy only', 'Reliable access to affordable energy', 'Renewable only', 'No imports'], correctAnswer: 'Reliable access to affordable energy', feedback: { correct: 'Correct.', incorrect: 'Energy security = reliable, affordable supply.' } },
+  // More quick checks for 120+ target
+  { id: 'nh-qc10', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'Where does subduction occur?', options: ['Constructive margin', 'Destructive margin', 'Conservative margin', 'All margins'], correctAnswer: 'Destructive margin', feedback: { correct: 'Correct.', incorrect: 'Subduction = oceanic plate under continental at destructive margin.' } },
+  { id: 'nh-qc11', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'What is the point on the surface directly above the earthquake focus?', correctAnswer: ['epicentre', 'epicenter'], feedback: { correct: 'Correct.', incorrect: 'Epicentre is directly above the focus.' } },
+  { id: 'eco-qc6', sectionId: 'physical-ecosystems', type: 'multipleChoice', question: 'What is biomass?', options: ['Only plants', 'Total mass of living organisms', 'Dead matter only', 'Water content'], correctAnswer: 'Total mass of living organisms', feedback: { correct: 'Correct.', incorrect: 'Biomass = total mass of living organisms.' } },
+  { id: 'rf-qc6', sectionId: 'physical-rainforests', type: 'trueFalse', question: 'Debt-for-nature swaps can help conserve rainforest.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Countries get debt relief in exchange for conservation.' } },
+  { id: 'coast-qc7', sectionId: 'physical-coastal', type: 'shortAnswer', question: 'What landform is left when an arch collapses?', correctAnswer: ['stack', 'stacks'], feedback: { correct: 'Correct.', incorrect: 'A stack is the isolated pillar left.' } },
+  { id: 'coast-qc8', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'What can groynes cause downdrift?', options: ['Deposition', 'Erosion', 'Nothing', 'Flooding'], correctAnswer: 'Erosion', feedback: { correct: 'Correct.', incorrect: 'Groynes trap sediment; downdrift loses supply and erodes.' } },
+  { id: 'river-qc7', sectionId: 'physical-river', type: 'shortAnswer', question: 'What is a smaller river joining a larger one called?', correctAnswer: ['tributary', 'tributaries'], feedback: { correct: 'Correct.', incorrect: 'A tributary joins the main river.' } },
+  { id: 'river-qc8', sectionId: 'physical-river', type: 'multipleChoice', question: 'Where do waterfalls typically form?', options: ['Lower course', 'Where hard rock overlies soft', 'At the mouth', 'In flood plains'], correctAnswer: 'Where hard rock overlies soft', feedback: { correct: 'Correct.', incorrect: 'Soft rock erodes faster, creating a drop.' } },
+  { id: 'glac-qc6', sectionId: 'physical-glacial', type: 'multipleChoice', question: 'What indicates ice flow direction?', options: ['Corrie', 'Drumlin', 'Ribbon lake', 'Arête'], correctAnswer: 'Drumlin', feedback: { correct: 'Correct.', incorrect: 'Drumlins are streamlined in flow direction.' } },
+  { id: 'urb-qc7', sectionId: 'human-urban', type: 'shortAnswer', question: 'What do we call reasons for leaving a place?', correctAnswer: ['push factors', 'push factor'], feedback: { correct: 'Correct.', incorrect: 'Push factors = reasons to leave.' } },
+  { id: 'urb-qc8', sectionId: 'human-urban', type: 'trueFalse', question: 'Pull factors attract people to a place.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Pull factors = jobs, education, etc.' } },
+  { id: 'econ-qc7', sectionId: 'human-economic', type: 'multipleChoice', question: 'What is bilateral aid?', options: ['Aid from NGOs', 'Aid from one country to another', 'Aid from UN only', 'Emergency aid only'], correctAnswer: 'Aid from one country to another', feedback: { correct: 'Correct.', incorrect: 'Bilateral = government to government.' } },
+  { id: 'econ-qc8', sectionId: 'human-economic', type: 'shortAnswer', question: 'What do we call money sent home by migrants?', correctAnswer: ['remittance', 'remittances'], feedback: { correct: 'Correct.', incorrect: 'Remittances support families in home country.' } },
+  { id: 'food-qc4', sectionId: 'human-food', type: 'trueFalse', question: 'Famines are always caused by absolute food shortage.', correctAnswer: 'false', feedback: { correct: 'Correct.', incorrect: 'Often distribution failure; food may exist elsewhere.' } },
+  { id: 'water-qc4', sectionId: 'human-water', type: 'multipleChoice', question: 'What can cause conflict over water?', options: ['Only drought', 'Transboundary rivers', 'Only pollution', 'Only dams'], correctAnswer: 'Transboundary rivers', feedback: { correct: 'Correct.', incorrect: 'Rivers crossing borders (Nile, Colorado) can cause conflict.' } },
+  { id: 'energy-qc5', sectionId: 'human-energy', type: 'shortAnswer', question: 'What provides base load electricity?', correctAnswer: ['nuclear', 'coal', 'gas', 'fossil'], feedback: { correct: 'Correct.', incorrect: 'Nuclear and fossil fuels provide constant base load.' } },
+  { id: 'app-qc5', sectionId: 'app-fieldwork', type: 'multipleChoice', question: 'What is a transect?', options: ['Random sample', 'Line along which samples are taken', 'Map type', 'Graph'], correctAnswer: 'Line along which samples are taken', feedback: { correct: 'Correct.', incorrect: 'Transect = sampling along a line.' } },
 ];
 
 export function getQuickChecksForSections(sectionIds: GeographySectionId[]): GeographyQuickCheckItem[] {
@@ -165,6 +451,26 @@ const GEOGRAPHY_SKILLS_TASKS: GeographySkillsTask[] = [
   { id: 'sk-3', skillType: 'numerical', title: 'Percentage change', prompt: 'Calculate percentage change: (new - old) / old × 100. If a city\'s population grew from 2 million to 2.5 million, what is the percentage increase?', expected: '25%' },
   { id: 'sk-4', skillType: 'statistical', title: 'Measures of central tendency', prompt: 'For fieldwork data, when might you use median instead of mean?', expected: 'When data has outliers or is skewed' },
   { id: 'sk-5', skillType: 'graph', title: 'Choropleth map', prompt: 'What does a choropleth map show? How is data represented?', expected: 'Shows values for areas using shading or colour; darker = higher value' },
+  { id: 'sk-6', skillType: 'map', title: 'Direction and bearing', prompt: 'From grid reference 2345, what direction is 2567? Use compass directions or bearing (0–360°).', expected: 'East or bearing ~90°' },
+  { id: 'sk-7', skillType: 'map', title: 'Scale and distance', prompt: 'Using a linear scale, measure the straight-line distance between two points. Convert to real distance.', expected: 'Measure with ruler; multiply by scale' },
+  { id: 'sk-8', skillType: 'map', title: 'Relief and contour lines', prompt: 'Interpret contour lines on a map. What do close contours indicate? What do wide spacing indicate?', expected: 'Close = steep slope; wide = gentle slope' },
+  { id: 'sk-9', skillType: 'map', title: 'Land use identification', prompt: 'Identify land use from map symbols: residential, industrial, commercial, agricultural.', expected: 'Use map key; describe distribution' },
+  { id: 'sk-10', skillType: 'graph', title: 'Line graph – describe trend', prompt: 'Describe the trend in a line graph (e.g. population over time). Use: increase, decrease, fluctuate, steady.', expected: 'Identify overall pattern; quote data' },
+  { id: 'sk-11', skillType: 'graph', title: 'Bar chart comparison', prompt: 'Compare two or more bars in a bar chart. What is the difference? Calculate if needed.', expected: 'Quote values; calculate difference/percentage' },
+  { id: 'sk-12', skillType: 'graph', title: 'Scatter graph correlation', prompt: 'Describe the relationship in a scatter graph. Positive, negative, or no correlation?', expected: 'As X increases, Y increases/decreases/unchanged' },
+  { id: 'sk-13', skillType: 'graph', title: 'Pie chart proportions', prompt: 'What proportion does each sector represent? Calculate percentage from angle if needed.', expected: 'Angle/360 × 100 = percentage' },
+  { id: 'sk-14', skillType: 'graph', title: 'Hydrograph analysis', prompt: 'From a storm hydrograph: identify lag time, peak discharge, rising limb, falling limb.', expected: 'Lag = time from peak rainfall to peak discharge' },
+  { id: 'sk-15', skillType: 'graph', title: 'Triangular graph (employment)', prompt: 'Plot or read from a triangular graph showing primary, secondary, tertiary employment.', expected: 'Each axis 0–100%; point shows mix' },
+  { id: 'sk-16', skillType: 'numerical', title: 'Mean, median, mode', prompt: 'Calculate mean, median and mode for a dataset. When is each appropriate?', expected: 'Mean = total/n; median = middle; mode = most frequent' },
+  { id: 'sk-17', skillType: 'numerical', title: 'Interquartile range', prompt: 'Find Q1, Q3 and IQR. What does IQR tell you about the data?', expected: 'IQR = Q3 - Q1; spread of middle 50%' },
+  { id: 'sk-18', skillType: 'numerical', title: 'Density calculation', prompt: 'Calculate population density: population ÷ area. Units: people per km².', expected: 'e.g. 500,000 ÷ 100 = 5,000 per km²' },
+  { id: 'sk-19', skillType: 'numerical', title: 'Ratio and proportion', prompt: 'Express one value as proportion of another. E.g. what % of total is X?', expected: 'X/total × 100' },
+  { id: 'sk-20', skillType: 'statistical', title: 'Sample size and reliability', prompt: 'Why does a larger sample size improve reliability?', expected: 'Reduces effect of outliers; more representative' },
+  { id: 'sk-21', skillType: 'statistical', title: 'Anomalies', prompt: 'Identify anomalies in data. How might you deal with them in analysis?', expected: 'Point that does not fit pattern; exclude or note' },
+  { id: 'sk-22', skillType: 'statistical', title: 'Correlation vs causation', prompt: 'Two variables correlate. Does that mean one causes the other?', expected: 'No – correlation does not prove causation' },
+  { id: 'sk-23', skillType: 'map', title: 'Cross-section drawing', prompt: 'Draw a cross-section between two points on a map. Show relief profile.', expected: 'Plot heights; join with smooth line' },
+  { id: 'sk-24', skillType: 'graph', title: 'Describe distribution', prompt: 'Describe the spatial distribution of a feature from a map. Use: clustered, dispersed, linear, random.', expected: 'Pattern + location + example' },
+  { id: 'sk-25', skillType: 'numerical', title: 'Rate of change', prompt: 'Calculate rate of change: change in value ÷ time. E.g. erosion rate m/year.', expected: 'e.g. 10m ÷ 5 years = 2 m/year' },
 ];
 
 export const GEOGRAPHY_SKILLS_TASKS_LIST = GEOGRAPHY_SKILLS_TASKS;
@@ -206,6 +512,28 @@ const GEOGRAPHY_ISSUE_SCENARIOS: GeographyIssueScenario[] = [
       { question: 'Evaluate the proposal. Would you support it? Justify your decision.', markScheme: 'Consider stakeholders; balance advantages and disadvantages; reasoned conclusion.' },
     ],
     sectionIds: ['human-energy', 'human-urban'],
+  },
+  {
+    id: 'issue-4',
+    title: 'Urban regeneration vs green space',
+    resources: ['Map of proposed housing development on former industrial land', 'Data on housing need and green space provision', 'Stakeholder views (residents, developer, council, environmental group)'],
+    questions: [
+      { question: 'Outline one advantage of building on brownfield land.', markScheme: 'Reduces sprawl; uses existing infrastructure; cleans contaminated land.' },
+      { question: 'Outline one disadvantage of losing green space.', markScheme: 'Recreation; wildlife; air quality; mental health.' },
+      { question: 'Evaluate the proposal. Would you support it? Justify with reference to stakeholders.', markScheme: 'Balance housing need vs green space; consider who benefits/loses.' },
+    ],
+    sectionIds: ['human-urban', 'app-issue-evaluation'],
+  },
+  {
+    id: 'issue-5',
+    title: 'Rainforest conservation decision',
+    resources: ['Map of rainforest area showing proposed logging zone', 'Data on biodiversity and carbon storage', 'Stakeholder views (government, logging company, indigenous group, NGO)'],
+    questions: [
+      { question: 'Outline one economic benefit of allowing logging.', markScheme: 'Jobs; revenue; timber for export.' },
+      { question: 'Outline one environmental cost of deforestation.', markScheme: 'Biodiversity loss; climate change; soil erosion.' },
+      { question: 'Evaluate the options. Which approach would you support? Justify your decision.', markScheme: 'Consider sustainable alternatives; balance economic and environmental.' },
+    ],
+    sectionIds: ['physical-rainforests', 'human-economic'],
   },
 ];
 
@@ -276,6 +604,68 @@ const GEOGRAPHY_QUESTION_LAB: GeographyQuestionLabItem[] = [
   { id: 'food-ql1', sectionId: 'human-food', questionType: 'evaluate', question: 'Evaluate strategies to increase food supply.', markSchemeSummary: 'Strategies: irrigation, biotechnology, urban farming. Advantages and disadvantages; sustainability.' },
   { id: 'water-ql1', sectionId: 'human-water', questionType: 'explain', question: 'Explain the causes and impacts of water insecurity.', markSchemeSummary: 'Causes: climate, geology, pollution, over-abstraction. Impacts: disease, food production, conflict.' },
   { id: 'energy-ql1', sectionId: 'human-energy', questionType: 'evaluate', question: 'Evaluate the advantages and disadvantages of renewable energy.', markSchemeSummary: 'Advantages: sustainable, lower emissions. Disadvantages: intermittency, land use, cost.' },
+  // Natural hazards – expanded
+  { id: 'nh-ql3', sectionId: 'physical-natural-hazards', questionType: 'explain', question: 'Explain why the effects of earthquakes differ between HICs and LICs.', markSchemeSummary: 'Building quality, emergency response, planning, infrastructure, population density.' },
+  { id: 'nh-ql4', sectionId: 'physical-natural-hazards', questionType: 'describe', question: 'Describe the formation of a tropical storm.', markSchemeSummary: 'Warm ocean 26°C+; low pressure; Coriolis effect; evaporation; condensation releases energy.' },
+  { id: 'nh-ql5', sectionId: 'physical-natural-hazards', questionType: 'evaluate', question: 'Evaluate the effectiveness of mitigation and adaptation strategies for climate change.', markSchemeSummary: 'Mitigation: reduce cause. Adaptation: respond. Both needed; compare costs/benefits.' },
+  { id: 'nh-ql6', sectionId: 'physical-natural-hazards', questionType: 'explain', question: 'Explain why people continue to live in areas at risk from tectonic hazards.', markSchemeSummary: 'Jobs, family, poverty, fertile soil, geothermal energy, lack of choice.' },
+  // Ecosystems
+  { id: 'eco-ql2', sectionId: 'physical-ecosystems', questionType: 'explain', question: 'Explain the importance of biodiversity in an ecosystem.', markSchemeSummary: 'Interdependence; resilience; human benefits (medicine, food); ecosystem services.' },
+  { id: 'eco-ql3', sectionId: 'physical-ecosystems', questionType: 'describe', question: 'Describe the nutrient cycle in an ecosystem.', markSchemeSummary: 'Producers take nutrients; consumers eat; decomposers return to soil; cycle continues.' },
+  // Rainforests
+  { id: 'rf-ql2', sectionId: 'physical-rainforests', questionType: 'evaluate', question: 'Evaluate strategies for sustainable management of tropical rainforests.', markSchemeSummary: 'Selective logging, ecotourism, FSC, debt-for-nature. Compare effectiveness.' },
+  { id: 'rf-ql3', sectionId: 'physical-rainforests', questionType: 'explain', question: 'Explain why deforestation contributes to climate change.', markSchemeSummary: 'Trees store carbon; burning releases CO2; less absorption; reduced evapotranspiration.' },
+  // Desert
+  { id: 'ds-ql2', sectionId: 'physical-desert', questionType: 'explain', question: 'Explain the opportunities for economic development in hot desert areas.', markSchemeSummary: 'Minerals, energy, irrigation farming, solar, tourism. Use case study.' },
+  { id: 'ds-ql3', sectionId: 'physical-desert', questionType: 'explain', question: 'Explain the causes of desertification.', markSchemeSummary: 'Overgrazing, over-cultivation, climate change, removal of vegetation, population pressure.' },
+  // Cold
+  { id: 'cl-ql2', sectionId: 'physical-cold', questionType: 'evaluate', question: 'Evaluate the conflict between development and conservation in cold environments.', markSchemeSummary: 'Mining, tourism vs wilderness; use case study (Svalbard, Alaska).' },
+  { id: 'cl-ql3', sectionId: 'physical-cold', questionType: 'explain', question: 'Explain why building in cold environments is challenging.', markSchemeSummary: 'Permafrost; extreme cold; inaccessibility; short construction season.' },
+  // UK
+  { id: 'uk-ql2', sectionId: 'physical-uk-overview', questionType: 'explain', question: 'Explain how geology influences UK relief.', markSchemeSummary: 'Hard rocks (igneous, metamorphic) in north/west; softer sedimentary in south/east.' },
+  // Coastal
+  { id: 'coast-ql2', sectionId: 'physical-coastal', questionType: 'describe', question: 'Describe the formation of a spit.', markSchemeSummary: 'Longshore drift; change in coastline direction; deposition; recurved end.' },
+  { id: 'coast-ql3', sectionId: 'physical-coastal', questionType: 'evaluate', question: 'Evaluate hard engineering vs soft engineering for coastal management.', markSchemeSummary: 'Hard: effective but expensive, causes erosion elsewhere. Soft: sustainable but may need maintenance.' },
+  { id: 'coast-ql4', sectionId: 'physical-coastal', questionType: 'caseStudy', question: 'Using the Holderness Coast, explain the causes and impacts of coastal erosion.', markSchemeSummary: 'Soft boulder clay; destructive waves; 1–2m/year; property loss; Mappleton defences.' },
+  // River
+  { id: 'river-ql2', sectionId: 'physical-river', questionType: 'describe', question: 'Describe the formation of a meander.', markSchemeSummary: 'Lateral erosion on outside; deposition on inside; thalweg; helicoidal flow.' },
+  { id: 'river-ql3', sectionId: 'physical-river', questionType: 'caseStudy', question: 'Using the Somerset Levels, explain the causes and management of flooding.', markSchemeSummary: '2014: prolonged rain; low-lying; rivers not dredged. Management: dredging, flood relief channel.' },
+  { id: 'river-ql4', sectionId: 'physical-river', questionType: 'explain', question: 'Explain how a hydrograph can be used to predict flood risk.', markSchemeSummary: 'Lag time; peak discharge; steep rising limb = flashy; urban areas have shorter lag.' },
+  // Glacial
+  { id: 'glac-ql2', sectionId: 'physical-glacial', questionType: 'describe', question: 'Describe the formation of a ribbon lake.', markSchemeSummary: 'Glacial erosion in trough; over-deepening; ice melts; water fills hollow.' },
+  { id: 'glac-ql3', sectionId: 'physical-glacial', questionType: 'evaluate', question: 'Evaluate the conflicts between different land uses in glaciated uplands.', markSchemeSummary: 'Tourism vs farming vs conservation vs quarrying. Use Lake District.' },
+  // Urban
+  { id: 'urb-ql2', sectionId: 'human-urban', questionType: 'caseStudy', question: 'Using Bristol, explain how migration has changed a UK city.', markSchemeSummary: 'Polish, Somali migration; cultural diversity; regeneration; inequality.' },
+  { id: 'urb-ql3', sectionId: 'human-urban', questionType: 'explain', question: 'Explain the push and pull factors causing rural-urban migration in LICs.', markSchemeSummary: 'Push: poverty, drought, unemployment. Pull: jobs, education, healthcare.' },
+  { id: 'urb-ql4', sectionId: 'human-urban', questionType: 'evaluate', question: 'Evaluate the effectiveness of one strategy to reduce inequality in a city.', markSchemeSummary: 'Favela Bairro, regeneration, education. Advantages and disadvantages.' },
+  { id: 'urb-ql5', sectionId: 'human-urban', questionType: 'explain', question: 'Explain the challenges of rapid urbanisation in LICs and NEEs.', markSchemeSummary: 'Slums, pollution, congestion, unemployment, strain on services.' },
+  // Economic
+  { id: 'econ-ql2', sectionId: 'human-economic', questionType: 'caseStudy', question: 'Using Nigeria, explain how industrial development can reduce the development gap.', markSchemeSummary: 'Oil, TNCs, Lagos industry; jobs, investment; but uneven, environmental cost.' },
+  { id: 'econ-ql3', sectionId: 'human-economic', questionType: 'evaluate', question: 'Evaluate the effectiveness of aid in reducing the development gap.', markSchemeSummary: 'Types of aid; advantages (infrastructure, relief); disadvantages (debt, dependency).' },
+  { id: 'econ-ql4', sectionId: 'human-economic', questionType: 'explain', question: 'Explain why HDI might be a better measure of development than GNI alone.', markSchemeSummary: 'HDI includes life expectancy, education; GNI is just income; HDI more comprehensive.' },
+  // Resource
+  { id: 'res-ql2', sectionId: 'human-resource-overview', questionType: 'explain', question: 'Explain why the UK has a mixed pattern of water surplus and deficit.', markSchemeSummary: 'Rainfall higher north/west; population higher south-east; demand vs supply.' },
+  // Food
+  { id: 'food-ql2', sectionId: 'human-food', questionType: 'evaluate', question: 'Evaluate the advantages and disadvantages of genetically modified (GM) crops.', markSchemeSummary: 'Advantages: yield, drought resistance. Disadvantages: ethics, biodiversity, corporate control.' },
+  { id: 'food-ql3', sectionId: 'human-food', questionType: 'explain', question: 'Explain why famine can occur when food is available.', markSchemeSummary: 'Distribution; poverty; conflict; infrastructure; access not supply.' },
+  // Water
+  { id: 'water-ql2', sectionId: 'human-water', questionType: 'evaluate', question: 'Evaluate large-scale water transfer schemes.', markSchemeSummary: 'Advantages: supply to deficit. Disadvantages: cost, environmental impact, political.' },
+  { id: 'water-ql3', sectionId: 'human-water', questionType: 'explain', question: 'Explain the causes of water insecurity.', markSchemeSummary: 'Climate, geology, pollution, over-abstraction, population growth, conflict.' },
+  // Energy
+  { id: 'energy-ql2', sectionId: 'human-energy', questionType: 'explain', question: 'Explain why the UK energy mix is changing.', markSchemeSummary: 'Declining fossil fuels; climate targets; renewables growing; nuclear debate.' },
+  { id: 'energy-ql3', sectionId: 'human-energy', questionType: 'caseStudy', question: 'Using a UK example, explain how renewable energy can contribute to energy security.', markSchemeSummary: 'Offshore wind; location; advantages; intermittency challenge.' },
+  // Issue evaluation
+  { id: 'app-ql1', sectionId: 'app-issue-evaluation', questionType: 'evaluate', question: 'For a given issue, evaluate the options and justify your decision.', markSchemeSummary: 'Consider stakeholders; social, economic, environmental; balanced conclusion.' },
+  // Fieldwork
+  { id: 'app-ql2', sectionId: 'app-fieldwork', questionType: 'explain', question: 'Explain how you would improve the reliability of a fieldwork method.', markSchemeSummary: 'Larger sample; repeat; consistent method; control variables.' },
+  { id: 'app-ql3', sectionId: 'app-fieldwork', questionType: 'describe', question: 'Describe an appropriate way to present fieldwork data.', markSchemeSummary: 'Match data type to method: map for location; graph for trend; etc.' },
+  // Additional question lab for 50+ target
+  { id: 'nh-ql7', sectionId: 'physical-natural-hazards', questionType: 'describe', question: 'Describe the structure of the Earth.', markSchemeSummary: 'Crust, mantle, core; lithosphere; convection currents.' },
+  { id: 'eco-ql4', sectionId: 'physical-ecosystems', questionType: 'describe', question: 'Describe a small-scale ecosystem you have studied.', markSchemeSummary: 'Pond or hedgerow; producers, consumers, decomposers; abiotic factors.' },
+  { id: 'coast-ql5', sectionId: 'physical-coastal', questionType: 'explain', question: 'Explain how geology affects coastal erosion rates.', markSchemeSummary: 'Hard rock resists; soft rock erodes faster; joints and bedding.' },
+  { id: 'river-ql5', sectionId: 'physical-river', questionType: 'describe', question: 'Describe the characteristics of the upper course of a river.', markSchemeSummary: 'Steep gradient; V-shaped valley; erosion dominant; waterfalls.' },
+  { id: 'econ-ql5', sectionId: 'human-economic', questionType: 'explain', question: 'Explain the physical and historical causes of uneven development.', markSchemeSummary: 'Physical: climate, resources, location. Historical: colonialism, conflict.' },
+  { id: 'res-ql3', sectionId: 'human-resource-overview', questionType: 'evaluate', question: 'Evaluate the UK\'s approach to resource management.', markSchemeSummary: 'Imports; efficiency; renewables; sustainability.' },
 ];
 
 export function getQuestionLabForSections(sectionIds: GeographySectionId[]): GeographyQuestionLabItem[] {

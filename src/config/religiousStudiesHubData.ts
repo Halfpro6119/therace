@@ -167,6 +167,28 @@ export const BELIEF_CONCEPTS: BeliefConcept[] = [
     coreIdea: 'Muslims believe in resurrection, judgement, heaven (Jannah) and hell (Jahannam). Actions in this life determine the afterlife.',
     influence: 'Akhirah motivates Muslims to live righteously.',
   },
+  {
+    id: 'isl-quran',
+    religionId: 'islam',
+    title: 'The Qur\'an',
+    coreIdea: 'The Qur\'an is the literal word of God revealed to Muhammad through the angel Jibril. It is in Arabic and is considered unchanged.',
+    influence: 'Central to all Muslim belief and practice.',
+    scriptureRef: 'Qur\'an',
+  },
+  {
+    id: 'isl-sunnah',
+    religionId: 'islam',
+    title: 'Sunnah and Hadith',
+    coreIdea: 'The Sunnah is the example of Muhammad; Hadith are the recorded sayings and actions. They guide Muslims alongside the Qur\'an.',
+    influence: 'Shapes daily practice and legal rulings.',
+  },
+  {
+    id: 'isl-ummah',
+    religionId: 'islam',
+    title: 'Ummah',
+    coreIdea: 'The global Muslim community. Unity and brotherhood across nations and cultures.',
+    influence: 'Hajj brings Muslims together; mutual support.',
+  },
   // Theme A
   {
     id: 'thA-marriage',
@@ -203,13 +225,22 @@ export const BELIEF_CONCEPTS: BeliefConcept[] = [
   { id: 'hin-brahman', religionId: 'hinduism', title: 'Brahman', coreIdea: 'Ultimate reality; can be understood as nirguna (without form) or saguna (with form). The divine consciousness.', scriptureRef: 'Brihadaranyaka Upanishad' },
   { id: 'hin-karma-samsara', religionId: 'hinduism', title: 'Karma, samsara and moksha', coreIdea: 'Actions affect rebirth (samsara). Moksha is liberation from the cycle. Dharma guides right action.', influence: 'Shapes Hindu ethics and life goals.' },
   { id: 'hin-tri-murti', religionId: 'hinduism', title: 'Tri-murti', coreIdea: 'Brahma (creator), Vishnu (preserver), Shiva (destroyer). Different aspects of the divine.', influence: 'Worship and devotion take many forms.' },
+  { id: 'hin-avatar', religionId: 'hinduism', title: 'Avatar', coreIdea: 'Incarnation of a deity; Vishnu descends (e.g. as Krishna, Rama) to restore dharma.', influence: 'Stories of avatars inspire devotion.', scriptureRef: 'Bhagavad Gita' },
+  { id: 'hin-puja', religionId: 'hinduism', title: 'Puja', coreIdea: 'Worship through offerings, chanting, darshan (seeing the divine). Can be at home or in temples.', influence: 'Daily and festival worship.' },
+  { id: 'hin-ahimsa', religionId: 'hinduism', title: 'Ahimsa', coreIdea: 'Non-violence; not harming living beings. Important in Hindu and Buddhist ethics.', influence: 'Many Hindus are vegetarian.', scriptureRef: 'Bhagavad Gita' },
   // Judaism
   { id: 'jud-covenant', religionId: 'judaism', title: 'Covenant', coreIdea: 'God\'s agreement with Abraham (Genesis 12) and with Israel at Sinai (Exodus 20). The Torah contains the terms.', scriptureRef: 'Genesis 12:1–3; Exodus 20:1–17' },
   { id: 'jud-mitzvot', religionId: 'judaism', title: 'Mitzvot', coreIdea: 'The 613 commandments. Mitzvot between humans and God, and between humans. Pikuach Nefesh: saving a life overrides most laws.', influence: 'Guide Jewish daily life and ethics.' },
   { id: 'jud-messiah', religionId: 'judaism', title: 'Messiah', coreIdea: 'The anointed one who will bring peace and redemption. Jews await the Messiah; Christians believe Jesus is the Messiah.', influence: 'Different expectations in Judaism vs Christianity.' },
+  { id: 'jud-shekhinah', religionId: 'judaism', title: 'Shekhinah', coreIdea: 'The divine presence; God\'s immanence in the world. Associated with the Tabernacle and Temple.', influence: 'God is both transcendent and present.', scriptureRef: 'Exodus' },
+  { id: 'jud-shabbat', religionId: 'judaism', title: 'Shabbat', coreIdea: 'The Sabbath; rest from Friday sunset to Saturday sunset. Remembers creation and the Exodus.', influence: 'Central to Jewish observance.', scriptureRef: 'Exodus 20:8–11' },
+  { id: 'jud-torah', religionId: 'judaism', title: 'Torah', coreIdea: 'The first five books of the Hebrew Bible; God\'s law given to Moses. Contains the 613 mitzvot.', influence: 'Foundation of Jewish life and law.', scriptureRef: 'Exodus 20' },
   // Sikhism
   { id: 'sik-mool-mantra', religionId: 'sikhism', title: 'Mool Mantra', coreIdea: 'The opening of the Guru Granth Sahib; defines God as one, creator, timeless, beyond birth and death.', scriptureRef: 'Guru Granth Sahib 1a' },
   { id: 'sik-equality-sewa', religionId: 'sikhism', title: 'Equality and sewa', coreIdea: 'All humans are equal regardless of gender, caste or background. Sewa is selfless service to others.', influence: 'Langar (free kitchen), sangat (community).' },
+  { id: 'sik-guru', religionId: 'sikhism', title: 'The Guru', coreIdea: 'Ten human Gurus; Guru Granth Sahib is the eternal Guru. Guidance for Sikhs.', influence: 'Gurdwara centres on the Guru Granth Sahib.', scriptureRef: 'Guru Granth Sahib' },
+  { id: 'sik-langar', religionId: 'sikhism', title: 'Langar', coreIdea: 'Free communal meal in the gurdwara. All eat together regardless of background. Symbolises equality.', influence: 'Practical expression of sewa and equality.' },
+  { id: 'sik-five-ks', religionId: 'sikhism', title: 'Five Ks', coreIdea: 'Kesh (uncut hair), Kara (bracelet), Kanga (comb), Kaccha (undergarment), Kirpan (sword). Worn by initiated Sikhs.', influence: 'Outward signs of commitment and identity.' },
   // Theme B
   { id: 'thB-sanctity-life', themeId: 'B', title: 'Sanctity of life', coreIdea: 'Human life is sacred because it is created by God (or has inherent worth). Affects views on abortion and euthanasia.', influence: 'Many religions oppose abortion and euthanasia.' },
   { id: 'thB-stewardship', themeId: 'B', title: 'Stewardship', coreIdea: 'Humans have a duty to care for creation. The world is God\'s gift; we are caretakers, not owners.', influence: 'Affects environmental ethics.' },
@@ -271,6 +302,44 @@ export const SCRIPTURE_CARDS: ScriptureCard[] = [
   { id: 'sc-thE-retribution', themeId: 'E', term: 'Retribution', definition: 'Punishment as deserved penalty; "eye for an eye".', inContext: 'One aim of punishment.' },
   { id: 'sc-thE-reformation', themeId: 'E', term: 'Reformation', definition: 'Punishment should reform the offender.', inContext: 'Rehabilitation rather than vengeance.' },
   { id: 'sc-thF-discrimination', themeId: 'F', term: 'Discrimination', definition: 'Unfair treatment based on race, gender, religion, etc.', inContext: 'Religions often oppose discrimination.' },
+  // Christianity – expanded
+  { id: 'sc-chr-resurrection', religionId: 'christianity', term: 'Resurrection', definition: 'Jesus rising from the dead; Christians believe in their own resurrection.', scriptureRef: '1 Corinthians 15' },
+  { id: 'sc-chr-kingdom', religionId: 'christianity', term: 'Kingdom of God', definition: 'God\'s rule; present and future; Jesus announced it.', scriptureRef: 'Mark 1:15' },
+  { id: 'sc-chr-forgiveness', religionId: 'christianity', term: 'Forgiveness', definition: 'God forgives through Christ; Christians are called to forgive others.', scriptureRef: 'Matthew 6:14–15' },
+  { id: 'sc-chr-love', religionId: 'christianity', term: 'Agape', definition: 'Selfless, sacrificial love; the highest form of love in Christian teaching.', scriptureRef: '1 Corinthians 13' },
+  { id: 'sc-chr-commandments', religionId: 'christianity', term: 'Ten Commandments', definition: 'Moral law given to Moses; summarised as love of God and neighbour.', scriptureRef: 'Exodus 20:1–17' },
+  // Islam – expanded
+  { id: 'sc-isl-quran', religionId: 'islam', term: 'Qur\'an', definition: 'Holy book; God\'s literal word revealed to Muhammad.', inContext: 'Unchanged; in Arabic; recited in prayer.' },
+  { id: 'sc-isl-sunnah', religionId: 'islam', term: 'Sunnah', definition: 'The example of Muhammad; recorded in Hadith.', inContext: 'Guides Muslim practice alongside Qur\'an.' },
+  { id: 'sc-isl-akhirah', religionId: 'islam', term: 'Akhirah', definition: 'Life after death; judgement; heaven (Jannah) and hell (Jahannam).', inContext: 'One of the Six Articles of Faith.' },
+  { id: 'sc-isl-ummah', religionId: 'islam', term: 'Ummah', definition: 'The global Muslim community.', inContext: 'Unity and brotherhood.' },
+  { id: 'sc-isl-mosque', religionId: 'islam', term: 'Mosque', definition: 'Place of Muslim worship; faces Makkah.', inContext: 'Salah performed here or anywhere.' },
+  // Buddhism – expanded
+  { id: 'sc-bud-karma', religionId: 'buddhism', term: 'Karma', definition: 'Moral law of cause and effect; actions have consequences.', inContext: 'Affects rebirth.' },
+  { id: 'sc-bud-sangha', religionId: 'buddhism', term: 'Sangha', definition: 'The Buddhist community; monks, nuns and lay followers.', inContext: 'One of the Three Jewels.' },
+  { id: 'sc-bud-five-precepts', religionId: 'buddhism', term: 'Five Precepts', definition: 'Ethical guidelines: no killing, stealing, sexual misconduct, lying, intoxication.', inContext: 'Lay Buddhist ethics.' },
+  { id: 'sc-bud-meditation', religionId: 'buddhism', term: 'Meditation', definition: 'Mental training; mindfulness and concentration.', inContext: 'Part of the Eightfold Path.' },
+  // Hinduism – expanded
+  { id: 'sc-hin-dharma', religionId: 'hinduism', term: 'Dharma', definition: 'Duty, righteousness; the moral law.', inContext: 'Guides right action.' },
+  { id: 'sc-hin-samsara', religionId: 'hinduism', term: 'Samsara', definition: 'Cycle of birth, death and rebirth.', inContext: 'Liberation (moksha) ends the cycle.' },
+  { id: 'sc-hin-avatar', religionId: 'hinduism', term: 'Avatar', definition: 'Incarnation of a deity; e.g. Vishnu as Krishna.', inContext: 'God descends to restore dharma.' },
+  // Judaism – expanded
+  { id: 'sc-jud-torah', religionId: 'judaism', term: 'Torah', definition: 'The first five books of the Hebrew Bible; God\'s law.', scriptureRef: 'Exodus 20' },
+  { id: 'sc-jud-pikuach-nefesh', religionId: 'judaism', term: 'Pikuach Nefesh', definition: 'Saving a life overrides almost all other commandments.', inContext: 'Preservation of life is paramount.' },
+  { id: 'sc-jud-kosher', religionId: 'judaism', term: 'Kosher', definition: 'Food that is fit to eat according to Jewish law.', inContext: 'Dietary laws in Leviticus.' },
+  // Sikhism – expanded
+  { id: 'sc-sik-guru', religionId: 'sikhism', term: 'Guru', definition: 'Teacher; the ten human Gurus; Guru Granth Sahib is the eternal Guru.', inContext: 'Guidance for Sikhs.' },
+  { id: 'sc-sik-gurdwara', religionId: 'sikhism', term: 'Gurdwara', definition: 'Sikh place of worship; contains the Guru Granth Sahib.', inContext: 'Langar is served here.' },
+  { id: 'sc-sik-5ks', religionId: 'sikhism', term: 'Five Ks', definition: 'Kesh, Kara, Kanga, Kaccha, Kirpan – articles of faith worn by initiated Sikhs.', inContext: 'Outward signs of commitment.' },
+  // Theme C
+  { id: 'sc-thC-design', themeId: 'C', term: 'Design argument', definition: 'The universe appears designed; therefore a designer (God) exists.', inContext: 'Paley\'s watch analogy.' },
+  { id: 'sc-thC-first-cause', themeId: 'C', term: 'First Cause argument', definition: 'Everything has a cause; there must be an uncaused first cause.', inContext: 'Aquinas\' cosmological argument.' },
+  // Additional scripture cards for 60+ target
+  { id: 'sc-chr-commandments2', religionId: 'christianity', term: 'Great Commandment', definition: 'Love God and love your neighbour as yourself.', scriptureRef: 'Mark 12:30–31' },
+  { id: 'sc-isl-prophets', religionId: 'islam', term: 'Risalah', definition: 'Belief in prophets; Muhammad is the final prophet.', inContext: 'One of the Six Articles of Faith.' },
+  { id: 'sc-bud-four-truths', religionId: 'buddhism', term: 'Four Noble Truths', definition: 'Dukkha exists; craving causes it; cessation is possible; the Eightfold Path leads to it.', inContext: 'Core Buddhist teaching.' },
+  { id: 'sc-hin-bhagavad-gita', religionId: 'hinduism', term: 'Bhagavad Gita', definition: 'Sacred text; dialogue between Krishna and Arjuna on duty and devotion.', inContext: 'Part of the Mahabharata.' },
+  { id: 'sc-jud-ten-commandments', religionId: 'judaism', term: 'Ten Commandments', definition: 'Moral law given at Sinai; summarised in Exodus 20.', scriptureRef: 'Exodus 20:1–17' },
 ];
 
 // ============================================================================
@@ -319,6 +388,30 @@ export const CONTRASTING_VIEWS: ContrastingView[] = [
   { id: 'cv-death-penalty', themeId: 'E', issue: 'Death penalty', views: [{ religion: 'Catholic Christianity', view: 'Opposed; all life is sacred; rehabilitation possible.', scripture: 'Sanctity of life' }, { religion: 'Some Christians', view: 'May be justified for serious crimes; retribution.', scripture: 'Genesis 9:6' }, { religion: 'Islam', view: 'Permitted for certain crimes (e.g. murder) under Shari\'ah.', scripture: 'Qur\'an' }], modelAnswer: 'One belief: Catholics oppose the death penalty, teaching that all life is sacred and redemption is always possible. Another belief: Some Muslims support it for certain crimes, as specified in Shari\'ah, seeing it as just retribution.' },
   // Theme F
   { id: 'cv-wealth-poverty', themeId: 'F', issue: 'Wealth and poverty', views: [{ religion: 'Christianity', view: 'Wealth should be shared; "love your neighbour"; charity.', scripture: 'Matthew 25; Luke 12' }, { religion: 'Islam', view: 'Zakah obliges giving; wealth is a trust from God.', scripture: 'Qur\'an; Zakah' }] },
+  // Theme A – expanded
+  { id: 'cv-cohabitation', themeId: 'A', issue: 'Cohabitation before marriage', views: [{ religion: 'Catholic Christianity', view: 'Cohabitation is wrong; sex belongs in marriage.', scripture: 'Church teaching' }, { religion: 'Liberal Christians', view: 'Cohabitation can be acceptable as preparation for marriage.', scripture: 'Conscience' }, { religion: 'Islam', view: 'Cohabitation without marriage is forbidden.', scripture: 'Qur\'an' }], modelAnswer: 'One belief: Catholics teach that cohabitation undermines the sanctity of marriage. Another belief: Some Christians accept it as a step towards marriage.' },
+  { id: 'cv-gender-roles', themeId: 'A', issue: 'Gender roles in the family', views: [{ religion: 'Traditional Christianity', view: 'Husband as head; complementary roles.', scripture: 'Ephesians 5' }, { religion: 'Liberal Christianity', view: 'Partnership and equality; shared roles.', scripture: 'Galatians 3:28' }, { religion: 'Islam', view: 'Different roles but equal worth; husband provides.', scripture: 'Qur\'an 4:34' }] },
+  { id: 'cv-remarriage', themeId: 'A', issue: 'Remarriage after divorce', views: [{ religion: 'Catholic Christianity', view: 'Remarriage not permitted unless annulment.', scripture: 'Mark 10:9' }, { religion: 'Protestant Christianity', view: 'Remarriage permitted in many denominations.', scripture: 'Matthew 19:9' }, { religion: 'Islam', view: 'Remarriage permitted after divorce procedures.', scripture: 'Qur\'an' }] },
+  // Theme B – expanded
+  { id: 'cv-animal-rights', themeId: 'B', issue: 'Animal rights', views: [{ religion: 'Christianity', view: 'Stewardship; animals have value but humans have dominion.', scripture: 'Genesis 1' }, { religion: 'Buddhism', view: 'Ahimsa (non-harm); respect for all sentient beings.', scripture: 'First precept' }, { religion: 'Humanism', view: 'Animals deserve moral consideration; reduce suffering.', scripture: 'Ethical reasoning' }] },
+  { id: 'cv-environment', themeId: 'B', issue: 'Environmental responsibility', views: [{ religion: 'Christianity', view: 'Stewardship; care for God\'s creation.', scripture: 'Genesis 2:15' }, { religion: 'Buddhism', view: 'Interdependence; reduce harm to all life.', scripture: 'Dependent arising' }, { religion: 'Islam', view: 'Khalifah (stewardship); balance and moderation.', scripture: 'Qur\'an' }] },
+  // Theme C – expanded
+  { id: 'cv-existence-god', themeId: 'C', issue: 'Does God exist?', views: [{ religion: 'Theist', view: 'Design and First Cause arguments support belief.', scripture: 'Natural theology' }, { religion: 'Atheist', view: 'No evidence; science explains without God.', scripture: 'Naturalism' }, { religion: 'Agnostic', view: 'Cannot know either way.', scripture: 'Epistemic humility' }] },
+  // Theme D – expanded
+  { id: 'cv-holy-war', themeId: 'D', issue: 'Holy war / religious violence', views: [{ religion: 'Just war tradition', view: 'War may be justified under strict criteria.', scripture: 'Augustine; Aquinas' }, { religion: 'Pacifism', view: 'Violence never justified; religious texts misinterpreted.', scripture: 'Jesus\' teaching' }, { religion: 'Islam', view: 'Jihad as defence; not aggression.', scripture: 'Qur\'an' }] },
+  { id: 'cv-terrorism', themeId: 'D', issue: 'Terrorism', views: [{ religion: 'All major religions', view: 'Terrorism is condemned; violence against innocents wrong.', scripture: 'Various' }, { religion: 'Extremist distortion', view: 'Some claim religious justification; mainstream reject.', scripture: 'N/A' }] },
+  // Theme E – expanded
+  { id: 'cv-prison', themeId: 'E', issue: 'Purpose of prison', views: [{ religion: 'Christianity', view: 'Reformation and rehabilitation; redemption possible.', scripture: 'Forgiveness' }, { religion: 'Retribution view', view: 'Prison as punishment; desert.', scripture: 'Justice' }, { religion: 'Islam', view: 'Punishment and reform; Shari\'ah specifies penalties.', scripture: 'Qur\'an' }] },
+  { id: 'cv-forgiveness', themeId: 'E', issue: 'Forgiveness of criminals', views: [{ religion: 'Christianity', view: 'Forgiveness is a duty; does not exclude justice.', scripture: 'Matthew 18' }, { religion: 'Restorative justice', view: 'Healing for victim and offender; reconciliation.', scripture: 'Various traditions' }] },
+  // Theme F – expanded
+  { id: 'cv-equality', themeId: 'F', issue: 'Religious freedom vs equality', views: [{ religion: 'Religious view', view: 'Freedom to practise religion; conscience matters.', scripture: 'Various' }, { religion: 'Secular view', view: 'Equality for all; religion should not discriminate.', scripture: 'Human rights' }] },
+  { id: 'cv-social-justice', themeId: 'F', issue: 'Social justice', views: [{ religion: 'Christianity', view: 'Preferential option for the poor; structural change.', scripture: 'Luke 4; Catholic social teaching' }, { religion: 'Islam', view: 'Zakah; economic justice; fair trade.', scripture: 'Qur\'an' }, { religion: 'Sikhism', view: 'Sewa; langar; equality and sharing.', scripture: 'Guru Granth Sahib' }] },
+  // Additional contrasting views for 30+ target
+  { id: 'cv-sex-before-marriage', themeId: 'A', issue: 'Sex before marriage', views: [{ religion: 'Traditional Christianity', view: 'Sex belongs in marriage only.', scripture: 'Church teaching' }, { religion: 'Liberal Christianity', view: 'Sex in committed relationships may be acceptable.', scripture: 'Conscience' }, { religion: 'Islam', view: 'Sex outside marriage is forbidden (zina).', scripture: 'Qur\'an' }], modelAnswer: 'One belief: Traditional Christians teach that sex should only occur within marriage. Another belief: Some liberal Christians accept sex in committed relationships before marriage.' },
+  { id: 'cv-evolution', themeId: 'B', issue: 'Evolution and creation', views: [{ religion: 'Literalist Christians', view: 'Genesis is literal; God created in six days.', scripture: 'Genesis 1' }, { religion: 'Theistic evolution', view: 'God created through evolution.', scripture: 'Compatibility of faith and science' }, { religion: 'Humanism', view: 'Evolution explains life; no God needed.', scripture: 'Science' }], modelAnswer: 'One belief: Some Christians take Genesis literally. Another belief: Theistic evolutionists see God as guiding the process.' },
+  { id: 'cv-revelation', themeId: 'C', issue: 'Revelation and holy books', views: [{ religion: 'Christianity', view: 'Bible is inspired by God; contains God\'s word.', scripture: '2 Timothy 3:16' }, { religion: 'Islam', view: 'Qur\'an is God\'s literal word, unchanged.', scripture: 'Qur\'an' }, { religion: 'Liberal view', view: 'Scripture is human interpretation of divine encounter.', scripture: 'Critical scholarship' }] },
+  { id: 'cv-restorative-justice', themeId: 'E', issue: 'Restorative justice', views: [{ religion: 'Christianity', view: 'Forgiveness and reconciliation; healing for victim and offender.', scripture: 'Matthew 18' }, { religion: 'Retribution view', view: 'Punishment should fit the crime; desert matters.', scripture: 'Justice' }, { religion: 'Buddhism', view: 'Compassion and rehabilitation; reduce harm.', scripture: 'Metta; First Precept' }] },
+  { id: 'cv-religious-symbols', themeId: 'F', issue: 'Religious symbols in public', views: [{ religion: 'Religious view', view: 'Freedom to display symbols; expression of faith.', scripture: 'Religious freedom' }, { religion: 'Secular view', view: 'Public space should be neutral; no favour to any religion.', scripture: 'Separation of church and state' }, { religion: 'Pluralist view', view: 'All symbols allowed; diversity celebrated.', scripture: 'Multiculturalism' }] },
 ];
 
 // ============================================================================
@@ -360,6 +453,75 @@ export const QUICK_CHECK_ITEMS: RSQuickCheckItem[] = [
   { id: 'qc-thD-1', themeId: 'D', type: 'multipleChoice', question: 'What does pacifism mean?', options: ['Support for war', 'Opposition to all violence', 'Just war', 'Holy war'], correctAnswer: 'Opposition to all violence' },
   { id: 'qc-thE-1', themeId: 'E', type: 'multipleChoice', question: 'Which is an aim of punishment?', options: ['Liberation', 'Retribution', 'Salvation', 'Eucharist'], correctAnswer: 'Retribution' },
   { id: 'qc-thF-1', themeId: 'F', type: 'multipleChoice', question: 'Which theme covers human rights and discrimination?', options: ['Theme B', 'Theme D', 'Theme E', 'Theme F'], correctAnswer: 'Theme F' },
+  // Christianity – expanded
+  { id: 'qc-chr-6', religionId: 'christianity', type: 'shortAnswer', question: 'Give one belief about creation.', correctAnswer: 'god created', feedback: { correct: 'Correct.', incorrect: 'Christians believe God created the universe.' } },
+  { id: 'qc-chr-7', religionId: 'christianity', type: 'multipleChoice', question: 'What is salvation?', options: ['A type of prayer', 'Being saved from sin', 'A sacrament', 'A festival'], correctAnswer: 'Being saved from sin' },
+  { id: 'qc-chr-8', religionId: 'christianity', type: 'trueFalse', question: 'Christians believe in resurrection.', correctAnswer: 'true' },
+  { id: 'qc-chr-9', religionId: 'christianity', type: 'whichTwo', question: 'Which two are sacraments?', options: ['Baptism', 'Prayer', 'Eucharist', 'Fasting', 'Pilgrimage'], correctAnswer: ['Baptism', 'Eucharist'] },
+  // Islam – expanded
+  { id: 'qc-isl-6', religionId: 'islam', type: 'shortAnswer', question: 'What is the holy book of Islam?', correctAnswer: 'quran', feedback: { correct: 'Correct.', incorrect: 'The Qur\'an is Islam\'s holy book.' } },
+  { id: 'qc-isl-7', religionId: 'islam', type: 'trueFalse', question: 'Hajj is the pilgrimage to Makkah.', correctAnswer: 'true' },
+  { id: 'qc-isl-8', religionId: 'islam', type: 'multipleChoice', question: 'What does Zakah mean?', options: ['Prayer', 'Fasting', 'Charity', 'Pilgrimage'], correctAnswer: 'Charity' },
+  { id: 'qc-isl-9', religionId: 'islam', type: 'whichTwo', question: 'Which two are in the Six Articles of Faith?', options: ['Angels', 'Salah', 'Prophets', 'Hajj', 'Day of Judgement'], correctAnswer: ['Angels', 'Prophets'] },
+  // Buddhism – expanded
+  { id: 'qc-bud-3', religionId: 'buddhism', type: 'shortAnswer', question: 'What is the goal of Buddhism?', correctAnswer: 'nibbana', feedback: { correct: 'Correct.', incorrect: 'Nibbana (liberation from suffering) is the goal.' } },
+  { id: 'qc-bud-4', religionId: 'buddhism', type: 'trueFalse', question: 'Anatta means no fixed self.', correctAnswer: 'true' },
+  { id: 'qc-bud-5', religionId: 'buddhism', type: 'multipleChoice', question: 'What does dukkha mean?', options: ['Joy', 'Suffering', 'Enlightenment', 'Meditation'], correctAnswer: 'Suffering' },
+  // Hinduism – expanded
+  { id: 'qc-hin-2', religionId: 'hinduism', type: 'trueFalse', question: 'Hindus believe in reincarnation.', correctAnswer: 'true' },
+  { id: 'qc-hin-3', religionId: 'hinduism', type: 'shortAnswer', question: 'Name one of the Tri-murti.', correctAnswer: ['brahma', 'vishnu', 'shiva'], feedback: { correct: 'Correct.', incorrect: 'Brahma, Vishnu and Shiva are the Tri-murti.' } },
+  { id: 'qc-hin-4', religionId: 'hinduism', type: 'multipleChoice', question: 'What is Brahman?', options: ['A god', 'Ultimate reality', 'A ritual', 'A book'], correctAnswer: 'Ultimate reality' },
+  // Judaism – expanded
+  { id: 'qc-jud-2', religionId: 'judaism', type: 'shortAnswer', question: 'How many mitzvot are there?', correctAnswer: '613', feedback: { correct: 'Correct.', incorrect: 'There are 613 mitzvot in Judaism.' } },
+  { id: 'qc-jud-3', religionId: 'judaism', type: 'trueFalse', question: 'Jews await the coming of the Messiah.', correctAnswer: 'true' },
+  { id: 'qc-jud-4', religionId: 'judaism', type: 'multipleChoice', question: 'What is the Covenant?', options: ['A prayer', 'God\'s agreement with Israel', 'A festival', 'A building'], correctAnswer: 'God\'s agreement with Israel' },
+  // Sikhism – expanded
+  { id: 'qc-sik-2', religionId: 'sikhism', type: 'trueFalse', question: 'Sikhs believe in equality of all people.', correctAnswer: 'true' },
+  { id: 'qc-sik-3', religionId: 'sikhism', type: 'shortAnswer', question: 'What is sewa?', correctAnswer: 'service', feedback: { correct: 'Correct.', incorrect: 'Sewa is selfless service.' } },
+  { id: 'qc-sik-4', religionId: 'sikhism', type: 'multipleChoice', question: 'What is the Guru Granth Sahib?', options: ['A building', 'The Sikh holy book', 'A festival', 'A prayer'], correctAnswer: 'The Sikh holy book' },
+  // Catholic Christianity – expanded
+  { id: 'qc-cath-3', religionId: 'catholic-christianity', type: 'shortAnswer', question: 'What is transubstantiation?', correctAnswer: 'bread and wine become body and blood', feedback: { correct: 'Correct.', incorrect: 'Bread and wine become the body and blood of Christ.' } },
+  { id: 'qc-cath-4', religionId: 'catholic-christianity', type: 'multipleChoice', question: 'What is purgatory?', options: ['Heaven', 'Hell', 'State of purification', 'A sacrament'], correctAnswer: 'State of purification' },
+  // Theme A – expanded
+  { id: 'qc-thA-4', themeId: 'A', type: 'trueFalse', question: 'All religions have the same view on same-sex marriage.', correctAnswer: 'false' },
+  { id: 'qc-thA-5', themeId: 'A', type: 'multipleChoice', question: 'What is procreation?', options: ['Prayer', 'Having children', 'Divorce', 'Marriage ceremony'], correctAnswer: 'Having children' },
+  // Theme B – expanded
+  { id: 'qc-thB-2', themeId: 'B', type: 'trueFalse', question: 'Sanctity of life means life is sacred.', correctAnswer: 'true' },
+  { id: 'qc-thB-3', themeId: 'B', type: 'shortAnswer', question: 'Give one religious belief about the environment.', correctAnswer: ['stewardship', 'care for creation', 'khalifah'], feedback: { correct: 'Correct.', incorrect: 'Stewardship, care for creation, khalifah.' } },
+  { id: 'qc-thB-4', themeId: 'B', type: 'multipleChoice', question: 'What is quality of life?', options: ['Length of life', 'Standard of living and wellbeing', 'Wealth only', 'Health only'], correctAnswer: 'Standard of living and wellbeing' },
+  // Theme C – expanded
+  { id: 'qc-thC-2', themeId: 'C', type: 'trueFalse', question: 'The First Cause argument claims there must be an uncaused cause.', correctAnswer: 'true' },
+  { id: 'qc-thC-3', themeId: 'C', type: 'shortAnswer', question: 'What is a miracle?', correctAnswer: ['event that defies natural law', 'supernatural event', 'sign from god'], feedback: { correct: 'Correct.', incorrect: 'A miracle is an event that defies natural law.' } },
+  { id: 'qc-thC-4', themeId: 'C', type: 'multipleChoice', question: 'Who proposed the Design argument?', options: ['Aquinas', 'Paley', 'Augustine', 'Muhammad'], correctAnswer: 'Paley' },
+  // Theme D – expanded
+  { id: 'qc-thD-2', themeId: 'D', type: 'shortAnswer', question: 'Give one criterion of just war.', correctAnswer: ['just cause', 'legitimate authority', 'last resort', 'proportionality'], feedback: { correct: 'Correct.', incorrect: 'Just cause, legitimate authority, last resort, proportionality.' } },
+  { id: 'qc-thD-3', themeId: 'D', type: 'trueFalse', question: 'Pacifists oppose all violence.', correctAnswer: 'true' },
+  // Theme E – expanded
+  { id: 'qc-thE-2', themeId: 'E', type: 'shortAnswer', question: 'Give one aim of punishment besides retribution.', correctAnswer: ['deterrence', 'reformation', 'protection'], feedback: { correct: 'Correct.', incorrect: 'Deterrence, reformation, protection.' } },
+  { id: 'qc-thE-3', themeId: 'E', type: 'multipleChoice', question: 'What is reformation?', options: ['Punishment as revenge', 'Changing the offender', 'Protecting the public', 'Fining'], correctAnswer: 'Changing the offender' },
+  // Theme F – expanded
+  { id: 'qc-thF-2', themeId: 'F', type: 'trueFalse', question: 'Religions teach that wealth should be shared.', correctAnswer: 'true' },
+  { id: 'qc-thF-3', themeId: 'F', type: 'shortAnswer', question: 'Give one religious teaching about helping the poor.', correctAnswer: ['zakah', 'charity', 'love your neighbour', 'sewa'], feedback: { correct: 'Correct.', incorrect: 'Zakah, charity, love your neighbour, sewa.' } },
+  // Additional quick checks for 80+ target
+  { id: 'qc-chr-10', religionId: 'christianity', type: 'multipleChoice', question: 'What is the Eucharist?', options: ['A prayer', 'Commemoration of the Last Supper', 'A baptism', 'A pilgrimage'], correctAnswer: 'Commemoration of the Last Supper' },
+  { id: 'qc-chr-11', religionId: 'christianity', type: 'shortAnswer', question: 'Give one belief about Jesus.', correctAnswer: ['son of god', 'incarnation', 'saviour', 'messiah'], feedback: { correct: 'Correct.', incorrect: 'Son of God, incarnation, Saviour, Messiah.' } },
+  { id: 'qc-isl-10', religionId: 'islam', type: 'multipleChoice', question: 'What is Akhirah?', options: ['Prayer', 'Life after death', 'Fasting', 'Pilgrimage'], correctAnswer: 'Life after death' },
+  { id: 'qc-isl-11', religionId: 'islam', type: 'trueFalse', question: 'The Qur\'an is believed to be God\'s literal word.', correctAnswer: 'true' },
+  { id: 'qc-bud-6', religionId: 'buddhism', type: 'multipleChoice', question: 'What are the Three Jewels?', options: ['Buddha, Dhamma, Sangha', 'Karma, Samsara, Moksha', 'Four Noble Truths', 'Five Precepts'], correctAnswer: 'Buddha, Dhamma, Sangha' },
+  { id: 'qc-bud-7', religionId: 'buddhism', type: 'shortAnswer', question: 'What does anicca mean?', correctAnswer: 'impermanence', feedback: { correct: 'Correct.', incorrect: 'Anicca = impermanence; nothing lasts forever.' } },
+  { id: 'qc-hin-5', religionId: 'hinduism', type: 'multipleChoice', question: 'What is karma?', options: ['A god', 'Moral law of cause and effect', 'A festival', 'A prayer'], correctAnswer: 'Moral law of cause and effect' },
+  { id: 'qc-hin-6', religionId: 'hinduism', type: 'trueFalse', question: 'Hindus believe in many forms of the divine.', correctAnswer: 'true' },
+  { id: 'qc-jud-5', religionId: 'judaism', type: 'shortAnswer', question: 'What is the Torah?', correctAnswer: ['first five books', 'god\'s law', 'hebrew bible'], feedback: { correct: 'Correct.', incorrect: 'The Torah is the first five books of the Hebrew Bible.' } },
+  { id: 'qc-jud-6', religionId: 'judaism', type: 'multipleChoice', question: 'What is Pikuach Nefesh?', options: ['A prayer', 'Saving a life overrides other commandments', 'A festival', 'Dietary law'], correctAnswer: 'Saving a life overrides other commandments' },
+  { id: 'qc-sik-5', religionId: 'sikhism', type: 'multipleChoice', question: 'What is the Guru Granth Sahib?', options: ['A building', 'The eternal Guru and holy book', 'A festival', 'A prayer'], correctAnswer: 'The eternal Guru and holy book' },
+  { id: 'qc-sik-6', religionId: 'sikhism', type: 'trueFalse', question: 'Sewa means selfless service.', correctAnswer: 'true' },
+  { id: 'qc-cath-5', religionId: 'catholic-christianity', type: 'multipleChoice', question: 'What is annulment?', options: ['Divorce', 'Declaration that marriage was never valid', 'A sacrament', 'A prayer'], correctAnswer: 'Declaration that marriage was never valid' },
+  { id: 'qc-thA-6', themeId: 'A', type: 'shortAnswer', question: 'Give one religious belief about the family.', correctAnswer: ['nuclear family', 'extended family', 'children', 'parents'], feedback: { correct: 'Correct.', incorrect: 'Nuclear family, extended family, role of parents.' } },
+  { id: 'qc-thB-5', themeId: 'B', type: 'multipleChoice', question: 'What is stewardship?', options: ['Owning the Earth', 'Caring for God\'s creation', 'Exploiting resources', 'A type of prayer'], correctAnswer: 'Caring for God\'s creation' },
+  { id: 'qc-thC-5', themeId: 'C', type: 'shortAnswer', question: 'Who proposed the First Cause argument?', correctAnswer: 'aquinas', feedback: { correct: 'Correct.', incorrect: 'Thomas Aquinas.' } },
+  { id: 'qc-thD-4', themeId: 'D', type: 'multipleChoice', question: 'What is holy war?', options: ['War justified by religion', 'A pilgrimage', 'A prayer', 'A festival'], correctAnswer: 'War justified by religion' },
+  { id: 'qc-thE-4', themeId: 'E', type: 'shortAnswer', question: 'What is deterrence?', correctAnswer: 'putting others off', feedback: { correct: 'Correct.', incorrect: 'Deterrence aims to put others off committing crime.' } },
+  { id: 'qc-thF-4', themeId: 'F', type: 'multipleChoice', question: 'What is discrimination?', options: ['Fair treatment', 'Unfair treatment based on group', 'A religious practice', 'A festival'], correctAnswer: 'Unfair treatment based on group' },
 ];
 
 // ============================================================================
@@ -518,6 +680,14 @@ export const PHILOSOPHICAL_ARGUMENTS: PhilosophicalArgument[] = [
     premises: ['Miracles occur.', 'Miracles cannot be explained by natural causes.', 'Therefore a supernatural cause (God) exists.'],
     strengths: ['Fits with religious testimony.', 'If one miracle occurred, it could support God\'s existence.'],
     weaknesses: ['Miracles may have natural explanations.', 'Can we verify miracles?', 'Hume: it is always more reasonable to doubt than to believe.'],
+  },
+  {
+    id: 'pa-revelation',
+    title: 'The argument from religious experience',
+    description: 'People claim to have experienced God directly; such experiences provide evidence for God\'s existence.',
+    premises: ['Religious experiences occur.', 'Those who have them are convinced of God\'s reality.', 'Such experiences cannot be explained away.'],
+    strengths: ['Personal conviction is powerful.', 'Mystics across traditions report similar experiences.', 'William James: experiences have real effects.'],
+    weaknesses: ['Experiences are subjective; cannot be verified.', 'Could be explained by psychology (e.g. temporal lobe).', 'Different religions claim conflicting revelations.'],
   },
 ];
 
