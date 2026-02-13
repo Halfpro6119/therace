@@ -39,7 +39,15 @@ function generateConceptFlashcards(
 
   const flashcards: ScienceFlashcard[] = [];
 
-  concepts.forEach(concept => {
+  concepts.forEach((concept, conceptIdx) => {
+    // Varied prompt templates to reduce predictability and strengthen retrieval
+    const promptTemplates = [
+      `What is the core idea behind ${concept.topic}?`,
+      `Explain the key concept of ${concept.topic} in 1–2 sentences.`,
+      `What must you understand about ${concept.topic}?`,
+    ];
+    const prompt = promptTemplates[conceptIdx % promptTemplates.length];
+
     // Main concept card
     flashcards.push({
       id: `flashcard-${concept.id}`,
@@ -49,9 +57,9 @@ function generateConceptFlashcards(
       topic: concept.topic,
       type: 'concept',
       front: {
-        prompt: `What is the core idea behind ${concept.topic}?`,
+        prompt,
         visual: {
-          type: concept.visualModel.type === 'flow' ? 'diagram' : concept.visualModel.type,
+          type: (['flow', 'cell', 'particle', 'energy', 'foodChain'].includes(concept.visualModel.type) ? 'diagram' : concept.visualModel.type) as 'diagram' | 'graph' | 'icon' | 'equation',
           description: concept.visualModel.description,
           diagramId: concept.visualModel.diagramId,
         },
@@ -98,24 +106,51 @@ function generateMisconceptionFlashcards(
   tier: ScienceTier
 ): ScienceFlashcard[] {
   const misconceptions = getMisconceptionsBySubject(subject);
+  const cards: ScienceFlashcard[] = [];
 
-  return misconceptions.map(misconception => ({
-    id: `flashcard-misconception-${misconception.id}`,
-    subject,
-    paper,
-    tier,
-    topic: misconception.topic,
-    type: 'misconception',
-    front: {
-      prompt: `What is wrong with this idea: "${misconception.misconception}"?`,
-    },
-    back: {
-      explanation: misconception.correctUnderstanding,
-      keyTerms: extractKeyTerms(misconception.correctUnderstanding),
-      misconceptionWarning: misconception.misconception,
-      example: misconception.example,
-    },
-  }));
+  misconceptions.forEach((misconception, idx) => {
+    // Card 1: "What is wrong" – tests explanation recall
+    cards.push({
+      id: `flashcard-misconception-${misconception.id}`,
+      subject,
+      paper,
+      tier,
+      topic: misconception.topic,
+      type: 'misconception',
+      front: {
+        prompt: `What is wrong with this idea: "${misconception.misconception}"?`,
+      },
+      back: {
+        explanation: misconception.correctUnderstanding,
+        keyTerms: extractKeyTerms(misconception.correctUnderstanding),
+        misconceptionWarning: misconception.misconception,
+        example: misconception.example,
+      },
+    });
+
+    // Card 2: "True or False" – tests quick recognition (every other misconception to avoid doubling deck size)
+    if (idx % 2 === 0) {
+      cards.push({
+        id: `flashcard-misconception-${misconception.id}-tf`,
+        subject,
+        paper,
+        tier,
+        topic: misconception.topic,
+        type: 'misconception',
+        front: {
+          prompt: `True or False: "${misconception.misconception}"`,
+        },
+        back: {
+          explanation: `False. ${misconception.correctUnderstanding}`,
+          keyTerms: extractKeyTerms(misconception.correctUnderstanding),
+          misconceptionWarning: misconception.misconception,
+          example: misconception.example,
+        },
+      });
+    }
+  });
+
+  return cards;
 }
 
 /**
@@ -143,12 +178,13 @@ function generatePracticalFlashcards(
       },
       back: {
         explanation: practical.purpose,
-        keyTerms: ['purpose', 'investigate', 'determine'],
+        keyTerms: extractKeyTerms(practical.purpose).length > 0 ? extractKeyTerms(practical.purpose) : ['purpose', 'investigate', 'determine'],
       },
       relatedPracticalId: practical.id,
     });
 
     // Variables card
+    const variablesExplanation = `Independent: ${practical.independentVariable}. Dependent: ${practical.dependentVariable}. Controlled: ${practical.controlledVariables.join(', ')}.`;
     flashcards.push({
       id: `flashcard-practical-${practical.id}-variables`,
       subject,
@@ -160,11 +196,53 @@ function generatePracticalFlashcards(
         prompt: `What are the variables in ${practical.title}?`,
       },
       back: {
-        explanation: `Independent: ${practical.independentVariable}. Dependent: ${practical.dependentVariable}. Controlled: ${practical.controlledVariables.join(', ')}.`,
+        explanation: variablesExplanation,
         keyTerms: ['independent variable', 'dependent variable', 'controlled variable'],
       },
       relatedPracticalId: practical.id,
     });
+
+    // Risk card – first hazard and control (exam-relevant)
+    if (practical.risks.length > 0) {
+      const risk = practical.risks[0];
+      flashcards.push({
+        id: `flashcard-practical-${practical.id}-risk`,
+        subject,
+        paper,
+        tier,
+        topic: practical.title,
+        type: 'practical',
+        front: {
+          prompt: `What is a hazard in ${practical.title} and how do you control it?`,
+        },
+        back: {
+          explanation: `${risk.hazard}: ${risk.risk}. Control: ${risk.control}`,
+          keyTerms: extractKeyTerms(`${risk.hazard} ${risk.control}`),
+        },
+        relatedPracticalId: practical.id,
+      });
+    }
+
+    // Graph card – when practical has graph expectations
+    if (practical.graphExpectations) {
+      const g = practical.graphExpectations;
+      flashcards.push({
+        id: `flashcard-practical-${practical.id}-graph`,
+        subject,
+        paper,
+        tier,
+        topic: practical.title,
+        type: 'practical',
+        front: {
+          prompt: `What graph do you plot for ${practical.title} and what trend do you expect?`,
+        },
+        back: {
+          explanation: `Plot ${g.xAxis} (x-axis) against ${g.yAxis} (y-axis). Expected trend: ${g.expectedTrend ?? g.type + ' graph'}.`,
+          keyTerms: [g.xAxis, g.yAxis, g.type],
+        },
+        relatedPracticalId: practical.id,
+      });
+    }
   });
 
   return flashcards;
@@ -182,6 +260,7 @@ function generateEquationFlashcards(
   const flashcards: ScienceFlashcard[] = [];
 
   equations.forEach(equation => {
+    // Symbol → meaning cards (original)
     equation.symbols.forEach(symbol => {
       flashcards.push({
         id: `flashcard-equation-${equation.id}-${symbol.symbol}`,
@@ -203,32 +282,95 @@ function generateEquationFlashcards(
         },
       });
     });
+
+    // Reverse card: concept → equation (one per equation)
+    const firstSymbol = equation.symbols[0];
+    if (firstSymbol) {
+      flashcards.push({
+        id: `flashcard-equation-${equation.id}-reverse`,
+        subject,
+        paper,
+        tier,
+        topic: equation.topic,
+        type: 'equation',
+        front: {
+          prompt: `What is the equation for ${equation.topic}?`,
+        },
+        back: {
+          explanation: equation.equation,
+          keyTerms: equation.symbols.map(s => s.name),
+        },
+      });
+    }
+
+    // Unit trap cards – common mistakes (one per equation with traps)
+    if (equation.unitTraps?.length > 0) {
+      const trap = equation.unitTraps[0];
+      flashcards.push({
+        id: `flashcard-equation-${equation.id}-unit`,
+        subject,
+        paper,
+        tier,
+        topic: equation.topic,
+        type: 'equation',
+        front: {
+          prompt: `In ${equation.equation}, why is ${trap.wrongUnit} wrong? What is correct?`,
+        },
+        back: {
+          explanation: trap.explanation,
+          keyTerms: [trap.correctUnit, trap.wrongUnit],
+          misconceptionWarning: `Using ${trap.wrongUnit} is a common mistake.`,
+        },
+      });
+    }
   });
 
   return flashcards;
 }
 
 /**
- * Extract key terms from text
+ * Science vocabulary for key term extraction (longer phrases first for specificity)
+ */
+const SCIENCE_VOCABULARY = [
+  'concentration gradient', 'active transport', 'negative feedback', 'natural selection',
+  'activation energy', 'fractional distillation', 'specific heat capacity', 'potential difference',
+  'magnetic field', 'life cycle assessment', 'carbon cycle', 'food chain', 'trophic level',
+  'diffusion', 'osmosis', 'enzyme', 'substrate', 'active site', 'denatured',
+  'photosynthesis', 'respiration', 'glucose', 'ATP', 'homeostasis', 'hormone', 'insulin',
+  'DNA', 'gene', 'chromosome', 'allele', 'genotype', 'phenotype', 'evolution', 'variation',
+  'ecosystem', 'mole', 'concentration', 'neutralisation', 'reactivity', 'electrolysis',
+  'cathode', 'anode', 'exothermic', 'endothermic', 'crude oil', 'alkane',
+  'greenhouse', 'infrared', 'density', 'wave', 'wavelength', 'frequency',
+  'resistance', 'current', 'force', 'acceleration', 'Fleming',
+  'turgid', 'plasmolysed', 'carrier protein', 'kinetic energy', 'mitosis', 'meiosis',
+  'pathogen', 'antibody', 'antigen', 'vaccine', 'chlorophyll', 'chloroplast',
+  'aerobic', 'anaerobic', 'lactic acid', 'oxygen debt', 'receptor', 'effector',
+  'stimulus', 'reflex', 'CNS', 'neurone', 'gamete', 'homozygous', 'heterozygous',
+  'fermentation', 'catalyst', 'emulsify', 'lipase', 'amylase', 'starch',
+  'independent variable', 'dependent variable', 'controlled variable',
+];
+
+/**
+ * Extract key terms from text – uses vocabulary match + extracts quoted/phrase-like terms
  */
 function extractKeyTerms(text: string): string[] {
-  const scienceTerms = [
-    'diffusion', 'osmosis', 'active transport', 'concentration gradient',
-    'enzyme', 'substrate', 'active site', 'denatured',
-    'photosynthesis', 'respiration', 'glucose', 'ATP',
-    'homeostasis', 'negative feedback', 'hormone', 'insulin',
-    'DNA', 'gene', 'chromosome', 'allele', 'genotype', 'phenotype',
-    'natural selection', 'evolution', 'variation',
-    'ecosystem', 'food chain', 'trophic level', 'carbon cycle',
-    'mole', 'concentration', 'neutralisation', 'reactivity', 'electrolysis', 'cathode', 'anode',
-    'exothermic', 'endothermic', 'activation energy', 'crude oil', 'alkane', 'fractional distillation',
-    'greenhouse', 'infrared', 'life cycle assessment',
-    'density', 'specific heat capacity', 'wave', 'wavelength', 'frequency', 'resistance', 'current', 'potential difference',
-    'force', 'acceleration', 'magnetic field', 'Fleming',
-  ];
-
   const lowerText = text.toLowerCase();
-  return scienceTerms.filter(term => lowerText.includes(term.toLowerCase()));
+  const found = new Set<string>();
+
+  // Match known science vocabulary (longer phrases first)
+  for (const term of SCIENCE_VOCABULARY) {
+    if (lowerText.includes(term.toLowerCase())) {
+      found.add(term);
+    }
+  }
+
+  // Extract unit-like terms (e.g. "g", "mol", "N", "m/s²")
+  const unitMatch = text.match(/\b(g|kg|mol|N|J|s|m\/s²|°C|V|A|Ω|Hz|m|cm|mm|μm|%|dm³)\b/gi);
+  if (unitMatch) {
+    unitMatch.forEach(u => found.add(u));
+  }
+
+  return Array.from(found).slice(0, 8); // Cap at 8 to avoid clutter
 }
 
 /**
@@ -267,12 +409,20 @@ export function generateQuickChecks(
   const quickChecks: ScienceQuickCheck[] = [];
 
   // Generate misconception checks (MC with improved options)
+  // Use only wrong statements as distractors: the misconception itself + other misconceptions.
+  // Avoid whyWrong/example - they often restate the correct understanding and create duplicate "correct" options.
   const misconceptions = getMisconceptionsBySubject(subject);
   misconceptions.forEach(misconception => {
+    const sameTopicWrong = misconceptions
+      .filter(m => m.id !== misconception.id && m.topic === misconception.topic)
+      .map(m => m.misconception);
+    const otherTopicWrong = misconceptions
+      .filter(m => m.id !== misconception.id && m.topic !== misconception.topic)
+      .map(m => m.misconception);
     const distractors = [
       misconception.misconception,
-      misconception.whyWrong.length > 80 ? misconception.whyWrong.slice(0, 80) + '...' : misconception.whyWrong,
-      misconception.example && misconception.example.length < 100 ? misconception.example : misconception.misconception,
+      ...sameTopicWrong,
+      ...otherTopicWrong,
     ].filter((v, i, a) => a.indexOf(v) === i && v !== misconception.correctUnderstanding);
     const options = [misconception.correctUnderstanding, ...distractors.slice(0, 2)].sort(() => Math.random() - 0.5);
     quickChecks.push({

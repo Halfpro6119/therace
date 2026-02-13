@@ -1,10 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, RotateCcw, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, AlertCircle, Lightbulb, GitBranch, Calculator, FlaskConical, AlertTriangle, BookOpen } from 'lucide-react';
 import { getFlashcardsByFilters } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
-import type { ScienceSubject, SciencePaper, ScienceTier, ConfidenceLevel, ScienceFlashcard } from '../../types/scienceLab';
+import type { ScienceSubject, SciencePaper, ScienceTier, ConfidenceLevel, ScienceFlashcard, FlashcardType } from '../../types/scienceLab';
+
+// Refined type styling – clear, digestible
+const CARD_TYPE_STYLE: Record<FlashcardType, { icon: typeof Lightbulb; color: string; bgColor: string; label: string }> = {
+  concept: { icon: Lightbulb, color: '#0EA5E9', bgColor: 'rgba(14, 165, 233, 0.12)', label: 'Concept' },
+  processChain: { icon: GitBranch, color: '#8B5CF6', bgColor: 'rgba(139, 92, 246, 0.12)', label: 'Process' },
+  equation: { icon: Calculator, color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.12)', label: 'Equation' },
+  practical: { icon: FlaskConical, color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.12)', label: 'Practical' },
+  misconception: { icon: AlertTriangle, color: '#EF4444', bgColor: 'rgba(239, 68, 68, 0.12)', label: 'Misconception' },
+  graph: { icon: GitBranch, color: '#6366F1', bgColor: 'rgba(99, 102, 241, 0.12)', label: 'Graph' },
+};
+
+const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
+  1: 'Again',
+  2: 'Learning',
+  3: 'Got it',
+};
 
 export function ScienceLabFlashcardPage() {
   const navigate = useNavigate();
@@ -13,7 +29,7 @@ export function ScienceLabFlashcardPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [viewedCards, setViewedCards] = useState<Set<string>>(new Set());
   const [viewStartTime, setViewStartTime] = useState<number>(Date.now());
-  const [minViewTime] = useState(2000); // 2 seconds minimum
+  const [minViewTime] = useState(1000); // 1 second minimum – quick but prevents accidental skip
   const [sessionComplete, setSessionComplete] = useState(false);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
@@ -36,6 +52,31 @@ export function ScienceLabFlashcardPage() {
       setIsFlipped(false);
     }
   }, [currentIndex]);
+
+  // Keyboard shortcuts – Space flip, 1/2/3 rate, arrows navigate
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (!isFlipped && currentCard) {
+          const elapsed = Date.now() - viewStartTime;
+          if (elapsed >= minViewTime) {
+            setIsFlipped(true);
+            setViewedCards(prev => new Set(prev).add(currentCard.id));
+          }
+        }
+      } else if (isFlipped && ['1', '2', '3'].includes(e.key)) {
+        handleConfidence(parseInt(e.key) as ConfidenceLevel);
+      } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setCurrentIndex(currentIndex - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < flashcards.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [currentIndex, isFlipped, currentCard, viewStartTime, minViewTime, flashcards.length, handleConfidence]);
 
   const handleBack = () => {
     const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
@@ -96,24 +137,28 @@ export function ScienceLabFlashcardPage() {
     }
   };
 
-  // Session complete: show choice to proceed to Quick Check or return to modes
+  // Session complete – clean, clear next steps
   if (sessionComplete) {
     return (
-      <div className="max-w-4xl mx-auto space-y-8">
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl p-6 sm:p-8 border shadow-sm"
+          transition={{ duration: 0.4 }}
+          className="max-w-md w-full rounded-2xl p-8 text-center"
           style={{
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-            borderColor: 'transparent',
+            background: 'rgb(var(--surface))',
+            boxShadow: '0 4px 24px -4px rgb(0 0 0 / 0.08), 0 0 0 1px rgb(var(--border))',
           }}
         >
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Session Complete!</h1>
-          <p className="text-white/90 text-sm sm:text-base mb-6">
-            You've reviewed all {flashcards.length} flashcards. What would you like to do next?
+          <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
+            <span className="text-2xl">✓</span>
+          </div>
+          <h1 className="text-xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>All done!</h1>
+          <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
+            You reviewed {flashcards.length} cards. Ready for a quick check?
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-3">
             <button
               type="button"
               onClick={() => {
@@ -121,9 +166,10 @@ export function ScienceLabFlashcardPage() {
                 const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
                 navigate(base + query);
               }}
-              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition bg-white/20 hover:bg-white/30"
+              className="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90"
+              style={{ background: '#10B981' }}
             >
-              Proceed to Quick Check →
+              Quick Check →
             </button>
             <button
               type="button"
@@ -132,12 +178,13 @@ export function ScienceLabFlashcardPage() {
                 const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
                 navigate(base + query);
               }}
-              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition bg-white/20 hover:bg-white/30"
+              className="w-full py-3 rounded-xl font-medium transition hover:bg-black/5"
+              style={{ color: 'rgb(var(--text-secondary))' }}
             >
-              Return to Lab Modes
+              Back to lab
             </button>
           </div>
-        </motion.section>
+        </motion.div>
       </div>
     );
   }
@@ -154,62 +201,63 @@ export function ScienceLabFlashcardPage() {
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
   const timeViewed = Date.now() - viewStartTime;
   const canFlip = timeViewed >= minViewTime;
+  const typeStyle = CARD_TYPE_STYLE[currentCard.type] ?? CARD_TYPE_STYLE.concept;
+  const TypeIcon = typeStyle.icon;
+
+  const processSteps = currentCard.back.explanation.includes('→')
+    ? currentCard.back.explanation.split('→').map(s => s.trim()).filter(Boolean)
+    : null;
+  const visualType = currentCard.front.visual?.type;
+  const isEquationVisual = visualType === 'equation';
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Header */}
-      <motion.section
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{
-          background: 'linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%)',
-          borderColor: 'transparent',
-        }}
-      >
-        <button
-          type="button"
-          onClick={handleBack}
-          className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
-        >
-          <ChevronLeft size={18} />
-          Back to Lab Modes
-        </button>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Flashcard Mode</h1>
-        <p className="text-white/90 text-sm sm:text-base">
-          Learn it first, then prove it
-        </p>
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-sm text-white/90 mb-2">
-            <span>Card {currentIndex + 1} of {flashcards.length}</span>
-            <span>{Math.round(progress)}% complete</span>
-          </div>
-          <div className="w-full bg-white/20 rounded-full h-2">
-            <div
-              className="bg-white rounded-full h-2 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
+      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
+        {/* Minimal header – progress only */}
+        <div className="flex items-center justify-between mb-6">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="flex items-center gap-2 text-sm font-medium transition hover:opacity-80"
+            style={{ color: 'rgb(var(--text-secondary))' }}
+          >
+            <ChevronLeft size={18} />
+            Back
+          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+              {currentIndex + 1} / {flashcards.length}
+            </span>
+            <div className="w-24 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--border))' }}>
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: typeStyle.color }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              />
+            </div>
           </div>
         </div>
-      </motion.section>
 
-      {/* Flashcard */}
-      <div className="relative" style={{ minHeight: '400px' }}>
+        {/* Flashcard */}
+        <div className="relative" style={{ minHeight: '420px' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentCard.id}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             className="relative"
           >
             <div
-              className="rounded-2xl p-8 border shadow-lg cursor-pointer transform transition-transform hover:scale-[1.02]"
+              className="rounded-2xl p-8 sm:p-10 cursor-pointer transition-all duration-200 hover:shadow-xl active:scale-[0.99]"
               style={{
                 background: 'rgb(var(--surface))',
-                borderColor: 'rgb(var(--border))',
-                minHeight: '400px',
+                boxShadow: '0 4px 24px -4px rgb(0 0 0 / 0.08), 0 0 0 1px rgb(var(--border))',
+                borderLeft: `4px solid ${typeStyle.color}`,
+                minHeight: '380px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -217,113 +265,138 @@ export function ScienceLabFlashcardPage() {
               onClick={handleFlip}
             >
               {!isFlipped ? (
-                // Front of card
-                <div className="text-center space-y-6">
-                  <div className="text-sm font-medium mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    {currentCard.topic} • {currentCard.type}
+                // Front – one clear question, minimal chrome
+                <div className="text-center space-y-8">
+                  <div className="flex items-center justify-center gap-2">
+                    <span
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                      style={{ background: typeStyle.bgColor, color: typeStyle.color }}
+                    >
+                      <TypeIcon size={14} />
+                      {typeStyle.label}
+                    </span>
+                    <span className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{currentCard.topic}</span>
                   </div>
-                  <h2 className="text-2xl font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>
+                  <h2 className="text-xl sm:text-2xl font-semibold leading-snug max-w-lg mx-auto" style={{ color: 'rgb(var(--text))' }}>
                     {currentCard.front.prompt}
                   </h2>
                   {currentCard.front.visual && (
-                    <div className="mt-6 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                        {currentCard.front.visual.description}
-                      </p>
+                    <div
+                      className="mx-auto max-w-md p-5 rounded-xl"
+                      style={{ background: typeStyle.bgColor }}
+                    >
+                      {isEquationVisual ? (
+                        <p className="text-2xl sm:text-3xl font-mono font-bold" style={{ color: typeStyle.color }}>
+                          {currentCard.front.visual.description}
+                        </p>
+                      ) : (
+                        <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--text))' }}>
+                          {currentCard.front.visual.description}
+                        </p>
+                      )}
                     </div>
                   )}
-                  <div className="mt-8 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                     {!canFlip ? (
-                      <span>Reading... ({Math.ceil((minViewTime - timeViewed) / 1000)}s)</span>
+                      <span>Wait {Math.ceil((minViewTime - timeViewed) / 1000)}s</span>
                     ) : (
-                      <span>Tap to reveal answer</span>
+                      <span>Tap or press Space to reveal</span>
                     )}
-                  </div>
+                  </p>
                 </div>
               ) : (
-                // Back of card
-                <div className="space-y-6">
-                  <div className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    Answer
-                  </div>
-                  <p className="text-lg leading-relaxed" style={{ color: 'rgb(var(--text))' }}>
-                    {currentCard.back.explanation}
-                  </p>
-                  
-                  {currentCard.back.keyTerms.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-sm font-semibold mb-2" style={{ color: 'rgb(var(--text))' }}>
-                        Key Terms:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {currentCard.back.keyTerms.map((term, idx) => (
+                // Back – answer first, then extras, then rate
+                <div className="space-y-5 text-left">
+                  <div>
+                    <p className="text-xs font-medium mb-1 uppercase tracking-wider" style={{ color: typeStyle.color }}>Answer</p>
+                  {processSteps ? (
+                    <div className="space-y-2">
+                      {processSteps.map((step, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
                           <span
-                            key={idx}
-                            className="px-3 py-1 rounded-full text-sm"
-                            style={{
-                              background: 'rgb(var(--surface-2))',
-                              color: 'rgb(var(--text))',
-                            }}
+                            className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                            style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                           >
-                            {term}
+                            {idx + 1}
                           </span>
-                        ))}
-                      </div>
+                          <p className="text-base leading-relaxed pt-0.5" style={{ color: 'rgb(var(--text))' }}>
+                            {step}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p
+                      className={
+                        currentCard.type === 'equation' &&
+                        currentCard.back.explanation.includes('=') &&
+                        currentCard.back.explanation.length < 60
+                          ? 'text-2xl sm:text-3xl font-mono font-bold'
+                          : 'text-lg leading-relaxed'
+                      }
+                      style={{ color: 'rgb(var(--text))' }}
+                    >
+                      {currentCard.back.explanation}
+                    </p>
+                  )}
+                  </div>
+
+                  {currentCard.back.keyTerms.length > 0 && (
+                    <div className="pt-3 flex flex-wrap gap-2">
+                      {currentCard.back.keyTerms.map((term, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium"
+                          style={{ background: typeStyle.bgColor, color: typeStyle.color }}
+                        >
+                          {term}
+                        </span>
+                      ))}
                     </div>
                   )}
 
                   {currentCard.back.misconceptionWarning && (
-                    <div className="mt-4 p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-                      <div className="flex items-start gap-2">
-                        <AlertCircle size={20} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>
-                            ⚠️ Common Mistake:
-                          </p>
-                          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                            {currentCard.back.misconceptionWarning}
-                          </p>
-                        </div>
+                    <div className="p-3 rounded-lg flex items-start gap-2" style={{ background: 'rgba(251, 191, 36, 0.15)' }}>
+                      <AlertCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Common mistake</p>
+                        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{currentCard.back.misconceptionWarning}</p>
                       </div>
                     </div>
                   )}
 
                   {currentCard.back.example && (
-                    <div className="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                      <p className="text-sm font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>
-                        Example:
-                      </p>
-                      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                        {currentCard.back.example}
-                      </p>
+                    <div className="p-3 rounded-lg flex items-start gap-2" style={{ background: 'rgba(59, 130, 246, 0.08)' }}>
+                      <BookOpen size={18} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Example</p>
+                        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{currentCard.back.example}</p>
+                      </div>
                     </div>
                   )}
 
-                  {/* Confidence Rating */}
-                  <div className="mt-8 pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
-                    <p className="text-sm font-semibold mb-4 text-center" style={{ color: 'rgb(var(--text))' }}>
-                      How confident are you?
-                    </p>
-                    <div className="flex gap-4 justify-center">
+                  {/* Rate & advance – simple, one tap */}
+                  <div className="pt-5 mt-5" style={{ borderTop: '1px solid rgb(var(--border))' }}>
+                    <p className="text-xs font-medium mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+                    <div className="flex gap-2">
                       {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
                         <button
                           key={level}
                           type="button"
                           onClick={() => handleConfidence(level)}
-                          className="px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
+                          className="flex-1 py-3 rounded-xl font-semibold text-sm transition hover:opacity-90 active:scale-[0.98]"
                           style={{
-                            background: level === 3
-                              ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                              : level === 2
-                              ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)'
-                              : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                            background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444',
                             color: 'white',
                           }}
                         >
-                          {level === 3 ? 'Confident' : level === 2 ? 'Somewhat' : 'Not Sure'}
+                          {CONFIDENCE_LABELS[level]}
                         </button>
                       ))}
                     </div>
+                    <p className="text-xs mt-2 text-center" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      Or press 1, 2, or 3
+                    </p>
                   </div>
                 </div>
               )}
@@ -331,46 +404,41 @@ export function ScienceLabFlashcardPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation */}
+        {/* Navigation – minimal, keyboard-friendly */}
         <div className="flex items-center justify-between mt-6">
           <button
             type="button"
             onClick={handlePrevious}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: currentIndex === 0 ? 'rgb(var(--surface-2))' : 'rgb(var(--surface))',
-              color: 'rgb(var(--text))',
-            }}
+            className="p-2.5 rounded-xl transition disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ color: 'rgb(var(--text))' }}
+            aria-label="Previous"
           >
-            <ChevronLeft size={20} />
-            Previous
+            <ChevronLeft size={24} />
           </button>
           <button
             type="button"
             onClick={() => setIsFlipped(false)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium"
-            style={{
-              background: 'rgb(var(--surface))',
-              color: 'rgb(var(--text))',
-            }}
+            className="text-sm font-medium px-4 py-2 rounded-xl transition hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ color: 'rgb(var(--text-secondary))' }}
           >
-            <RotateCcw size={18} />
-            Flip Back
+            <RotateCcw size={16} className="inline mr-1.5 -mt-0.5" />
+            Flip back
           </button>
           <button
             type="button"
             onClick={handleNext}
             disabled={currentIndex === flashcards.length - 1}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: currentIndex === flashcards.length - 1 ? 'rgb(var(--surface-2))' : 'rgb(var(--surface))',
-              color: 'rgb(var(--text))',
-            }}
+            className="p-2.5 rounded-xl transition disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ color: 'rgb(var(--text))' }}
+            aria-label="Next"
           >
-            Next
-            <ChevronRight size={20} />
+            <ChevronRight size={24} />
           </button>
+        </div>
+        <p className="text-center text-xs mt-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+          ← → navigate · Space flip · 1 2 3 rate
+        </p>
         </div>
       </div>
     </div>

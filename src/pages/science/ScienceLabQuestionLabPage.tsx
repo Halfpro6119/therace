@@ -1,10 +1,8 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, FileQuestion, CheckCircle, XCircle, Calculator, Lock, ArrowRight } from 'lucide-react';
+import { ChevronLeft, FileQuestion, CheckCircle, XCircle, Calculator } from 'lucide-react';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
-import { getFlashcardsByFilters } from '../../config/scienceLabFlashcards';
-import { storage } from '../../utils/storage';
 import { gradeScienceAnswer } from '../../utils/scienceGrading';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -29,34 +27,6 @@ export function ScienceLabQuestionLabPage() {
   const topicFilter = searchParams.get('topic') ?? undefined;
   const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
   const currentQuestion = questions[currentQuestionIndex];
-
-  // Check if quiz is unlocked (flashcard mastery >= 70% and quick check passed)
-  const [quizUnlocked, setQuizUnlocked] = useState(false);
-  const [topicMastery, setTopicMastery] = useState<Record<string, { mastery: number; unlocked: boolean }>>({});
-
-  useEffect(() => {
-    // Check mastery for each topic
-    const topics = new Set(questions.map(q => q.topic));
-    const masteryMap: Record<string, { mastery: number; unlocked: boolean }> = {};
-    
-    topics.forEach(topic => {
-      const topicMasteryData = storage.getTopicMasteryByKey(
-        normalizedSubject,
-        paperNum,
-        tierValue,
-        topic
-      );
-      const mastery = topicMasteryData?.flashcardMastery || 0;
-      const unlocked = topicMasteryData?.quizUnlocked || false;
-      masteryMap[topic] = { mastery, unlocked };
-    });
-
-    setTopicMastery(masteryMap);
-    
-    // Quiz is unlocked only when at least one topic has passed flashcards (≥70%) and quick check
-    const hasUnlockedTopic = Object.values(masteryMap).some(m => m.unlocked);
-    setQuizUnlocked(hasUnlockedTopic);
-  }, [normalizedSubject, paperNum, tierValue, questions]);
 
   const handleBack = () => {
     navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
@@ -83,100 +53,6 @@ export function ScienceLabQuestionLabPage() {
       setShowFeedback(false);
     }
   };
-
-  // Show unlock screen if quiz is locked
-  if (!quizUnlocked && questions.length > 0) {
-    const flashcards = getFlashcardsByFilters(normalizedSubject, paperNum, tierValue);
-    const topics = Array.from(new Set(questions.map(q => q.topic)));
-    const topicsNeedingWork = topics.filter(topic => {
-      const mastery = topicMastery[topic];
-      return !mastery || mastery.mastery < 70 || !mastery.unlocked;
-    });
-
-    return (
-      <div className="max-w-4xl mx-auto space-y-8">
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-          style={{
-            background: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)',
-            borderColor: 'transparent',
-          }}
-        >
-          <button
-            type="button"
-            onClick={handleBack}
-            className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
-          >
-            <ChevronLeft size={18} />
-            Back to Lab Modes
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Quiz Locked</h1>
-          <p className="text-white/90 text-sm sm:text-base">
-            Complete flashcards and quick checks first
-          </p>
-        </motion.section>
-
-        <div className="rounded-xl p-6 border" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-4 rounded-xl bg-red-500/20">
-              <Lock size={32} className="text-red-600 dark:text-red-400" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-                Quiz Not Yet Unlocked
-              </h2>
-              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                You need to master flashcards (≥70%) and pass quick checks before taking quizzes.
-              </p>
-            </div>
-          </div>
-
-          {topicsNeedingWork.length > 0 && (
-            <div className="mb-6">
-              <p className="text-sm font-semibold mb-3" style={{ color: 'rgb(var(--text))' }}>
-                Topics needing work:
-              </p>
-              <div className="space-y-2">
-                {topicsNeedingWork.map(topic => {
-                  const mastery = topicMastery[topic];
-                  return (
-                    <div key={topic} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm" style={{ color: 'rgb(var(--text))' }}>{topic}</span>
-                        <span className="text-sm font-semibold" style={{ color: 'rgb(var(--text-secondary))' }}>
-                          {mastery?.mastery || 0}% mastery
-                        </span>
-                      </div>
-                      <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div
-                          className="bg-blue-500 rounded-full h-2 transition-all"
-                          style={{ width: `${mastery?.mastery || 0}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={() => navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/flashcard`)}
-            className="w-full px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
-            style={{
-              background: 'linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%)',
-            }}
-          >
-            Start Learning with Flashcards
-            <ArrowRight size={18} />
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (!currentQuestion) {
     return (
@@ -306,7 +182,9 @@ export function ScienceLabQuestionLabPage() {
                   {isCorrect ? 'Correct!' : 'Incorrect'}
                 </p>
                 <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {isCorrect ? currentQuestion.feedback.correct : currentQuestion.feedback.incorrect}
+                  {isCorrect
+                    ? (currentQuestion.feedback?.correct ?? 'Correct!')
+                    : (currentQuestion.feedback?.incorrect ?? 'Incorrect. Review the model answer.')}
                 </p>
                 {!isCorrect && (
                   <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
@@ -320,9 +198,11 @@ export function ScienceLabQuestionLabPage() {
                     </p>
                   </div>
                 )}
-                <p className="text-xs italic mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {currentQuestion.feedback.ideaReference}
-                </p>
+                {currentQuestion.feedback?.ideaReference && (
+                  <p className="text-xs italic mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    {currentQuestion.feedback.ideaReference}
+                  </p>
+                )}
               </div>
             </div>
 

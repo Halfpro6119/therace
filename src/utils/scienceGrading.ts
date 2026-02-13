@@ -44,18 +44,26 @@ export function gradeScienceAnswer(
   question: ScienceQuestion,
   userAnswer: string
 ): { correct: boolean; score?: number; reason?: string } {
+  const correctAnswer = question.correctAnswer;
+  if (!correctAnswer || (Array.isArray(correctAnswer) && correctAnswer.length === 0)) {
+    return { correct: false, reason: 'No correct answer defined' };
+  }
+
   const normalized = userAnswer.trim().toLowerCase().replace(/\s+/g, ' ');
-  const correctAnswers = Array.isArray(question.correctAnswer)
-    ? question.correctAnswer.map(a => a.trim().toLowerCase())
-    : [question.correctAnswer.trim().toLowerCase()];
+  const correctAnswers = Array.isArray(correctAnswer)
+    ? correctAnswer.map(a => String(a || '').trim().toLowerCase()).filter(Boolean)
+    : [String(correctAnswer).trim().toLowerCase()];
+
+  if (correctAnswers.length === 0) return { correct: false, reason: 'No valid correct answer' };
 
   // 1. Exact or close match
   for (const ca of correctAnswers) {
-    if (normalized === ca || normalized.includes(ca)) return { correct: true };
+    if (ca && (normalized === ca || normalized.includes(ca))) return { correct: true };
   }
 
   // 2. Common mistake check – if answer clearly states wrong idea, mark incorrect
-  if (containsCommonMistake(userAnswer, question.commonMistakes)) {
+  const commonMistakes = question.commonMistakes ?? [];
+  if (commonMistakes.length > 0 && containsCommonMistake(userAnswer, commonMistakes)) {
     return { correct: false, reason: 'Contains common misconception' };
   }
 
