@@ -44,8 +44,8 @@ import { EnglishVocabHeatmapPage } from './pages/english/vocab/EnglishVocabHeatm
 import { EnglishVocabWordDetailPage } from './pages/english/vocab/EnglishVocabWordDetailPage';
 import { MathsMasteryHomePage } from './pages/maths/MathsMasteryHomePage';
 import { MathsHubPage } from './pages/maths/MathsHubPage';
-import { FurtherMathsPlaceholder } from './pages/maths/FurtherMathsPlaceholder';
-import { StatisticsPlaceholder } from './pages/maths/StatisticsPlaceholder';
+import { FurtherMathsHubPage } from './pages/maths/FurtherMathsHubPage';
+import { StatisticsHubPage } from './pages/maths/StatisticsHubPage';
 import { ScienceLabSubjectPage } from './pages/science/ScienceLabSubjectPage';
 import { ScienceLabCombinedSciencePage } from './pages/science/ScienceLabCombinedSciencePage';
 import { ScienceLabModePage } from './pages/science/ScienceLabModePage';
@@ -288,8 +288,8 @@ function App() {
                 <Route path="/english-campus/vocab/word/:wordId" element={<EnglishVocabWordDetailPage />} />
                 <Route path="/maths-mastery" element={<MathsMasteryHomePage />} />
                 <Route path="/maths-mastery/maths" element={<MathsHubPage />} />
-                <Route path="/maths-mastery/further-maths" element={<FurtherMathsPlaceholder />} />
-                <Route path="/maths-mastery/statistics" element={<StatisticsPlaceholder />} />
+                <Route path="/maths-mastery/further-maths" element={<FurtherMathsHubPage />} />
+                <Route path="/maths-mastery/statistics" element={<StatisticsHubPage />} />
                 <Route path="/science-lab" element={<ScienceLabSubjectPage />} />
                 <Route path="/science-lab/subjects" element={<Navigate to="/science-lab" replace />} />
                 <Route path="/science-lab/combined-science" element={<ScienceLabCombinedSciencePage />} />

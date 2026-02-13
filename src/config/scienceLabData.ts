@@ -437,6 +437,120 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       },
     ],
   },
+  // Stretch: Cell differentiation and stem cells (Grade 9)
+  {
+    id: 'bio-stem-cells',
+    subject: 'Biology',
+    topic: 'Cell Biology',
+    coreIdea: 'Stem cells are undifferentiated cells that can divide to produce more stem cells or differentiate into specialised cells. Embryonic stem cells can become any cell type; adult stem cells are more limited.',
+    visualModel: {
+      type: 'flow',
+      description: 'Stem cell → mitosis → more stem cells OR differentiation → specialised cell (e.g. nerve, muscle, blood)',
+      diagramId: 'stem_cell_differentiation',
+    },
+    commonMisconception: 'All stem cells can become any cell type.',
+    changeScenarios: [
+      {
+        prompt: 'Why might embryonic stem cells be more useful for treating disease than adult stem cells?',
+        explanation: 'Embryonic stem cells are pluripotent—can differentiate into any cell type. Adult stem cells are multipotent—limited to certain cell types in their tissue.',
+      },
+    ],
+  },
+  // Stretch: Monoclonal antibodies (Grade 9)
+  {
+    id: 'bio-monoclonal-antibodies',
+    subject: 'Biology',
+    topic: 'Infection and Response',
+    coreIdea: 'Monoclonal antibodies are identical antibodies produced from a single clone of cells. They bind to specific antigens and are used in pregnancy tests, cancer treatment, and targeted drug delivery.',
+    visualModel: {
+      type: 'cell',
+      description: 'Hybridoma (fused mouse B-cell + tumour cell) → produces identical antibodies → bind to specific antigen',
+      diagramId: 'monoclonal_antibodies',
+    },
+    commonMisconception: 'Monoclonal antibodies are the same as natural antibodies from infection.',
+    changeScenarios: [
+      {
+        prompt: 'Why are monoclonal antibodies useful for targeting cancer cells?',
+        explanation: 'Cancer cells have specific antigens not found on healthy cells. Monoclonal antibodies bind only to these antigens, so drugs attached to them are delivered specifically to cancer cells, reducing side effects.',
+      },
+    ],
+  },
+  // Stretch: Limiting factors and inverse square law (Grade 9)
+  {
+    id: 'bio-limiting-factors-quantitative',
+    subject: 'Biology',
+    topic: 'Bioenergetics',
+    coreIdea: 'When light intensity is limiting, rate of photosynthesis is proportional to light intensity. At very high light, another factor (CO₂ or temperature) becomes limiting. Light intensity follows inverse square law with distance.',
+    visualModel: {
+      type: 'graph',
+      description: 'Graph: light intensity (x) vs rate of photosynthesis (y)—linear at low light, plateaus when another factor limits',
+      diagramId: 'photosynthesis_light_graph',
+    },
+    commonMisconception: 'Doubling light always doubles photosynthesis rate.',
+    changeScenarios: [
+      {
+        prompt: 'A lamp is moved from 10 cm to 20 cm from a plant. Why might the rate of photosynthesis not halve?',
+        explanation: 'Inverse square law: light intensity ∝ 1/distance². At 20 cm, intensity is ¼ of at 10 cm. But if light was already saturating (another factor limiting), the rate may not change much.',
+      },
+    ],
+  },
+  // Stretch: Negative feedback and thyroxine (Grade 9)
+  {
+    id: 'bio-thyroxine-feedback',
+    subject: 'Biology',
+    topic: 'Homeostasis and Response',
+    coreIdea: 'Thyroxine controls metabolic rate. Low thyroxine → pituitary releases TSH → thyroid releases more thyroxine. High thyroxine → inhibits TSH release. This negative feedback maintains thyroxine within a set range.',
+    visualModel: {
+      type: 'flow',
+      description: 'Low thyroxine → pituitary (TSH) → thyroid (thyroxine) → metabolic rate rises. High thyroxine → inhibits pituitary → less TSH.',
+      diagramId: 'thyroxine_feedback',
+    },
+    commonMisconception: 'Hormones always stimulate; they never inhibit.',
+    changeScenarios: [
+      {
+        prompt: 'What happens if the thyroid is damaged and cannot produce thyroxine?',
+        explanation: 'No thyroxine → pituitary keeps releasing TSH (no negative feedback) → TSH levels rise but thyroid cannot respond → low metabolic rate, weight gain, fatigue.',
+      },
+    ],
+  },
+  // Stretch: Genetic engineering and ethics (Grade 9)
+  {
+    id: 'bio-genetic-engineering-ethics',
+    subject: 'Biology',
+    topic: 'Inheritance, Variation and Evolution',
+    coreIdea: 'Genetic engineering inserts genes from one organism into another. Benefits: insulin production, disease-resistant crops. Ethical concerns: unknown long-term effects, impact on ecosystems, designer babies.',
+    visualModel: {
+      type: 'flow',
+      description: 'Gene isolated → inserted into vector (plasmid) → vector inserted into host cell → host produces protein',
+      diagramId: 'genetic_engineering',
+    },
+    commonMisconception: 'Genetic modification always makes organisms dangerous.',
+    changeScenarios: [
+      {
+        prompt: 'Evaluate the use of genetic engineering to produce human insulin in bacteria.',
+        explanation: 'Benefits: identical to human insulin, no animal products, scalable. Concerns: need strict quality control; some oppose GM. Overall: widely accepted as safe and beneficial.',
+      },
+    ],
+  },
+  // Stretch: Quadrat sampling and biodiversity indices (Grade 9)
+  {
+    id: 'bio-biodiversity-sampling',
+    subject: 'Biology',
+    topic: 'Ecology',
+    coreIdea: 'Biodiversity can be measured by species richness (number of species) and species evenness (how evenly distributed). Quadrat sampling and transects allow systematic sampling. Simpson\'s index combines richness and evenness.',
+    visualModel: {
+      type: 'diagram',
+      description: 'Grid of quadrats; different species in each; transect line across habitat',
+      diagramId: 'quadrat_sampling',
+    },
+    commonMisconception: 'More individuals always means higher biodiversity.',
+    changeScenarios: [
+      {
+        prompt: 'Two fields have 100 plants each. Field A has 2 species (99 of one, 1 of another). Field B has 10 species (10 of each). Which has higher biodiversity and why?',
+        explanation: 'Field B has higher biodiversity: more species (richness) and more even distribution (evenness). Field A is dominated by one species.',
+      },
+    ],
+  },
   {
     id: 'chem-rate-reaction',
     subject: 'Chemistry',
@@ -639,6 +753,63 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     commonMisconception: 'Recycling always saves energy.',
     changeScenarios: [
       { prompt: 'What does LCA consider?', explanation: 'Raw material extraction → manufacture → transport → use → disposal → overall impact on environment' },
+    ],
+  },
+
+  // ========== CHEMISTRY STRETCH (Grade 9) ==========
+  {
+    id: 'chem-le-chatelier',
+    subject: 'Chemistry',
+    topic: 'Rate and extent of chemical change',
+    coreIdea: 'Le Chatelier\'s principle: if a system at equilibrium is disturbed, the position of equilibrium shifts to oppose the change. Increase concentration of reactant → equilibrium shifts to products; increase temperature for endothermic reaction → shifts to products.',
+    visualModel: { type: 'energy', description: 'Energy profile for reversible reaction; arrows showing shift when conditions change', diagramId: 'le_chatelier' },
+    commonMisconception: 'Changing conditions always increases the yield.',
+    changeScenarios: [
+      { prompt: 'For an exothermic forward reaction, what happens to yield if temperature is increased?', explanation: 'Equilibrium shifts to oppose the change → favours the endothermic (reverse) direction → yield of products decreases' },
+    ],
+  },
+  {
+    id: 'chem-half-equations',
+    subject: 'Chemistry',
+    topic: 'Chemical changes',
+    coreIdea: 'Half-equations show oxidation and reduction separately. At anode: oxidation (loss of electrons). At cathode: reduction (gain of electrons). Electrons must balance when combining half-equations.',
+    visualModel: { type: 'flow', description: 'Anode: 2Cl⁻ → Cl₂ + 2e⁻. Cathode: 2H⁺ + 2e⁻ → H₂. Electrons flow through circuit.', diagramId: 'half_equations' },
+    commonMisconception: 'Electrons flow through the solution.',
+    changeScenarios: [
+      { prompt: 'When electrolysing copper sulfate with copper electrodes, why does the anode lose mass?', explanation: 'Copper atoms oxidise: Cu → Cu²⁺ + 2e⁻. Copper ions go into solution; electrons flow to cathode. Anode dissolves.' },
+    ],
+  },
+  {
+    id: 'chem-empirical-molecular',
+    subject: 'Chemistry',
+    topic: 'Quantitative chemistry',
+    coreIdea: 'Empirical formula is the simplest whole-number ratio of atoms. Molecular formula is the actual number of atoms. Molecular formula = (empirical formula)ₙ. Find n from Mr ÷ empirical mass.',
+    visualModel: { type: 'diagram', description: 'Mass % → moles → divide by smallest → ratio → empirical formula. Mr ÷ empirical mass = n.', diagramId: 'empirical_molecular' },
+    commonMisconception: 'Empirical and molecular formula are always the same.',
+    changeScenarios: [
+      { prompt: 'A compound has empirical formula CH₂ and Mr = 42. What is the molecular formula?', explanation: 'Empirical mass = 14. n = 42 ÷ 14 = 3. Molecular formula = C₃H₆ (e.g. propene)' },
+    ],
+  },
+  {
+    id: 'chem-alkenes-addition',
+    subject: 'Chemistry',
+    topic: 'Organic chemistry',
+    coreIdea: 'Alkenes have C=C double bond; they undergo addition reactions. Bromine water decolourises (test for unsaturation). Hydrogen adds to form alkane. Steam adds to form alcohol. Polymerisation: many monomers → polymer.',
+    visualModel: { type: 'flow', description: 'Ethene + Br₂ → dibromoethane. Ethene + H₂O (catalyst) → ethanol. Many ethene → poly(ethene).', diagramId: 'alkene_addition' },
+    commonMisconception: 'Alkenes and alkanes react the same way.',
+    changeScenarios: [
+      { prompt: 'Why does bromine water decolourise with ethene but not with ethane?', explanation: 'Ethene has C=C double bond; bromine adds across it (addition). Ethane has only single bonds; no addition occurs; bromine stays red-brown.' },
+    ],
+  },
+  {
+    id: 'chem-bond-energy-calculations',
+    subject: 'Chemistry',
+    topic: 'Energy changes',
+    coreIdea: 'Bond breaking is endothermic (energy in). Bond making is exothermic (energy out). ΔH = sum(bonds broken) − sum(bonds made). Negative ΔH = exothermic.',
+    visualModel: { type: 'energy', description: 'Energy level diagram: reactants → activation energy → products. ΔH = products − reactants.', diagramId: 'bond_energy' },
+    commonMisconception: 'Breaking bonds releases energy.',
+    changeScenarios: [
+      { prompt: 'Why is the bond energy of a C=C double bond not exactly twice the C–C single bond energy?', explanation: 'The second bond is a pi bond, weaker than the first sigma bond. Total C=C is stronger than C–C but not double. Plus, bond energies are average values.' },
     ],
   },
 

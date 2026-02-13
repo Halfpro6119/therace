@@ -13,7 +13,9 @@ import type {
   LogicCircuitTask,
   SqlTask,
   ComputeQuestion,
+  ComputeMisconception,
   ComputeUnitId,
+  ComputeMisconception,
 } from '../types/computeLab';
 
 // ============================================================================

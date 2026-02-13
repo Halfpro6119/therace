@@ -3,7 +3,8 @@ import { db } from '../db/client';
 import { createTopicQuizzes, createUnitQuizzes, createPaperQuizzes, createSinglePaperQuiz, createFullGCSEQuiz } from './quizBuilder';
 import { seedDiagramTemplates } from './seedDiagramTemplates';
 import { syncGoldenTopicUnitQuizzes } from './goldenTopicUnitQuizBuilder';
-import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen, BookMarked } from 'lucide-react';
+import { seedFurtherMathsAndStatistics } from '../config/furtherMathsStatisticsSeed';
+import { Wrench, Zap, Database, CheckCircle, Layout, BookOpen, BookMarked, BarChart3 } from 'lucide-react';
 import { Subject, Paper } from '../types';
 
 export function ToolsPage() {
@@ -198,6 +199,30 @@ export function ToolsPage() {
     }
   };
 
+  const handleSeedFurtherMathsStatistics = async () => {
+    setLoading(true);
+    setResult('');
+    try {
+      const r = await seedFurtherMathsAndStatistics();
+      const parts = [];
+      if (r.furtherMaths.created > 0) parts.push(`Further Maths: ${r.furtherMaths.created} prompts created`);
+      if (r.statistics.created > 0) parts.push(`Statistics: ${r.statistics.created} prompts created`);
+      const errs = [...r.furtherMaths.errors, ...r.statistics.errors];
+      setResult(
+        parts.length > 0
+          ? `Success: ${parts.join('. ')}` + (errs.length > 0 ? ` Errors: ${errs.slice(0, 5).join('; ')}` : '')
+          : errs.length > 0
+            ? `Errors: ${errs.join('; ')}`
+            : 'No new prompts created (may already exist). Run GCSE scope sync first if subjects are missing.'
+      );
+    } catch (error) {
+      console.error(error);
+      setResult(`Error: ${formatError(error)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tools = [
     {
       id: 'topic-quizzes',
@@ -255,6 +280,14 @@ export function ToolsPage() {
       icon: BookMarked,
       color: 'from-amber-500 to-orange-500',
       action: handleSyncGoldenTopicUnitQuizzes,
+    },
+    {
+      id: 'seed-fm-stats',
+      title: 'Seed Further Maths & Statistics',
+      description: 'Create placeholder prompts for Further Maths (AQA 8365) and Statistics (AQA 8382). Run GCSE scope sync first.',
+      icon: BarChart3,
+      color: 'from-teal-500 to-cyan-500',
+      action: handleSeedFurtherMathsStatistics,
     },
   ];
 

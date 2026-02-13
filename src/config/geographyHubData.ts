@@ -365,6 +365,27 @@ const GEOGRAPHY_KEY_TERMS: GeographyKeyTerm[] = [
   { id: 'energy-kt10', sectionId: 'human-energy', term: 'Fracking', definition: 'Extracting gas from shale rock by fracturing.', inContext: 'Debated in UK.' },
   { id: 'app-kt9', sectionId: 'app-fieldwork', term: 'Data presentation', definition: 'Showing data in graphs, maps or tables.', inContext: 'Part of geographical enquiry.' },
   { id: 'app-kt10', sectionId: 'app-fieldwork', term: 'Conclusion', definition: 'Summary of findings answering the hypothesis.', inContext: 'Final stage of enquiry.' },
+  // Content plan expansion — toward 300+ key terms (Grade 9 coverage)
+  { id: 'nh-kt28', sectionId: 'physical-natural-hazards', term: 'Exposure', definition: 'How many people or assets are in a hazard zone.', inContext: 'Higher exposure = higher risk.' },
+  { id: 'nh-kt29', sectionId: 'physical-natural-hazards', term: 'Hazard risk', definition: 'Chance of being affected by a hazard.', inContext: 'Increases with exposure, vulnerability, lack of capacity.' },
+  { id: 'eco-kt17', sectionId: 'physical-ecosystems', term: 'Carbon cycle', definition: 'Movement of carbon between atmosphere, plants, animals and soil.', inContext: 'Deforestation disrupts the cycle.' },
+  { id: 'eco-kt18', sectionId: 'physical-ecosystems', term: 'Succession', definition: 'Change in ecosystem over time as species replace each other.', inContext: 'Pioneer species → climax community.' },
+  { id: 'rf-kt17', sectionId: 'physical-rainforests', term: 'Sustainable development', definition: 'Meeting needs without damaging future generations.', inContext: 'Balances economic and environmental.' },
+  { id: 'coast-kt22', sectionId: 'physical-coastal', term: 'Rock armour', definition: 'Large boulders placed at coast to absorb wave energy.', inContext: 'Hard engineering strategy.' },
+  { id: 'coast-kt23', sectionId: 'physical-coastal', term: 'Sea wall', definition: 'Concrete or stone wall to protect coast from erosion.', inContext: 'Expensive; can reflect waves.' },
+  { id: 'river-kt21', sectionId: 'physical-river', term: 'Storm hydrograph', definition: 'Graph showing river discharge in response to a storm.', inContext: 'Shows lag time and peak discharge.' },
+  { id: 'river-kt22', sectionId: 'physical-river', term: 'Rising limb', definition: 'Part of hydrograph where discharge increases after rainfall.', inContext: 'Steeper = faster runoff.' },
+  { id: 'river-kt23', sectionId: 'physical-river', term: 'Falling limb', definition: 'Part of hydrograph where discharge decreases after peak.', inContext: 'Recession of flood.' },
+  { id: 'glac-kt18', sectionId: 'physical-glacial', term: 'Bulldozing', definition: 'Glacial process pushing material in front of ice.', inContext: 'Creates push moraines.' },
+  { id: 'urb-kt20', sectionId: 'human-urban', term: 'Urban greening', definition: 'Adding parks, trees and green space to cities.', inContext: 'Improves air quality and wellbeing.' },
+  { id: 'urb-kt21', sectionId: 'human-urban', term: 'Deprivation index', definition: 'Measure of lack of access to opportunities and resources.', inContext: 'IMD = Index of Multiple Deprivation.' },
+  { id: 'econ-kt20', sectionId: 'human-economic', term: 'Intermediate technology', definition: 'Technology appropriate for local conditions and skills.', inContext: 'Often more sustainable than high-tech.' },
+  { id: 'econ-kt21', sectionId: 'human-economic', term: 'Debt-for-nature swap', definition: 'Country\'s debt reduced in exchange for conservation.', inContext: 'Sustainable development strategy.' },
+  { id: 'food-kt10', sectionId: 'human-food', term: 'Food insecurity', definition: 'Lack of reliable access to sufficient nutritious food.', inContext: 'Affects millions globally.' },
+  { id: 'water-kt9', sectionId: 'human-water', term: 'Water scarcity', definition: 'Lack of sufficient water for needs.', inContext: 'Physical or economic.' },
+  { id: 'energy-kt11', sectionId: 'human-energy', term: 'Energy efficiency', definition: 'Using less energy to achieve the same outcome.', inContext: 'Reduces demand and costs.' },
+  { id: 'app-kt11', sectionId: 'app-fieldwork', term: 'Reliability', definition: 'Consistency of results; repeatability of method.', inContext: 'Larger samples improve reliability.' },
+  { id: 'app-kt12', sectionId: 'app-fieldwork', term: 'Validity', definition: 'Whether the method measures what it claims to measure.', inContext: 'Methodology affects validity.' },
 ];
 
 export function getKeyTermsForSections(sectionIds: GeographySectionId[]): GeographyKeyTerm[] {
@@ -517,6 +538,18 @@ const GEOGRAPHY_QUICK_CHECKS: GeographyQuickCheckItem[] = [
   { id: 'water-qc6', sectionId: 'human-water', type: 'multipleChoice', question: 'What can cause water conflict between countries?', options: ['Only drought', 'Transboundary rivers and dams', 'Only pollution', 'Only floods'], correctAnswer: 'Transboundary rivers and dams', feedback: { correct: 'Correct.', incorrect: 'Rivers crossing borders (Nile, Colorado) can cause conflict.' } },
   { id: 'energy-qc7', sectionId: 'human-energy', type: 'trueFalse', question: 'Carbon capture can reduce emissions from power stations.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'CCS captures CO2 for storage.' } },
   { id: 'app-qc7', sectionId: 'app-fieldwork', type: 'multipleChoice', question: 'What is stratified sampling?', options: ['Random selection', 'Proportional from different groups', 'Along a line', 'At regular intervals'], correctAnswer: 'Proportional from different groups', feedback: { correct: 'Correct.', incorrect: 'Stratified = sampling proportionally from groups.' } },
+  // Content plan expansion — toward 120+ quick checks (Grade 9 coverage)
+  { id: 'nh-qc15', sectionId: 'physical-natural-hazards', type: 'multipleChoice', question: 'What increases hazard risk?', options: ['Good emergency planning', 'High population in hazard zone', 'Strong infrastructure', 'Low vulnerability'], correctAnswer: 'High population in hazard zone', feedback: { correct: 'Correct.', incorrect: 'More people exposed = higher risk.' } },
+  { id: 'eco-qc9', sectionId: 'physical-ecosystems', type: 'shortAnswer', question: 'What do we call the movement of carbon between atmosphere and living things?', correctAnswer: ['carbon cycle'], feedback: { correct: 'Correct.', incorrect: 'The carbon cycle.' } },
+  { id: 'rf-qc9', sectionId: 'physical-rainforests', type: 'trueFalse', question: 'Sustainable development balances economic and environmental needs.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Sustainable development meets needs without compromising future.' } },
+  { id: 'coast-qc11', sectionId: 'physical-coastal', type: 'multipleChoice', question: 'What is rock armour?', options: ['A type of cliff', 'Large boulders to absorb wave energy', 'A beach', 'A spit'], correctAnswer: 'Large boulders to absorb wave energy', feedback: { correct: 'Correct.', incorrect: 'Rock armour = large boulders for coastal defence.' } },
+  { id: 'river-qc11', sectionId: 'physical-river', type: 'shortAnswer', question: 'What do we call the part of a hydrograph where discharge increases?', correctAnswer: ['rising limb'], feedback: { correct: 'Correct.', incorrect: 'Rising limb.' } },
+  { id: 'glac-qc9', sectionId: 'physical-glacial', type: 'trueFalse', question: 'Bulldozing is a glacial deposition process.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Bulldozing pushes material in front of the ice.' } },
+  { id: 'urb-qc11', sectionId: 'human-urban', type: 'shortAnswer', question: 'What do we call adding parks and trees to cities?', correctAnswer: ['urban greening'], feedback: { correct: 'Correct.', incorrect: 'Urban greening.' } },
+  { id: 'econ-qc11', sectionId: 'human-economic', type: 'multipleChoice', question: 'What is intermediate technology?', options: ['Always high-tech', 'Technology suited to local conditions', 'Only solar power', 'Only in HICs'], correctAnswer: 'Technology suited to local conditions', feedback: { correct: 'Correct.', incorrect: 'Appropriate for local skills and resources.' } },
+  { id: 'food-qc7', sectionId: 'human-food', type: 'trueFalse', question: 'Food insecurity means lack of reliable access to sufficient food.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Food insecurity = unreliable access.' } },
+  { id: 'energy-qc8', sectionId: 'human-energy', type: 'shortAnswer', question: 'What do we call using less energy for the same outcome?', correctAnswer: ['energy efficiency'], feedback: { correct: 'Correct.', incorrect: 'Energy efficiency.' } },
+  { id: 'app-qc8', sectionId: 'app-fieldwork', type: 'multipleChoice', question: 'What does validity mean in geographical enquiry?', options: ['Speed of data collection', 'Whether the method measures what it claims', 'Sample size', 'Number of locations'], correctAnswer: 'Whether the method measures what it claims', feedback: { correct: 'Correct.', incorrect: 'Validity = measures what it claims to measure.' } },
 ];
 
 export function getQuickChecksForSections(sectionIds: GeographySectionId[]): GeographyQuickCheckItem[] {

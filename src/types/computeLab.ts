@@ -124,6 +124,16 @@ export interface ComputeQuestion {
   markScheme: string;
 }
 
+/** Mistake Museum: common misconception with why students think it and why it is wrong */
+export interface ComputeMisconception {
+  id: string;
+  unitId: ComputeUnitId;
+  topicId?: string;
+  misconception: string;
+  whyStudentsThinkThis: string;
+  whyItsWrong: string;
+}
+
 /** Progress: per unit/topic for gating */
 export interface ComputeTopicProgress {
   unitId: ComputeUnitId;

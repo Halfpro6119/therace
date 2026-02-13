@@ -13,22 +13,25 @@ const PILLARS = [
     path: '/maths-mastery/maths',
     icon: Calculator,
     color: '#6366F1',
+    comingSoon: false,
   },
   {
     id: 'further-maths',
     title: 'Further Maths',
-    description: 'Level 2 / FSMQ-style Further Mathematics – coming soon',
+    description: 'AQA Level 2 Certificate (8365) – Algebra, Calculus, Matrices, Geometry',
     path: '/maths-mastery/further-maths',
     icon: Sigma,
     color: '#8B5CF6',
+    comingSoon: false,
   },
   {
     id: 'statistics',
     title: 'Statistics',
-    description: 'GCSE Statistics – coming soon',
+    description: 'AQA GCSE Statistics (8382) – Data, probability, correlation, distributions',
     path: '/maths-mastery/statistics',
     icon: BarChart3,
     color: '#0EA5E9',
+    comingSoon: false,
   },
 ] as const;
 
@@ -65,12 +68,12 @@ export function MathsMasteryHomePage() {
           Practice GCSE Maths
         </h2>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Full papers and topic drills covering everything you&apos;ll be tested on. Further Maths and Statistics are coming soon.
+          Full papers and topic drills. GCSE Maths, Further Maths (AQA 8365), and Statistics (AQA 8382).
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PILLARS.map((pillar, index) => {
             const Icon = pillar.icon;
-            const isComingSoon = pillar.id !== 'maths';
+            const isComingSoon = pillar.comingSoon ?? false;
             return (
               <motion.button
                 key={pillar.id}
@@ -109,7 +112,7 @@ export function MathsMasteryHomePage() {
                   {pillar.description}
                 </p>
                 <div className="mt-4 flex items-center gap-1 font-semibold text-sm" style={{ color: pillar.color }}>
-                  <span>{pillar.id === 'maths' ? 'Start practising' : 'Open'}</span>
+                  <span>Start practising</span>
                   <ChevronRight size={16} />
                 </div>
               </motion.button>

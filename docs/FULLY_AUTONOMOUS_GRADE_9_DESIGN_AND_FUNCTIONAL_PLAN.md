@@ -1954,8 +1954,19 @@ Before claiming "fully autonomous" for MFL:
 
 ### 17.3 Recommendation
 
-- **Short term:** Remove from "Maths Mastery" marketing until content ready
-- **Long term:** Full build if demand exists; otherwise deprioritise
+- **Short term:** ~~Remove from "Maths Mastery" marketing until content ready~~ **Implemented** — Full hub structure with topic/unit specs and placeholder seed.
+- **Long term:** Replace placeholder prompts with real exam-style questions; expand to full spec coverage.
+
+### 17.4 Implementation Status (Feb 2025)
+
+| Component | Status |
+|-----------|--------|
+| **Further Maths hub** | ✅ Implemented — `FurtherMathsHubPage.tsx`, AQA 8365 structure |
+| **Statistics hub** | ✅ Implemented — `StatisticsHubPage.tsx`, AQA 8382 structure |
+| **Topic/unit specs** | ✅ `furtherMathsTopicUnitSpec.ts`, `statisticsTopicUnitSpec.ts` |
+| **gcseScope** | ✅ Further Maths (AQA), Statistics (AQA) added |
+| **Placeholder seed** | ✅ Admin → Tools → "Seed Further Maths & Statistics" |
+| **Real content** | ⏳ Replace placeholders with exam-style questions |
 
 ---
 
@@ -2201,9 +2212,20 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 | **Health** | ✅ Expanded | 22 concepts, 80+ terms, 50+ quick checks, 4+ case studies; Units 3–4 content present |
 | **Languages** | ✅ In progress | French 200+ words, Spanish 150+ words; vocabulary mode implemented |
 
+### Implemented (Feb 2025 — Content Implementation Phase)
+
+| Subject | Change | Details |
+|---------|--------|---------|
+| **Geography** | +31 key terms, +15 quick checks | Toward 300+ terms, 120+ quick checks; nh-kt25–app-kt10, nh-qc13–app-qc7 |
+| **Business** | +3 case studies | NewPhone Ltd (penetration pricing), BuildCo Ltd (procurement), ServiceFirst Ltd (customer service); total 18 |
+| **French** | +48 vocabulary items | savoir, pouvoir, venir, faire, climate change, skills, etc.; total ~320 |
+| **Spanish** | +45 vocabulary items | saber, poder, venir, hacer, cambio climático, etc.; total ~310 |
+| **Health** | +9 terms (Units 3–4) | Evaluation, intervention, target audience, health inequality, risk factor, etc. |
+| **Biology** | +1 stretch concept | Bioaccumulation/biomagnification (Grade 9 Ecology) |
+
 ### Remaining (Content & Future)
 
-- **Geography** — Key terms at ~170; target 300+ (further expansion possible)
+- **Geography** — Key terms ~230; target 300+ (further expansion possible)
 - **French/Spanish** — Expand to 1,200+ (Foundation) / 1,700+ (Higher) words; add Grammar, Listening, Reading, Writing, Speaking, Translation modes
 - **Compute Lab** — Per-unit content density to implementation plan targets
 - **Further Maths & Statistics** — Build or remove from scope
