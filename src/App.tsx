@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { SubjectsPage } from './pages/SubjectsPage';
 import { SubjectDetailPageWithTier } from './pages/SubjectDetailPageWithTier';
@@ -46,7 +46,6 @@ import { MathsMasteryHomePage } from './pages/maths/MathsMasteryHomePage';
 import { MathsHubPage } from './pages/maths/MathsHubPage';
 import { FurtherMathsPlaceholder } from './pages/maths/FurtherMathsPlaceholder';
 import { StatisticsPlaceholder } from './pages/maths/StatisticsPlaceholder';
-import { ScienceLabHomePage } from './pages/science/ScienceLabHomePage';
 import { ScienceLabSubjectPage } from './pages/science/ScienceLabSubjectPage';
 import { ScienceLabModePage } from './pages/science/ScienceLabModePage';
 import { ScienceLabConceptLabPage } from './pages/science/ScienceLabConceptLabPage';
@@ -276,8 +275,8 @@ function App() {
                 <Route path="/maths-mastery/maths" element={<MathsHubPage />} />
                 <Route path="/maths-mastery/further-maths" element={<FurtherMathsPlaceholder />} />
                 <Route path="/maths-mastery/statistics" element={<StatisticsPlaceholder />} />
-                <Route path="/science-lab" element={<ScienceLabHomePage />} />
-                <Route path="/science-lab/subjects" element={<ScienceLabSubjectPage />} />
+                <Route path="/science-lab" element={<ScienceLabSubjectPage />} />
+                <Route path="/science-lab/subjects" element={<Navigate to="/science-lab" replace />} />
                 <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />

@@ -49,11 +49,11 @@ export function ScienceLabSubjectPage() {
       >
         <button
           type="button"
-          onClick={() => navigate('/science-lab')}
+          onClick={() => navigate('/subjects')}
           className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
         >
           <ChevronLeft size={18} />
-          Back to Science Lab
+          Back to Subjects
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Choose Your Subject</h1>
         <p className="text-white/90 text-sm sm:text-base">

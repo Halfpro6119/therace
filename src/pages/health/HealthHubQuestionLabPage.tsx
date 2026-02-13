@@ -1,21 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, PenLine, CheckCircle2 } from 'lucide-react';
+import { storage } from '../../utils/storage';
 import { getUnitById, getQuestionLabByUnit } from '../../config/healthHubData';
 import type { HealthUnitId } from '../../types/healthHub';
 
 const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+
+function getHealthDraftKey(unitId: string, itemId: string): string {
+  return `health:${unitId}:${itemId}`;
+}
 
 export function HealthHubQuestionLabPage() {
   const navigate = useNavigate();
   const { unitId } = useParams<{ unitId: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
+  const [content, setContent] = useState('');
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   const unit = unitId ? getUnitById(unitId as HealthUnitId) : undefined;
   const items = unit ? getQuestionLabByUnit(unit.id) : [];
   const current = items[currentIndex];
+
+  useEffect(() => {
+    if (current && unit) {
+      const key = getHealthDraftKey(unit.id, current.id);
+      setContent(storage.getHubWritingDraft(key));
+    } else {
+      setContent('');
+    }
+  }, [current?.id, unit?.id, currentIndex]);
 
   if (!unit) {
     return (
@@ -77,6 +93,42 @@ export function HealthHubQuestionLabPage() {
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
           Plan and write your answer, then reveal the model answer to compare.
         </p>
+
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Your answer</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write your answer here…"
+            className="w-full min-h-[180px] rounded-xl border p-4 text-base resize-y focus:outline-none focus:ring-2"
+            style={{
+              background: 'rgb(var(--surface-2))',
+              borderColor: 'rgb(var(--border))',
+              color: 'rgb(var(--text))',
+            }}
+          />
+          <div className="mt-3 flex gap-3 items-center">
+            <button
+              type="button"
+              onClick={() => {
+                if (current && unit) {
+                  const key = getHealthDraftKey(unit.id, current.id);
+                  storage.setHubWritingDraft(key, content);
+                  setSaveFeedback(true);
+                  setTimeout(() => setSaveFeedback(false), 2000);
+                }
+              }}
+              className="text-sm font-medium px-3 py-1.5 rounded-lg bg-red-500/20 text-red-700 dark:text-red-400"
+            >
+              {saveFeedback ? 'Saved!' : 'Save draft'}
+            </button>
+            {saveFeedback && (
+              <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Draft saved – your answer will be here when you return
+              </span>
+            )}
+          </div>
+        </div>
 
         {!revealAnswer ? (
           <button

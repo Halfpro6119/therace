@@ -103,6 +103,8 @@ const STORAGE_KEYS = {
   PSYCHOLOGY_HUB_OPTIONS: 'grade9sprint_psychology_hub_options',
   PSYCHOLOGY_HUB_TOPIC_PROGRESS: 'grade9sprint_psychology_hub_topic_progress',
   PSYCHOLOGY_HUB_FLASHCARD_MASTERY: 'grade9sprint_psychology_hub_flashcard_mastery',
+  // Hub writing drafts (source lab, interpretation lab, question labs, etc.)
+  HUB_WRITING_DRAFTS: 'grade9sprint_hub_writing_drafts',
 };
 
 /**
@@ -840,6 +842,19 @@ export const storage = {
     const map: Record<string, HistoryFactorEssayDraft> = data ? JSON.parse(data) : {};
     map[draft.questionId] = { ...draft, updatedAt: Date.now() };
     localStorage.setItem(STORAGE_KEYS.HISTORY_HUB_FACTOR_ESSAY_DRAFTS, JSON.stringify(map));
+  },
+
+  /** Generic hub writing drafts (source lab, interpretation lab, question labs). Key format: "hub:taskKey" e.g. "source-lab:ww_BA:BA-1:set1" */
+  getHubWritingDraft: (taskKey: string): string => {
+    const data = localStorage.getItem(STORAGE_KEYS.HUB_WRITING_DRAFTS);
+    const map: Record<string, { content: string; updatedAt: number }> = data ? JSON.parse(data) : {};
+    return map[taskKey]?.content ?? '';
+  },
+  setHubWritingDraft: (taskKey: string, content: string): void => {
+    const data = localStorage.getItem(STORAGE_KEYS.HUB_WRITING_DRAFTS);
+    const map: Record<string, { content: string; updatedAt: number }> = data ? JSON.parse(data) : {};
+    map[taskKey] = { content, updatedAt: Date.now() };
+    localStorage.setItem(STORAGE_KEYS.HUB_WRITING_DRAFTS, JSON.stringify(map));
   },
 
   // —— Religious Studies Hub ——

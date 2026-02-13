@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getGeographySectionsForSelection, getQuestionLabForSections } from '../../config/geographyHubData';
 
 const ACCENT = '#0D9488';
+
+function getGeographyDraftKey(sectionId: string, itemId: string): string {
+  return `geography:${sectionId}:${itemId}`;
+}
 
 export function GeographyHubQuestionLabPage() {
   const navigate = useNavigate();
@@ -15,9 +19,20 @@ export function GeographyHubQuestionLabPage() {
   const [sectionFilter, setSectionFilter] = useState(sectionIds[0] ?? '');
   const [index, setIndex] = useState(0);
   const [showModel, setShowModel] = useState(false);
+  const [content, setContent] = useState('');
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   const items = sectionFilter ? allItems.filter((i) => i.sectionId === sectionFilter) : allItems;
   const item = items[index];
+
+  useEffect(() => {
+    if (item) {
+      const key = getGeographyDraftKey(item.sectionId, item.id);
+      setContent(storage.getHubWritingDraft(key));
+    } else {
+      setContent('');
+    }
+  }, [item?.id, item?.sectionId, index]);
 
   if (!selection) {
     return (
@@ -51,6 +66,42 @@ export function GeographyHubQuestionLabPage() {
             <p className="text-xs font-medium mb-1" style={{ color: 'rgb(var(--text-secondary))' }}>Mark scheme</p>
             <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{item.markSchemeSummary}</p>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Your answer</label>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write your answer here…"
+              className="w-full min-h-[160px] rounded-xl border p-4 text-base resize-y focus:outline-none focus:ring-2"
+              style={{
+                background: 'rgb(var(--surface-2))',
+                borderColor: 'rgb(var(--border))',
+                color: 'rgb(var(--text))',
+              }}
+            />
+            <div className="mt-3 flex gap-3 items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  const key = getGeographyDraftKey(item.sectionId, item.id);
+                  storage.setHubWritingDraft(key, content);
+                  setSaveFeedback(true);
+                  setTimeout(() => setSaveFeedback(false), 2000);
+                }}
+                className="text-sm font-medium"
+                style={{ color: ACCENT }}
+              >
+                {saveFeedback ? 'Saved!' : 'Save draft'}
+              </button>
+              {saveFeedback && (
+                <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  Draft saved – your answer will be here when you return
+                </span>
+              )}
+            </div>
+          </div>
+
           {item.modelAnswer && (
             <>
               <button type="button" onClick={() => setShowModel((s) => !s)} className="text-sm font-medium" style={{ color: ACCENT }}>

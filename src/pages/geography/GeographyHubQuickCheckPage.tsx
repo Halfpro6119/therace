@@ -76,7 +76,15 @@ export function GeographyHubQuickCheckPage() {
           {item.type === 'multipleChoice' && item.options && (
             <div className="space-y-2">
               {item.options.map((opt) => (
-                <button key={opt} type="button" onClick={() => setAnswer(opt)} className="w-full text-left rounded-lg border px-4 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}>{opt}</button>
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setAnswer(opt)}
+                  className={`w-full text-left rounded-lg border px-4 py-2 text-sm transition ${answer === opt ? 'ring-2 ring-teal-500' : ''}`}
+                  style={{ borderColor: answer === opt ? ACCENT : 'rgb(var(--border))', color: 'rgb(var(--text))', ...(answer === opt ? { borderWidth: 2 } : {}) }}
+                >
+                  {opt}{answer === opt ? ' ✓' : ''}
+                </button>
               ))}
             </div>
           )}
@@ -85,8 +93,22 @@ export function GeographyHubQuickCheckPage() {
           )}
           {item.type === 'trueFalse' && (
             <div className="flex gap-2 mt-2">
-              <button type="button" onClick={() => setAnswer('true')} className="px-4 py-2 rounded-lg border text-sm" style={{ borderColor: 'rgb(var(--border))' }}>True</button>
-              <button type="button" onClick={() => setAnswer('false')} className="px-4 py-2 rounded-lg border text-sm" style={{ borderColor: 'rgb(var(--border))' }}>False</button>
+              <button
+                type="button"
+                onClick={() => setAnswer('true')}
+                className={`px-4 py-2 rounded-lg border text-sm transition ${answer === 'true' ? 'ring-2 ring-teal-500' : ''}`}
+                style={{ borderColor: answer === 'true' ? ACCENT : 'rgb(var(--border))', ...(answer === 'true' ? { borderWidth: 2 } : {}) }}
+              >
+                True{answer === 'true' ? ' ✓' : ''}
+              </button>
+              <button
+                type="button"
+                onClick={() => setAnswer('false')}
+                className={`px-4 py-2 rounded-lg border text-sm transition ${answer === 'false' ? 'ring-2 ring-teal-500' : ''}`}
+                style={{ borderColor: answer === 'false' ? ACCENT : 'rgb(var(--border))', ...(answer === 'false' ? { borderWidth: 2 } : {}) }}
+              >
+                False{answer === 'false' ? ' ✓' : ''}
+              </button>
             </div>
           )}
           {!feedback && <button type="button" onClick={check} className="mt-4 px-4 py-2 rounded-xl font-medium text-white" style={{ background: ACCENT }}>Check</button>}

@@ -164,11 +164,11 @@ export function HealthHubQuickCheckPage() {
                 type="button"
                 onClick={() => !showFeedback && setSelectedAnswer(opt)}
                 className={`w-full text-left px-4 py-3 rounded-lg border transition ${
-                  selectedAnswer === opt ? 'border-red-500 bg-red-500/10' : ''
+                  selectedAnswer === opt ? 'ring-2 ring-red-500 border-red-500 bg-red-500/10' : ''
                 }`}
                 style={{ borderColor: selectedAnswer === opt ? 'rgb(220 38 38)' : 'rgb(var(--border))' }}
               >
-                {opt}
+                {opt}{selectedAnswer === opt ? ' ✓' : ''}
               </button>
             ))}
           </div>
@@ -181,10 +181,10 @@ export function HealthHubQuickCheckPage() {
                 key={opt}
                 type="button"
                 onClick={() => !showFeedback && setSelectedAnswer(opt)}
-                className={`flex-1 px-4 py-3 rounded-lg border ${selectedAnswer === opt ? 'border-red-500 bg-red-500/10' : ''}`}
+                className={`flex-1 px-4 py-3 rounded-lg border ${selectedAnswer === opt ? 'ring-2 ring-red-500 border-red-500 bg-red-500/10' : ''}`}
                 style={{ borderColor: selectedAnswer === opt ? 'rgb(220 38 38)' : 'rgb(var(--border))' }}
               >
-                {opt}
+                {opt}{selectedAnswer === opt ? ' ✓' : ''}
               </button>
             ))}
           </div>

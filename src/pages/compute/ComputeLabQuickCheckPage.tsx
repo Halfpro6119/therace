@@ -164,7 +164,7 @@ export function ComputeLabQuickCheckPage() {
                 } ${showFeedback && opt === current.correctAnswer ? 'bg-green-500/20 border-green-500' : ''}`}
                 style={{ borderColor: 'rgb(var(--border))' }}
               >
-                {opt}
+                {opt}{selectedAnswer === opt && !showFeedback ? ' ✓' : ''}
               </button>
             ))}
           </div>

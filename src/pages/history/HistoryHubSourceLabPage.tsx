@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getHistoryOptionsForSelection, getSourceSetsForOption } from '../../config/historyHubData';
 
@@ -13,6 +13,10 @@ function getSourceLabOptions(selection: { periodStudy: string; widerWorldDepth: 
   return options.filter((o) => o.section === 'widerWorldDepth' || o.section === 'thematic');
 }
 
+function getSourceLabDraftKey(optionKey: string, partId: string, setId: string): string {
+  return `source-lab:${optionKey}:${partId}:${setId}`;
+}
+
 export function HistoryHubSourceLabPage() {
   const navigate = useNavigate();
   const selection = storage.getHistoryOptionSelection();
@@ -20,9 +24,20 @@ export function HistoryHubSourceLabPage() {
   const [optionKey, setOptionKey] = useState(options[0]?.optionKey ?? '');
   const [partId, setPartId] = useState('');
   const [setIndex, setSetIndex] = useState(0);
+  const [content, setContent] = useState('');
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   const sets = getSourceSetsForOption(optionKey, partId || undefined);
   const set = sets[setIndex];
+
+  useEffect(() => {
+    if (set) {
+      const key = getSourceLabDraftKey(optionKey, set.partId, set.id);
+      setContent(storage.getHubWritingDraft(key));
+    } else {
+      setContent('');
+    }
+  }, [optionKey, set?.id, set?.partId, setIndex]);
 
   if (!selection) {
     return (
@@ -60,6 +75,28 @@ export function HistoryHubSourceLabPage() {
       ) : sets.length === 0 ? (
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No source sets for this option yet.</p>
       ) : set ? (
+        <div className="space-y-4">
+          {sets.length > 1 && (
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setSetIndex((i) => (i === 0 ? sets.length - 1 : i - 1))}
+                className="flex items-center gap-1 px-3 py-2 rounded-lg border text-sm"
+                style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
+              >
+                <ChevronLeft size={18} /> Previous set
+              </button>
+              <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{setIndex + 1} of {sets.length}</span>
+              <button
+                type="button"
+                onClick={() => setSetIndex((i) => (i >= sets.length - 1 ? 0 : i + 1))}
+                className="flex items-center gap-1 px-3 py-2 rounded-lg border text-sm"
+                style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
+              >
+                Next set <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
         <div className="rounded-2xl border p-6 space-y-6" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
           {set.sources.map((src) => (
             <div key={src.id} className="rounded-lg border p-4" style={{ borderColor: 'rgb(var(--border))' }}>
@@ -70,6 +107,42 @@ export function HistoryHubSourceLabPage() {
           ))}
           <p className="font-medium" style={{ color: 'rgb(var(--text))' }}>{set.question}</p>
           <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{set.markSchemeSummary}</p>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Your answer</label>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write your source analysis here…"
+              className="w-full min-h-[200px] rounded-xl border p-4 text-base resize-y focus:outline-none focus:ring-2"
+              style={{
+                background: 'rgb(var(--surface-2))',
+                borderColor: 'rgb(var(--border))',
+                color: 'rgb(var(--text))',
+              }}
+            />
+            <div className="mt-4 flex gap-3 items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  const key = getSourceLabDraftKey(optionKey, set.partId, set.id);
+                  storage.setHubWritingDraft(key, content);
+                  setSaveFeedback(true);
+                  setTimeout(() => setSaveFeedback(false), 2000);
+                }}
+                className="text-sm font-medium"
+                style={{ color: ACCENT }}
+              >
+                {saveFeedback ? 'Saved!' : 'Save draft'}
+              </button>
+              {saveFeedback && (
+                <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  Draft saved – your answer will be here when you return
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
         </div>
       ) : null}
     </div>

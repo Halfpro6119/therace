@@ -17,7 +17,7 @@ export function ScienceLabTopicsPage() {
     return (
       <div className="max-w-4xl mx-auto p-8">
         <p>Invalid subject. Please select Biology, Chemistry, or Physics.</p>
-        <button type="button" onClick={() => navigate('/science-lab/subjects')}>Go Back</button>
+        <button type="button" onClick={() => navigate('/science-lab')}>Go Back</button>
       </div>
     );
   }

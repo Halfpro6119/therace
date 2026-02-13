@@ -183,7 +183,7 @@ export function ScienceLabQuickCheckPage() {
                 disabled={showFeedback}
                 className={`w-full p-4 rounded-lg text-left border transition ${
                   selectedAnswer === option
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'border-gray-200 dark:border-gray-700'
                 } ${showFeedback ? 'opacity-75 cursor-not-allowed' : 'hover:border-blue-300'}`}
                 style={{
@@ -193,7 +193,7 @@ export function ScienceLabQuickCheckPage() {
                   color: 'rgb(var(--text))',
                 }}
               >
-                {option}
+                {option}{selectedAnswer === option ? ' ✓' : ''}
               </button>
             ))}
           </div>

@@ -17,6 +17,7 @@ export function HistoryHubQuestionLabPage() {
   const [itemIndex, setItemIndex] = useState(0);
   const [essayDraft, setEssayDraft] = useState('');
   const [plan, setPlan] = useState<FactorEssayPlan | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   const items = getQuestionLabItemsForOption(optionKey, partId || undefined);
   const item = items[itemIndex];
@@ -35,7 +36,8 @@ export function HistoryHubQuestionLabPage() {
       }
     } else {
       setPlan(null);
-      setEssayDraft('');
+      const saved = storage.getHubWritingDraft(`history-question-lab:${item.id}`);
+      setEssayDraft(saved);
     }
   }, [item?.id, item?.questionFactor, isFactorEssay]);
 
@@ -51,12 +53,24 @@ export function HistoryHubQuestionLabPage() {
     });
   };
 
+  const saveNonFactorDraft = () => {
+    if (!item || isFactorEssay) return;
+    storage.setHubWritingDraft(`history-question-lab:${item.id}`, essayDraft);
+  };
+
   useEffect(() => {
     if (isFactorEssay && plan) {
       const t = setTimeout(saveFactorDraft, 500);
       return () => clearTimeout(t);
     }
   }, [plan, essayDraft, isFactorEssay, item?.id, optionKey, item?.partId]);
+
+  useEffect(() => {
+    if (!isFactorEssay && item) {
+      const t = setTimeout(saveNonFactorDraft, 500);
+      return () => clearTimeout(t);
+    }
+  }, [essayDraft, isFactorEssay, item?.id]);
 
   if (!selection) {
     return (
@@ -109,7 +123,10 @@ export function HistoryHubQuestionLabPage() {
                 <textarea
                   value={essayDraft}
                   onChange={(e) => setEssayDraft(e.target.value)}
-                  onBlur={() => isFactorEssay && plan && saveFactorDraft()}
+                  onBlur={() => {
+                    if (isFactorEssay && plan) saveFactorDraft();
+                    else if (!isFactorEssay) saveNonFactorDraft();
+                  }}
                   placeholder="Write your answer..."
                   rows={12}
                   className="w-full rounded-lg border px-3 py-2 text-sm resize-y"
@@ -119,12 +136,33 @@ export function HistoryHubQuestionLabPage() {
                 <textarea
                   value={essayDraft}
                   onChange={(e) => setEssayDraft(e.target.value)}
+                  onBlur={() => !isFactorEssay && saveNonFactorDraft()}
                   placeholder="Your answer..."
                   rows={4}
                   className="w-full rounded-lg border px-3 py-2 text-sm resize-y"
                   style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}
                 />
               )}
+              <div className="mt-3 flex gap-3 items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isFactorEssay && plan) saveFactorDraft();
+                    else saveNonFactorDraft();
+                    setSaveFeedback(true);
+                    setTimeout(() => setSaveFeedback(false), 2000);
+                  }}
+                  className="text-sm font-medium"
+                  style={{ color: ACCENT }}
+                >
+                  {saveFeedback ? 'Saved!' : 'Save draft'}
+                </button>
+                {saveFeedback && (
+                  <span className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    Draft saved – your answer will be here when you return
+                  </span>
+                )}
+              </div>
             </div>
             {item.modelAnswer && (
               <details className="rounded-xl border p-4" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
