@@ -1876,12 +1876,32 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 | **Religious Studies** | ✅ Expanded | Mistake Museum; chr-trinity, chr-nature-god (Explain Like I'm 11, Compare & Contrast) |
 | **Command Palette** | ✅ Updated | Spaced Review Queue, Interleave Roulette added for access from any page |
 
+### Implemented (Feb 2025 — Full Subject Integration)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| **Mistake Museum — All subjects** | ✅ Implemented | History, English, Maths, Languages added to getMistakeMuseumItems |
+| **English, Maths, Languages superpowers** | ✅ Implemented | ENGLISH_SUPERPOWERS, MATHS_SUPERPOWERS, LANGUAGES_SUPERPOWERS in learningSuperpowersConfig |
+| **History Mistake Museum** | ✅ Implemented | Added to DEFAULT_SUPERPOWERS; HISTORY_MISTAKES items |
+| **Next Action system** | ✅ Implemented | getNextAction() in subjectStats.ts; Home hero uses smart recommendation |
+| **Results "What's Next?"** | ✅ Implemented | Run It Back, Fix-It Drill, Recommended Next Quiz |
+| **Expanded superpower configs** | ✅ Implemented | Psychology (dev-c1, si-c1), Geography (nh-3, econ-1), Health (c-1.4), Compute (c-3.1.4-sort) |
+
+### Implemented (Feb 2025 — Content Expansion)
+
+| Subject | Status | Notes |
+|---------|--------|-------|
+| **Geography** | ✅ Expanded | +20 key terms (toward 300+); concepts, quick checks, question lab already at/above targets; 25 skills tasks, 5 issue scenarios |
+| **Religious Studies** | ✅ Meets targets | 60+ scripture cards, 30+ contrasting views, 80+ quick checks, 5 philosophical arguments |
+| **Business** | ✅ Meets targets | 130+ glossary terms, 120+ quick checks, 5+ case studies, evaluation prompts |
+| **Health** | ✅ Expanded | 22 concepts, 80+ terms, 50+ quick checks, 4+ case studies; Units 3–4 content present |
+| **Languages** | ✅ In progress | French 200+ words, Spanish 150+ words; vocabulary mode implemented |
+
 ### Remaining (Content & Future)
 
-- **Geography, RS, Business** — Content expansion (concepts, terms, quick checks) per quantified targets
-- **Health Units 3–4** — Expand content
-- **Compute Lab** — Per-unit content density
+- **Geography** — Key terms at ~170; target 300+ (further expansion possible)
 - **French/Spanish** — Expand to 1,200+ (Foundation) / 1,700+ (Higher) words; add Grammar, Listening, Reading, Writing, Speaking, Translation modes
+- **Compute Lab** — Per-unit content density to implementation plan targets
 - **Further Maths & Statistics** — Build or remove from scope
 - **Diagrams** — 50+ new diagrams per §22
 

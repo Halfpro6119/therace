@@ -12,6 +12,7 @@ import { XPPopup } from '../components/XPPopup';
 import { cosmeticsStorage } from '../utils/cosmetics';
 import { soundSystem } from '../utils/sounds';
 import { Quiz, Prompt, Subject } from '../types';
+import { getRecommendedQuiz } from '../utils/subjectStats';
 
 export function ResultsPage() {
   const { attemptId } = useParams<{ attemptId: string }>();
@@ -27,6 +28,7 @@ export function ResultsPage() {
   const [newLevel, setNewLevel] = useState(0);
   const [showXPPopup, setShowXPPopup] = useState(false);
   const [previousAttempt, setPreviousAttempt] = useState<any>(null);
+  const [subjectQuizzes, setSubjectQuizzes] = useState<Quiz[]>([]);
 
   const attempt = storage.getAttemptById(attemptId!);
   const profile = storage.getProfile();
@@ -63,6 +65,9 @@ export function ResultsPage() {
 
         const subjectData = await db.getSubject(quizData.subjectId);
         setSubject(subjectData ?? null);
+
+        const quizzesForSubject = await db.getQuizzesBySubject(quizData.subjectId);
+        setSubjectQuizzes(quizzesForSubject);
 
         const allAttempts = storage.getAttemptsByQuizId(quizData.id);
         if (allAttempts.length > 1) {
@@ -377,8 +382,11 @@ export function ResultsPage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4"
       >
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'rgb(var(--text))' }}>
+          What&apos;s Next?
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <motion.button
           onClick={handleRetry}
           whileHover={{ scale: 1.02 }}
@@ -410,6 +418,27 @@ export function ResultsPage() {
           <Share2 size={18} className="sm:w-5 sm:h-5" />
           <span>Share</span>
         </motion.button>
+
+        {(() => {
+          const masteryStates = storage.getMasteryStates();
+          const rec = getRecommendedQuiz(
+            subjectQuizzes.filter(q => q.id !== quiz.id),
+            masteryStates
+          );
+          return rec ? (
+            <motion.button
+              key="recommended"
+              onClick={() => navigate(`/quiz/${rec.quiz.id}`)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-secondary py-4 sm:py-5 flex items-center justify-center gap-2 sm:gap-3 font-semibold min-h-[52px] col-span-full sm:col-span-1"
+            >
+              <Zap size={18} className="sm:w-5 sm:h-5" />
+              <span>Recommended: {rec.quiz.title}</span>
+            </motion.button>
+          ) : null;
+        })()}
+        </div>
       </motion.div>
 
       {masteryState && (

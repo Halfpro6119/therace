@@ -9,6 +9,7 @@ import { storage } from '../utils/storage';
 import { MasteryLevel, Subject, Quiz } from '../types';
 import { SkeletonCard, SkeletonSubjectCard } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
+import { getNextAction } from '../utils/subjectStats';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -51,6 +52,18 @@ export function HomePage() {
     const missedPromptIds = recentAttempts.flatMap(a => a.missedPromptIds);
     return missedPromptIds.slice(0, 10);
   };
+
+  const today = new Date().toDateString();
+  const streakActiveToday = streak.lastActiveDate === today;
+
+  const nextAction = getNextAction(
+    quizzes,
+    masteryStates,
+    getRecentMisses(),
+    lastAttempt ? { quizId: lastAttempt.quizId, finishedAt: lastAttempt.finishedAt } : null,
+    streakActiveToday,
+    streak.currentStreakDays
+  );
 
   const calculateOverallReadiness = () => {
     const totalQuizzes = quizzes.length;
@@ -166,7 +179,7 @@ export function HomePage() {
 
           <div className="flex flex-wrap items-center gap-3">
           <motion.button
-            onClick={() => navigate('/quiz/daily-challenge-1')}
+            onClick={() => nextAction && navigate(nextAction.href)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0 }}
@@ -176,7 +189,7 @@ export function HomePage() {
             style={{ color: 'rgb(var(--accent))' }}
           >
             <Zap size={24} />
-            <span>Start Today's Sprint</span>
+            <span>{nextAction?.label ?? "Start Today's Sprint"}</span>
           </motion.button>
           <motion.button
             onClick={() => navigate('/subjects')}

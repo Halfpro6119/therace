@@ -311,6 +311,28 @@ const GEOGRAPHY_KEY_TERMS: GeographyKeyTerm[] = [
   { id: 'energy-kt7', sectionId: 'human-energy', term: 'Offshore wind', definition: 'Wind turbines in the sea.', inContext: 'UK has large capacity.' },
   { id: 'app-kt6', sectionId: 'app-fieldwork', term: 'Stratified sampling', definition: 'Sampling proportionally from different groups.', inContext: 'E.g. by land use type.' },
   { id: 'app-kt7', sectionId: 'app-fieldwork', term: 'Transect', definition: 'Line along which samples are taken.', inContext: 'Beach profile, vegetation.' },
+  // Additional key terms toward 300+ (Grade 9 spec coverage)
+  { id: 'nh-kt22', sectionId: 'physical-natural-hazards', term: 'Magnitude', definition: 'Size or strength of an earthquake; measured on Richter scale.', inContext: 'Each unit = 10× more energy.' },
+  { id: 'nh-kt23', sectionId: 'physical-natural-hazards', term: 'Lava', definition: 'Molten rock that reaches the Earth\'s surface.', inContext: 'Constructive margins: runny; destructive: viscous.' },
+  { id: 'nh-kt24', sectionId: 'physical-natural-hazards', term: 'Magma', definition: 'Molten rock beneath the Earth\'s surface.', inContext: 'Rises at constructive and destructive margins.' },
+  { id: 'eco-kt13', sectionId: 'physical-ecosystems', term: 'Habitat', definition: 'Place where an organism lives.', inContext: 'Provides food, shelter, breeding sites.' },
+  { id: 'eco-kt14', sectionId: 'physical-ecosystems', term: 'Niche', definition: 'Role of an organism in its ecosystem.', inContext: 'What it eats, where it lives, how it behaves.' },
+  { id: 'rf-kt13', sectionId: 'physical-rainforests', term: 'Biodiversity hotspot', definition: 'Area with very high species diversity under threat.', inContext: 'Amazon, Congo Basin.' },
+  { id: 'rf-kt14', sectionId: 'physical-rainforests', term: 'Carbon sink', definition: 'Area that absorbs more CO2 than it releases.', inContext: 'Rainforests store huge amounts of carbon.' },
+  { id: 'coast-kt18', sectionId: 'physical-coastal', term: 'Arch', definition: 'Opening through a headland formed when cave erodes through.', inContext: 'Durdle Door, Dorset.' },
+  { id: 'coast-kt19', sectionId: 'physical-coastal', term: 'Cave', definition: 'Hollow in cliff formed by wave erosion at weakness.', inContext: 'First stage of arch formation.' },
+  { id: 'river-kt17', sectionId: 'physical-river', term: 'Velocity', definition: 'Speed of river flow.', inContext: 'Faster on outside of meander; affects erosion/deposition.' },
+  { id: 'river-kt18', sectionId: 'physical-river', term: 'Channel', definition: 'The bed and banks of a river.', inContext: 'Shape affects velocity and capacity.' },
+  { id: 'glac-kt13', sectionId: 'physical-glacial', term: 'Lateral moraine', definition: 'Ridge of till along side of glacier.', inContext: 'Marks former ice margin.' },
+  { id: 'glac-kt14', sectionId: 'physical-glacial', term: 'Terminal moraine', definition: 'Ridge of till at glacier snout.', inContext: 'Marks maximum extent of ice.' },
+  { id: 'urb-kt16', sectionId: 'human-urban', term: 'Urban regeneration', definition: 'Improving run-down urban areas.', inContext: 'New housing, jobs, facilities.' },
+  { id: 'urb-kt17', sectionId: 'human-urban', term: 'Deprivation', definition: 'Lack of access to opportunities and resources.', inContext: 'Measured by indices of multiple deprivation.' },
+  { id: 'econ-kt16', sectionId: 'human-economic', term: 'Multilateral aid', definition: 'Aid from international organisations (e.g. World Bank, UN).', inContext: 'Often for large projects.' },
+  { id: 'econ-kt17', sectionId: 'human-economic', term: 'Infrastructure', definition: 'Basic physical structures (roads, water, electricity).', inContext: 'Essential for development.' },
+  { id: 'food-kt7', sectionId: 'human-food', term: 'Subsistence farming', definition: 'Growing food mainly for own consumption.', inContext: 'Common in LICs.' },
+  { id: 'water-kt7', sectionId: 'human-water', term: 'Aquifer', definition: 'Underground layer of rock holding water.', inContext: 'Source of groundwater.' },
+  { id: 'energy-kt8', sectionId: 'human-energy', term: 'Carbon neutral', definition: 'Net zero carbon emissions.', inContext: 'Balance emissions with absorption/offset.' },
+  { id: 'app-kt8', sectionId: 'app-fieldwork', term: 'Bias', definition: 'Systematic error that affects results.', inContext: 'Sampling method can introduce bias.' },
 ];
 
 export function getKeyTermsForSections(sectionIds: GeographySectionId[]): GeographyKeyTerm[] {
@@ -434,6 +456,19 @@ const GEOGRAPHY_QUICK_CHECKS: GeographyQuickCheckItem[] = [
   { id: 'water-qc4', sectionId: 'human-water', type: 'multipleChoice', question: 'What can cause conflict over water?', options: ['Only drought', 'Transboundary rivers', 'Only pollution', 'Only dams'], correctAnswer: 'Transboundary rivers', feedback: { correct: 'Correct.', incorrect: 'Rivers crossing borders (Nile, Colorado) can cause conflict.' } },
   { id: 'energy-qc5', sectionId: 'human-energy', type: 'shortAnswer', question: 'What provides base load electricity?', correctAnswer: ['nuclear', 'coal', 'gas', 'fossil'], feedback: { correct: 'Correct.', incorrect: 'Nuclear and fossil fuels provide constant base load.' } },
   { id: 'app-qc5', sectionId: 'app-fieldwork', type: 'multipleChoice', question: 'What is a transect?', options: ['Random sample', 'Line along which samples are taken', 'Map type', 'Graph'], correctAnswer: 'Line along which samples are taken', feedback: { correct: 'Correct.', incorrect: 'Transect = sampling along a line.' } },
+  // Additional quick checks for 120+ target (Grade 9 coverage)
+  { id: 'nh-qc12', sectionId: 'physical-natural-hazards', type: 'shortAnswer', question: 'What is magma called when it reaches the surface?', correctAnswer: ['lava'], feedback: { correct: 'Correct.', incorrect: 'Lava is molten rock on the surface.' } },
+  { id: 'eco-qc7', sectionId: 'physical-ecosystems', type: 'multipleChoice', question: 'What is a habitat?', options: ['A food chain', 'Where an organism lives', 'A type of consumer', 'A decomposer'], correctAnswer: 'Where an organism lives', feedback: { correct: 'Correct.', incorrect: 'Habitat = place where an organism lives.' } },
+  { id: 'rf-qc7', sectionId: 'physical-rainforests', type: 'trueFalse', question: 'Rainforests act as carbon sinks.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'They absorb and store huge amounts of CO2.' } },
+  { id: 'coast-qc9', sectionId: 'physical-coastal', type: 'shortAnswer', question: 'What landform is formed when a cave erodes through a headland?', correctAnswer: ['arch'], feedback: { correct: 'Correct.', incorrect: 'An arch forms when two caves meet.' } },
+  { id: 'river-qc9', sectionId: 'physical-river', type: 'multipleChoice', question: 'Where is river velocity fastest in a meander?', options: ['Inside of bend', 'Outside of bend', 'Centre', 'Bottom'], correctAnswer: 'Outside of bend', feedback: { correct: 'Correct.', incorrect: 'Fastest flow is on the outside; erosion there.' } },
+  { id: 'glac-qc7', sectionId: 'physical-glacial', type: 'shortAnswer', question: 'What type of moraine forms at the end of a glacier?', correctAnswer: ['terminal', 'end moraine'], feedback: { correct: 'Correct.', incorrect: 'Terminal moraine marks the snout.' } },
+  { id: 'urb-qc9', sectionId: 'human-urban', type: 'trueFalse', question: 'Urban regeneration can reduce deprivation.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'New jobs, housing and facilities can help.' } },
+  { id: 'econ-qc9', sectionId: 'human-economic', type: 'multipleChoice', question: 'What is infrastructure?', options: ['Aid money', 'Basic physical structures like roads', 'A type of TNC', 'Trade agreement'], correctAnswer: 'Basic physical structures like roads', feedback: { correct: 'Correct.', incorrect: 'Roads, water, electricity, etc.' } },
+  { id: 'food-qc5', sectionId: 'human-food', type: 'shortAnswer', question: 'What do we call farming mainly for own consumption?', correctAnswer: ['subsistence'], feedback: { correct: 'Correct.', incorrect: 'Subsistence farming.' } },
+  { id: 'water-qc5', sectionId: 'human-water', type: 'multipleChoice', question: 'What is an aquifer?', options: ['A dam', 'Underground water-bearing rock', 'A river', 'A reservoir'], correctAnswer: 'Underground water-bearing rock', feedback: { correct: 'Correct.', incorrect: 'Aquifer = underground water storage.' } },
+  { id: 'energy-qc6', sectionId: 'human-energy', type: 'trueFalse', question: 'Carbon neutral means net zero carbon emissions.', correctAnswer: 'true', feedback: { correct: 'Correct.', incorrect: 'Emissions balanced by absorption or offset.' } },
+  { id: 'app-qc6', sectionId: 'app-fieldwork', type: 'shortAnswer', question: 'What can sampling method introduce into data?', correctAnswer: ['bias'], feedback: { correct: 'Correct.', incorrect: 'Bias = systematic error.' } },
 ];
 
 export function getQuickChecksForSections(sectionIds: GeographySectionId[]): GeographyQuickCheckItem[] {

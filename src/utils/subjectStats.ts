@@ -258,3 +258,108 @@ export const getRecommendedQuiz = (
 
   return quizzes.length > 0 ? { quiz: quizzes[0], reason: 'Keep practicing' } : null;
 };
+
+/** Next Action system — Design Plan §3B.2: single smart recommendation for Home hero */
+export interface NextAction {
+  action: 'fixit' | 'streak' | 'continue' | 'weakest' | 'unseen' | 'speed' | 'sprint';
+  label: string;
+  href: string;
+  reason: string;
+  urgency: 'high' | 'medium' | 'low';
+}
+
+export function getNextAction(
+  quizzes: Quiz[],
+  masteryStates: Record<string, MasteryState>,
+  recentMissedPromptIds: string[],
+  lastAttempt: { quizId: string; finishedAt: number } | null,
+  streakActiveToday: boolean,
+  streakCurrentDays: number
+): NextAction | null {
+  if (quizzes.length === 0) return null;
+
+  // 1. Has missed questions from recent attempts → Fix-It Drill
+  if (recentMissedPromptIds.length > 0) {
+    return {
+      action: 'fixit',
+      label: 'Fix Your Mistakes',
+      href: '/quiz/daily-challenge-1?mode=fixit',
+      reason: `${recentMissedPromptIds.length} questions to review`,
+      urgency: 'high',
+    };
+  }
+
+  // 2. Streak at risk (no activity today) → Save streak
+  if (streakCurrentDays > 0 && !streakActiveToday) {
+    const rec = getRecommendedQuiz(quizzes, masteryStates);
+    return {
+      action: 'streak',
+      label: 'Save Your Streak',
+      href: rec ? `/quiz/${rec.quiz.id}` : '/quiz/daily-challenge-1',
+      reason: `${streakCurrentDays}-day streak — one quiz to save it`,
+      urgency: 'high',
+    };
+  }
+
+  // 3. Has last attempt (resumable / continue) → Continue last quiz
+  if (lastAttempt) {
+    const lastQuiz = quizzes.find(q => q.id === lastAttempt.quizId);
+    if (lastQuiz) {
+      return {
+        action: 'continue',
+        label: `Continue ${lastQuiz.title}`,
+        href: `/quiz/${lastQuiz.id}`,
+        reason: 'Pick up where you left off',
+        urgency: 'medium',
+      };
+    }
+  }
+
+  // 4–6. Use getRecommendedQuiz for weakest / unseen / speed
+  const rec = getRecommendedQuiz(quizzes, masteryStates);
+  if (rec) {
+    if (rec.reason === 'Unseen') {
+      return {
+        action: 'unseen',
+        label: `Try ${rec.quiz.title}`,
+        href: `/quiz/${rec.quiz.id}`,
+        reason: 'New quiz to explore',
+        urgency: 'medium',
+      };
+    }
+    if (rec.reason === 'Needs practice') {
+      return {
+        action: 'weakest',
+        label: `Strengthen ${rec.quiz.title}`,
+        href: `/quiz/${rec.quiz.id}`,
+        reason: 'Build mastery on this topic',
+        urgency: 'medium',
+      };
+    }
+    if (rec.reason === 'Needs speed') {
+      return {
+        action: 'speed',
+        label: `Beat Your Time: ${rec.quiz.title}`,
+        href: `/quiz/${rec.quiz.id}`,
+        reason: 'You know it — now get faster',
+        urgency: 'medium',
+      };
+    }
+    return {
+      action: 'sprint',
+      label: `Practice ${rec.quiz.title}`,
+      href: `/quiz/${rec.quiz.id}`,
+      reason: rec.reason,
+      urgency: 'low',
+    };
+  }
+
+  // 7. Default → Today's Sprint
+  return {
+    action: 'sprint',
+    label: "Start Today's Sprint",
+    href: '/quiz/daily-challenge-1',
+    reason: 'Daily challenge',
+    urgency: 'low',
+  };
+}

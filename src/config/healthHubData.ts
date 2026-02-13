@@ -501,6 +501,30 @@ export const HEALTH_CASE_STUDIES: HealthCaseStudy[] = [
       { id: 'cs-4-3-q2', question: 'Describe a person-centred approach to this health promotion activity.', marks: 4, type: 'describe', markScheme: [{ idea: 'Student involvement', marks: 2 }, { idea: 'Relevant / engaging', marks: 2 }], modelAnswer: 'Involve students in designing the campaign – they know what would work. Use peer-led activities, practical demonstrations (e.g. sugar content) and focus on benefits they value (energy, skin, sport) rather than just "don\'t do this".' },
     ],
   },
+  {
+    id: 'cs-2-4',
+    unitId: '2',
+    title: 'Sophie – voluntary sector support',
+    scenario: 'Sophie is 16 and has been caring for her mother who has MS. She has missed school and feels isolated. A voluntary organisation runs a young carers group that offers respite and peer support. Sophie is unsure whether to go.',
+    clientGroup: 'Adolescent',
+    setting: 'Community / voluntary sector',
+    questions: [
+      { id: 'cs-2-4-q1', question: 'Explain how the voluntary sector differs from statutory provision.', marks: 4, type: 'explain', markScheme: [{ idea: 'Not required by law', marks: 2 }, { idea: 'Charity / donations / volunteers', marks: 2 }], modelAnswer: 'Voluntary provision is not required by law; it is provided by charities and non-profit organisations. It often relies on donations and volunteers, whereas statutory services (e.g. NHS) are funded by government and required by law.' },
+      { id: 'cs-2-4-q2', question: 'Describe two benefits the young carers group could offer Sophie.', marks: 4, type: 'describe', markScheme: [{ idea: 'Respite / time for herself', marks: 2 }, { idea: 'Peer support / reduced isolation', marks: 2 }], modelAnswer: 'Respite – time away from caring responsibilities. Peer support – meeting others in similar situations reduces isolation and provides emotional support from people who understand.' },
+    ],
+  },
+  {
+    id: 'cs-4-4',
+    unitId: '4',
+    title: 'Day centre – promoting independence',
+    scenario: 'A day centre supports adults with learning disabilities. Staff have noticed that some service users are capable of making their own drinks but staff often do it for them to save time. The manager wants to promote independence.',
+    clientGroup: 'Adults with learning disabilities',
+    setting: 'Day centre',
+    questions: [
+      { id: 'cs-4-4-q1', question: 'Explain why promoting independence is important in care.', marks: 4, type: 'explain', markScheme: [{ idea: 'Dignity / self-worth', marks: 2 }, { idea: 'Skills / confidence', marks: 2 }], modelAnswer: 'Promoting independence upholds dignity and self-worth – doing things for oneself matters. It also builds skills and confidence, which can improve quality of life and reduce dependence over time.' },
+      { id: 'cs-4-4-q2', question: 'Describe how care workers could support service users to make their own drinks while ensuring safety.', marks: 4, type: 'describe', markScheme: [{ idea: 'Scaffolding / support', marks: 2 }, { idea: 'Risk assessment / supervision', marks: 2 }], modelAnswer: 'Provide step-by-step support or visual guides; allow extra time. Assess risks (e.g. hot water) and supervise initially, reducing support as confidence grows. Use adapted equipment if needed.' },
+    ],
+  },
 ];
 
 // ============================================================================

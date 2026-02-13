@@ -211,6 +211,38 @@ const PSYCHOLOGY_SUPERPOWERS: Record<string, SuperpowerContent> = {
       ],
     },
   },
+  'dev-c1': {
+    explainLike11: {
+      concept: "Piaget's stages of development",
+      modelExplanation:
+        "Think of it like levels in a game. Babies (0–2) learn by touching and moving. Toddlers (2–7) use words but can't yet see things from others' views. Kids (7–11) start to think logically about real things. Teens (11+) can think about abstract ideas and 'what if'.",
+    },
+    schemaBuilder: {
+      title: "Piaget's stages",
+      layout: 'flow',
+      centralConcept: 'Cognitive development',
+      nodes: [
+        { id: 'sensorimotor', label: 'Sensorimotor (0–2)' },
+        { id: 'preop', label: 'Pre-operational (2–7)' },
+        { id: 'concrete', label: 'Concrete operational (7–11)' },
+        { id: 'formal', label: 'Formal operational (11+)' },
+      ],
+      slots: [
+        { id: 's1', label: 'Object permanence, senses' },
+        { id: 's2', label: 'Language, egocentrism' },
+        { id: 's3', label: 'Conservation, logical (concrete)' },
+        { id: 's4', label: 'Abstract thought, hypotheticals' },
+      ],
+      correctMapping: { sensorimotor: 's1', preop: 's2', concrete: 's3', formal: 's4' },
+    },
+  },
+  'si-c1': {
+    explainLike11: {
+      concept: 'Conformity and obedience',
+      modelExplanation:
+        "Conformity is when you go along with the group even if you disagree — like wearing the same clothes as friends. Obedience is when you follow an authority figure's orders — like a teacher or boss. Both show how others influence our behaviour.",
+    },
+  },
 };
 
 // ============================================================================
@@ -323,6 +355,26 @@ const GEOGRAPHY_SUPERPOWERS: Record<string, SuperpowerContent> = {
       content: 'Erosion (hydraulic action, abrasion, attrition), transport (longshore drift), deposition. Creates headlands, bays, cliffs, beaches, spits.',
     },
   },
+  'nh-3': {
+    explainLike11: {
+      concept: 'Tropical storms',
+      modelExplanation:
+        "Imagine a giant spinning weather system over warm ocean water. Warm air rises, cool air rushes in, and the Earth's rotation makes it spin. The warm water fuels it like petrol. When it hits land, it loses its fuel and weakens.",
+    },
+  },
+  'econ-1': {
+    compareContrast: {
+      conceptA: 'LIC (Low Income Country)',
+      conceptB: 'HIC (High Income Country)',
+      statements: [
+        { id: '1', text: 'Low GNI per capita', correctColumn: 'conceptA' },
+        { id: '2', text: 'High HDI typically', correctColumn: 'conceptB' },
+        { id: '3', text: 'Rapid urbanisation', correctColumn: 'conceptA' },
+        { id: '4', text: 'Established infrastructure', correctColumn: 'conceptB' },
+        { id: '5', text: 'Development varies within', correctColumn: 'same' },
+      ],
+    },
+  },
 };
 
 // ============================================================================
@@ -373,6 +425,13 @@ const HEALTH_SUPERPOWERS: Record<string, SuperpowerContent> = {
         { id: 's4', label: 'Protecting from harm' },
       ],
       correctMapping: { dignity: 's1', respect: 's2', confidentiality: 's3', safeguarding: 's4' },
+    },
+  },
+  'c-1.4-life-events': {
+    retrieval: {
+      prompt: 'What are expected vs unexpected life events?',
+      hint: 'Think about what we can predict.',
+      content: 'Expected: school, marriage, retirement. Unexpected: bereavement, accident, redundancy. Both affect development; unexpected often need stronger support.',
     },
   },
 };
@@ -427,6 +486,13 @@ const COMPUTE_SUPERPOWERS: Record<string, SuperpowerContent> = {
         { id: '4', text: 'Uses 0–9 and A–F', correctColumn: 'conceptB' },
         { id: '5', text: 'Represents same numbers', correctColumn: 'same' },
       ],
+    },
+  },
+  'c-3.1.4-sort': {
+    retrieval: {
+      prompt: 'What is the difference between bubble sort and merge sort?',
+      hint: 'Think about how they work and efficiency.',
+      content: 'Bubble sort: compare adjacent pairs, swap if wrong order; O(n²). Merge sort: divide, sort halves, merge; O(n log n). Merge sort more efficient for large lists.',
     },
   },
 };
@@ -608,6 +674,153 @@ const COMPUTE_MISTAKES: MistakeItem[] = [
   },
 ];
 
+const HISTORY_MISTAKES: MistakeItem[] = [
+  {
+    wrongAnswer: 'The Treaty of Versailles caused the Second World War',
+    whyStudentsThinkThis: 'We learn that Versailles was harsh and that Hitler wanted to overturn it.',
+    whyItsWrong: 'Versailles contributed to conditions (resentment, economic strain) but did not directly cause WW2. Many factors: Hitler\'s actions, appeasement, invasion of Poland.',
+    correctApproach: 'Versailles created resentment and instability. It was one factor among many. Avoid oversimplifying causation.',
+  },
+  {
+    wrongAnswer: 'Source content and provenance are the same thing',
+    whyStudentsThinkThis: 'Both are about what the source says or shows.',
+    whyItsWrong: 'Content = what the source says/shows. Provenance = who made it, when, why, for whom. Different types of evidence.',
+    correctApproach: 'Content: the message. Provenance: origin and purpose. Use both for full analysis.',
+  },
+];
+
+const ENGLISH_MISTAKES: MistakeItem[] = [
+  {
+    wrongAnswer: 'Using more sophisticated vocabulary always improves an answer',
+    whyStudentsThinkThis: 'We are told to use ambitious vocabulary for higher grades.',
+    whyItsWrong: 'Forced or inappropriate vocabulary can obscure meaning. Precision and fit matter more than complexity.',
+    correctApproach: 'Choose words that precisely convey your meaning. Sophistication comes from clarity and control, not jargon.',
+  },
+  {
+    wrongAnswer: 'AO2 is only about identifying techniques',
+    whyStudentsThinkThis: 'We learn to spot similes, metaphors, etc.',
+    whyItsWrong: 'AO2 requires analysis of how language/structure creates meaning and effect — not just labelling.',
+    correctApproach: 'Identify technique, then explain what it does and why it matters. Effect and meaning are key.',
+  },
+];
+
+const MATHS_MISTAKES: MistakeItem[] = [
+  {
+    wrongAnswer: 'Area and perimeter increase together when you scale a shape',
+    whyStudentsThinkThis: 'Bigger shape seems to mean more of everything.',
+    whyItsWrong: 'Area scales with the square of the scale factor; perimeter scales linearly. Double the sides → 4× area, 2× perimeter.',
+    correctApproach: 'Perimeter ∝ scale factor. Area ∝ (scale factor)². Remember the difference.',
+  },
+  {
+    wrongAnswer: 'A negative times a negative gives a negative',
+    whyStudentsThinkThis: 'Two negatives might seem to stay negative.',
+    whyItsWrong: 'Negative × negative = positive. Think: owing a debt (negative) of −5 is like having +5.',
+    correctApproach: '−a × −b = +ab. Same rule for division: −a ÷ −b = +a/b.',
+  },
+];
+
+const LANGUAGES_MISTAKES: MistakeItem[] = [
+  {
+    wrongAnswer: 'French/Spanish adjectives always come after the noun',
+    whyStudentsThinkThis: 'We learn "maison blanche" (house white) early on.',
+    whyItsWrong: 'Some adjectives go before (bon, mauvais, petit, grand, jeune, vieux, etc.); others after. Meaning can change (ancien = former vs old).',
+    correctApproach: 'Learn BAGS (Beauty, Age, Goodness, Size) — these often go before. Others typically after.',
+  },
+  {
+    wrongAnswer: 'Por and para mean the same in Spanish',
+    whyStudentsThinkThis: 'Both translate to "for" in English.',
+    whyItsWrong: 'Por = cause, means, duration, exchange. Para = purpose, destination, deadline, recipient.',
+    correctApproach: 'Por = through/by/reason. Para = in order to/for (purpose)/towards. Learn the distinction.',
+  },
+];
+
+// ============================================================================
+// ENGLISH, MATHS, LANGUAGES — Superpower content (for future Concept Labs)
+// ============================================================================
+
+const ENGLISH_SUPERPOWERS: Record<string, SuperpowerContent> = {
+  'lang-structure': {
+    compareContrast: {
+      conceptA: 'Language (AO2)',
+      conceptB: 'Structure (AO2)',
+      statements: [
+        { id: '1', text: 'Word choice, imagery, sentence forms', correctColumn: 'conceptA' },
+        { id: '2', text: 'How the text is organised', correctColumn: 'conceptB' },
+        { id: '3', text: 'Shift in focus or perspective', correctColumn: 'conceptB' },
+        { id: '4', text: 'Metaphor, simile, alliteration', correctColumn: 'conceptA' },
+        { id: '5', text: 'Both contribute to meaning and effect', correctColumn: 'same' },
+      ],
+    },
+    retrieval: {
+      prompt: 'What do AO1, AO2, AO3 and AO4 test in English Language?',
+      hint: 'Think: what you understand, how it\'s written, your view, your writing.',
+      content: 'AO1: Identify and interpret. AO2: Analyse language and structure. AO3: Compare writers\' ideas. AO4: Evaluate texts critically.',
+    },
+  },
+  'writing-planning': {
+    retrieval: {
+      prompt: 'Before writing, what should you plan?',
+      hint: 'Think about structure and content.',
+      content: 'Opening hook, main points/paragraphs, evidence or examples, conclusion. For creative: character, setting, conflict, resolution.',
+    },
+  },
+};
+
+const MATHS_SUPERPOWERS: Record<string, SuperpowerContent> = {
+  'algebra-expand': {
+    workedExample: {
+      title: 'Expand double brackets',
+      problem: 'Expand (x + 3)(x − 2)',
+      steps: [
+        { id: 's1', content: 'First: x × x = x²', given: true },
+        { id: 's2', content: 'Outer: x × (−2) = −2x', given: true },
+        { id: 's3', content: 'Inner: 3 × x = 3x', given: false, modelAnswer: '3x' },
+        { id: 's4', content: 'Last: 3 × (−2) = −6', given: false, modelAnswer: '−6' },
+        { id: 's5', content: 'Combine: x² − 2x + 3x − 6 = x² + x − 6', given: false, modelAnswer: 'x² + x − 6' },
+      ],
+    },
+    retrieval: {
+      prompt: 'What is FOIL for expanding (a + b)(c + d)?',
+      hint: 'First, Outer, Inner, Last.',
+      content: 'First: a×c. Outer: a×d. Inner: b×c. Last: b×d. Sum them.',
+    },
+  },
+  'quadratics-solve': {
+    retrieval: {
+      prompt: 'What are the methods to solve a quadratic equation?',
+      hint: 'Think about factorising, formula, completing the square.',
+      content: 'Factorise (if possible), quadratic formula x = (−b ± √(b²−4ac)) / 2a, or complete the square.',
+    },
+  },
+};
+
+const LANGUAGES_SUPERPOWERS: Record<string, SuperpowerContent> = {
+  'theme-identity': {
+    memoryPalace: {
+      title: 'Identity theme vocabulary',
+      items: [
+        { id: '1', label: 'Family members' },
+        { id: '2', label: 'Personal description' },
+        { id: '3', label: 'Hobbies and interests' },
+        { id: '4', label: 'Daily routine' },
+        { id: '5', label: 'Relationships' },
+      ],
+      rooms: [
+        { id: 'hall', name: 'Hall', icon: '🚪' },
+        { id: 'kitchen', name: 'Kitchen', icon: '🍳' },
+        { id: 'living', name: 'Living room', icon: '🛋️' },
+        { id: 'bedroom', name: 'Bedroom', icon: '🛏️' },
+        { id: 'bathroom', name: 'Bathroom', icon: '🚿' },
+      ],
+    },
+    retrieval: {
+      prompt: 'What are the three main themes in GCSE French/Spanish?',
+      hint: 'Think about yourself, your world, and the future.',
+      content: 'Identity and culture; Local, national, international and global areas; Current and future study and employment.',
+    },
+  },
+};
+
 // ============================================================================
 // PUBLIC API
 // ============================================================================
@@ -621,9 +834,9 @@ const CONFIG: Record<SubjectId, Record<string, SuperpowerContent>> = {
   compute: COMPUTE_SUPERPOWERS,
   'religious-studies': RS_SUPERPOWERS,
   history: HISTORY_SUPERPOWERS,
-  english: {},
-  maths: {},
-  languages: {},
+  english: ENGLISH_SUPERPOWERS,
+  maths: MATHS_SUPERPOWERS,
+  languages: LANGUAGES_SUPERPOWERS,
 };
 
 export type SuperpowerType = 'explainLike11' | 'conceptBridge' | 'compareContrast' | 'schemaBuilder' | 'retrieval' | 'mistakeMuseum' | 'memoryPalace' | 'workedExample';
@@ -634,13 +847,13 @@ export const DEFAULT_SUPERPOWERS: Record<SubjectId, SuperpowerType[]> = {
   psychology: ['explainLike11', 'compareContrast', 'conceptBridge', 'mistakeMuseum'],
   business: ['explainLike11', 'compareContrast', 'schemaBuilder', 'workedExample', 'mistakeMuseum'],
   geography: ['explainLike11', 'compareContrast', 'retrieval', 'mistakeMuseum'],
-  health: ['compareContrast', 'schemaBuilder', 'mistakeMuseum'],
-  compute: ['explainLike11', 'schemaBuilder', 'retrieval', 'mistakeMuseum'],
+  health: ['explainLike11', 'compareContrast', 'schemaBuilder', 'mistakeMuseum'],
+  compute: ['explainLike11', 'schemaBuilder', 'retrieval', 'compareContrast', 'mistakeMuseum'],
   'religious-studies': ['memoryPalace', 'explainLike11', 'compareContrast', 'mistakeMuseum'],
-  history: ['explainLike11', 'retrieval', 'conceptBridge', 'compareContrast', 'schemaBuilder'],
-  english: ['compareContrast', 'retrieval'],
+  history: ['explainLike11', 'retrieval', 'conceptBridge', 'compareContrast', 'schemaBuilder', 'mistakeMuseum'],
+  english: ['compareContrast', 'retrieval', 'mistakeMuseum'],
   maths: ['retrieval', 'workedExample', 'mistakeMuseum'],
-  languages: ['memoryPalace', 'retrieval'],
+  languages: ['memoryPalace', 'retrieval', 'mistakeMuseum'],
 };
 
 export function getSuperpowerContent(
@@ -675,5 +888,9 @@ export function getMistakeMuseumItems(subjectId: SubjectId, topic?: string): Mis
   if (subjectId === 'health') return HEALTH_MISTAKES;
   if (subjectId === 'religious-studies') return RS_MISTAKES;
   if (subjectId === 'compute') return COMPUTE_MISTAKES;
+  if (subjectId === 'history') return HISTORY_MISTAKES;
+  if (subjectId === 'english') return ENGLISH_MISTAKES;
+  if (subjectId === 'maths') return MATHS_MISTAKES;
+  if (subjectId === 'languages') return LANGUAGES_MISTAKES;
   return [];
 }
