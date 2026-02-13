@@ -419,6 +419,24 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       },
     ],
   },
+  // Stretch concept (Grade 9) — Implementation plan
+  {
+    id: 'bio-bioaccumulation',
+    subject: 'Biology',
+    topic: 'Ecology',
+    coreIdea: 'Bioaccumulation is the build-up of toxins in an organism over time. Biomagnification is the increase in toxin concentration up the food chain, as each trophic level consumes many organisms from the level below.',
+    visualModel: {
+      type: 'flow',
+      description: 'Food chain: plankton (low toxin) → small fish (more) → large fish (more) → predator (highest). Toxin concentration increases at each level.',
+    },
+    commonMisconception: 'Toxins are diluted as they move up the food chain (actually they concentrate).',
+    changeScenarios: [
+      {
+        prompt: 'Why might a top predator have dangerous levels of a toxin even if the toxin is only present in tiny amounts in the environment?',
+        explanation: 'Each consumer eats many organisms; toxins are stored in fat and not excreted; concentration builds up at each trophic level (biomagnification).',
+      },
+    ],
+  },
   {
     id: 'chem-rate-reaction',
     subject: 'Chemistry',

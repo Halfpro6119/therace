@@ -262,6 +262,16 @@ export const HEALTH_TERMS: HealthTerm[] = [
   { id: 't-personal-care', unitId: '4', topicId: '4.2', term: 'Personal care', definition: 'Support with washing, dressing, toileting', inContext: 'Requires dignity and privacy.' },
   { id: 't-mental-wellbeing', unitId: '3', topicId: '3.1', term: 'Mental wellbeing', definition: 'Emotional and psychological health', inContext: 'Part of holistic health.' },
   { id: 't-social-wellbeing', unitId: '3', topicId: '3.1', term: 'Social wellbeing', definition: 'Quality of relationships and social connections', inContext: 'Part of holistic health.' },
+  // Implementation plan — Unit 3–4 expansion
+  { id: 't-evaluation', unitId: '3', topicId: '3.4', term: 'Evaluation', definition: 'Assessing effectiveness of health promotion', inContext: 'Did the intervention work?' },
+  { id: 't-intervention', unitId: '3', topicId: '3.4', term: 'Intervention', definition: 'Action taken to improve health', inContext: 'E.g. smoking cessation programme.' },
+  { id: 't-target-audience', unitId: '3', topicId: '3.4', term: 'Target audience', definition: 'Group the health promotion is aimed at', inContext: 'Tailored to their needs.' },
+  { id: 't-health-inequality', unitId: '3', topicId: '3.2', term: 'Health inequality', definition: 'Difference in health outcomes between groups', inContext: 'E.g. by income, area.' },
+  { id: 't-risk-factor', unitId: '3', topicId: '3.2', term: 'Risk factor', definition: 'Factor that increases chance of illness', inContext: 'Smoking, poor diet, inactivity.' },
+  { id: 't-protective-factor', unitId: '3', topicId: '3.2', term: 'Protective factor', definition: 'Factor that reduces risk of illness', inContext: 'Exercise, social support.' },
+  { id: 't-advocacy-care', unitId: '4', topicId: '4.2', term: 'Advocacy in care', definition: 'Supporting someone to express their views', inContext: 'When they cannot speak for themselves.' },
+  { id: 't-care-planning', unitId: '4', topicId: '4.1', term: 'Care planning', definition: 'Process of identifying needs and how to meet them', inContext: 'Person-centred and reviewed.' },
+  { id: 't-behaviour-support', unitId: '4', topicId: '4.4', term: 'Behaviour support', definition: 'Helping someone change unhealthy habits', inContext: 'Ongoing, not one-off.' },
 ];
 
 // ============================================================================

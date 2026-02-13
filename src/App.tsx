@@ -135,6 +135,12 @@ import { ComputeLabQuestionLabPage } from './pages/compute/ComputeLabQuestionLab
 import { LanguagesHubHomePage } from './pages/languages/LanguagesHubHomePage';
 import { LanguagesHubLanguagePage } from './pages/languages/LanguagesHubLanguagePage';
 import { LanguagesHubVocabularyPage } from './pages/languages/LanguagesHubVocabularyPage';
+import { LanguagesHubGrammarPage } from './pages/languages/LanguagesHubGrammarPage';
+import { LanguagesHubListeningPage } from './pages/languages/LanguagesHubListeningPage';
+import { LanguagesHubReadingPage } from './pages/languages/LanguagesHubReadingPage';
+import { LanguagesHubWritingPage } from './pages/languages/LanguagesHubWritingPage';
+import { LanguagesHubSpeakingPage } from './pages/languages/LanguagesHubSpeakingPage';
+import { LanguagesHubTranslationPage } from './pages/languages/LanguagesHubTranslationPage';
 import { LanguagesHubPlaceholderPage } from './pages/languages/LanguagesHubPlaceholderPage';
 import { LearningSuperpowersPage } from './pages/LearningSuperpowersPage';
 import { AdminLayout } from './admin/AdminLayout';
@@ -372,6 +378,12 @@ function App() {
                 <Route path="/languages-hub" element={<LanguagesHubHomePage />} />
                 <Route path="/languages-hub/:languageId" element={<LanguagesHubLanguagePage />} />
                 <Route path="/languages-hub/:languageId/vocabulary" element={<LanguagesHubVocabularyPage />} />
+                <Route path="/languages-hub/:languageId/grammar" element={<LanguagesHubGrammarPage />} />
+                <Route path="/languages-hub/:languageId/listening" element={<LanguagesHubListeningPage />} />
+                <Route path="/languages-hub/:languageId/reading" element={<LanguagesHubReadingPage />} />
+                <Route path="/languages-hub/:languageId/writing" element={<LanguagesHubWritingPage />} />
+                <Route path="/languages-hub/:languageId/speaking" element={<LanguagesHubSpeakingPage />} />
+                <Route path="/languages-hub/:languageId/translation" element={<LanguagesHubTranslationPage />} />
                 <Route path="/languages-hub/:languageId/:modeId" element={<LanguagesHubPlaceholderPage />} />
                 <Route path="/health-hub/unit/:unitId/case-study" element={<HealthHubCaseStudyPage />} />
                 <Route path="/health-hub/unit/:unitId/investigation" element={<HealthHubInvestigationPage />} />

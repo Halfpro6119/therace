@@ -877,6 +877,45 @@ export const BUSINESS_CASE_STUDIES: BusinessCaseStudy[] = [
       { id: 'cs-nmw-q3', question: 'Evaluate how CareHome Services should respond to the NMW increase.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Options: prices, hours, profit', marks: 2 }, { idea: 'Stakeholder impact', marks: 2 }, { idea: 'Conclusion', marks: 2 }], modelAnswer: 'Raising prices may lose clients. Cutting hours may reduce quality of care. Accepting lower profit may not be sustainable. A combination might work: small price rise, efficiency gains, and modest profit reduction. Must comply with law.' },
     ],
   },
+  {
+    id: 'cs-p2-penetration',
+    unitIds: ['3.5', '3.6'],
+    paper: 2,
+    title: 'NewPhone Ltd',
+    scenario: 'NewPhone Ltd is launching a budget smartphone. It is considering penetration pricing (low initial price) to gain market share quickly. Competitors charge £200–300. NewPhone\'s cost is £120 per unit. It aims to sell 50,000 units in year one.',
+    data: 'Cost: £120. Penetration price option: £150. Competitor range: £200–300. Target: 50,000 units year 1.',
+    questions: [
+      { id: 'cs-pen-q1', question: 'Define the term penetration pricing.', marks: 2, type: 'define', markScheme: [{ idea: 'Setting low initial price to gain market share', marks: 2 }], modelAnswer: 'Penetration pricing is setting a low initial price when launching a product to attract customers and gain market share quickly.' },
+      { id: 'cs-pen-q2', question: 'Calculate the profit per unit if NewPhone uses penetration pricing at £150.', marks: 2, type: 'calculate', markScheme: [{ idea: '150 − 120 = 30', marks: 2 }], modelAnswer: 'Profit per unit = £150 − £120 = £30.' },
+      { id: 'cs-pen-q3', question: 'Evaluate whether penetration pricing is the right strategy for NewPhone.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Benefits: market share, volume', marks: 2 }, { idea: 'Drawbacks: low margin, may be hard to raise price later', marks: 2 }, { idea: 'Conclusion', marks: 2 }], modelAnswer: 'Penetration pricing could win customers from higher-priced rivals and achieve volume. However, £30 margin is thin; if sales fall short, profit suffers. Raising price later may lose customers. Depends on whether the business can achieve scale and whether the product can justify a higher price once established.' },
+    ],
+  },
+  {
+    id: 'cs-p1-procurement',
+    unitIds: ['3.2', '3.3'],
+    paper: 1,
+    title: 'BuildCo Ltd',
+    scenario: 'BuildCo Ltd is a construction company. It is reviewing its procurement. Currently it uses many small suppliers. It is considering switching to fewer, larger suppliers to get bulk discounts. Quality and delivery reliability are concerns.',
+    data: 'Current: 20 suppliers, average order £5,000. Proposed: 5 suppliers, average order £25,000. Expected discount: 8%. One large supplier has had delivery delays.',
+    questions: [
+      { id: 'cs-proc-q1', question: 'Define the term procurement.', marks: 2, type: 'define', markScheme: [{ idea: 'Process of obtaining goods and services from suppliers', marks: 2 }], modelAnswer: 'Procurement is the process of obtaining goods and services from suppliers.' },
+      { id: 'cs-proc-q2', question: 'Explain one risk of using fewer, larger suppliers for BuildCo.', marks: 3, type: 'explain', markScheme: [{ idea: 'Dependency, delivery, quality', marks: 1 }, { idea: 'Application', marks: 2 }], modelAnswer: 'If one large supplier has delivery delays, BuildCo has fewer alternatives. A single supplier failure could halt construction. Dependency on few suppliers increases risk.' },
+      { id: 'cs-proc-q3', question: 'Evaluate whether BuildCo should consolidate its suppliers.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Benefits: discount, simpler management', marks: 2 }, { idea: 'Risks: dependency, delivery', marks: 2 }, { idea: 'Conclusion', marks: 2 }], modelAnswer: 'Consolidation could save 8% and simplify ordering. But delivery delays from one large supplier could be costly. A balanced approach: consolidate where suppliers are reliable, keep alternatives for critical materials.' },
+    ],
+  },
+  {
+    id: 'cs-p2-customer-service',
+    unitIds: ['3.3', '3.5'],
+    paper: 2,
+    title: 'ServiceFirst Ltd',
+    scenario: 'ServiceFirst Ltd provides IT support to businesses. It is considering investing in a 24/7 helpline and better training for staff. Currently it operates 9–5. Some customers have complained about response times. The investment would cost £80,000 per year.',
+    data: 'Current: 9–5 support, 12 staff. Complaints: 15% about response time. Investment: £80k/year for 24/7 and training. Customer retention: 85%.',
+    questions: [
+      { id: 'cs-serv-q1', question: 'Define the term customer service.', marks: 2, type: 'define', markScheme: [{ idea: 'Meeting customer needs before, during and after purchase', marks: 2 }], modelAnswer: 'Customer service is meeting customer needs before, during and after a purchase.' },
+      { id: 'cs-serv-q2', question: 'Explain one benefit of 24/7 support for ServiceFirst.', marks: 3, type: 'explain', markScheme: [{ idea: 'Retention, satisfaction, competitive advantage', marks: 1 }, { idea: 'Application', marks: 2 }], modelAnswer: '24/7 support could reduce complaints about response times and improve retention. Businesses needing IT support outside office hours would value it, giving ServiceFirst a competitive advantage.' },
+      { id: 'cs-serv-q3', question: 'Evaluate whether ServiceFirst should invest in the 24/7 helpline.', marks: 6, type: 'evaluate', markScheme: [{ idea: 'Benefits: retention, differentiation', marks: 2 }, { idea: 'Costs: £80k, staffing', marks: 2 }, { idea: 'Conclusion', marks: 2 }], modelAnswer: 'The £80k cost must be weighed against improved retention and new customers. If 15% of customers leave due to poor response, the lost revenue may exceed £80k. Depends on customer base and willingness to pay for premium service.' },
+    ],
+  },
 ];
 
 // ============================================================================

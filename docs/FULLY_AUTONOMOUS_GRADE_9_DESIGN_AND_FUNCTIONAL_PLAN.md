@@ -570,6 +570,130 @@ Each subject below has a **complete, self-contained design plan** including: con
 
 ---
 
+### 4.8 Maths Mastery Hub — Architecture & Full Implementation Plan
+
+**Purpose:** Define the complete Maths Mastery hub flow — entry, home, GCSE Maths hub, unit-level practice, learning path, and curriculum organisation. Aligned with `MATHS_MASTERY_AUDIT.md` and `goldenMathsTopicUnitSpec.ts`.
+
+#### 4.8.1 Entry Flow & Navigation
+
+| Step | Route | Component | Description |
+|------|-------|------------|-------------|
+| 1 | `/subjects` | Subjects page | "Enter hub" for Maths Mastery |
+| 2 | `/maths-mastery` | `MathsMasteryHomePage` | Three pillars: Maths (primary), Further Maths (placeholder), Statistics (placeholder) |
+| 3 | `/maths-mastery/maths` | `MathsHubPage` | GCSE Maths hub — tier → paper → quiz type → topic/unit picker |
+| 4 | Quiz flow | `QuizPlayerPage` → Results | Full paper or topic/unit quiz → Fix-It / Run It Back |
+
+**Back navigation:** Every page has clear "Back to Subjects" or "Back to Maths Mastery" so students never feel lost.
+
+#### 4.8.2 Maths Mastery Home — Layout & Copy
+
+| Element | Current | Target | Implementation |
+|---------|---------|--------|-----------------|
+| **Primary CTA** | Three equal cards | **Maths** = clear primary; Further Maths & Statistics = secondary | Maths card: larger, ring/border, "Start GCSE Maths"; others: muted, "Coming soon" badge |
+| **Heading** | "Maths Mastery" | Keep; add tagline | "Build fluency and exam-ready speed across GCSE Maths – by paper or by topic." |
+| **Section heading** | "Practice GCSE Maths" | Keep | Primary action area |
+| **Coming soon** | In card description | Add visible badge | Small "Coming soon" badge top-right on Further Maths and Statistics cards |
+| **Curriculum trust** | Minimal | Add one line | "Full papers and topic drills covering everything you'll be tested on." |
+
+**Design tokens:** Use `hubConfig.accentColor` from `FEATURED_HUBS` for Maths; consistent with `designTokens.ts`.
+
+#### 4.8.3 GCSE Maths Hub — Multi-Step Flow
+
+| Step | Label | Options | Notes |
+|------|-------|---------|-------|
+| **1. Tier** | "Choose your tier" | Foundation, Higher | Foundation: Papers 1–3 (F1: 26q, F2: 14q, F3: 8q topic; full paper 30/35/40). Higher: 80q each paper. |
+| **2. Paper** | "Choose a paper" | Paper 1, Paper 2, Paper 3 | Paper names from DB: "Paper 1 (Non-Calculator)", "Paper 2 (Calculator)", "Paper 3 (Calculator)" |
+| **3. Quiz type** | "How do you want to practice?" | Full paper, Topic quiz | Full paper: all questions for that paper; Topic quiz: choose topic (or unit) |
+| **4. Topic / Unit** | "Choose a topic" or "Or practice a unit" | Topic list grouped by paper; unit list per topic | See §4.8.4 and §4.8.5 |
+
+**Calculator rules:** Paper 1 = no calculator; Papers 2 & 3 = calculator allowed. `calculatorAllowedDefault` from paper config; quiz player respects it.
+
+#### 4.8.4 Topic List — Grouping by Paper
+
+| Current | Target | Implementation |
+|---------|--------|-----------------|
+| Flat grid of topics | **Group by paper** | Section headings: "Paper 1 (Non-Calculator)", "Paper 2 (Calculator)", "Paper 3 (Calculator)" |
+| Topic name + question count | Keep; add paper context | Each topic shows: name, question count, paper label in heading |
+| No suggested order | Optional: "Start with Paper 1" hint | Short line: "We recommend starting with Paper 1 topics." |
+
+**Data source:** `GOLDEN_TOPIC_SPECS` from `goldenMathsTopicUnitSpec.ts` — filter by `tier` and `paper`; group by `paper` for display.
+
+**Curriculum messaging:** Add one line above topic list: "Covers all GCSE Maths topics you'll be tested on. Aligned with Edexcel 1MA1."
+
+#### 4.8.5 Unit-Level Practice — Implementation
+
+| Gap (from audit) | Solution | Implementation |
+|------------------|----------|----------------|
+| Students cannot start unit quiz from Maths Hub | Add unit picker after topic selection | When "Topic quiz" chosen: show "Start topic quiz" (full topic) **and** "Or practice a unit:" with list of units for that topic |
+| Unit specs exist but no UI | `handleStartUnitQuiz(unitKey)` | Create quiz from `GOLDEN_UNIT_SPECS`; resolve prompts via `meta.goldenId`; same flow as topic quiz |
+
+**Unit examples (from `GOLDEN_UNIT_SPECS`):**
+- `f1-bidmas` — BIDMAS, integers, four operations (4 questions)
+- `f1-fractions-ratio` — Fractions & ratio (6 questions)
+- `h1-geometry-trig-full` — Geometry & trig (angles, area, circle, Pythagoras, exact trig)
+- `h2-algebra-equations-full` — Algebra & equations (H2)
+
+**UI flow:**
+1. User selects topic (e.g. "Number & Arithmetic")
+2. Show: **"Start topic quiz"** (primary) — uses `GOLDEN_TOPIC_SPECS` for that topic
+3. Show: **"Or practice a unit:"** — list units where `topicKey` matches (e.g. BIDMAS, Fractions & ratio)
+4. On unit click: `handleStartUnitQuiz(unit.key)` → create quiz from `unit.questionIds` → navigate to `QuizPlayerPage`
+
+**Admin sync:** `goldenTopicUnitQuizBuilder.ts` already syncs unit quizzes; ensure unit quizzes exist in DB for all `GOLDEN_UNIT_SPECS`.
+
+#### 4.8.6 Learning Path & Curriculum Order
+
+| Area | Current | Target | Implementation |
+|------|---------|--------|-----------------|
+| **Suggested sequence** | None | "Start with Paper 1" | Short hint on hub: "We recommend starting with Paper 1 topics." |
+| **Paper order** | Arbitrary | Paper 1 → 2 → 3 | Display topics in paper order (1, 2, 3) |
+| **Topic order** | By spec | By `GOLDEN_TOPIC_SPECS` order | Preserve order from `goldenMathsTopicUnitSpec.ts` |
+| **Curriculum map** | None | Future | Optional "Curriculum map" view showing all topics in sequence; not in scope for initial implementation |
+
+#### 4.8.7 Results & Post-Quiz Flow
+
+| Feature | Description |
+|--------|-------------|
+| **Results page** | Score, time, marks per question; Fix-It Drill, Run It Back |
+| **Fix-It drill** | Missed questions only; re-ordered by topic for spaced practice |
+| **Run It Back** | Same quiz again; "Beat your score" |
+| **Mastery / XP / Streak** | Update on quiz completion per `CORE_LOOPS_AUDIT` |
+| **Recommended next** | "What's next?" — weak topic or next in sequence (future) |
+
+#### 4.8.8 Data & Spec Alignment
+
+| Component | Source | Notes |
+|-----------|--------|-------|
+| **Topic specs** | `GOLDEN_TOPIC_SPECS` | `key`, `name`, `tier`, `paper`, `questionIds` |
+| **Unit specs** | `GOLDEN_UNIT_SPECS` | `key`, `name`, `topicKey`, `questionIds` |
+| **Golden questions** | `GOLDEN_MATHS_QUESTION_LIST.md`, `goldenMathsQuestions.ts` | Prompts with `meta.goldenId`; order preserved |
+| **Papers** | DB / `gcseScope` | Paper names, calculator rules, time limits |
+
+#### 4.8.9 Implementation Checklist — Maths Mastery
+
+| # | Task | Priority | Status |
+|---|------|----------|--------|
+| 1 | Maths Mastery home: primary CTA for Maths; Coming soon badge for Further Maths & Statistics | P0 | ✅ Implemented |
+| 2 | GCSE Maths hub: topic list grouped by paper with paper headings | P0 | ✅ Implemented |
+| 3 | GCSE Maths hub: unit-level practice — "Or practice a unit" after topic selection | P0 | ✅ Implemented |
+| 4 | GCSE Maths hub: curriculum copy — "Covers all GCSE Maths topics… Aligned with Edexcel 1MA1" | P1 | ✅ Implemented |
+| 5 | GCSE Maths hub: "Start with Paper 1" recommended hint | P2 | ✅ Implemented |
+| 6 | Ensure all unit quizzes synced via `goldenTopicUnitQuizBuilder` | P0 | ✅ Verified (admin tool exists) |
+| 7 | Paper names in DB: "Paper 1 (Non-Calculator)", etc. | P1 | ✅ Verified (gcseScopeSync) |
+| 8 | Results "What's next?" — recommended next quiz (weak topic / next in sequence) | P2 | Future |
+
+#### 4.8.10 Further Maths & Statistics — Placeholder Behaviour
+
+| Pillar | Current | Target |
+|--------|---------|--------|
+| **Further Maths** | "Coming soon" card | Keep; "Level 2 / FSMQ-style Further Mathematics – coming soon" |
+| **Statistics** | "Coming soon" card | Keep; "GCSE Statistics – coming soon" |
+| **Back navigation** | To Maths Mastery | Ensure obvious; "For now, use main Maths from Subjects page" if needed |
+
+**Recommendation (from §17):** Remove from Maths Mastery marketing until content ready; full build or deprioritise long term.
+
+---
+
 ## 5. Science Lab (Biology, Chemistry, Physics — AQA 8461/62/63)
 
 **Specs:** AQA 8461 (Biology), 8462 (Chemistry), 8463 (Physics) | **Papers:** 2 per subject | **Tiers:** Foundation, Higher
@@ -1531,13 +1655,115 @@ Each subject below has a **complete, self-contained design plan** including: con
 |---------|----------|
 | Flowchart, CPU, Fetch-execute, network, TCP/IP, Huffman tree, database schema | P1 |
 
+### 15.8 Compute Lab — Per-sub-topic content breakdown
+
+| Unit | Sub-topic | Concepts | Glossary | Quick Check | Lab tasks | Question Lab |
+|------|-----------|----------|----------|-------------|-----------|--------------|
+| **3.1** | 3.1.1 Representing algorithms | 1 | 6+ (algorithm, decomposition, abstraction, pseudo-code, flowchart, trace table) | 4+ | 2–3 trace | 2+ |
+| | 3.1.2 Efficiency | 1 | 2+ (time efficiency, comparison) | 2+ | 1 trace | 1+ |
+| | 3.1.3 Searching | 1 | 4+ (linear, binary, sorted, comparison) | 4+ | 2–3 trace | 3+ |
+| | 3.1.4 Sorting | 1 | 4+ (merge, bubble, divide-and-conquer) | 4+ | 2–3 trace | 3+ |
+| **3.2** | 3.2.1 Data types | 1 | 5+ (integer, real, Boolean, character, string) | 3+ | 2 code | 1+ |
+| | 3.2.2 Programming concepts | 2 | 10+ (variable, constant, iteration, selection, subroutine, FOR, WHILE, nested) | 8+ | 4–5 code | 2+ |
+| | 3.2.3–3.2.5 Arithmetic/relational/Boolean | 1 | 6+ (DIV, MOD, operators) | 4+ | 2 code | 1+ |
+| | 3.2.6 Data structures | 1 | 5+ (array, 1D, 2D, record) | 4+ | 2–3 code | 2+ |
+| | 3.2.7–3.2.9 I/O, string, random | 1 | 5+ | 4+ | 2 code | 1+ |
+| | 3.2.10 Subroutines | 1 | 5+ (procedure, function, parameter, return, local) | 4+ | 2–3 code | 2+ |
+| | 3.2.11 Robust programming | 1 | 4+ (validation, authentication, normal/boundary/erroneous) | 4+ | 2 code | 2+ |
+| **3.3** | 3.3.1–3.3.2 Number bases | 1 | 5+ (binary, hex, decimal, place value) | 4+ | 3–4 calc | 2+ |
+| | 3.3.3 Units | 1 | 4+ (bit, byte, kilo, mega, giga, tera) | 3+ | 1 calc | 1+ |
+| | 3.3.4 Binary arithmetic | 1 | 3+ (addition, shift) | 3+ | 3–4 calc | 2+ |
+| | 3.3.5 Character encoding | 1 | 4+ (ASCII, Unicode, code) | 3+ | 2 calc | 1+ |
+| | 3.3.6 Images | 1 | 5+ (pixel, bitmap, colour depth, file size) | 4+ | 3–4 calc | 2+ |
+| | 3.3.7 Sound | 1 | 4+ (sampling, resolution, analogue, digital) | 3+ | 2–3 calc | 1+ |
+| | 3.3.8 Compression | 1 | 4+ (Huffman, RLE, frequency) | 4+ | 2–3 calc | 2+ |
+| **3.4** | 3.4.1 Hardware/software | 1 | 3+ | 2+ | — | 1+ |
+| | 3.4.2 Boolean logic | 1 | 6+ (NOT, AND, OR, XOR, truth table, circuit) | 6+ | 8–10 logic | 3+ |
+| | 3.4.3 Software classification | 1 | 6+ (OS, system, application, utility) | 4+ | — | 2+ |
+| | 3.4.4 Translators | 1 | 6+ (compiler, interpreter, assembler, machine code) | 4+ | — | 2+ |
+| | 3.4.5 Systems architecture | 2 | 10+ (CPU, ALU, control unit, registers, bus, RAM, ROM, cache, Fetch-execute) | 8+ | 2–3 logic | 4+ |
+| **3.5** | 3.5.1 Networks | 1 | 5+ (LAN, WAN, PAN, wired, wireless) | 4+ | — | 2+ |
+| | 3.5.2 Protocols | 1 | 6+ (TCP/IP, HTTP, HTTPS, SMTP, IMAP) | 4+ | — | 2+ |
+| | 3.5.3–3.5.4 Security, TCP/IP model | 1 | 5+ (firewall, encryption, layers) | 4+ | — | 2+ |
+| **3.6** | 3.6.1–3.6.3 Cyber security | 2 | 10+ (phishing, malware, penetration testing, biometrics) | 8+ | — | 3+ |
+| **3.7** | 3.7.1 Relational databases | 1 | 5+ (table, record, field, primary key, foreign key) | 4+ | 2–3 SQL | 2+ |
+| | 3.7.2 SQL | 1 | 5+ (SELECT, INSERT, UPDATE, DELETE, WHERE, ORDER BY) | 4+ | 8–12 SQL | 3+ |
+| **3.8** | 3.8.1 Ethical/legal/environmental | 2 | 8+ (privacy, autonomous vehicles, hacking, cloud, wearables) | 6+ | — | 4+ |
+
+### 15.9 Compute Lab — Grade 9 stretch & model answers
+
+| Question type | Grade 9 requirement | Content to add |
+|---------------|---------------------|----------------|
+| **Trace table (extended)** | Complete trace for nested loops; identify purpose; compare efficiency | 3–4 Grade 9 trace tasks per algorithm type; model trace with examiner commentary |
+| **Code writing** | Write robust program with validation, subroutines, error handling | 5+ Grade 9 code tasks; model solution with "why this approach" |
+| **Efficiency comparison** | "Compare linear vs binary search for 1000 items — justify" | 2–3 evaluation prompts; model answer showing sustained argument |
+| **Calculation (multi-step)** | Bitmap + compression; sound + conversion; combined scenarios | 3–4 stretch calc tasks; worked solution with units check |
+| **Logic circuit** | Given expression, build circuit; given circuit, write expression; 3+ inputs | 2–3 stretch logic tasks; model with Boolean simplification |
+| **SQL (2 tables)** | JOIN-style queries; complex WHERE; explain redundancy | 2–3 Grade 9 SQL tasks; model query with explanation |
+| **Ethical/legal (extended)** | "To what extent should…?" — balanced argument with evidence | 2–3 evaluation prompts; Grade 9 model (both sides + conclusion) |
+
+**Unfamiliar-context practice:** At least 2–3 questions per unit where scenario is novel (e.g. "A hospital database stores…" rather than "A school database stores…").
+
+### 15.10 Compute Lab — Common misconceptions (Mistake Museum)
+
+| Unit | Misconception | "Why students think this" | "Why it's wrong" |
+|------|---------------|---------------------------|------------------|
+| 3.1 | Binary search works on unsorted data | "It's faster so it must work on any list" | Binary search relies on sorted order to eliminate half each time |
+| 3.1 | Bubble sort is always faster than merge sort | "It's simpler" | Merge sort O(n log n) vs bubble O(n²); merge wins for large n |
+| 3.2 | DIV and / do the same thing | "Both divide" | DIV is integer division (truncates); / is real division |
+| 3.2 | Logic errors are caught by the compiler | "Errors are errors" | Logic errors produce wrong output; compiler only catches syntax |
+| 3.3 | 1 KB = 1024 bytes | "Computers use binary, so kilo = 1024" | AQA 8525 uses decimal prefixes: 1 KB = 1000 bytes |
+| 3.3 | More colour depth = smaller file | "Better compression?" | More bits per pixel = larger file; compression is separate |
+| 3.4 | RAM and ROM are the same | "Both are memory" | RAM is volatile, read-write; ROM is non-volatile, read-only |
+| 3.4 | The CPU executes instructions from the hard drive | "Programs are on the hard drive" | CPU fetches from RAM; hard drive loads into RAM first |
+| 3.5 | HTTP and HTTPS are different protocols | "Different names" | Both HTTP; HTTPS adds encryption (TLS) on top |
+| 3.6 | Phishing and pharming are the same | "Both trick users" | Phishing = fake emails/links; pharming = DNS poisoning, redirects |
+| 3.7 | Primary key and foreign key are interchangeable | "Both are keys" | Primary key uniquely identifies a record; foreign key links tables |
+| 3.8 | Hacking is always illegal | "It's breaking in" | Ethical hacking (penetration testing) is authorised |
+
+### 15.11 Compute Lab — Implementation phasing
+
+| Phase | Scope | Outcome |
+|-------|--------|---------|
+| **1** | Types + config skeleton; Compute Lab home + unit list; Concept Lab for 3.1 and 3.3 (one each) | Proof of structure; two units navigable |
+| **2** | Glossary + Flashcard mode for all units; Quick Check for 3.1, 3.3, 3.4 | Learn and check flow |
+| **3** | Algorithm Lab: trace tables for 3.1 (search, sort, simple programs) | Interactive trace practice |
+| **4** | Calculation Lab: binary/hex, bitmap, sound, Huffman, RLE | All calculation types covered |
+| **5** | Logic Lab: truth tables, circuits, Boolean expressions | 3.4.2 coverage |
+| **6** | Code Lab: pseudo-code tasks; basic Python sandbox for 3.2 | Programming practice |
+| **7** | SQL Lab: SELECT, INSERT, UPDATE, DELETE with sample DB | 3.7 coverage |
+| **8** | Question Lab: full question bank across all units; mark-scheme feedback | Exam-style practice |
+| **9** | Full content: all concepts, glossary, quick checks, labs for 3.1–3.8; Mistake Museum; Grade 9 stretch | Full spec + Grade 9 ready |
+| **10** | Gating, progress, Paper 1/2 filter, Fix-It integration, "next step" recommendations | Production-ready |
+
+### 15.12 Compute Lab — Technical routes & data
+
+| Area | Implementation |
+|------|----------------|
+| **Routes** | `/compute-lab` (home), `/compute-lab/unit/:unitId`, `/compute-lab/unit/:unitId/concept`, `/compute-lab/unit/:unitId/flashcard`, `/compute-lab/unit/:unitId/algorithm-lab`, `/compute-lab/unit/:unitId/code-lab`, `/compute-lab/unit/:unitId/quick-check`, `/compute-lab/unit/:unitId/calculation-lab`, `/compute-lab/unit/:unitId/logic-lab`, `/compute-lab/unit/:unitId/sql-lab`, `/compute-lab/unit/:unitId/question-lab`; optional `/compute-lab/paper/1` and `/compute-lab/paper/2` |
+| **Types** | `ComputeUnit`, `ComputeTopic`, `Concept`, `Term`, `TraceTableTask`, `CodeTask`, `QuickCheckItem`, `CalculationTask`, `LogicCircuitTask`, `SqlTask`, `QuestionItem` |
+| **Config** | `computeLabData.ts` — units 3.1–3.8; concepts, glossary, trace tasks, code tasks, quick checks, calc tasks, logic tasks, SQL tasks, question items |
+| **Progress** | Per-unit: concept %, glossary %, quick check passed, algorithm/code/calc/logic/SQL lab completed, question lab %; gating: unlock labs when Concept + Glossary + Quick Check done |
+| **Reuse** | Flashcard (ScienceLabFlashcardPage), Quick Check (ScienceLabQuickCheckPage), Concept (ScienceLabConceptLabPage), Question Lab (Science Lab patterns) |
+| **Specialised** | Code sandbox (Pyodide/Monaco); SQL runner (SQL.js); logic circuit builder (SVG/canvas); trace table step-through UI; binary/hex converter |
+
+### 15.13 Compute Lab — Fix-It & Next Action integration
+
+| Integration | How |
+|-------------|-----|
+| **Fix-It Drill** | When student misses Compute Lab questions (trace, code, calc, logic, SQL, theory), add to Fix-It queue; "Fix Your Mistakes" surfaces Compute Lab items by unit |
+| **Weak spot** | Mastery 1–2 in any unit → "Strengthen [Algorithms/Programming/Data representation/…]" as recommended action |
+| **Streak** | Any Compute Lab activity (concept, flashcard, quick check, lab) counts toward daily streak |
+| **Next Action** | If Compute Lab is in-progress and student has unfinished trace/code/SQL task → "Continue [Algorithm Lab]" or "Continue [Code Lab]" |
+| **Paper filter** | "Paper 1" = 3.1 + 3.2; "Paper 2" = 3.3–3.8; allow student to focus revision by paper |
+
 ---
 
 ## 16. French & Spanish (AQA 8658/8698)
 
 **Specs:** AQA 8658 (French), 8698 (Spanish) | **Papers:** 4 (Listening, Speaking, Reading, Writing) | **Tiers:** Foundation, Higher
 
-**Status:** No content yet. Full build required. **New MFL spec (2025):** Vocabulary lists, grammar, themes defined by DfE. Align to AQA 8658 (French), 8698 (Spanish).
+**Status:** Vocabulary mode implemented (French ~272, Spanish ~264 words). Grammar, Listening, Reading, Writing, Speaking, Translation modes to build. **New MFL spec (2025):** Vocabulary lists, grammar, themes defined by DfE. Align to AQA 8658 (French), 8698 (Spanish).
 
 ### 16.1 Content Targets (from Content Plan) — Per Language
 
@@ -1628,6 +1854,84 @@ Each subject below has a **complete, self-contained design plan** including: con
 | Diagram | Priority |
 |---------|----------|
 | Tense timeline, conjugation grid, theme map, question word poster | P0 |
+
+---
+
+### 16.8 Full Implementation Plan Reference
+
+**Standalone document:** `docs/MFL_FRENCH_SPANISH_IMPLEMENTATION_PLAN.md`
+
+The MFL implementation plan provides:
+- Full AQA spec breakdown (4 papers, 3 themes, task types)
+- Grammar scope (tenses, structures, agreement) per language
+- Learning modes: Vocabulary (extend), Grammar (new), Listening (new), Reading (new), Writing (new), Speaking Prep (new), Translation (new)
+- Content targets per mode (1,200+ Foundation / 1,700+ Higher vocab; 20+ listening/reading; 15+ writing; 80+ translation each)
+- Technical implementation (routes, data types, config, components)
+- 10-phase rollout from vocabulary extension to full Grade 9 ready
+
+---
+
+### 16.9 French & Spanish — Implementation Phases (Summary)
+
+| Phase | Scope | Outcome |
+|-------|--------|---------|
+| **1** | Extend vocabulary to 500+ per language; add meaning-from-word, use-in-sentence to session UI | Vocabulary Lab complete for core modes |
+| **2** | Grammar Lab: 10 concepts per language; conjugation grid, tense timeline | Grammar Lab skeleton |
+| **3** | Vocabulary expansion to 1,200 Foundation (per language) | Foundation vocab target met |
+| **4** | Listening Lab: 5 tasks per language (Foundation); audio + questions UI | Listening Lab proof of concept |
+| **5** | Reading Lab: 5 tasks per language (Foundation); text + questions UI | Reading Lab proof of concept |
+| **6** | Writing Lab: 5 tasks per language (photo, 40-word, 90-word); workspace, checklist, model answers | Writing Lab proof of concept |
+| **7** | Speaking Prep: role-play prompts, photo cards (5 each); conversation themes | Speaking Prep skeleton |
+| **8** | Translation Lab: 20 EN→TL, 20 TL→EN per language | Translation Lab proof of concept |
+| **9** | Expand all modes to targets (20+ listening, 20+ reading, 15+ writing, 15+ role-play, 15+ photo, 80+ translation each) | Content targets met |
+| **10** | Higher tier content; vocabulary to 1,700; polish, progress, "next step" | Full Grade 9 ready |
+
+---
+
+### 16.10 French & Spanish — Routes & Pages
+
+| Route | Page | Status |
+|-------|------|--------|
+| `/languages-hub` | LanguagesHubHomePage | ✅ Implemented |
+| `/languages-hub/:lang` | LanguagesHubLanguagePage | ✅ Implemented |
+| `/languages-hub/:lang/vocabulary` | LanguagesHubVocabularyPage | ✅ Implemented |
+| `/languages-hub/:lang/grammar` | Grammar Lab | ❌ To build |
+| `/languages-hub/:lang/listening` | Listening Lab | ❌ To build |
+| `/languages-hub/:lang/reading` | Reading Lab | ❌ To build |
+| `/languages-hub/:lang/writing` | Writing Lab | ❌ To build |
+| `/languages-hub/:lang/speaking` | Speaking Prep | ❌ To build |
+| `/languages-hub/:lang/translation` | Translation Lab | ❌ To build |
+
+---
+
+### 16.11 French & Spanish — Data Structures (Technical)
+
+| Data Type | File | Purpose |
+|-----------|------|---------|
+| `MflVocabItem` | `languagesHubData.ts` | ✅ Implemented |
+| `MflGrammarConcept` | `mflGrammarData.ts` (new) | Tense, structure, conjugation, examples |
+| `MflListeningTask` | `mflListeningData.ts` (new) | Audio URL, transcript, questions |
+| `MflReadingTask` | `mflReadingData.ts` (new) | Text, questions |
+| `MflWritingTask` | `mflWritingData.ts` (new) | Type, prompt, bullets, model answers |
+| `MflRolePlayPrompt` | `mflSpeakingData.ts` (new) | Scenario, prompts, model |
+| `MflPhotoCard` | `mflSpeakingData.ts` (new) | Image, questions, model |
+| `MflTranslationTask` | `mflTranslationData.ts` (new) | Direction, source, model |
+
+---
+
+### 16.12 French & Spanish — Content Creation Checklist
+
+Before claiming "fully autonomous" for MFL:
+
+- [ ] **Vocabulary:** 1,200+ Foundation, 1,700+ Higher per language (AQA/DfE lists)
+- [ ] **Grammar:** 25+ concepts per language; conjugation grids; tense timeline; Mistake Museum items
+- [ ] **Listening:** 20+ tasks per language (10 Foundation + 10 Higher); audio + transcript
+- [ ] **Reading:** 20+ tasks per language (10 Foundation + 10 Higher)
+- [ ] **Writing:** 15+ tasks per language (photo, 40-word, 90-word, 150-word); model answers G4/6/8/9
+- [ ] **Speaking:** 15+ role-play prompts, 15+ photo cards per language; conversation themes
+- [ ] **Translation:** 80+ EN→TL, 80+ TL→EN per language (sentence + passage)
+- [ ] **Diagrams:** Tense timeline, conjugation grid, theme map (P0)
+- [ ] **Learning Superpowers:** Memory Palace (theme vocab), Mistake Museum (grammar), Retrieval Before Relearn, Dual-Code Flip, Schema Builder (sentence builder)
 
 ---
 
@@ -2003,3 +2307,354 @@ To integrate superpowers, each subject needs **content**:
 Subject-specific creative methods are documented in each subject's section (§4.6 Maths, §5.6 Science, §7.6 English Language, §8.6 English Literature, §9.6 History, §10.6 Geography, §11.6 RS, §12.6 Business, §13.6 Psychology, §14.6 Health, §15.6 Compute, §16.6 MFL).
 
 **Principle:** Each subject should have at least 2–3 creative methods that go beyond "answer the question" — they make students *think like examiners*, *apply to unfamiliar contexts*, and *build transferable skills*.
+
+---
+
+## 26. Full Content Implementation Plan — All Subjects
+
+**Purpose:** Actionable content checklist for every subject in `gcseScope.ts`. Ensures no subject is left behind. Content creators and developers can use this as the single reference for what to add, in what order, and how to verify completion.
+
+**Cross-reference:** Existing implementation plans provide deeper spec-level detail:
+- `GEOGRAPHY_AQA_IMPLEMENTATION_PLAN.md` — Geography topic list, case studies, skills
+- `RELIGIOUS_STUDIES_AQA_IMPLEMENTATION_PLAN.md` — RS religions, themes, scripture
+- `HISTORY_AQA_IMPLEMENTATION_PLAN.md` — History options, period/depth/thematic
+- `BUSINESS_STUDIES_IMPLEMENTATION_PLAN.md` — Business topics, calculations
+- `PSYCHOLOGY_AQA_IMPLEMENTATION_PLAN.md` — GCSE 8182 topics, key studies
+- `COMPUTER_SCIENCE_AQA_IMPLEMENTATION_PLAN.md` — AQA 8525 units, algorithms
+- `HEALTH_SOCIAL_CARE_IMPLEMENTATION_PLAN.md` — Edexcel Units 1–4
+
+---
+
+### 26.1 Subject-by-Subject Content Implementation Checklist
+
+#### Maths (Edexcel 1MA1)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Golden questions | 345 | ✅ | Maintain; ensure stretch items present |
+| 2 | Full paper quizzes | Both tiers | ✅ | |
+| 3 | Topic drills | All 16 topics | ✅ | |
+| 4 | Mistake Museum items | Top 5 per major topic | Partial | Add common error traps |
+| 5 | Worked Example Fade configs | 5+ key procedures | Partial | Quadratic, trig, probability |
+| 6 | Diagrams | Ratio/scale, Loci, Transformations, Graph | ❌ | P2 — see §22 |
+
+**Maintain:** No content gaps. Focus on Learning Superpowers integration and P2 diagrams.
+
+---
+
+#### Further Maths (Edexcel)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | Full spec (algebra, functions, calculus, matrices, vectors) | ❌ | Build or remove |
+| 2 | Question bank | 80+ questions | ❌ | |
+| 3 | Topic drills | Per topic | ❌ | |
+| 4 | Diagrams | Distributions, Venn, tree | ❌ | |
+
+**Decision required:** Build full content or remove from scope. See §17.
+
+---
+
+#### Statistics (AQA / Edexcel)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | Data, probability, distributions | ❌ | Build or remove |
+| 2 | Question bank | 50+ questions | ❌ | |
+| 3 | Diagrams | Distributions, Venn, tree | ❌ | |
+
+**Decision required:** Build or remove. See §17.
+
+---
+
+#### Biology (AQA 8461)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | 20+ | ✅ | Add 5–10 stretch concepts |
+| 2 | Questions | 22+ | ✅ | Add 10+ Grade 9-style |
+| 3 | Practicals | 6 | ✅ | |
+| 4 | Misconceptions | 17+ | ✅ | |
+| 5 | Stretch content | 5–10 concepts | Partial | Beyond grade 5 |
+| 6 | Grade 9 model answers | 8–10 | Partial | |
+| 7 | Explain Like I'm 11 | Per concept | Partial | Expand |
+| 8 | Mistake Museum | Top misconceptions | Partial | |
+| 9 | Diagrams | Cell, digestive, heart, neuron, DNA, food web, carbon cycle | Partial | See §22 |
+
+---
+
+#### Chemistry (AQA 8462)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | 13+ | ✅ | Add 5 stretch |
+| 2 | Questions | 12+ | ✅ | Add 8+ Grade 9-style |
+| 3 | Practicals | 3 | ✅ | |
+| 4 | Misconceptions | 9+ | ✅ | |
+| 5 | Stretch content | 5 concepts | Partial | |
+| 6 | Diagrams | Atom, bonding, periodic table, electrolysis, energy profile | Partial | See §22 |
+
+---
+
+#### Physics (AQA 8463)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | 11+ | ✅ | Add 4 stretch |
+| 2 | Questions | 9+ | ✅ | Add 8+ Grade 9-style |
+| 3 | Practicals | 5 | ✅ | |
+| 4 | Misconceptions | 6+ | ✅ | |
+| 5 | Stretch content | 4 concepts | Partial | |
+| 6 | Diagrams | Force diagrams, waves, ray diagrams, pendulum, magnet | Partial | See §22 |
+
+---
+
+#### Combined Science (AQA 8464/8465)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | 6-paper flow | Papers 1–6 mapped | ✅ | Implemented |
+| 2 | Combined-specific questions | Shorter, synoptic | Partial | Add combined-style items |
+| 3 | Content mapping | Triple content → 6 papers | Partial | Verify coverage |
+| 4 | Option selector | Foundation vs Higher | ✅ | |
+
+---
+
+#### English Language (AQA 8700)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Reading tasks | 8 (Paper 1 + 2) | ✅ | |
+| 2 | Writing tasks | 10 | ✅ | |
+| 3 | Examiner packs | All tasks | ✅ | |
+| 4 | Grade 9 model answers | 2–3 per task | Partial | Add where missing |
+| 5 | Mistake Museum | Common writing/reading errors | Partial | |
+| 6 | Dual-Code Flip | Structure diagrams, AO mapping | Partial | |
+
+---
+
+#### English Literature (AQA 8702)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Set texts | Macbeth, ACC, J&H, AIC | ✅ | |
+| 2 | Poetry tasks | 6+ | ✅ | Add 4–6 more |
+| 3 | GuidePost packs | All tasks | ✅ | |
+| 4 | Optional texts | 2–3 (R&J, P&P, etc.) | ❌ | P2 expansion |
+| 5 | Memory Palace | Key quotes, themes | Partial | |
+| 6 | Compare & Contrast | Characters, themes | Partial | |
+| 7 | Diagrams | Plot timeline, character map, theme web | Partial | P1 |
+
+---
+
+#### History (AQA 8145)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | 16 options | Full coverage | ✅ | |
+| 2 | Timeline, key terms, concept cards | Per option | ✅ | |
+| 3 | Source/interpretation labs | Per option | ✅ | |
+| 4 | Question lab | Per option | ✅ | |
+| 5 | Historic environment | 12 sites | ✅ | |
+| 6 | Grade 9 model answers | 2–3 per option | Partial | Add sustained argument |
+| 7 | Superpowers | Concept Bridge, Schema Builder, Compare & Contrast | ✅ | |
+| 8 | Mistake Museum | History-specific | ✅ | |
+| 9 | Diagrams | Timeline, source grid, cause-effect | Partial | P1 |
+
+---
+
+#### Geography (AQA 8035)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | 50+ (2–6 per section) | Partial | ~20; add 32+ |
+| 2 | Key terms | 300+ | Partial | ~170; add 130+ |
+| 3 | Quick checks | 120+ (3–5 per sub-topic) | Partial | Add 102+ |
+| 4 | Skills tasks | 25+ | Partial | 25 done; verify coverage |
+| 5 | Issue scenarios | 5 | Partial | 5 done |
+| 6 | Fieldwork tasks | 4–6 | ✅ | |
+| 7 | Question lab | 50+ | Partial | Add 34+ |
+| 8 | Case studies | 12+ named | Partial | LIC/NEE city, UK city, coastal, flood, etc. |
+| 9 | Option selector | Living world, Landscapes, Resource | ✅ | |
+| 10 | Diagrams | Map, cross-section, process, hydrograph, DTM | Partial | P1 — see GEOGRAPHY_AQA_IMPLEMENTATION_PLAN |
+
+---
+
+#### Religious Studies (AQA 8062)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Belief concepts | 8–15 per religion | Partial | Add 3–10 per religion |
+| 2 | Scripture cards | 60+ | Partial | 60+ done |
+| 3 | Contrasting views | 30+ (6–10 per theme) | Partial | 30+ done |
+| 4 | Quick check | 80+ | Partial | 80+ done |
+| 5 | Short answer | 15–25 per religion, 10–15 per theme | Partial | Expand |
+| 6 | Extended writing (12-mark) | 4–6 per religion, 3–5 per theme | Partial | Expand |
+| 7 | Philosophical arguments | 5 (Theme C) | Partial | 5 done |
+| 8 | Memory Palace | 5 Pillars, 4 Noble Truths, etc. | ✅ | |
+| 9 | Mistake Museum | RS misconceptions | ✅ | |
+| 10 | Diagrams | Belief web, argument map | Partial | P1 |
+
+---
+
+#### Business Studies (AQA 8132)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Concepts | 33+ | ✅ | |
+| 2 | Glossary | 130+ | Partial | ~130; verify |
+| 3 | Quick checks | 120+ | Partial | ~120; verify |
+| 4 | Case studies | 15–20 | Partial | 5+; add 10–15 |
+| 5 | Calculations | 8+ | Partial | 7; add 1 |
+| 6 | Evaluation prompts | 25+ | Partial | 18; add 7 |
+| 7 | Mistake Museum | Break-even, cash flow, etc. | ✅ | |
+| 8 | Worked Example Fade | Break-even | ✅ | |
+| 9 | Diagrams | Break-even, cash flow, product life cycle | Partial | P1 |
+
+---
+
+#### Psychology (AQA GCSE 8182)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | GCSE alignment | 8182 (not A-level 7182) | ✅ | Fixed |
+| 2 | Paper 1 topics | Memory, Perception, Development, Research methods | ✅ | |
+| 3 | Paper 2 topics | Social influence, Language, Brain, Psychological problems | ✅ | |
+| 4 | Concepts | 25+ | Partial | Verify all GCSE topics |
+| 5 | Key studies | 15+ (GCSE spec) | Partial | Add GCSE-specific |
+| 6 | Quick checks | 40+ | Partial | Expand |
+| 7 | Question lab | 25+ | Partial | Expand |
+| 8 | Mistake Museum | Psychology misconceptions | ✅ | |
+| 9 | Diagrams | Multi-store model, working memory, brain, neuron | Partial | P0 |
+
+---
+
+#### Health & Social Care (Edexcel 2HS01/02)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Units 1–4 | Full coverage | Partial | Units 3–4 lighter |
+| 2 | Concepts | 22+ | Partial | 22 done; verify |
+| 3 | Terms | 80+ | Partial | 80+ done |
+| 4 | Quick checks | 80+ | Partial | 50+; add 30+ |
+| 5 | Case studies | 12+ | Partial | 4+; add 8+ |
+| 6 | Investigation scaffolds | 4–6 | Partial | 2; add 2–4 |
+| 7 | Life stages (PIES) | 6 | ✅ | |
+| 8 | Mistake Museum | Health misconceptions | ✅ | |
+| 9 | Explain Like I'm 11 | Maslow, etc. | ✅ | |
+| 10 | Diagrams | Life stage timeline, Maslow, care value wheel | Partial | P2 |
+
+---
+
+#### Computer Science (AQA 8525)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Spec alignment | AQA 8525 | ✅ | |
+| 2 | Units 3.1–3.8 | Per-unit targets | Partial | Audit density |
+| 3 | Concepts | Per unit (3–8 each) | Partial | See §15.1 |
+| 4 | Glossary | Per unit (10–40 each) | Partial | |
+| 5 | Quick checks | Per unit (10–40 each) | Partial | |
+| 6 | Algorithm lab | Trace tasks | ✅ | |
+| 7 | Calculation lab | 15–20 | Partial | |
+| 8 | Logic lab | 10–15 | Partial | |
+| 9 | SQL lab | 10–15 | Partial | |
+| 10 | Question lab | 5–10 per unit | Partial | |
+| 11 | Mistake Museum | Compute misconceptions | ✅ | |
+| 12 | Diagrams | Flowchart, CPU, Fetch-execute, network | Partial | P1 — see COMPUTER_SCIENCE_AQA_IMPLEMENTATION_PLAN |
+
+---
+
+#### French (AQA 8658)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Vocabulary (Foundation) | 1,200+ words | Partial | 200+; expand |
+| 2 | Vocabulary (Higher) | 1,700+ words | Partial | |
+| 3 | Grammar | Full spec | ❌ | Tenses, agreement, structures |
+| 4 | Themes | Identity, Local, Future | Partial | |
+| 5 | Listening | 20+ tasks | ❌ | |
+| 6 | Reading | 20+ tasks | ❌ | |
+| 7 | Writing | 15+ (photo, 40, 90, 150 word) | ❌ | |
+| 8 | Speaking prep | Role-play, photo card, conversation | ❌ | |
+| 9 | Translation | Sentence + passage | ❌ | |
+| 10 | Vocabulary mode | Spell, meaning, sentence | ✅ | |
+| 11 | Diagrams | Tense timeline, conjugation grid | ❌ | P0 |
+
+---
+
+#### Spanish (AQA 8698)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Vocabulary (Foundation) | 1,200+ words | Partial | 150+; expand |
+| 2 | Vocabulary (Higher) | 1,700+ words | Partial | |
+| 3 | Grammar | Full spec | ❌ | |
+| 4 | Themes | Identity, Local, Future | Partial | |
+| 5 | Listening | 20+ tasks | ❌ | |
+| 6 | Reading | 20+ tasks | ❌ | |
+| 7 | Writing | 15+ | ❌ | |
+| 8 | Speaking prep | Role-play, photo card, conversation | ❌ | |
+| 9 | Translation | Sentence + passage | ❌ | |
+| 10 | Vocabulary mode | Spell, meaning, sentence | ✅ | |
+| 11 | Diagrams | Tense timeline, conjugation grid | ❌ | P0 |
+
+---
+
+#### Vocab Lab (Cross-Subject)
+
+| # | Content Task | Target | Status | Notes |
+|---|--------------|--------|--------|-------|
+| 1 | Spell from meaning | Implemented | ✅ | |
+| 2 | Meaning from word | In session UI | ✅ | |
+| 3 | Use in sentence | In session UI | ✅ | |
+| 4 | Upgrade word | In session UI | ✅ | |
+| 5 | Common mistake hint | Surface in session | ✅ | |
+| 6 | Theme packs | Link to English, Science | Partial | Expand |
+| 7 | Word + image + sentence | Triple encoding | Partial | Per vocab set |
+
+---
+
+### 26.2 Phased Content Rollout — All Subjects
+
+| Phase | Subjects | Content Focus | Effort | Dependencies |
+|-------|----------|---------------|--------|--------------|
+| **Phase 1 — P0 Critical** | Psychology, Combined Science, French, Spanish, Further Maths, Statistics | Spec alignment; 6-paper flow; MFL full build; FM/Stats decision | 4–6 months | gcseScope, Languages Hub |
+| **Phase 2 — P1 High Impact** | Geography, Religious Studies, Business | +concepts, +terms, +quick checks, +case studies | 3–4 months | Implementation plans |
+| **Phase 3 — P2 Full Coverage** | Health, Compute Lab, Science (Triple), English Literature | Units 3–4; per-unit density; stretch content; poetry/optional texts | 2–3 months | |
+| **Phase 4 — Polish** | Maths, English Language, History, Vocab Lab | Mistake Museum expansion; Grade 9 models; diagram completion | 1–2 months | §22 Diagram Master List |
+
+---
+
+### 26.3 Verification Checklist — Per Subject
+
+Before marking a subject "Ultra Sufficient" for Grade 9, verify:
+
+- [ ] **Full spec coverage** — Every topic/sub-topic from specification present
+- [ ] **Key terms glossary** — All required terminology with definitions
+- [ ] **Concept explanations** — Core ideas with dual coding (verbal + visual)
+- [ ] **Common misconceptions** — Addressed (Mistake Museum or equivalent)
+- [ ] **Quick check / recall** — 3–5+ items per sub-topic
+- [ ] **Application practice** — Case studies, scenarios, unfamiliar contexts
+- [ ] **Evaluation practice** — "Assess", "evaluate", "to what extent" questions
+- [ ] **Model answers** — Grade 8/9 level for extended questions
+- [ ] **Stretch content** — Beyond grade 5 where spec allows
+- [ ] **Option-aware** — Geography, History, RS, Literature filter by student choices
+- [ ] **Learning Superpowers** — At least 2 integrated per Concept Lab
+- [ ] **Diagrams** — P0/P1 items from §22 complete
+
+---
+
+### 26.4 Content Creation Order (Recommended)
+
+For content creators working through the plan:
+
+1. **Geography** — Highest gap; use `GEOGRAPHY_AQA_IMPLEMENTATION_PLAN.md` for topic list
+2. **Religious Studies** — Belief concepts, scripture, contrasting views; use RS implementation plan
+3. **Business** — Case studies, glossary expansion; use Business implementation plan
+4. **Health** — Units 3–4; use Health implementation plan
+5. **Compute Lab** — Per-unit audit; use Computer Science implementation plan
+6. **French & Spanish** — Vocabulary to 1,200+; then grammar, listening, reading, writing
+7. **Science (Triple)** — Stretch concepts, Grade 9 questions
+8. **English Literature** — More poetry, optional texts
+9. **Diagrams** — Work through §22 Diagram Master List by priority (P0 → P1 → P2)
