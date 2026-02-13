@@ -136,6 +136,7 @@ import { LanguagesHubHomePage } from './pages/languages/LanguagesHubHomePage';
 import { LanguagesHubLanguagePage } from './pages/languages/LanguagesHubLanguagePage';
 import { LanguagesHubVocabularyPage } from './pages/languages/LanguagesHubVocabularyPage';
 import { LanguagesHubPlaceholderPage } from './pages/languages/LanguagesHubPlaceholderPage';
+import { LearningSuperpowersPage } from './pages/LearningSuperpowersPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -243,6 +244,7 @@ function App() {
             <AppShell>
               <Routes>
                 <Route path="/" element={<SubjectsPage />} />
+                <Route path="/learning-superpowers" element={<LearningSuperpowersPage />} />
                 <Route path="/discover" element={<DiscoverPage />} />
                 <Route path="/playlists/:playlistId" element={<PlaylistDetailPage />} />
                 <Route path="/library" element={<LibraryPage />} />

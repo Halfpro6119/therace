@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle, ArrowRight } from 'lucide-react';
 import { getUnitById, getConceptsByUnit } from '../../config/businessHubData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 import type { BusinessUnitId } from '../../types/businessHub';
 import type { BusinessConcept } from '../../types/businessHub';
 
@@ -157,6 +158,16 @@ export function BusinessHubConceptLabPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            <div className="pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+              <ConceptLabSuperpowersSection
+                subjectId="business"
+                conceptId={selectedConcept.id}
+                conceptTitle={selectedConcept.title}
+                coreIdea={selectedConcept.coreIdea}
+                context="Business"
+              />
             </div>
 
             <div className="flex justify-between pt-4 border-t" style={{ borderColor: 'rgb(var(--border))' }}>

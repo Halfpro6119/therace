@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getPsychologyTopicsForSelection, getConceptsForTopic } from '../../config/psychologyHubData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 
 const ACCENT = '#9333EA';
 
 export function PsychologyHubConceptLabPage() {
   const navigate = useNavigate();
+  const selection = storage.getPsychologyOptionSelection();
   const topics = getPsychologyTopicsForSelection();
   const [topicId, setTopicId] = useState(topics[0]?.id ?? '');
   const [index, setIndex] = useState(0);
@@ -60,6 +62,15 @@ export function PsychologyHubConceptLabPage() {
               <strong>Evaluate:</strong> {card.evaluationHook}
             </p>
           )}
+          <div className="mt-6 pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+            <ConceptLabSuperpowersSection
+              subjectId="psychology"
+              conceptId={card.id}
+              conceptTitle={card.title}
+              coreIdea={card.coreIdea}
+              context="Psychology"
+            />
+          </div>
           <div className="flex justify-between mt-6">
             <button type="button" onClick={() => setIndex((i) => (i === 0 ? concepts.length - 1 : i - 1))} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronLeft size={20} /></button>
             <span className="text-sm self-center" style={{ color: 'rgb(var(--text-secondary))' }}>{index + 1} of {concepts.length}</span>

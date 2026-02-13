@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getHistoryOptionsForSelection, getConceptCardsForOption } from '../../config/historyHubData';
 import { storage } from '../../utils/storage';
+import { RetrievalBeforeRelearn, ConceptLabSuperpowersSection } from '../../components/learning';
 
 const ACCENT = '#B45309';
 
@@ -13,7 +14,6 @@ export function HistoryHubConceptCardsPage() {
   const [optionKey, setOptionKey] = useState(options[0]?.optionKey ?? '');
   const [partId, setPartId] = useState('');
   const [index, setIndex] = useState(0);
-  const [showModel, setShowModel] = useState(false);
 
   const cards = getConceptCardsForOption(optionKey, partId || undefined);
   const card = cards[index];
@@ -35,11 +35,11 @@ export function HistoryHubConceptCardsPage() {
       <h1 className="text-xl font-bold" style={{ color: 'rgb(var(--text))' }}>Concept cards</h1>
 
       <div className="flex flex-wrap gap-2">
-        <select value={optionKey} onChange={(e) => { setOptionKey(e.target.value); setPartId(''); setIndex(0); setShowModel(false); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
+        <select value={optionKey} onChange={(e) => { setOptionKey(e.target.value); setPartId(''); setIndex(0); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
           {options.map((o) => <option key={o.optionKey} value={o.optionKey}>{o.title}</option>)}
         </select>
         {options.find((o) => o.optionKey === optionKey)?.parts.length ? (
-          <select value={partId} onChange={(e) => { setPartId(e.target.value); setIndex(0); setShowModel(false); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
+          <select value={partId} onChange={(e) => { setPartId(e.target.value); setIndex(0); }} className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
             <option value="">All parts</option>
             {options.find((o) => o.optionKey === optionKey)?.parts.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
           </select>
@@ -49,19 +49,29 @@ export function HistoryHubConceptCardsPage() {
       {cards.length === 0 ? (
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No concept cards for this option yet.</p>
       ) : card ? (
-        <div className="rounded-2xl border p-6" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
+        <div className="rounded-2xl border p-6 space-y-6" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
           <p className="text-xs mb-2" style={{ color: ACCENT }}>{card.conceptType}</p>
-          <p className="font-medium mb-4" style={{ color: 'rgb(var(--text))' }}>{card.prompt}</p>
-          {!showModel ? (
-            <button type="button" onClick={() => setShowModel(true)} className="text-sm font-medium" style={{ color: ACCENT }}>Show model answer</button>
-          ) : (
-            <div className="rounded-lg p-4 text-sm border" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text-secondary))' }}>
-              {card.modelAnswer}
-            </div>
-          )}
+          <RetrievalBeforeRelearn
+            prompt={card.prompt}
+            hint="Think about cause, consequence, or change."
+            content={
+              <div className="text-sm" style={{ color: 'rgb(var(--text))' }}>
+                {card.modelAnswer}
+              </div>
+            }
+          />
+          <div className="pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+            <ConceptLabSuperpowersSection
+              subjectId="history"
+              conceptId={card.id}
+              conceptTitle={card.prompt.length > 60 ? card.prompt.slice(0, 60) + '…' : card.prompt}
+              coreIdea={card.modelAnswer}
+              context="History"
+            />
+          </div>
           <div className="flex justify-between mt-6">
-            <button type="button" onClick={() => { setIndex((i) => (i === 0 ? cards.length - 1 : i - 1)); setShowModel(false); }} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronLeft size={20} /></button>
-            <button type="button" onClick={() => { setIndex((i) => (i >= cards.length - 1 ? 0 : i + 1)); setShowModel(false); }} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronRight size={20} /></button>
+            <button type="button" onClick={() => setIndex((i) => (i === 0 ? cards.length - 1 : i - 1))} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronLeft size={20} /></button>
+            <button type="button" onClick={() => setIndex((i) => (i >= cards.length - 1 ? 0 : i + 1))} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronRight size={20} /></button>
           </div>
         </div>
       ) : null}

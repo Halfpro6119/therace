@@ -2,6 +2,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Lightbulb, AlertTriangle, ArrowRight, FileQuestion, FlaskConical, Calculator } from 'lucide-react';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 import {
   getConceptsBySubject,
   getConceptsByTopic,
@@ -160,6 +161,15 @@ export function ScienceLabConceptLabPage() {
                   </p>
                 </div>
               </div>
+
+              {/* Learning Superpowers */}
+              <ConceptLabSuperpowersSection
+                subjectId="science"
+                conceptId={selectedConcept.id}
+                conceptTitle={selectedConcept.topic}
+                coreIdea={selectedConcept.coreIdea}
+                context={normalizedSubject}
+              />
 
               {/* Change Scenarios */}
               {selectedConcept.changeScenarios.length > 0 && (

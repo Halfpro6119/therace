@@ -9,7 +9,7 @@ import {
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight, Zap } from 'lucide-react';
 import { StudyPathDashboard } from '../components/learning/StudyPathDashboard';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
@@ -136,6 +136,34 @@ export function SubjectsPage() {
 
       <motion.div variants={item}>
         <StudyPathDashboard />
+      </motion.div>
+
+      {/* Learning Superpowers */}
+      <motion.div variants={item}>
+        <button
+          type="button"
+          onClick={() => navigate('/learning-superpowers')}
+          className="w-full rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2 flex items-center justify-between text-left"
+          style={{
+            background: 'linear-gradient(135deg, rgb(var(--accent) / 0.12) 0%, rgb(var(--surface)) 60%)',
+            borderColor: 'rgb(var(--accent) / 0.4)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl" style={{ background: 'rgb(var(--accent) / 0.2)' }}>
+              <Zap size={24} style={{ color: 'rgb(var(--accent))' }} />
+            </div>
+            <div>
+              <h2 className="font-bold text-lg" style={{ color: 'rgb(var(--text))' }}>
+                Learning Superpowers
+              </h2>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Concept Bridge, Memory Palace, Explain Like I'm 11 & more — evidence-based methods
+              </p>
+            </div>
+          </div>
+          <ArrowRight size={20} style={{ color: 'rgb(var(--accent))' }} />
+        </button>
       </motion.div>
 
       {/* Top: 3 featured hub cards */}

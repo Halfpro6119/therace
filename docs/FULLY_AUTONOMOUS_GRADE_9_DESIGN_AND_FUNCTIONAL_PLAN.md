@@ -201,9 +201,33 @@ A Grade 9 student needs:
 
 ## Subject-by-Subject Plan
 
+Each subject below has a **complete, self-contained design plan** including: content targets, question presentation, diagrams, functions, Learning Superpowers integration, and subject-specific creative methods.
+
+### Subject Quick Reference
+
+| § | Subject | Spec | Key Sections |
+|---|---------|------|--------------|
+| 4 | Maths | Edexcel 1MA1 | 4.1–4.7 |
+| 5 | Science Lab (Bio, Chem, Phys) | AQA 8461/62/63 | 5.1–5.7 |
+| 6 | Combined Science | AQA 8464/8465 | 6.1–6.6 |
+| 7 | English Language | AQA 8700 | 7.1–7.7 |
+| 8 | English Literature | AQA 8702 | 8.1–8.7 |
+| 9 | History | AQA 8145 | 9.1–9.7 |
+| 10 | Geography | AQA 8035 | 10.1–10.7 |
+| 11 | Religious Studies | AQA 8062 | 11.1–11.7 |
+| 12 | Business | AQA 8132 / Edexcel 1BS0 | 12.1–12.7 |
+| 13 | Psychology | AQA 8182 (GCSE) | 13.1–13.7 |
+| 14 | Health & Social Care | Edexcel 2HS01/02 | 14.1–14.7 |
+| 15 | Computer Science | AQA 8525 | 15.1–15.7 |
+| 16 | French & Spanish | AQA 8658/8698 | 16.1–16.7 |
+| 17 | Further Maths & Statistics | Edexcel / AQA | 17.1–17.3 |
+| 18 | Vocab Lab | Cross-subject | 18.1–18.4 |
+
 ---
 
 ## 4. Maths (Edexcel 1MA1)
+
+**Spec:** Edexcel 1MA1 | **Papers:** 3 (Non-calc, Calc, Calc) | **Tiers:** Foundation, Higher
 
 ### 4.1 Content Targets (from Content Plan)
 
@@ -268,9 +292,36 @@ A Grade 9 student needs:
 | **Full paper + Topic practice** | Both modes; topic practice shows topic name per question |
 | **Personal best + mastery chip** | Per paper/topic; visible on results page |
 
+### 4.5 Maths — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Topic drill intro | Retrieval Before Relearn | "Before we show the method — what do you remember?" for each topic |
+| Question feedback | Mistake Museum | After wrong answer: "Many students choose X because…" |
+| Formula cards | Dual-Code Flip | Formula + geometric interpretation; "Sketch this" / "What do you see?" |
+| Multi-step questions | Worked Example Fade | First 2 steps given, student completes; "What would the next step be?" |
+| Mixed mastery | Interleave Roulette | 30% current topic, 70% previous — built into topic drill |
+| Before answer | Confidence Calibration | "How sure are you?" 1–5 |
+
+### 4.6 Maths — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Examiner's eye overlay** | Shows where marks would be awarded/lost after submission |
+| **Common error trap** | "Many students choose X because… but the correct approach is…" |
+| **Graph + "What does this point mean in words?"** | Dual coding: visual → verbal retrieval |
+
+### 4.7 Maths — Diagram Priorities (from Master List)
+
+| Diagram | Priority |
+|---------|----------|
+| Ratio/scale, Loci, Transformations overlay, Graph with movable point | P2 |
+
 ---
 
 ## 5. Science Lab (Biology, Chemistry, Physics — AQA 8461/62/63)
+
+**Specs:** AQA 8461 (Biology), 8462 (Chemistry), 8463 (Physics) | **Papers:** 2 per subject | **Tiers:** Foundation, Higher
 
 ### 5.1 Content Targets (from Content Plan)
 
@@ -346,9 +397,41 @@ A Grade 9 student needs:
 | **Combined Science mode** | 6-paper structure; combined-specific questions (shorter, synoptic); student selects Triple vs Combined at start |
 | **Stretch content** | Grade 9-style questions; extension concepts beyond core spec |
 
+### 5.5 Science Lab — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Concept Lab | Explain Like I'm 11 | ✅ Already embedded; extend to all concepts |
+| Concept Lab | Concept Bridge | "Link photosynthesis & respiration"; "Link electrolysis & bonding" |
+| Concept Lab | Schema Builder | Cell → tissue → organ → system; reactivity series; energy transfers |
+| Concept Lab | Compare & Contrast Matrix | Diffusion vs osmosis; exothermic vs endothermic; series vs parallel |
+| Concept Lab | Retrieval Before Relearn | "Before we show you — what do you remember about mitosis?" |
+| Quick Check / Question Lab | Mistake Museum | Per-topic misconception cards |
+| Process diagrams | Dual-Code Flip | Diagram → describe; text → sketch (e.g. reflex arc, electrolysis) |
+| Practical Lab | Worked Example Fade | Method steps: first 2 given, student completes |
+
+### 5.6 Science Lab — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Data dive** | Real data; student selects graph type, plots, interprets |
+| **Stretch scenario** | Unfamiliar context (new organism, new reaction) — tests application |
+| **Change scenario** | "If temperature increases…" — tests transfer |
+| **Practical simulator** | Step-through of required practical; "What would you measure here?" |
+
+### 5.7 Science Lab — Diagram Priorities (from Master List)
+
+| Subject | Diagrams | Priority |
+|---------|----------|----------|
+| Biology | Cell, digestive system, heart, neuron, DNA, food web, carbon cycle, microscope | P0 |
+| Chemistry | Atom, bonding, periodic table, electrolysis, energy profile, fractionating column | P0 |
+| Physics | Force diagrams, waves, ray diagrams, pendulum, magnet, solar system | P0 |
+
 ---
 
 ## 6. Combined Science (AQA 8464/8465)
+
+**Spec:** AQA 8464/8465 | **Papers:** 6 (2 Bio, 2 Chem, 2 Phys) | **Tiers:** Foundation, Higher
 
 ### 6.1 Content Targets (from Content Plan)
 
@@ -383,9 +466,17 @@ A Grade 9 student needs:
 | **Combined vs Triple toggle** | At onboarding; affects content and equation sheet |
 | **Unified progress** | Single "Science" progress bar that aggregates all 6 papers |
 
+### 6.6 Combined Science — Subject-Specific Notes
+
+- Reuses all Science Lab diagrams; no new diagrams needed
+- Same Learning Superpowers as Science Lab (§5.5); same Creative methods (§5.6)
+- Distinct: 6-paper dashboard, synoptic question bank, combined equation sheet
+
 ---
 
 ## 7. English Language (AQA 8700)
+
+**Spec:** AQA 8700 | **Papers:** 2 (Fiction + Non-fiction) | **Tier:** Single
 
 ### 7.1 Content Targets (from Content Plan)
 
@@ -439,9 +530,36 @@ A Grade 9 student needs:
 | **SPaG tracker** | For writing, flag common errors; link to Vocab Lab |
 | **Draft history** | Save multiple drafts; compare Draft 1 vs Draft 2 |
 
+### 7.5 English Language — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Reading tasks | Compare & Contrast Matrix | Two texts side-by-side; drag statements to Same / Text A / Text B |
+| Writing tasks | Worked Example Fade | Model paragraph: first 2 sentences given, student completes |
+| Planning | Retrieval Before Relearn | "Before you write — list 3 techniques you'll use" |
+| Structure questions | Dual-Code Flip | Structure diagram + extract with highlighted sections |
+| Model answers | Mistake Museum | "Many students write X; examiners want Y because…" |
+
+### 7.6 English Language — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Examiner's annotations** | Model answer with marginal notes: "Topic sentence here" |
+| **Evidence hunter** | Highlight 3 quotes before answering; app checks relevance |
+| **Upgrade this sentence** | Grade 4 → Grade 6/8 rewrite; compare to model |
+| **Timed burst** | 5 min to plan, 10 min to write — mimics exam pressure |
+
+### 7.7 English Language — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Structure diagram, comparison grid, AO mapping | P1 |
+
 ---
 
 ## 8. English Literature (AQA 8702)
+
+**Spec:** AQA 8702 | **Papers:** 2 (Shakespeare + 19thC novel; Modern + poetry) | **Tier:** Single
 
 ### 8.1 Content Targets (from Content Plan)
 
@@ -495,9 +613,37 @@ A Grade 9 student needs:
 | **Seen + Unseen poetry** | Full anthology coverage; unseen with comparison |
 | **Option-aware** | Only show tasks for student's chosen texts |
 
+### 8.5 English Literature — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Literature concepts | Explain Like I'm 11 | "Explain this theme so someone who hasn't read it would get it" |
+| Quotation Lab | Memory Palace | "Place each quote in a scene from the play" |
+| Theme/character | Schema Builder | Build theme web: central theme, branches to characters/events/quotes |
+| Two texts/poems | Compare & Contrast Matrix | Form, structure, language, ideas — side by side |
+| Model answers | Mistake Museum | "Many students write X; examiners want Y because…" |
+
+### 8.6 English Literature — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Quotation Lab** | Drill quotes by theme/character; "Explain", "Upgrade", "Link two" |
+| **Context injector** | Suggest relevant context when writing (e.g. "Jacobean audience…") |
+| **Comparison connector** | For poetry comparison, suggest linking phrases: "Similarly…", "In contrast…" |
+| **Character arc** | Visual timeline of character change; student annotates key moments |
+| **Theme web** | Central theme, branches to characters/events/quotes — interactive revision |
+
+### 8.7 English Literature — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Plot timeline, character map, theme web, context timeline, poetry comparison grid | P1 |
+
 ---
 
 ## 9. History Hub (AQA 8145)
+
+**Spec:** AQA 8145 | **Papers:** 3 (Period study, Wider world, Modern depth) | **Tier:** Single
 
 ### 9.1 Content Targets (from Content Plan)
 
@@ -555,9 +701,38 @@ A Grade 9 student needs:
 | **Key terms + concept cards** | Per option; flashcard-style |
 | **Grade 9 model answers** | For essay and source questions |
 
+### 9.5 History — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Timeline / events | Retrieval Before Relearn | "Before we show you — what happened here?" per event |
+| Source analysis | Compare & Contrast Matrix | Two interpretations; drag to Same / Interpretation A / B |
+| Causation | Concept Bridge | "Link these two events" — drag and explain cause-effect |
+| Key dates/lists | Memory Palace | "Place each event in a room" (method of loci) |
+| Essay planning | Schema Builder | Build causation web: events → causes → consequences |
+| Key terms | Explain Like I'm 11 | "Explain [concept] so a Year 8 would get it" |
+
+### 9.6 History — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Source surgeon** | Annotate source — circle content, underline provenance |
+| **Interpretation duel** | Two historians' views; student writes both sides |
+| **Timeline zoom** | Interactive timeline; "What came before this that caused it?" |
+| **Essay skeleton** | Template: Intro → Para 1 → Para 2 → Para 3 → Conclusion — drag to reorder |
+| **Key term injector** | When writing, suggest spec terms they haven't used yet |
+
+### 9.7 History — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Timeline, source grid, interpretation comparison, cause-effect, essay plan | P1 |
+
 ---
 
 ## 10. Geography Hub (AQA 8035)
+
+**Spec:** AQA 8035 | **Papers:** 3 (Physical, Human, Fieldwork & skills) | **Tier:** Single
 
 ### 10.1 Content Targets (from Content Plan)
 
@@ -623,9 +798,37 @@ A Grade 9 student needs:
 | **Quick check + Question Lab** | Per section; 3–5 quick checks per sub-topic |
 | **Key terms** | 300+; full spec + case study terms |
 
+### 10.5 Geography — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Case studies | Retrieval Before Relearn | "Before we show you — what do you remember about [Rio/Bristol]?" |
+| Processes | Compare & Contrast Matrix | LIC vs HIC city; two management strategies |
+| Case study structure | Schema Builder | Drag facts (location, causes, impacts, management) into structure |
+| Map/data | Dual-Code Flip | See map → "What do you see?"; see data → "Which graph type fits?" |
+| Concrete examples | Varied practice | "Example 1: Somerset Levels…", "Example 2: [different location]" |
+
+### 10.6 Geography — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Map decoder** | Annotate map — relief, land use, settlement pattern |
+| **Graph builder** | Given data, student chooses graph type and plots |
+| **Case study deep dive** | LIC city, UK city, tectonic hazard — full fact file + application |
+| **Decision maker** | Issue evaluation — student as planner; justify with evidence |
+| **Fieldwork simulator** | Virtual fieldwork — photos, data collection sheet; analyse results |
+
+### 10.7 Geography — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Map, choropleth, cross-section, process diagrams, hydrograph, urban model, DTM | P1 |
+
 ---
 
 ## 11. Religious Studies Hub (AQA 8062)
+
+**Spec:** AQA 8062 | **Papers:** 2 | **Tier:** Single
 
 ### 11.1 Content Targets (from Content Plan)
 
@@ -685,9 +888,35 @@ A Grade 9 student needs:
 | **12-mark practice** | 4–6 per religion, 3–5 per theme; full scaffold |
 | **Philosophical arguments** | Theme C: 5 full arguments with evaluation |
 
+### 11.5 Religious Studies — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Beliefs (5 Pillars, etc.) | Memory Palace | "Place each in a room" — method of loci |
+| 12-mark views | Compare & Contrast Matrix | Two religions on one theme; drag to Same / Religion A / B |
+| Belief explanation | Explain Like I'm 11 | "Explain [belief] so someone of another faith would understand" |
+| Argument evaluation | Schema Builder | Design argument: premise → premise → conclusion |
+| View builder | Chunking | Build two views with evidence; then write conclusion |
+
+### 11.6 Religious Studies — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Scripture unpacker** | Given a quote, identify: What does it teach? Which belief? How might it influence a believer? |
+| **Philosophy explorer** | Theme C — Design, First Cause; step through argument; identify strengths/weaknesses |
+| **Religious literacy** | Key terms per religion; "What does Tawhid mean?" with scripture link |
+
+### 11.7 Religious Studies — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Belief web, theme matrix, argument map | P1 |
+
 ---
 
 ## 12. Business Hub (AQA 8132 / Edexcel 1BS0)
+
+**Spec:** AQA 8132 / Edexcel 1BS0 | **Papers:** 2 | **Tier:** Single
 
 ### 12.1 Content Targets (from Content Plan)
 
@@ -746,9 +975,36 @@ A Grade 9 student needs:
 | **Evaluation prompts** | 25+; "Evaluate the importance of…" |
 | **Option support** | AQA and Edexcel content where different |
 
+### 12.5 Business — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Calculations | Worked Example Fade | Break-even, cash flow — first step given, student completes |
+| Concepts | Compare & Contrast Matrix | Two business types; two strategies; advantages/disadvantages |
+| Marketing mix | Schema Builder | "Build the marketing mix" — drag 4 Ps into structure |
+| Break-even | Dual-Code Flip | Graph + "What happens if price rises?" (interactive) |
+| Case studies | Concrete examples | Every concept with 2–3 real business scenarios |
+
+### 12.6 Business — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Calculation coach** | Step-by-step; "First identify fixed costs…" — student fills each step |
+| **Break-even visualiser** | Interactive graph; move price/cost; see break-even point shift |
+| **Stakeholder view** | Given decision, student writes from perspective of worker, customer, shareholder |
+| **Business in the news** | Short scenarios based on real events; apply concepts |
+
+### 12.7 Business — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Break-even chart, cash flow, org chart, product life cycle, supply/demand | P1 |
+
 ---
 
 ## 13. Psychology Hub (AQA GCSE 8182)
+
+**Spec:** AQA 8182 (GCSE) | **Papers:** 2 (Cognition & Behaviour; Social Context) | **Tier:** Single
 
 **Critical:** Align to GCSE 8182, not A-level 7182. Audit `psychologyHubData.ts` against AQA 8182; replace or supplement A-level content with GCSE content.
 
@@ -810,9 +1066,37 @@ A Grade 9 student needs:
 | **Question lab** | 25+; all question types |
 | **Research methods** | Design, IV/DV, sampling, ethics |
 
+### 13.5 Psychology — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Concept Lab | Explain Like I'm 11 | "Explain [study] so a non-psychologist would get it" |
+| Concept Lab | Concept Bridge | "Link memory and revision" — how does the research apply? |
+| Concept Lab | Compare & Contrast Matrix | Gregory vs Gibson; two studies on same topic |
+| Study design | Worked Example Fade | "Design a study" — first 2 steps given, student completes |
+| Models | Dual-Code Flip | Multi-store model diagram → "What happens at each stage?" |
+| Misconceptions | Mistake Museum | Per-topic: "Many students think X because…" |
+
+### 13.6 Psychology — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Study evaluator** | Rate strengths/weaknesses; compare to mark scheme |
+| **Design your own** | Scenario; student designs study (IV, DV, method); compare to model |
+| **Apply it** | "A teacher wants to improve recall. Using your knowledge of memory, suggest…" |
+| **Issues and debates** | Nature/nurture, ethics — apply to studies |
+
+### 13.7 Psychology — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Multi-store model, working memory, brain, neuron, study design flowchart | P0 |
+
 ---
 
 ## 14. Health & Social Care (Edexcel 2HS01/02)
+
+**Spec:** Edexcel 2HS01/02 | **Papers:** 2 | **Tier:** Single
 
 ### 14.1 Content Targets (from Content Plan)
 
@@ -869,9 +1153,36 @@ A Grade 9 student needs:
 | **Care value scenarios** | Multiple per value |
 | **Quick check** | 80+ |
 
+### 14.5 Health & Social Care — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Life stages | Compare & Contrast Matrix | Two life stages; two care values |
+| Investigation | Schema Builder | "Build the investigation" — hypothesis → method → ethics |
+| Maslow | Dual-Code Flip | Pyramid + "Which need is unmet here?" — application |
+| Care values | Concrete examples | Every concept with 2–3 service user scenarios |
+| Case studies | Retrieval Before Relearn | "Before we show you — what support would you suggest?" |
+
+### 14.6 Health & Social Care — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Life stage timeline** | Drag events to correct life stage; explain impact |
+| **Care value in action** | Video or scenario; "Where is the care worker demonstrating respect?" |
+| **Investigation scaffold** | Step-by-step; hypothesis → variables → method → ethics |
+| **Case study unpacker** | Given scenario, identify needs, suggest support |
+
+### 14.7 Health & Social Care — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Life stage timeline, Maslow, care value wheel, investigation flowchart | P2 |
+
 ---
 
 ## 15. Compute Lab (AQA 8525)
+
+**Spec:** AQA 8525 | **Papers:** 2 (Computational thinking; Programming) | **Tier:** Single
 
 **Note:** gcseScope lists OCR; implementation plan uses AQA 8525. Reconcile: use AQA 8525 (new spec, first teaching 2025) or OCR J277.
 
@@ -943,9 +1254,37 @@ A Grade 9 student needs:
 | **Concept lab** | Per unit; 3–8 concepts each |
 | **Question lab** | 50+ across units |
 
+### 15.5 Compute Lab — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Trace tables | Worked Example Fade | First 3 rows given, student completes |
+| TCP/IP layers | Schema Builder | "Build the TCP/IP layers" — drag protocols into correct layer |
+| Algorithms | Retrieval Before Relearn | "Before we show you — what does this algorithm do?" |
+| Flowchart + pseudo | Dual-Code Flip | Same algorithm in both forms; "Which step does this shape represent?" |
+| Concrete examples | Varied practice | "This program does X — what would happen if we changed Y?" |
+
+### 15.6 Compute Lab — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Trace animator** | Step through algorithm; watch variables update |
+| **Pseudo-code to code** | Given AQA pseudo-code, convert to Python |
+| **Logic builder** | Drag AND, OR, NOT; build circuit; test inputs |
+| **SQL explorer** | Given database, explore with queries; then answer exam-style question |
+| **Test data selector** | Given program, choose normal, boundary, erroneous — justify |
+
+### 15.7 Compute Lab — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Flowchart, CPU, Fetch-execute, network, TCP/IP, Huffman tree, database schema | P1 |
+
 ---
 
 ## 16. French & Spanish (AQA 8658/8698)
+
+**Specs:** AQA 8658 (French), 8698 (Spanish) | **Papers:** 4 (Listening, Speaking, Reading, Writing) | **Tiers:** Foundation, Higher
 
 **Status:** No content yet. Full build required. **New MFL spec (2025):** Vocabulary lists, grammar, themes defined by DfE. Align to AQA 8658 (French), 8698 (Spanish).
 
@@ -1013,11 +1352,37 @@ A Grade 9 student needs:
 | **Translation** | Sentence + passage |
 | **Theme filter** | Identity, Local/national/global, Future |
 
+### 16.5 French & Spanish — Learning Superpowers Integration
+
+| Where | Superpowers | Content / Trigger |
+|-------|-------------|-------------------|
+| Theme vocabulary | Memory Palace | "Place each word in a room" (Identity, Local, Future) |
+| Vocabulary drill | Retrieval Before Relearn | "Before we show you — what does this mean?" |
+| Grammar | Dual-Code Flip | Tense timeline + example; "When do we use this?" |
+| Sentence builder | Schema Builder | Drag words to form correct sentence — visual + verbal |
+| Common errors | Mistake Museum | "Many students write X; the correct form is Y because…" |
+| Concrete examples | Varied practice | Every grammar point: "Example 1…", "Example 2…", "Now you try" |
+
+### 16.6 French & Spanish — Creative Methods
+
+| Method | Purpose |
+|--------|---------|
+| **Shadow speaking** | Listen and repeat; fluency practice |
+| **Context cards** | Theme (Identity, Local, Future); sub-topics; vocab + example sentences |
+| **Exam-style tasks** | Foundation vs Higher; 4 papers each; full task types |
+| **Common error trap** | "Many students write X; the correct form is Y because…" |
+
+### 16.7 French & Spanish — Diagram Priorities
+
+| Diagram | Priority |
+|---------|----------|
+| Tense timeline, conjugation grid, theme map, question word poster | P0 |
+
 ---
 
 ## 17. Further Maths & Statistics
 
-**Status:** Placeholder only. Either full build or remove from scope. **Content Plan:** Full spec per exam board required if built.
+**Spec:** Edexcel (Further Maths) / AQA or Edexcel (Statistics) | **Status:** Placeholder — full build or remove from scope
 
 ### 17.1 If Built — Design Principles
 
@@ -1026,7 +1391,13 @@ A Grade 9 student needs:
 - **Question presentation**: Same as Maths; diagrams for distributions, Venn, tree
 - **Functions**: Topic drill, full paper, Fix-It
 
-### 17.2 Recommendation
+### 17.2 If Built — Subject-Specific Integration
+
+- **Learning Superpowers:** Same as Maths (§4.5) — Retrieval Before Relearn, Mistake Museum, Dual-Code Flip, Worked Example Fade, Interleave Roulette
+- **Creative methods:** Same as Maths (§4.6)
+- **Diagram priorities:** Distributions, Venn, tree diagrams — P2
+
+### 17.3 Recommendation
 
 - **Short term:** Remove from "Maths Mastery" marketing until content ready
 - **Long term:** Full build if demand exists; otherwise deprioritise
@@ -1034,6 +1405,8 @@ A Grade 9 student needs:
 ---
 
 ## 18. Vocab Lab (Cross-Subject)
+
+**Scope:** English, Science, and other subject vocabulary | **Modes:** Spell, Meaning, Use in sentence, Upgrade, Common mistake
 
 ### 18.1 Content Targets (from Content Plan)
 
@@ -1069,6 +1442,12 @@ A Grade 9 student needs:
 - **Spaced repetition**: Already present
 - **Fix-It, Streak Sprint**: Already present
 - **Integration**: From English writing result — "Improve vocabulary" → Vocab Lab with relevant set
+
+### 18.4 Vocab Lab — Subject-Specific Notes
+
+- **Learning Superpowers:** Retrieval practice (spell, meaning), Spaced repetition, Mistake Museum (common mistake hint)
+- **Dual coding:** Word + image + sentence (triple encoding); icon per word type
+- **Integration points:** English writing → "Improve vocabulary" → Vocab Lab; theme packs link to subject hubs
 
 ---
 
@@ -1220,6 +1599,32 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 | **Languages Hub** | ✅ Vocabulary mode | `LanguagesHubVocabularyPage.tsx` — spell, meaning, sentence; 30 words French, 28 Spanish |
 | **gcseScope** | ✅ Updated | Combined Science 6 papers; Computer Science AQA 8525; Psychology GCSE 8182 |
 
+### Learning Superpowers — All Implemented (Feb 2025)
+
+| Feature | Status | Location |
+|---------|--------|----------|
+| **Concept Bridge** | ✅ Implemented | `ConceptBridge.tsx` — link two concepts, explain connection |
+| **Memory Palace** | ✅ Implemented | `MemoryPalace.tsx` — place items in rooms, recall |
+| **Explain Like I'm 11** | ✅ Implemented | `ExplainLikeIm11.tsx` — Feynman technique; embedded in Science Concept Lab |
+| **Worked Example Fade** | ✅ Implemented | `WorkedExampleFade.tsx` — first steps given, student completes |
+| **Compare & Contrast Matrix** | ✅ Implemented | `CompareContrastMatrix.tsx` — drag statements to Same/A/B |
+| **Schema Builder** | ✅ Implemented | `SchemaBuilder.tsx` — drag concepts into hierarchy/flow |
+| **Retrieval Before Relearn** | ✅ Implemented | `RetrievalBeforeRelearn.tsx` — "What do you remember?" before reveal |
+| **Learning Superpowers Hub** | ✅ Implemented | `LearningSuperpowersPage.tsx` — `/learning-superpowers` with all 9 tools |
+| **Integration** | ✅ Implemented | Subjects page card; Command Palette; Science Concept Lab (Explain Like I'm 11) |
+
+### Learning Superpowers — Full Subject Integration (Feb 2025)
+
+| Subject | Status | Notes |
+|---------|--------|-------|
+| **History** | ✅ Implemented | ConceptLabSuperpowersSection added to Concept Cards; HISTORY_SUPERPOWERS config (BA-cc1, AB-cc1, BC-cc1); Concept Bridge, Schema Builder, Compare & Contrast |
+| **Business** | ✅ Expanded | Mistake Museum, Worked Example Fade (break-even); more concepts with superpowers |
+| **Geography** | ✅ Expanded | Mistake Museum; nh-2 (plate tectonics Schema Builder), coast-1 (Retrieval) |
+| **Health** | ✅ Expanded | Mistake Museum; c-2.1-hierarchy (Maslow Explain Like I'm 11) |
+| **Compute** | ✅ Expanded | Mistake Museum; c-3.4.5-cpu, c-3.3.1-bases (Compare & Contrast) |
+| **Religious Studies** | ✅ Expanded | Mistake Museum; chr-trinity, chr-nature-god (Explain Like I'm 11, Compare & Contrast) |
+| **Command Palette** | ✅ Updated | Spaced Review Queue, Interleave Roulette added for access from any page |
+
 ### Remaining (Content & Future)
 
 - **Geography, RS, Business** — Content expansion (concepts, terms, quick checks) per quantified targets
@@ -1228,3 +1633,102 @@ To make this app **fully autonomous for Grade 9** and **the greatest education a
 - **French/Spanish** — Expand to 1,200+ (Foundation) / 1,700+ (Higher) words; add Grammar, Listening, Reading, Writing, Speaking, Translation modes
 - **Further Maths & Statistics** — Build or remove from scope
 - **Diagrams** — 50+ new diagrams per §22
+
+---
+
+## 25. Learning Superpowers Integration Plan — Every Subject, Greatest Learning Platform
+
+**Purpose:** Ensure every subject uses the Learning Superpowers methods and other creative, evidence-based approaches so this app becomes the greatest learning platform on the planet. No subject left behind.
+
+**Principle:** Learning Superpowers are not optional extras — they are the *default way* students engage with concepts. Each subject has a tailored mix; the hub homepage and concept labs surface them contextually.
+
+**Subject-specific details:** Full integration plans, creative methods, and diagram priorities are now in each subject's section (§4.5–§18.4). This section provides the quick-reference matrix and implementation approach.
+
+---
+
+### 25.1 Integration Matrix — Superpower ↔ Subject (Quick Reference)
+
+| Superpower | Maths | Science | English Lang | English Lit | History | Geography | RS | Business | Psychology | Health | Compute | MFL |
+|------------|:-----:|:------:|:------------:|:-----------:|:-------:|:---------:|:--:|:--------:|:----------:|:------:|:-------:|:---:|
+| **Concept Bridge** | ✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ |
+| **Memory Palace** | ✓ | ✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓✓ |
+| **Explain Like I'm 11** | ✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ |
+| **Worked Example Fade** | ✓✓ | ✓ | ✓✓ | ✓ | — | ✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ |
+| **Compare & Contrast Matrix** | ✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓ |
+| **Schema Builder** | ✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ |
+| **Retrieval Before Relearn** | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓✓ | ✓✓ |
+| **Dual-Code Flip** | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Mistake Museum** | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ |
+| **Confidence Calibration** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Interleave Roulette** | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Spaced Review Queue** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+*✓✓ = Primary / high impact for this subject; ✓ = Secondary / contextual use*
+
+**Full subject-by-subject integration details:** See §4.5 (Maths), §5.5 (Science), §7.5 (English Language), §8.5 (English Literature), §9.5 (History), §10.5 (Geography), §11.5 (RS), §12.5 (Business), §13.5 (Psychology), §14.5 (Health), §15.5 (Compute), §16.5 (MFL).
+
+---
+
+### 25.2 Implementation Priority (Phased Rollout)
+
+| Phase | Scope | Subjects | Effort |
+|-------|-------|----------|--------|
+| **P0 — Foundation** | Embed 2–3 superpowers per Concept Lab | Science (expand), Psychology, Business, Geography, Health, Compute | 2–3 weeks |
+| **P1 — Deep integration** | Add subject-specific content (Mistake Museum items, Schema Builder configs, etc.) | All hubs with Concept Labs | 3–4 weeks |
+| **P2 — Question Lab & creative** | Integrate into question feedback, add creative features | Maths, English, History, Science, Psychology | 4–6 weeks |
+| **P3 — MFL & cross-cutting** | Languages Hub; Confidence Calibration everywhere; Interleave Roulette per subject | Languages, all subjects | 2–3 weeks |
+
+---
+
+### 25.3 Technical Approach
+
+1. **Shared config:** Create `learningSuperpowersConfig.ts` — maps `subjectId` + `context` (concept-lab, question-lab, etc.) → which superpowers to show and with what default content.
+2. **Concept Lab wrapper:** A reusable `ConceptLabWithSuperpowers` wrapper that:
+   - Renders concept content
+   - Injects superpowers based on config (e.g. after concept: Explain Like I'm 11, then optional Concept Bridge if linked concepts exist)
+   - Accepts `subjectId`, `conceptId`, `linkedConcepts[]`, `misconceptions[]`
+3. **Subject data enrichment:** Each subject's concept/glossary data gains optional fields: `explainLike11Model`, `conceptBridgePairs`, `compareContrastStatements`, `schemaBuilderConfig`, `mistakeMuseumItems`, `retrievalPrompt`.
+4. **"Try a superpower" CTA:** From any concept or question, a subtle "Strengthen this — try Concept Bridge" or "Explain like you're 11" that opens the superpower with pre-filled context.
+
+---
+
+### 25.4 Success Criteria — Greatest Learning Platform
+
+- [ ] **Every Concept Lab** uses at least 2 Learning Superpowers (Explain Like I'm 11 + one other)
+- [ ] **Every subject** has at least 1 Compare & Contrast Matrix and 1 Schema Builder config
+- [ ] **Maths, Science, English** have Mistake Museum items for top 5 misconceptions per major topic
+- [ ] **Memory Palace** is available for list-heavy content (RS, Literature, History, MFL)
+- [ ] **Retrieval Before Relearn** appears before revealing answers in concept flows
+- [ ] **Worked Example Fade** appears in calculation/procedure-heavy subjects (Maths, Business, Compute, Science practicals)
+- [ ] **Dual-Code Flip** appears wherever diagrams + text are core (Science, Geography, Compute, Maths)
+- [ ] **Confidence Calibration** is available (or default) before high-stakes checks
+- [ ] **Interleave Roulette** and **Spaced Review Queue** are accessible from every hub
+- [ ] **Creative features** (examiner's eye, evidence hunter, study evaluator, etc.) are implemented per subject where specified
+
+---
+
+### 25.5 Content Requirements for Integration
+
+To integrate superpowers, each subject needs **content**:
+
+| Superpower | Content Needed |
+|------------|----------------|
+| **Explain Like I'm 11** | `modelExplanation` per concept (simple, Year 6-friendly) |
+| **Concept Bridge** | Pairs of concepts + `modelConnection` (e.g. photosynthesis ↔ respiration) |
+| **Compare & Contrast Matrix** | `conceptA`, `conceptB`, `statements[]` with `correctColumn` |
+| **Schema Builder** | `nodes[]`, `slots[]`, `correctMapping`, `layout` (hierarchy/flow) |
+| **Memory Palace** | `items[]` (e.g. 5 Pillars), `rooms[]` (default or custom) |
+| **Worked Example Fade** | `steps[]` with `given: true/false`, `modelAnswer` for completion |
+| **Retrieval Before Relearn** | `prompt`, `hint`, `content` (what to reveal after) |
+| **Mistake Museum** | `items[]`: wrongAnswer, whyStudentsThinkThis, whyItsWrong, correctApproach |
+| **Dual-Code Flip** | `diagram` (React node), `text`, `diagramPrompt`, `textPrompt` |
+
+**Action:** Audit each subject's data files; add these fields where missing. Start with Science (already has Explain Like I'm 11), then Psychology, then Business/Geography/Health/Compute.
+
+---
+
+### 25.6 Creative Methods — Subject Reference
+
+Subject-specific creative methods are documented in each subject's section (§4.6 Maths, §5.6 Science, §7.6 English Language, §8.6 English Literature, §9.6 History, §10.6 Geography, §11.6 RS, §12.6 Business, §13.6 Psychology, §14.6 Health, §15.6 Compute, §16.6 MFL).
+
+**Principle:** Each subject should have at least 2–3 creative methods that go beyond "answer the question" — they make students *think like examiners*, *apply to unfamiliar contexts*, and *build transferable skills*.

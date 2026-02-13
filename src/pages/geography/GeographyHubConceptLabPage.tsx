@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getGeographySectionsForSelection, getConceptsForSections } from '../../config/geographyHubData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 
 const ACCENT = '#0D9488';
 
@@ -66,6 +67,15 @@ export function GeographyHubConceptLabPage() {
               <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{current.misconception}</p>
             </div>
           )}
+          <div className="pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+            <ConceptLabSuperpowersSection
+              subjectId="geography"
+              conceptId={current.id}
+              conceptTitle={current.title}
+              coreIdea={current.coreIdea}
+              context="Geography"
+            />
+          </div>
           <div className="flex justify-between pt-4">
             <button type="button" onClick={() => setIndex((i) => (i === 0 ? filteredConcepts.length - 1 : i - 1))} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronLeft size={20} /></button>
             <button type="button" onClick={() => setIndex((i) => (i >= filteredConcepts.length - 1 ? 0 : i + 1))} className="p-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))' }}><ChevronRight size={20} /></button>

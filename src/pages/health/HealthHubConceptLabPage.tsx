@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle, ArrowRight } from 'lucide-react';
 import { getUnitById, getConceptsByUnit } from '../../config/healthHubData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 import type { HealthUnitId } from '../../types/healthHub';
 import type { HealthConcept } from '../../types/healthHub';
 
@@ -153,6 +154,16 @@ export function HealthHubConceptLabPage() {
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{selectedConcept.applyScenario}</p>
               </div>
             )}
+
+            <div className="pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+              <ConceptLabSuperpowersSection
+                subjectId="health"
+                conceptId={selectedConcept.id}
+                conceptTitle={selectedConcept.title}
+                coreIdea={selectedConcept.coreIdea}
+                context="Health & Social Care"
+              />
+            </div>
 
             <div className="flex justify-between pt-4 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
               <button

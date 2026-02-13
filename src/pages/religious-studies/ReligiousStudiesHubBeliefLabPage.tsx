@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Lightbulb, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { storage } from '../../utils/storage';
 import { getBeliefConceptsForSelection } from '../../config/religiousStudiesHubData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 
 const ACCENT = '#7C3AED';
 
@@ -90,6 +91,15 @@ export function ReligiousStudiesHubBeliefLabPage() {
           {selectedConcept.scriptureRef && (
             <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>Scripture: {selectedConcept.scriptureRef}</p>
           )}
+          <div className="pt-6 mt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+            <ConceptLabSuperpowersSection
+              subjectId="religious-studies"
+              conceptId={selectedConcept.id}
+              conceptTitle={selectedConcept.title}
+              coreIdea={selectedConcept.coreIdea}
+              context="Religious Studies"
+            />
+          </div>
           <div className="flex justify-between mt-6">
             <button
               type="button"

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle, ArrowRight } from 'lucide-react';
 import { getUnitById, getConceptsByUnit } from '../../config/computeLabData';
+import { ConceptLabSuperpowersSection } from '../../components/learning';
 import type { ComputeUnitId } from '../../types/computeLab';
 import type { ComputeConcept } from '../../types/computeLab';
 
@@ -154,6 +155,16 @@ export function ComputeLabConceptLabPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            <div className="pt-6 border-t" style={{ borderColor: 'rgb(var(--border))' }}>
+              <ConceptLabSuperpowersSection
+                subjectId="compute"
+                conceptId={selectedConcept.id}
+                conceptTitle={selectedConcept.title}
+                coreIdea={selectedConcept.coreIdea}
+                context="Computer Science"
+              />
             </div>
 
             <div className="flex justify-between pt-4 border-t" style={{ borderColor: 'rgb(var(--border))' }}>

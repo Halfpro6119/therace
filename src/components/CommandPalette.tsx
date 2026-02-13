@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Compass, BookOpen, User, Trophy, Library, X } from 'lucide-react';
+import { Search, Compass, BookOpen, User, Trophy, Library, X, Zap, RotateCcw, Shuffle } from 'lucide-react';
 import { db } from '../db/client';
 import { Subject, Quiz } from '../types';
 
@@ -67,6 +67,36 @@ export function CommandPalette() {
       label: 'Subjects',
       description: 'Browse all subjects',
       icon: BookOpen,
+      action: () => {
+        navigate('/');
+        setIsOpen(false);
+      }
+    },
+    {
+      id: 'learning-superpowers',
+      label: 'Learning Superpowers',
+      description: 'Evidence-based learning methods',
+      icon: Zap,
+      action: () => {
+        navigate('/learning-superpowers');
+        setIsOpen(false);
+      }
+    },
+    {
+      id: 'spaced-review',
+      label: 'Spaced Review Queue',
+      description: 'Items due for retrieval today',
+      icon: RotateCcw,
+      action: () => {
+        navigate('/');
+        setIsOpen(false);
+      }
+    },
+    {
+      id: 'interleave-roulette',
+      label: 'Interleave Roulette',
+      description: 'Random weak topic practice',
+      icon: Shuffle,
       action: () => {
         navigate('/');
         setIsOpen(false);
