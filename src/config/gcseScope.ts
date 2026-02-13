@@ -208,8 +208,8 @@ export const GCSE_SCOPE_SUBJECTS: GcseSubjectDef[] = [
     name: 'Computer Science',
     category: 'Social',
     tierMode: 'single',
-    examBoard: 'OCR',
-    description: 'GCSE Computer Science',
+    examBoard: 'AQA',
+    description: 'GCSE Computer Science (AQA 8525)',
     icon: '🧠',
     themeColor: '#06B6D4',
     papers: [
@@ -250,8 +250,8 @@ export const GCSE_SCOPE_SUBJECTS: GcseSubjectDef[] = [
     name: 'Health and Social Studies',
     category: 'Social',
     tierMode: 'single',
-    examBoard: 'AQA',
-    description: 'GCSE Health and Social Studies',
+    examBoard: 'Edexcel',
+    description: 'GCSE Health & Social Care (Edexcel 2HS01/02)',
     icon: '🧑‍🤝‍🧑',
     themeColor: '#64748B',
     papers: [

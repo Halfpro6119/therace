@@ -1,40 +1,33 @@
 /**
- * Psychology Hub – AQA A-level Psychology 7182
- * Option IDs, topics, concepts, key studies, quick check, study evaluator, issues & debates, question lab.
+ * Psychology Hub – AQA GCSE Psychology 8182
+ * Paper 1: Memory, Perception, Development, Research methods
+ * Paper 2: Social influence, Language thought & communication, Brain & neuropsychology, Psychological problems
  */
 
 // ============================================================================
-// OPTION IDS (Paper 3: Option 1, Option 2, Option 3)
+// GCSE 8182 – All topics compulsory (no options)
 // ============================================================================
 
-export type Option1Id = 'relationships' | 'gender' | 'cognition-development';
-export type Option2Id = 'schizophrenia' | 'eating-behaviour' | 'stress';
-export type Option3Id = 'aggression' | 'forensic' | 'addiction';
-
 export interface PsychologyOptionSelection {
-  option1: Option1Id;
-  option2: Option2Id;
-  option3: Option3Id;
+  /** GCSE has no options; kept for storage compatibility */
+  confirmed?: boolean;
 }
 
-/** Topic IDs: compulsory (Paper 1, Paper 2, Paper 3 Issues) + optional (Paper 3 options) */
+/** Topic IDs: GCSE 8182 Paper 1 & Paper 2 */
 export type PsychologyTopicId =
-  | 'social-influence'
   | 'memory'
-  | 'attachment'
-  | 'clinical'
-  | 'approaches'
-  | 'biopsychology'
+  | 'perception'
+  | 'development'
   | 'research-methods'
-  | 'issues-debates'
-  | Option1Id
-  | Option2Id
-  | Option3Id;
+  | 'social-influence'
+  | 'language-thought-communication'
+  | 'brain-neuropsychology'
+  | 'psychological-problems';
 
 export interface PsychologyTopicMeta {
   id: PsychologyTopicId;
   title: string;
-  paper: 1 | 2 | 3;
+  paper: 1 | 2;
   isCompulsory: boolean;
 }
 
@@ -104,10 +97,10 @@ export interface PsychologyStudyEvaluatorPrompt {
 }
 
 // ============================================================================
-// ISSUES AND DEBATES
+// ISSUES AND DEBATES (GCSE: simplified)
 // ============================================================================
 
-export type IssuesDebatesId = 'gender-culture' | 'freewill-determinism' | 'nature-nurture' | 'holism-reductionism' | 'idiographic-nomothetic' | 'social-sensitivity';
+export type IssuesDebatesId = 'nature-nurture' | 'ethics' | 'applications';
 
 export interface PsychologyIssuesDebatesPrompt {
   id: string;

@@ -9,8 +9,7 @@ const ACCENT = '#9333EA';
 
 export function PsychologyHubResearchMethodsPage() {
   const navigate = useNavigate();
-  const selection = storage.getPsychologyOptionSelection();
-  const topics = selection ? getPsychologyTopicsForSelection(selection) : [];
+  const topics = getPsychologyTopicsForSelection();
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);

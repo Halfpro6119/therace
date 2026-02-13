@@ -20,7 +20,7 @@ export function EnglishVocabSessionPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const state = location.state as { setIds?: string[]; length?: 10 | 20 | 40 | 'mastery_sprint'; mode?: 'spell'; isFixIt?: boolean; weakOnly?: boolean } | null;
+  const state = location.state as { setIds?: string[]; length?: 10 | 20 | 40 | 'mastery_sprint'; mode?: import('../../../types/vocab').VocabAttemptMode; isFixIt?: boolean; weakOnly?: boolean } | null;
   const isFixIt = searchParams.get('mode') === 'fixit' || state?.isFixIt;
   const sprint = searchParams.get('sprint') === '1';
   const weakOnly = state?.weakOnly ?? false;
@@ -41,6 +41,7 @@ export function EnglishVocabSessionPage() {
   const [startedAt, setStartedAt] = useState<string | null>(null);
   const [questionStartMs, setQuestionStartMs] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [selectedDefinitionId, setSelectedDefinitionId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const currentItem = items[index];
@@ -75,6 +76,7 @@ export function EnglishVocabSessionPage() {
 
     const setIds = state?.setIds ?? [];
     const length = state?.length ?? (sprint ? 'mastery_sprint' : 10);
+    const mode = state?.mode ?? 'spell';
     if (setIds.length === 0) {
       setPhase('ready');
       setItems([]);
@@ -96,11 +98,11 @@ export function EnglishVocabSessionPage() {
     setConfig({
       setIds,
       length,
-      mode: 'spell',
+      mode,
       weakOnly: weakOnly || undefined,
     });
     setPhase('ready');
-  }, [isFixIt, sprint, weakOnly, state?.setIds, state?.length]);
+  }, [isFixIt, sprint, weakOnly, state?.setIds, state?.length, state?.mode]);
 
   useEffect(() => {
     loadSession();
@@ -125,36 +127,57 @@ export function EnglishVocabSessionPage() {
 
   const submit = useCallback(async () => {
     if (!currentItem || feedback !== null || !config) return;
-    const raw = input.trim();
-    if (!raw) return;
+    const word = currentItem.word;
+    const mode = config.mode;
+    let raw = input.trim();
+    if (mode === 'definition') raw = selectedDefinitionId ?? '';
+    if (!raw && mode !== 'definition') return;
+    if (mode === 'definition' && !selectedDefinitionId) return;
 
     const timeMs = Date.now() - questionStartMs;
-    const word = currentItem.word;
     let isCorrect = false;
     let nearMiss = false;
     let delta = 0;
     let addedToFixIt = false;
 
-    if (userId) {
-      try {
-        const res = await vocabApi.submitSpellAttempt(userId, word, raw, timeMs);
-        isCorrect = res.isCorrect;
-        nearMiss = res.nearMiss;
-        delta = res.masteryDelta;
-        addedToFixIt = res.addedToFixIt;
-        if (config?.isFixIt && isCorrect) {
-          await vocabApi.removeFromFixItAndBoost(userId, word.id);
+    if (mode === 'spell') {
+      if (userId) {
+        try {
+          const res = await vocabApi.submitSpellAttempt(userId, word, raw, timeMs);
+          isCorrect = res.isCorrect;
+          nearMiss = res.nearMiss;
+          delta = res.masteryDelta;
+          addedToFixIt = res.addedToFixIt;
+          if (config?.isFixIt && isCorrect) {
+            await vocabApi.removeFromFixItAndBoost(userId, word.id);
+          }
+        } catch (e) {
+          console.error(e);
         }
-      } catch (e) {
-        console.error(e);
+      } else {
+        const { gradeSpellAttempt } = await import('../../../utils/vocab/grading');
+        const g = gradeSpellAttempt(raw, word.word);
+        isCorrect = g.isCorrect;
+        nearMiss = g.nearMiss;
+        delta = isCorrect ? 8 : (nearMiss ? 2 : -10);
+        addedToFixIt = !isCorrect || nearMiss;
       }
-    } else {
-      const { gradeSpellAttempt } = await import('../../../utils/vocab/grading');
-      const g = gradeSpellAttempt(raw, word.word);
-      isCorrect = g.isCorrect;
-      nearMiss = g.nearMiss;
-      delta = isCorrect ? 8 : (nearMiss ? 2 : -10);
-      addedToFixIt = !isCorrect || nearMiss;
+    } else if (mode === 'definition') {
+      isCorrect = raw === word.definition;
+      delta = isCorrect ? 8 : -10;
+      addedToFixIt = !isCorrect;
+    } else if (mode === 'use_in_sentence') {
+      const lower = raw.toLowerCase();
+      const wordLower = word.word.toLowerCase();
+      isCorrect = lower.includes(wordLower) && raw.length >= 10;
+      delta = isCorrect ? 8 : -5;
+      addedToFixIt = false;
+    } else if (mode === 'upgrade') {
+      const userWord = raw.toLowerCase().trim();
+      const synonyms = word.synonyms.map(s => s.toLowerCase());
+      isCorrect = synonyms.some(s => s === userWord) || userWord === word.word;
+      delta = isCorrect ? 8 : -5;
+      addedToFixIt = false;
     }
 
     setFeedback(isCorrect ? 'correct' : (nearMiss ? 'near' : 'wrong'));
@@ -220,14 +243,14 @@ export function EnglishVocabSessionPage() {
     }
 
     setTimeout(() => {
-      setIndex(nextIndex);
-      setInput('');
-      setFeedback(null);
-      setQuestionStartMs(Date.now());
-      setFeedback(null);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }, 1500);
-  }, [currentItem, input, feedback, config, index, total, userId, sessionId, startedAt, streak, correctCount, masteryGained, results, fixItAdditions, questionStartMs]);
+    setIndex(nextIndex);
+    setInput('');
+    setSelectedDefinitionId(null);
+    setFeedback(null);
+    setQuestionStartMs(Date.now());
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }, 1500);
+  }, [currentItem, input, selectedDefinitionId, feedback, config, index, total, userId, sessionId, startedAt, streak, correctCount, masteryGained, results, fixItAdditions, questionStartMs]);
 
   const skipWord = useCallback(() => {
     if (!currentItem || feedback !== null || !config) return;
@@ -270,6 +293,7 @@ export function EnglishVocabSessionPage() {
     }
     setIndex(nextIndex);
     setInput('');
+    setSelectedDefinitionId(null);
     setQuestionStartMs(Date.now());
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [currentItem, feedback, config, index, total, results, correctCount, masteryGained, fixItAdditions, sessionId, startedAt, questionStartMs, navigate]);
@@ -361,9 +385,19 @@ export function EnglishVocabSessionPage() {
 
   if (phase === 'active' && currentItem) {
     const word = currentItem.word;
-    const oneLetterHint = word.word.length >= 6 && feedback === 'near'
+    const mode = config?.mode ?? 'spell';
+    const oneLetterHint = mode === 'spell' && word.word.length >= 6 && feedback === 'near'
       ? word.word[0].toLowerCase()
       : '';
+
+    // Definition mode: generate options (correct + 3 distractors from other words)
+    const definitionOptions = mode === 'definition' ? (() => {
+      const others = items.filter((_, i) => i !== index).map(it => it.word.definition);
+      const shuffled = [...others].sort(() => Math.random() - 0.5);
+      const distractors = shuffled.filter(d => d !== word.definition).slice(0, 3);
+      const opts = [word.definition, ...distractors].slice(0, 4);
+      return [...new Set(opts)].sort(() => Math.random() - 0.5);
+    })() : [];
 
     return (
       <div className="max-w-2xl mx-auto min-h-[70vh] flex flex-col p-4">
@@ -422,60 +456,150 @@ export function EnglishVocabSessionPage() {
               borderColor: feedback === 'wrong' ? 'rgb(var(--danger))' : feedback === 'near' ? '#F59E0B' : 'rgb(var(--border))',
             }}
           >
-            <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>
-              Definition
-            </p>
-            <p className="text-lg font-medium mb-3" style={{ color: 'rgb(var(--text))' }}>
-              {word.definition}
-            </p>
+            {mode === 'spell' && (
+              <>
+                <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>
+                  Definition
+                </p>
+                <p className="text-lg font-medium mb-3" style={{ color: 'rgb(var(--text))' }}>
+                  {word.definition}
+                </p>
+              </>
+            )}
+            {mode === 'definition' && (
+              <>
+                <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>
+                  What does this word mean?
+                </p>
+                <p className="text-2xl font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>
+                  {word.word}
+                </p>
+              </>
+            )}
+            {mode === 'use_in_sentence' && (
+              <>
+                <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>
+                  Use this word in a sentence
+                </p>
+                <p className="text-2xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+                  {word.word}
+                </p>
+                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {word.definition}
+                </p>
+              </>
+            )}
+            {mode === 'upgrade' && (
+              <>
+                <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--muted))' }}>
+                  Suggest a better or more sophisticated word
+                </p>
+                <p className="text-lg font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>
+                  {word.word}
+                </p>
+                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  Alternatives: {word.synonyms.length ? word.synonyms.join(', ') : word.definition}
+                </p>
+              </>
+            )}
             <span
-              className="inline-block px-2 py-0.5 rounded text-xs font-medium"
+              className="inline-block px-2 py-0.5 rounded text-xs font-medium mt-2"
               style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}
             >
               {WORD_CLASS_LABELS[word.word_class] ?? word.word_class}
             </span>
           </motion.div>
 
-          <div className="space-y-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), submit())}
-              placeholder="Type the word..."
-              disabled={!!feedback}
-              autoComplete="off"
-              className="w-full rounded-xl border px-4 py-3 text-lg"
-              style={{
-                borderColor: feedback ? (feedback === 'correct' ? 'rgb(var(--success))' : feedback === 'near' ? '#F59E0B' : 'rgb(var(--danger))') : 'rgb(var(--border))',
-                background: 'rgb(var(--surface-2))',
-                color: 'rgb(var(--text))',
-              }}
-            />
-            {feedback === 'wrong' && (
-              <p className="text-sm" style={{ color: 'rgb(var(--danger))' }}>
-                Correct: <strong>{word.word}</strong>
-                {fixItAdditions.includes(word.word) && ' · Added to Fix-It'}
-              </p>
-            )}
-            {feedback === 'near' && oneLetterHint && (
-              <p className="text-sm" style={{ color: '#F59E0B' }}>
-                Starts with &quot;{oneLetterHint}&quot;
-              </p>
-            )}
-          </div>
+          {mode === 'definition' ? (
+            <div className="space-y-2 mb-4">
+              {definitionOptions.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => !feedback && setSelectedDefinitionId(opt)}
+                  disabled={!!feedback}
+                  className="w-full text-left rounded-xl border px-4 py-3"
+                  style={{
+                    borderColor: selectedDefinitionId === opt
+                      ? (feedback ? (opt === word.definition ? 'rgb(var(--success))' : 'rgb(var(--danger))') : 'rgb(var(--accent))')
+                      : 'rgb(var(--border))',
+                    background: selectedDefinitionId === opt ? 'rgb(var(--accent) / 0.1)' : 'rgb(var(--surface-2))',
+                    color: 'rgb(var(--text))',
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), submit())}
+                placeholder={
+                  mode === 'spell' ? 'Type the word...' :
+                  mode === 'use_in_sentence' ? 'Write a sentence using this word...' :
+                  'Type a better word...'
+                }
+                disabled={!!feedback}
+                autoComplete="off"
+                className={`w-full rounded-xl border px-4 py-3 ${mode === 'use_in_sentence' ? 'min-h-[80px]' : 'text-lg'}`}
+                style={{
+                  borderColor: feedback ? (feedback === 'correct' ? 'rgb(var(--success))' : feedback === 'near' ? '#F59E0B' : 'rgb(var(--danger))') : 'rgb(var(--border))',
+                  background: 'rgb(var(--surface-2))',
+                  color: 'rgb(var(--text))',
+                }}
+              />
+              {feedback === 'wrong' && mode === 'spell' && (
+                <p className="text-sm" style={{ color: 'rgb(var(--danger))' }}>
+                  Correct: <strong>{word.word}</strong>
+                  {fixItAdditions.includes(word.word) && ' · Added to Fix-It'}
+                  {word.common_misspellings?.length > 0 && (
+                    <span className="block mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      Common mistake: many students spell it as &quot;{word.common_misspellings[0]}&quot;
+                    </span>
+                  )}
+                </p>
+              )}
+              {feedback === 'wrong' && mode === 'definition' && (
+                <p className="text-sm" style={{ color: 'rgb(var(--danger))' }}>
+                  Correct: <strong>{word.definition}</strong>
+                </p>
+              )}
+              {feedback === 'wrong' && mode === 'upgrade' && word.synonyms.length > 0 && (
+                <p className="text-sm" style={{ color: 'rgb(var(--danger))' }}>
+                  Good alternatives: {word.synonyms.join(', ')}
+                </p>
+              )}
+              {feedback === 'wrong' && mode === 'use_in_sentence' && (
+                <p className="text-sm" style={{ color: 'rgb(var(--danger))' }}>
+                  Example: {word.example_sentence || word.definition}
+                </p>
+              )}
+              {feedback === 'near' && oneLetterHint && (
+                <p className="text-sm" style={{ color: '#F59E0B' }}>
+                  Starts with &quot;{oneLetterHint}&quot;
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button
             type="button"
             onClick={submit}
-            disabled={!input.trim() || !!feedback}
+            disabled={
+              !!feedback ||
+              (mode === 'definition' ? !selectedDefinitionId : !input.trim())
+            }
             className="flex-1 py-3 rounded-xl font-semibold"
             style={{
-              background: input.trim() && !feedback ? 'rgb(var(--accent))' : 'rgb(var(--surface-2))',
-              color: input.trim() && !feedback ? 'white' : 'rgb(var(--muted))',
+              background: (mode === 'definition' ? selectedDefinitionId : input.trim()) && !feedback ? 'rgb(var(--accent))' : 'rgb(var(--surface-2))',
+              color: (mode === 'definition' ? selectedDefinitionId : input.trim()) && !feedback ? 'white' : 'rgb(var(--muted))',
             }}
           >
             Submit

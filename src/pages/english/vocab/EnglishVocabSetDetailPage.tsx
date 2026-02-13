@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Play } from 'lucide-react';
+import { ChevronLeft, Play, Type, BookOpen, PenLine, ArrowUpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { vocabApi } from '../../../utils/vocab';
 import { storage } from '../../../utils/storage';
-import type { VocabSet, VocabWord } from '../../../types/vocab';
+import type { VocabSet, VocabWord, VocabAttemptMode } from '../../../types/vocab';
 
 const LENGTHS = [10, 20, 40] as const;
 type Length = 10 | 20 | 40;
+
+const MODES: { id: VocabAttemptMode; label: string; icon: typeof Type }[] = [
+  { id: 'spell', label: 'Spell from meaning', icon: Type },
+  { id: 'definition', label: 'Meaning from word', icon: BookOpen },
+  { id: 'use_in_sentence', label: 'Use in sentence', icon: PenLine },
+  { id: 'upgrade', label: 'Upgrade word', icon: ArrowUpCircle },
+];
 
 export function EnglishVocabSetDetailPage() {
   const { setId } = useParams<{ setId: string }>();
@@ -20,6 +27,7 @@ export function EnglishVocabSetDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<Length | 'mastery_sprint'>(sprint ? 'mastery_sprint' : 10);
+  const [selectedMode, setSelectedMode] = useState<VocabAttemptMode>('spell');
 
   useEffect(() => {
     if (!setId) return;
@@ -56,7 +64,7 @@ export function EnglishVocabSetDetailPage() {
       state: {
         setIds: [setId],
         length: selectedLength,
-        mode: 'spell' as const,
+        mode: selectedMode,
       },
     });
   };
@@ -113,6 +121,26 @@ export function EnglishVocabSetDetailPage() {
         className="rounded-xl border p-4"
         style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
       >
+        <h2 className="font-bold mb-3" style={{ color: 'rgb(var(--text))' }}>
+          Practice mode
+        </h2>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {MODES.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setSelectedMode(id)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition"
+              style={{
+                background: selectedMode === id ? 'rgb(var(--accent))' : 'rgb(var(--surface-2))',
+                color: selectedMode === id ? 'white' : 'rgb(var(--text))',
+              }}
+            >
+              <Icon size={16} />
+              {label}
+            </button>
+          ))}
+        </div>
         <h2 className="font-bold mb-3" style={{ color: 'rgb(var(--text))' }}>
           Session length
         </h2>

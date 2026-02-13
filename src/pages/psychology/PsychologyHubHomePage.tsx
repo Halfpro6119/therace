@@ -9,7 +9,7 @@ const ACCENT = '#9333EA';
 export function PsychologyHubHomePage() {
   const navigate = useNavigate();
   const selection = storage.getPsychologyOptionSelection();
-  const topics = selection ? getPsychologyTopicsForSelection(selection) : null;
+  const topics = getPsychologyTopicsForSelection();
 
   const modes = [
     { id: 'concept', title: 'Concept Lab', description: 'Core ideas and key studies', icon: Lightbulb, path: '/psychology-hub/concept-lab' },
@@ -43,63 +43,35 @@ export function PsychologyHubHomePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Psychology Hub</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          AQA A-level Psychology 7182 – Concepts, key studies, evaluation & exam practice
+          AQA GCSE Psychology 8182 – Memory, perception, development, social influence & exam practice
         </p>
       </motion.section>
 
-      {!selection ? (
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl p-6 border shadow-sm"
-          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-        >
-          <h2 className="text-lg font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-            Choose your options
-          </h2>
-          <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-            For Paper 3, you need to select one topic from each option: Option 1 (Relationships, Gender, or Cognition and development), Option 2 (Schizophrenia, Eating behaviour, or Stress), and Option 3 (Aggression, Forensic Psychology, or Addiction).
-          </p>
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl p-6 border shadow-sm"
+        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+      >
+        <h2 className="text-lg font-bold mb-3" style={{ color: 'rgb(var(--text))' }}>
+          Your topics (GCSE 8182)
+        </h2>
+        <p className="text-sm mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Paper 1: Memory, Perception, Development, Research methods. Paper 2: Social influence, Language thought & communication, Brain & neuropsychology, Psychological problems.
+        </p>
+        {!selection?.confirmed && (
           <button
             type="button"
             onClick={() => navigate('/psychology-hub/option-select')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white"
-            style={{ background: ACCENT }}
+            className="text-sm font-medium"
+            style={{ color: ACCENT }}
           >
-            <Brain size={18} />
-            Select options
+            View spec details
           </button>
-        </motion.section>
-      ) : (
-        <>
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-6 border shadow-sm"
-            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-          >
-            <h2 className="text-lg font-bold mb-3" style={{ color: 'rgb(var(--text))' }}>
-              Your options (Paper 3)
-            </h2>
-            <ul className="space-y-1.5 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-              {topics?.filter((t) => !t.isCompulsory).map((t) => (
-                <li key={t.id}>
-                  <span className="font-medium" style={{ color: 'rgb(var(--text))' }}>{t.title}</span>
-                  <span className="ml-1">(Paper {t.paper})</span>
-                </li>
-              ))}
-            </ul>
-            <button
-              type="button"
-              onClick={() => navigate('/psychology-hub/option-select')}
-              className="mt-3 text-sm font-medium"
-              style={{ color: ACCENT }}
-            >
-              Change options
-            </button>
-          </motion.section>
+        )}
+      </motion.section>
 
-          <section className="space-y-4">
+      <section className="space-y-4">
             <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
               Learning modes
             </h2>
@@ -136,8 +108,6 @@ export function PsychologyHubHomePage() {
               ))}
             </div>
           </section>
-        </>
-      )}
     </div>
   );
 }

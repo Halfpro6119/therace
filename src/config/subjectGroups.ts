@@ -10,7 +10,7 @@ export interface SubjectHub {
   /** Subject names to show in this hub (matched against DB subject.name) */
   subjectNames: string[];
   /** Lucide icon name for hub styling */
-  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark' | 'Globe' | 'BookHeart' | 'Heart' | 'Cpu' | 'Brain';
+  icon: 'BookOpen' | 'Calculator' | 'FlaskConical' | 'Briefcase' | 'Landmark' | 'Globe' | 'BookHeart' | 'Heart' | 'Cpu' | 'Brain' | 'Languages';
   /** Accent hex for tint (e.g. #0EA5E9 for English, #3B82F6 for Maths, #22C55E for Science) */
   accentColor: string;
   /** Path to dedicated hub page */
@@ -90,7 +90,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'psychology',
     title: 'Psychology Hub',
-    subtitle: 'AQA A-level Psychology 7182 – Concepts, key studies, evaluation & exam practice',
+    subtitle: 'AQA GCSE Psychology 8182 – Memory, perception, development, social influence & exam practice',
     subjectNames: ['Psychology'],
     icon: 'Brain',
     accentColor: '#9333EA',
@@ -113,6 +113,15 @@ export const FEATURED_HUBS: SubjectHub[] = [
     icon: 'Cpu',
     accentColor: '#0891B2',
     hubPath: '/compute-lab',
+  },
+  {
+    id: 'languages',
+    title: 'Languages Hub',
+    subtitle: 'French & Spanish – AQA GCSE 8658 / 8698',
+    subjectNames: ['French', 'Spanish'],
+    icon: 'Languages',
+    accentColor: '#2563EB',
+    hubPath: '/languages-hub',
   },
 ];
 

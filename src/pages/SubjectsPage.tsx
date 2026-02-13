@@ -10,6 +10,7 @@ import {
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { StudyPathDashboard } from '../components/learning/StudyPathDashboard';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
 
@@ -24,6 +25,7 @@ const HUB_ICONS = {
   Heart,
   Cpu,
   Brain,
+  Languages,
 };
 
 function findByNames(subjects: Subject[], names: string[]): Subject[] {
@@ -130,6 +132,10 @@ export function SubjectsPage() {
             Choose a subject to start practicing
           </p>
         </div>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <StudyPathDashboard />
       </motion.div>
 
       {/* Top: 3 featured hub cards */}

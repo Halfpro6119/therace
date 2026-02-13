@@ -12,8 +12,7 @@ function getPsychologyDraftKey(topicId: string, itemId: string): string {
 
 export function PsychologyHubQuestionLabPage() {
   const navigate = useNavigate();
-  const selection = storage.getPsychologyOptionSelection();
-  const topics = selection ? getPsychologyTopicsForSelection(selection) : [];
+  const topics = getPsychologyTopicsForSelection();
   const [topicId, setTopicId] = useState(topics[0]?.id ?? '');
   const [index, setIndex] = useState(0);
   const [showModel, setShowModel] = useState(false);

@@ -7,8 +7,7 @@ const ACCENT = '#9333EA';
 
 export function PsychologyHubRevisionMapPage() {
   const navigate = useNavigate();
-  const selection = storage.getPsychologyOptionSelection();
-  const topics = selection ? getPsychologyTopicsForSelection(selection) : [];
+  const topics = getPsychologyTopicsForSelection();
   const progress = storage.getPsychologyTopicProgress();
 
   if (!selection) {

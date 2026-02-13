@@ -47,6 +47,7 @@ import { MathsHubPage } from './pages/maths/MathsHubPage';
 import { FurtherMathsPlaceholder } from './pages/maths/FurtherMathsPlaceholder';
 import { StatisticsPlaceholder } from './pages/maths/StatisticsPlaceholder';
 import { ScienceLabSubjectPage } from './pages/science/ScienceLabSubjectPage';
+import { ScienceLabCombinedSciencePage } from './pages/science/ScienceLabCombinedSciencePage';
 import { ScienceLabModePage } from './pages/science/ScienceLabModePage';
 import { ScienceLabConceptLabPage } from './pages/science/ScienceLabConceptLabPage';
 import { ScienceLabQuestionLabPage } from './pages/science/ScienceLabQuestionLabPage';
@@ -131,6 +132,10 @@ import { ComputeLabCalculationLabPage } from './pages/compute/ComputeLabCalculat
 import { ComputeLabLogicLabPage } from './pages/compute/ComputeLabLogicLabPage';
 import { ComputeLabSqlLabPage } from './pages/compute/ComputeLabSqlLabPage';
 import { ComputeLabQuestionLabPage } from './pages/compute/ComputeLabQuestionLabPage';
+import { LanguagesHubHomePage } from './pages/languages/LanguagesHubHomePage';
+import { LanguagesHubLanguagePage } from './pages/languages/LanguagesHubLanguagePage';
+import { LanguagesHubVocabularyPage } from './pages/languages/LanguagesHubVocabularyPage';
+import { LanguagesHubPlaceholderPage } from './pages/languages/LanguagesHubPlaceholderPage';
 import { AdminLayout } from './admin/AdminLayout';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
@@ -168,6 +173,7 @@ const CsvImportPageWithTier = lazy(() => import('./admin/CsvImportPageWithTier')
 const DeleteGoldQuestionsPage = lazy(() => import('./admin/DeleteGoldQuestionsPage').then(m => ({ default: m.DeleteGoldQuestionsPage })));
 import { ToastProvider } from './contexts/ToastContext';
 import { ConfirmProvider } from './contexts/ConfirmContext';
+import { StudyPathProvider } from './contexts/StudyPathContext';
 import { CommandPalette } from './components/CommandPalette';
 import { ScrollToTop } from './components/ScrollToTop';
 import { initializeQuestionRegistry } from './utils/questionRegistry';
@@ -188,6 +194,7 @@ function App() {
   return (
     <ToastProvider>
       <ConfirmProvider>
+        <StudyPathProvider>
         <BrowserRouter>
           <ScrollToTop />
           <CommandPalette />
@@ -277,6 +284,7 @@ function App() {
                 <Route path="/maths-mastery/statistics" element={<StatisticsPlaceholder />} />
                 <Route path="/science-lab" element={<ScienceLabSubjectPage />} />
                 <Route path="/science-lab/subjects" element={<Navigate to="/science-lab" replace />} />
+                <Route path="/science-lab/combined-science" element={<ScienceLabCombinedSciencePage />} />
                 <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />
@@ -359,6 +367,10 @@ function App() {
                 <Route path="/compute-lab/unit/:unitId/logic-lab" element={<ComputeLabLogicLabPage />} />
                 <Route path="/compute-lab/unit/:unitId/sql-lab" element={<ComputeLabSqlLabPage />} />
                 <Route path="/compute-lab/unit/:unitId/question-lab" element={<ComputeLabQuestionLabPage />} />
+                <Route path="/languages-hub" element={<LanguagesHubHomePage />} />
+                <Route path="/languages-hub/:languageId" element={<LanguagesHubLanguagePage />} />
+                <Route path="/languages-hub/:languageId/vocabulary" element={<LanguagesHubVocabularyPage />} />
+                <Route path="/languages-hub/:languageId/:modeId" element={<LanguagesHubPlaceholderPage />} />
                 <Route path="/health-hub/unit/:unitId/case-study" element={<HealthHubCaseStudyPage />} />
                 <Route path="/health-hub/unit/:unitId/investigation" element={<HealthHubInvestigationPage />} />
                 <Route path="/health-hub/unit/:unitId/question-lab" element={<HealthHubQuestionLabPage />} />
@@ -373,6 +385,7 @@ function App() {
         />
       </Routes>
         </BrowserRouter>
+        </StudyPathProvider>
       </ConfirmProvider>
     </ToastProvider>
   );

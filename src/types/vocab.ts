@@ -6,7 +6,7 @@ export type VocabSetMode = 'language_p1' | 'language_p2' | 'literature' | 'gener
 export type VocabTier = 'core' | 'stretch';
 export type VocabConnotation = 'positive' | 'negative' | 'neutral';
 export type VocabWordClass = 'noun' | 'verb' | 'adj' | 'adv' | 'other';
-export type VocabAttemptMode = 'spell' | 'definition' | 'synonym' | 'context';
+export type VocabAttemptMode = 'spell' | 'definition' | 'synonym' | 'context' | 'use_in_sentence' | 'upgrade';
 
 export interface VocabSet {
   id: string;
@@ -81,6 +81,8 @@ export interface VocabSessionConfig {
   isFixIt?: boolean;
   /** When true, prioritize weak words (mastery < 60) only */
   weakOnly?: boolean;
+  /** Show common mistake hint (e.g. "Many students confuse X and Y") */
+  showCommonMistakeHint?: boolean;
 }
 
 /** One item in a session (word + optional mastery) */

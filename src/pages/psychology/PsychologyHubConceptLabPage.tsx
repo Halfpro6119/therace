@@ -8,8 +8,7 @@ const ACCENT = '#9333EA';
 
 export function PsychologyHubConceptLabPage() {
   const navigate = useNavigate();
-  const selection = storage.getPsychologyOptionSelection();
-  const topics = selection ? getPsychologyTopicsForSelection(selection) : [];
+  const topics = getPsychologyTopicsForSelection();
   const [topicId, setTopicId] = useState(topics[0]?.id ?? '');
   const [index, setIndex] = useState(0);
 
