@@ -134,19 +134,37 @@ export function gradeMethodMarkAnswer(
   return { obtained, missed, score, totalMarks };
 }
 
+/** Result of grading a misconception correction (keyword-based) */
+export interface MisconceptionGradeResult {
+  correct: boolean;
+  feedback?: string;
+  /** Key ideas we look for in a correct answer (from correct understanding) */
+  expectedKeyTerms?: string[];
+}
+
 /** Grade a misconception correction answer – keyword matching */
 export function gradeMisconceptionAnswer(
   misconception: ScienceMisconception,
   userAnswer: string
-): { correct: boolean; feedback?: string } {
+): MisconceptionGradeResult {
   const lower = userAnswer.trim().toLowerCase();
   const correct = misconception.correctUnderstanding.toLowerCase();
   const keyTerms = extractKeywords(correct);
   const userTerms = extractKeywords(userAnswer);
   const mistakePhrases = misconception.misconception.toLowerCase().split(/\s+/).filter(w => w.length > 4);
   const hasMistake = mistakePhrases.some(p => lower.includes(p));
-  if (hasMistake && keyTerms.length > 0) return { correct: false, feedback: misconception.whyWrong };
+  if (hasMistake && keyTerms.length > 0) {
+    return {
+      correct: false,
+      feedback: misconception.whyWrong,
+      expectedKeyTerms: keyTerms.length > 0 ? keyTerms : undefined,
+    };
+  }
   const matchCount = userTerms.filter(k => keyTerms.includes(k)).length;
   const ok = matchCount >= Math.ceil(keyTerms.length * 0.5) || lower.includes(correct.slice(0, 30));
-  return { correct: ok, feedback: ok ? misconception.correctUnderstanding : misconception.whyWrong };
+  return {
+    correct: ok,
+    feedback: ok ? misconception.correctUnderstanding : misconception.whyWrong,
+    expectedKeyTerms: !ok && keyTerms.length > 0 ? keyTerms : undefined,
+  };
 }

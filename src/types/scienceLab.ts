@@ -146,6 +146,38 @@ export interface SciencePractical {
   }>;
   /** Optional diagram for equipment/setup */
   visual?: { diagramId?: string; description?: string };
+  /** Equipment needed – for setup understanding and exam-style questions */
+  equipment?: string[];
+  /** Key setup steps before the main method – e.g. calibrating, preparing solutions */
+  setupSteps?: string[];
+}
+
+/** Category of practical quiz question (setup, variables, method, risks, evaluation) */
+export type PracticalQuizCategory = 'setup' | 'variables' | 'method' | 'risks' | 'evaluation';
+
+/** Quiz question type for practicals */
+export type PracticalQuizQuestionType = 'multipleChoice' | 'dragOrder' | 'multiSelect';
+
+/**
+ * Quiz question for testing understanding of a required practical
+ * Used in Practical Lab "Test your understanding" section
+ */
+export interface PracticalQuizQuestion {
+  id: string;
+  /** Which practical this question belongs to */
+  practicalId: string;
+  category: PracticalQuizCategory;
+  type: PracticalQuizQuestionType;
+  question: string;
+  options?: string[];
+  /** For multipleChoice: correct option string; for dragOrder: correct ordered array; for multiSelect: array of correct options (mark points) */
+  correctAnswer: string | string[];
+  feedback: {
+    correct: string;
+    incorrect: string;
+  };
+  /** Max marks for this question (default 1; use 6 for 6-mark style multiSelect) */
+  marks?: number;
 }
 
 /**

@@ -14,6 +14,7 @@ export function ScienceLabMisconceptionLabPage() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [gradedCorrect, setGradedCorrect] = useState<boolean | null>(null);
   const [graderFeedback, setGraderFeedback] = useState<string | undefined>(undefined);
+  const [expectedKeyTerms, setExpectedKeyTerms] = useState<string[]>([]);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
@@ -35,6 +36,7 @@ export function ScienceLabMisconceptionLabPage() {
     const result = gradeMisconceptionAnswer(currentMisconception, userCorrection);
     setGradedCorrect(result.correct);
     setGraderFeedback(result.feedback);
+    setExpectedKeyTerms(result.expectedKeyTerms ?? []);
     setShowFeedback(true);
   };
 
@@ -45,6 +47,7 @@ export function ScienceLabMisconceptionLabPage() {
       setShowFeedback(false);
       setGradedCorrect(null);
       setGraderFeedback(undefined);
+      setExpectedKeyTerms([]);
     }
   };
 
@@ -78,7 +81,7 @@ export function ScienceLabMisconceptionLabPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Misconception Lab</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Identify and correct classic wrong ideas – Grade 9 feature
+          A student said something wrong. Explain why it’s wrong and give the correct idea. Your answer is marked correct or wrong based on key ideas (keywords).
         </p>
       </motion.section>
 
@@ -95,15 +98,15 @@ export function ScienceLabMisconceptionLabPage() {
           </div>
         </div>
 
-        {/* Misconception */}
+        {/* Student quote (misconception) */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-            <XCircle size={20} className="text-red-600 dark:text-red-400" />
-            The Wrong Idea
+            <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400" />
+            A student says:
           </h3>
-          <div className="p-4 rounded-lg border bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+          <div className="p-4 rounded-lg border bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
             <p className="text-base font-medium" style={{ color: 'rgb(var(--text))' }}>
-              ❌ {currentMisconception.misconception}
+              “{currentMisconception.misconception}”
             </p>
             {currentMisconception.example && (
               <p className="text-sm mt-2 italic" style={{ color: 'rgb(var(--text-secondary))' }}>
@@ -119,15 +122,15 @@ export function ScienceLabMisconceptionLabPage() {
             <div>
               <h3 className="text-lg font-semibold mb-2 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
                 <Lightbulb size={20} className="text-yellow-600 dark:text-yellow-400" />
-                Correct This Misconception
+                Your turn
               </h3>
               <p className="text-sm mb-3" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Explain the correct understanding and why the misconception is wrong.
+                Explain why this is wrong and give the correct idea. Your answer will be marked <strong>correct</strong> or <strong>wrong</strong> based on whether you include the right key ideas (keywords).
               </p>
               <textarea
                 value={userCorrection}
                 onChange={(e) => setUserCorrection(e.target.value)}
-                placeholder="Enter your correction..."
+                placeholder="Explain why the student is wrong and state the correct understanding..."
                 className="w-full p-4 rounded-lg border resize-none"
                 style={{
                   background: 'rgb(var(--surface-2))',
@@ -146,12 +149,12 @@ export function ScienceLabMisconceptionLabPage() {
                 background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
               }}
             >
-              Submit Correction
+              Submit answer
             </button>
           </div>
         )}
 
-        {/* Feedback */}
+        {/* Feedback – correct/wrong based on keywords */}
         {showFeedback && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -165,13 +168,23 @@ export function ScienceLabMisconceptionLabPage() {
                 }`}
               >
                 {gradedCorrect ? <CheckCircle size={24} className="text-green-600 flex-shrink-0" /> : <XCircle size={24} className="text-amber-600 flex-shrink-0" />}
-                <div>
+                <div className="min-w-0">
                   <p className="font-semibold" style={{ color: 'rgb(var(--text))' }}>
-                    {gradedCorrect ? 'Good! Your correction captures the key idea.' : 'Not quite. Check the correct understanding below.'}
+                    {gradedCorrect ? 'Your answer is correct.' : 'Your answer is wrong.'}
                   </p>
-                  {!gradedCorrect && graderFeedback && (
+                  <p className="text-sm mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    {gradedCorrect
+                      ? 'You included the key ideas we look for.'
+                      : 'Marking is based on key ideas (keywords). Your answer did not include enough of the required ideas.'}
+                  </p>
+                  {!gradedCorrect && expectedKeyTerms.length > 0 && (
                     <p className="text-sm mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                      {graderFeedback}
+                      Key ideas we look for: <span className="font-medium" style={{ color: 'rgb(var(--text))' }}>{expectedKeyTerms.join(', ')}</span>
+                    </p>
+                  )}
+                  {!gradedCorrect && graderFeedback && (
+                    <p className="text-sm mt-2 italic" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      Why it’s wrong: {graderFeedback}
                     </p>
                   )}
                 </div>

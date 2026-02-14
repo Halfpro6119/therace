@@ -107,6 +107,28 @@ export function ScienceLabTopicTestPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [quickCheck, showFeedback]);
 
+  // Enter: submit selected answer (MCQ/quick check) or move to next question when feedback shown
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return;
+      const isInputFocused =
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        document.activeElement?.getAttribute('contenteditable') === 'true';
+      if (isInputFocused) return;
+
+      if (showFeedback) {
+        e.preventDefault();
+        handleNext();
+      } else if (isQuickCheck && quickCheck && selectedAnswer !== null) {
+        e.preventDefault();
+        handleSubmitQuickCheck();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showFeedback, isQuickCheck, quickCheck, selectedAnswer, currentIndex, items.length]);
+
   const marksEarnedRef = useRef(marksEarned);
   marksEarnedRef.current = marksEarned;
   const timerStartedRef = useRef(false);

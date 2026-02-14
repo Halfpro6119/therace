@@ -621,7 +621,7 @@ export function ScienceLabFlashcardPage() {
         <div
           ref={cardRef}
           className="relative w-full flex-1 flex flex-col cursor-pointer select-none overflow-visible"
-          style={{ minHeight: 580, perspective: 1400 }}
+          style={{ minHeight: 600, perspective: 1400 }}
           onClick={handleFlip}
           onMouseMove={(e) => {
             const el = cardRef.current;
@@ -667,8 +667,8 @@ export function ScienceLabFlashcardPage() {
                   className="w-full h-full rounded-[20px]"
                   style={{
                     background: 'rgb(var(--surface))',
-                    boxShadow: '0 2px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.04)',
-                    borderLeft: `4px solid ${style.color}`,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
+                    borderLeft: `5px solid ${style.color}`,
                   }}
                 />
               </div>
@@ -687,21 +687,21 @@ export function ScienceLabFlashcardPage() {
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={isFlipped ? { type: 'spring', stiffness: 320, damping: 28 } : { duration: 0 }}
             >
-              {/* Front */}
+              {/* Front – handcrafted card with clear hierarchy */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   background: 'rgb(var(--surface))',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.04)',
-                  borderLeft: `5px solid ${typeStyle.color}`,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04)',
+                  borderLeft: `6px solid ${typeStyle.color}`,
                 }}
               >
-                <div className="flex-1 min-h-0 overflow-y-auto px-8 py-10 sm:px-10 sm:py-12 flex flex-col justify-center text-center">
-                  <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="flex-1 min-h-0 overflow-y-auto px-8 py-10 sm:px-10 sm:py-12 flex flex-col text-center">
+                  <div className="flex items-center justify-center gap-3 mb-5 flex-shrink-0">
                     <span
-                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide"
+                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide"
                       style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                     >
                       <TypeIcon size={14} strokeWidth={2.5} />
@@ -711,11 +711,11 @@ export function ScienceLabFlashcardPage() {
                       {currentFlashcard.topic}
                     </span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-semibold leading-[1.35] max-w-2xl mx-auto mb-8" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.01em' }}>
+                  <h2 className="text-xl sm:text-2xl font-semibold leading-[1.4] max-w-2xl mx-auto mb-6 flex-shrink-0" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.02em' }}>
                     {currentFlashcard.front.prompt}
                   </h2>
                   {currentFlashcard.front.visual && (
-                    <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[220px]">
+                    <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
                       {isEquationVisual ? (
                         <p className="text-2xl sm:text-3xl font-mono font-bold py-4" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
                       ) : currentFlashcard.front.visual.diagramId ? (
@@ -727,11 +727,11 @@ export function ScienceLabFlashcardPage() {
                       )}
                     </div>
                   )}
-                  <p className="text-xs font-medium mt-6 tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Tap or press Space to reveal</p>
+                  <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>Tap or Space to reveal</p>
                 </div>
               </div>
 
-              {/* Back */}
+              {/* Back – structured answer, key terms, callouts */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
@@ -739,22 +739,22 @@ export function ScienceLabFlashcardPage() {
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                   background: 'rgb(var(--surface))',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.04)',
-                  borderLeft: `5px solid ${typeStyle.color}`,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04)',
+                  borderLeft: `6px solid ${typeStyle.color}`,
                 }}
               >
                 <div className="flex-1 min-h-0 flex flex-col px-8 py-10 sm:px-10 sm:py-12">
-                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-5">
+                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-6">
                     <div>
-                      <p className="text-[11px] font-semibold mb-2 uppercase tracking-[0.08em]" style={{ color: typeStyle.color }}>Answer</p>
+                      <p className="text-[10px] font-semibold mb-3 uppercase tracking-[0.12em]" style={{ color: typeStyle.color }}>Answer</p>
                       {processSteps ? (
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           {processSteps.map((step, idx) => (
                             <div key={idx} className="flex items-start gap-4">
-                              <span className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[13px] font-bold" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
+                              <span className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-[13px] font-bold" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
                                 {idx + 1}
                               </span>
-                              <p className="text-[15px] leading-[1.6] pt-0.5" style={{ color: 'rgb(var(--text))' }}>{step}</p>
+                              <p className="text-[15px] leading-[1.65] pt-1" style={{ color: 'rgb(var(--text))' }}>{step}</p>
                             </div>
                           ))}
                         </div>
@@ -773,12 +773,13 @@ export function ScienceLabFlashcardPage() {
                     </div>
                     {currentFlashcard.back.keyTerms.length > 0 && (
                       <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
+                        <span className="text-[10px] font-semibold uppercase tracking-wider w-full" style={{ color: 'rgb(var(--text-secondary))' }}>Key terms</span>
                         {currentFlashcard.back.keyTerms.map((term, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => navigator.clipboard?.writeText(term)}
-                            className="px-3 py-1.5 rounded-lg text-[13px] font-medium"
+                            className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition hover:opacity-90"
                             style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                           >
                             {term}
@@ -787,20 +788,20 @@ export function ScienceLabFlashcardPage() {
                       </div>
                     )}
                     {currentFlashcard.back.misconceptionWarning && (
-                      <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: 'rgba(251, 191, 36, 0.1)' }}>
-                        <AlertCircle size={18} className="text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                      <div className="p-4 rounded-2xl flex items-start gap-3 border border-amber-200/60" style={{ background: 'rgba(251, 191, 36, 0.08)' }} onClick={(e) => e.stopPropagation()}>
+                        <AlertCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" strokeWidth={2} />
                         <div>
-                          <p className="text-[13px] font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Common mistake</p>
-                          <p className="text-[13px] leading-[1.5]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
+                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(180 83 9)' }}>Common mistake</p>
+                          <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
                         </div>
                       </div>
                     )}
                     {currentFlashcard.back.example && (
-                      <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: 'rgba(59, 130, 246, 0.06)' }}>
-                        <BookOpen size={18} className="text-blue-500 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                      <div className="p-4 rounded-2xl flex items-start gap-3 border border-sky-200/50" style={{ background: 'rgba(14, 165, 233, 0.06)' }} onClick={(e) => e.stopPropagation()}>
+                        <BookOpen size={18} className="text-sky-600 flex-shrink-0 mt-0.5" strokeWidth={2} />
                         <div>
-                          <p className="text-[13px] font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Example</p>
-                          <p className="text-[13px] leading-[1.5]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
+                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(2 132 199)' }}>Example</p>
+                          <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
                         </div>
                       </div>
                     )}
@@ -812,8 +813,8 @@ export function ScienceLabFlashcardPage() {
         </div>
 
         {isFlipped && (
-          <div className="mt-6 p-6 rounded-2xl w-full" style={{ background: 'rgb(var(--surface))', border: '1px solid rgb(var(--border))' }}>
-            <p className="text-[11px] font-semibold mb-4 uppercase tracking-[0.08em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+          <div className="mt-6 p-6 rounded-2xl w-full" style={{ background: 'rgb(var(--surface))', border: '1px solid rgb(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <p className="text-[10px] font-semibold mb-4 uppercase tracking-[0.12em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
             <div className="flex gap-3">
               {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
                 <button
@@ -824,14 +825,17 @@ export function ScienceLabFlashcardPage() {
                     e.preventDefault();
                     handleConfidence(level);
                   }}
-                  className="flex-1 min-h-[88px] py-6 px-6 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[16px] text-white transition active:scale-[0.97]"
-                  style={{ background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444' }}
+                  className="flex-1 min-h-[80px] py-5 px-4 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-2xl font-semibold text-[15px] text-white transition hover:opacity-95 active:scale-[0.98]"
+                  style={{
+                    background: level === 3 ? 'linear-gradient(180deg, #059669 0%, #047857 100%)' : level === 2 ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
+                    boxShadow: level === 3 ? '0 2px 8px rgba(5, 150, 105, 0.3)' : level === 2 ? '0 2px 8px rgba(217, 119, 6, 0.25)' : '0 2px 8px rgba(220, 38, 38, 0.25)',
+                  }}
                 >
                   {CONFIDENCE_LABELS[level]}
                 </button>
               ))}
             </div>
-            <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Or press 1, 2, or 3</p>
+            <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.75 }}>Or press 1, 2, or 3</p>
           </div>
         )}
 

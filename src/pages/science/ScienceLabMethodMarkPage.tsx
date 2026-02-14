@@ -2,7 +2,7 @@ import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Target, CheckCircle, AlertTriangle, FileQuestion, RotateCcw, ChevronRight, ExternalLink, Check, X } from 'lucide-react';
-import { getQuestionsWithMethodMarkBreakdowns, getMethodMarkBreakdown } from '../../config/scienceLabData';
+import { getQuestionsWithMethodMarkBreakdowns, getMethodMarkBreakdown, getTopicsWithMethodMarkQuestions } from '../../config/scienceLabData';
 import { gradeMethodMarkAnswer } from '../../utils/scienceGrading';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -23,11 +23,28 @@ export function ScienceLabMethodMarkPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const topicFilter = searchParams.get('topic') ?? undefined;
+  const topicsWithMethodMark = getTopicsWithMethodMarkQuestions(normalizedSubject, paperNum, tierValue);
   const questions = getQuestionsWithMethodMarkBreakdowns(normalizedSubject, paperNum, tierValue, topicFilter);
   const selectedQuestion = selectedQuestionIndex !== null ? questions[selectedQuestionIndex] : null;
   const breakdown = selectedQuestion ? getMethodMarkBreakdown(selectedQuestion.id) : null;
+
+  const selectTopic = (topic: string) => {
+    setSearchParams({ topic });
+    setSelectedQuestionIndex(null);
+    setUserAnswer('');
+    setGradeResult(null);
+    setShowMarkScheme(false);
+  };
+
+  const clearTopic = () => {
+    setSearchParams({});
+    setSelectedQuestionIndex(null);
+    setUserAnswer('');
+    setGradeResult(null);
+    setShowMarkScheme(false);
+  };
 
   const handleBack = () => {
     const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
@@ -93,18 +110,22 @@ export function ScienceLabMethodMarkPage() {
         </p>
       </motion.section>
 
-      {selectedQuestionIndex === null ? (
+      {/* Step 1: No topic selected — show topic picker */}
+      {!topicFilter ? (
         <section className="space-y-4">
           <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
-            Select a 4–6 Mark Question
+            Pick a topic
           </h2>
-          {questions.length === 0 ? (
+          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+            Complete 4–6 mark questions with mark scheme breakdown for one topic at a time.
+          </p>
+          {topicsWithMethodMark.length === 0 ? (
             <div
               className="rounded-xl p-6 border"
               style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
             >
               <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>
-                No questions with mark scheme breakdowns for this subject, paper, and tier.
+                No topics with 4–6 mark questions and mark scheme breakdowns for this subject, paper, and tier.
               </p>
               <Link
                 to={questionLabUrl}
@@ -114,6 +135,80 @@ export function ScienceLabMethodMarkPage() {
                 <ExternalLink size={18} />
                 Go to Question Lab
               </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {topicsWithMethodMark.map(({ topic, count }) => (
+                <button
+                  key={topic}
+                  type="button"
+                  onClick={() => selectTopic(topic)}
+                  className="w-full rounded-xl p-4 text-left border shadow-sm hover:shadow-md transition-all flex items-start gap-4"
+                  style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+                >
+                  <div className="p-2 rounded-lg bg-amber-500/20">
+                    <FileQuestion size={20} className="text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                      {topic}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {count} {count === 1 ? 'question' : 'questions'} (4–6 marks)
+                    </p>
+                  </div>
+                  <ChevronRight size={20} className="text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : selectedQuestionIndex === null ? (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
+                {topicFilter} — 4–6 Mark Questions
+              </h2>
+              <p className="text-sm mt-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Complete the questions below. Write your answer, then check against the mark scheme.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={clearTopic}
+              className="text-sm font-medium"
+              style={{ color: 'rgb(var(--text-secondary))' }}
+            >
+              Change topic
+            </button>
+          </div>
+          {questions.length === 0 ? (
+            <div
+              className="rounded-xl p-6 border"
+              style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+            >
+              <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>
+                No 4–6 mark questions with mark scheme breakdowns for this topic.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={clearTopic}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium border"
+                  style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
+                >
+                  Change topic
+                </button>
+                <Link
+                  to={questionLabUrl}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white"
+                  style={{ background: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)' }}
+                >
+                  <ExternalLink size={18} />
+                  Go to Question Lab
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">

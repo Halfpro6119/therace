@@ -785,7 +785,7 @@ export function generateQuickChecks(
           correctAnswer: steps,
           feedback: {
             correct: 'Correct! You understand the causal chain.',
-            incorrect: `The correct sequence: ${steps.join(' → ')}`,
+            incorrect: '', // Header already shows "Not quite"; correct answer shown separately
             ideaReference: scenario.explanation,
           },
           relatedFlashcardIds: [`flashcard-${concept.id}`, `flashcard-${concept.id}-scenario-${idx}`],

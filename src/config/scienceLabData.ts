@@ -14,6 +14,7 @@ import type {
   SciencePaper,
   ScienceTier,
   MethodMarkBreakdown,
+  PracticalQuizQuestion,
 } from '../types/scienceLab';
 
 // ============================================================================
@@ -1214,6 +1215,331 @@ export const METHOD_MARK_BREAKDOWNS: MethodMarkBreakdown[] = [
       { id: 'precision1', description: 'Correct use of memory cells, antibodies, antigens', marks: 1, keywords: ['memory cells', 'antibodies', 'antigens'] },
     ],
     commonPenalties: ['Saying secondary is slower', 'Missing vaccination link', 'Wrong immune pathway'],
+  },
+  // --- Additional breakdowns for full GCSE coverage (4–6 mark questions) ---
+  {
+    questionId: 'bio-diffusion-002',
+    ideaMarks: [
+      { id: 'idea1', description: 'Temperature increases kinetic energy of particles', marks: 1, keywords: ['temperature', 'kinetic energy', 'particles'] },
+      { id: 'idea2', description: 'Particles move faster', marks: 1, keywords: ['faster', 'move', 'speed'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'More collisions per second between particles', marks: 1, keywords: ['collisions', 'collision frequency'] },
+      { id: 'method2', description: 'Net movement from high to low concentration increases / diffusion rate increases', marks: 1, keywords: ['net movement', 'concentration gradient', 'rate', 'diffusion'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying particles want or choose to move', 'Not linking temperature to kinetic energy', 'Missing collision frequency'],
+  },
+  {
+    questionId: 'bio-active-transport-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Ions move against concentration gradient (low to high)', marks: 1, keywords: ['against', 'concentration gradient', 'low', 'high'] },
+      { id: 'idea2', description: 'Requires energy (from respiration)', marks: 1, keywords: ['energy', 'respiration', 'atp'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Carrier proteins (or membrane proteins) involved', marks: 1, keywords: ['carrier protein', 'membrane', 'protein'] },
+      { id: 'method2', description: 'Pump ions into the cell', marks: 1, keywords: ['pump', 'into', 'cell'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying it is diffusion', 'Not mentioning energy', 'Missing carrier proteins'],
+  },
+  {
+    questionId: 'bio-nervous-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Stimulus detected by receptor', marks: 1, keywords: ['stimulus', 'receptor', 'detected'] },
+      { id: 'idea2', description: 'Sensory neurone carries impulse to CNS', marks: 1, keywords: ['sensory', 'neurone', 'cns', 'impulse'] },
+      { id: 'idea3', description: 'Motor neurone carries impulse to effector', marks: 1, keywords: ['motor', 'neurone', 'effector'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct order: receptor → sensory → CNS → motor → effector (response)', marks: 1, keywords: ['order', 'pathway', 'response'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Missing a step in the pathway', 'Confusing with hormonal response', 'Wrong order'],
+  },
+  {
+    questionId: 'bio-inheritance-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Parent genotypes Pp and pp; gametes P or p from first, p from second', marks: 1, keywords: ['gametes', 'genotype', 'p', 'pp'] },
+      { id: 'idea2', description: 'Offspring genotypes: Pp and pp (50% each)', marks: 1, keywords: ['offspring', 'pp', 'pp', '50'] },
+      { id: 'idea3', description: 'Phenotypes: 50% purple (Pp), 50% white (pp)', marks: 1, keywords: ['phenotype', 'purple', 'white', '50'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Shows genetic cross or Punnett square reasoning', marks: 1, keywords: ['cross', 'punnett', 'ratio'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Confusing genotype with phenotype', 'Wrong ratio', 'Missing dominant/recessive'],
+  },
+  {
+    questionId: 'bio-grade9-enzyme-kinetics-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'At low concentration: substrate limits rate; more substrate = more enzyme–substrate complexes', marks: 1, keywords: ['low', 'substrate', 'limiting', 'enzyme-substrate'] },
+      { id: 'idea2', description: 'At high concentration: all active sites occupied; substrate no longer limiting', marks: 1, keywords: ['high', 'active site', 'occupied', 'saturated'] },
+      { id: 'idea3', description: 'Lock-and-key: substrate fits active site; enzyme specific', marks: 1, keywords: ['lock and key', 'active site', 'specific', 'fit'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Links doubling substrate at low conc to doubling rate', marks: 1, keywords: ['doubling', 'rate', 'proportional'] },
+      { id: 'method2', description: 'Links no effect at high conc to maximum rate / Vmax', marks: 1, keywords: ['no effect', 'maximum', 'vmax', 'limit'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying enzyme is used up', 'Not explaining both low and high', 'Missing lock-and-key'],
+  },
+  {
+    questionId: 'bio-grade9-homeostasis-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Pancreas detects rise in blood glucose', marks: 1, keywords: ['pancreas', 'detects', 'blood glucose', 'rise'] },
+      { id: 'idea2', description: 'Releases insulin; liver/muscles take up glucose, store as glycogen', marks: 1, keywords: ['insulin', 'liver', 'muscles', 'glycogen'] },
+      { id: 'idea3', description: 'Blood glucose returns to normal', marks: 1, keywords: ['normal', 'decreases', 'return'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Explains negative feedback: high level triggers response that reduces level', marks: 1, keywords: ['negative feedback', 'reduces', 'triggers'] },
+      { id: 'method2', description: 'Receptors detect change; effectors bring about correction', marks: 1, keywords: ['receptor', 'effector', 'correction', 'detect'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Confusing insulin with glucagon', 'Missing negative feedback', 'Incomplete chain'],
+  },
+  {
+    questionId: 'bio-grade9-inheritance-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Both parents carriers (heterozygous); child has cystic fibrosis so inherited recessive from both', marks: 1, keywords: ['carrier', 'heterozygous', 'recessive', 'both'] },
+      { id: 'idea2', description: 'Probability next child has condition = ¼ (25%)', marks: 1, keywords: ['probability', '1/4', '25', 'quarter'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Genetic diagram or Punnett square showing Cc × Cc → cc', marks: 1, keywords: ['punnett', 'cross', 'cc', 'genotype'] },
+      { id: 'method2', description: 'Correct working: ½ × ½ = ¼ or 1 in 4', marks: 1, keywords: ['1/2', 'calculation', 'working'] },
+    ],
+    precisionMarks: [
+      { id: 'precision1', description: 'Uses correct notation (e.g. C/c or dominant/recessive)', marks: 1, keywords: ['allele', 'notation', 'recessive'] },
+    ],
+    commonPenalties: ['Wrong probability', 'Saying parents have the condition', 'No working shown'],
+  },
+  {
+    questionId: 'bio-grade9-ecology-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Hedgerow provides habitat / shelter / food for more species', marks: 1, keywords: ['habitat', 'shelter', 'food', 'species'] },
+      { id: 'idea2', description: 'Increases biodiversity (species richness / variety)', marks: 1, keywords: ['biodiversity', 'species', 'richness', 'variety'] },
+      { id: 'idea3', description: 'Benefit to crops: pollination, pest predators, windbreak', marks: 1, keywords: ['pollination', 'pest', 'predator', 'windbreak', 'crop'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Links biodiversity to ecosystem stability or crop yield', marks: 1, keywords: ['stability', 'yield', 'benefit', 'crop'] },
+      { id: 'method2', description: 'Suggests specific mechanism (e.g. pollinators increase yield)', marks: 1, keywords: ['mechanism', 'pollinator', 'natural pest control'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Vague answer', 'No link to crop yield', 'Only one idea'],
+  },
+  {
+    questionId: 'bio-grade9-carbon-cycle-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Cutting down forests: less photosynthesis so less CO₂ removed', marks: 1, keywords: ['photosynthesis', 'co2', 'removed', 'trees'] },
+      { id: 'idea2', description: 'Decomposition / burning releases CO₂', marks: 1, keywords: ['decomposition', 'burning', 'release', 'co2'] },
+      { id: 'idea3', description: 'Ways to reduce impact: replanting, reduce deforestation, use sustainable wood', marks: 1, keywords: ['replant', 'sustainable', 'reduce', 'deforestation'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Links deforestation to atmospheric CO₂ increase', marks: 1, keywords: ['atmosphere', 'increase', 'link'] },
+      { id: 'method2', description: 'Suggests one specific way to reduce impact', marks: 1, keywords: ['reduce', 'impact', 'way', 'suggest'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Missing both causes and solution', 'Confusing carbon with energy', 'No suggestion'],
+  },
+  {
+    questionId: 'phys-energy-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Correct equation: E_k = ½mv² or kinetic energy = half × mass × speed²', marks: 1, keywords: ['ek', 'kinetic', '1/2', 'mv2', 'equation'] },
+      { id: 'idea2', description: 'Substitution: m = 2, v = 5 (or correct values)', marks: 1, keywords: ['substitute', '2', '5', 'mass', 'speed'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct calculation: ½ × 2 × 25 = 25 or 25 J', marks: 1, keywords: ['25', 'calculation', 'joules'] },
+      { id: 'method2', description: 'Unit stated: J or joules', marks: 1, keywords: ['j', 'joules', 'unit'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong formula', 'Forgetting to square speed', 'Wrong or missing unit'],
+  },
+  {
+    questionId: 'chem-grade9-le-chatelier-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Lower temperature would favour exothermic forward reaction → higher yield of ammonia', marks: 1, keywords: ['lower temperature', 'exothermic', 'forward', 'yield', 'ammonia'] },
+      { id: 'idea2', description: 'Higher temperature needed for rate: particles have more kinetic energy, more collisions', marks: 1, keywords: ['rate', 'kinetic energy', 'collisions', 'faster'] },
+      { id: 'idea3', description: 'Compromise: 450°C balances reasonable rate and reasonable yield', marks: 1, keywords: ['compromise', 'balance', 'rate', 'yield'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Explains Le Chatelier: lower T shifts equilibrium to exothermic side', marks: 1, keywords: ['le chatelier', 'equilibrium', 'shift', 'exothermic'] },
+      { id: 'method2', description: 'Links slow rate at low T to economic / practical need for faster reaction', marks: 1, keywords: ['slow', 'economic', 'practical', 'faster'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying high T gives higher yield', 'Missing compromise', 'No link to rate'],
+  },
+  {
+    questionId: 'chem-grade9-electrolysis-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Inert electrodes: OH⁻ or water oxidised at anode; 4OH⁻ → O₂ + 2H₂O + 4e⁻ (or equivalent)', marks: 1, keywords: ['inert', 'anode', 'oxygen', 'oh', 'half equation'] },
+      { id: 'idea2', description: 'Copper electrodes: anode is copper; Cu → Cu²⁺ + 2e⁻; copper dissolves', marks: 1, keywords: ['copper', 'anode', 'dissolves', 'cu2+', 'half equation'] },
+      { id: 'idea3', description: 'Difference: inert = oxygen from solution; copper = copper oxidised and lost', marks: 1, keywords: ['difference', 'inert', 'copper', 'oxidised'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct half-equations for both cases', marks: 1, keywords: ['half equation', 'electron', 'balance'] },
+      { id: 'method2', description: 'Explains why copper anode dissolves (preferable oxidation of Cu over OH⁻)', marks: 1, keywords: ['prefer', 'oxidation', 'dissolve', 'why'] },
+    ],
+    precisionMarks: [
+      { id: 'precision1', description: 'State symbols or correct ion formulae', marks: 1, keywords: ['state', 'ion', 'formula', 'equation'] },
+    ],
+    commonPenalties: ['Wrong half-equations', 'Saying oxygen at copper anode', 'Missing electrons'],
+  },
+  {
+    questionId: 'chem-grade9-moles-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Finds ratio of moles C : H : O from percentage composition', marks: 1, keywords: ['moles', 'ratio', 'percentage', 'composition'] },
+      { id: 'idea2', description: 'Simplest whole number ratio gives empirical formula (e.g. CH₂O)', marks: 1, keywords: ['empirical', 'formula', 'simplest', 'ratio'] },
+      { id: 'idea3', description: 'Molecular formula = (empirical)_n where n = Mr / empirical Mr', marks: 1, keywords: ['molecular', 'formula', 'relative formula mass', '60'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct calculation of moles from % and mass (e.g. 40/12, 6.67/1, 53.33/16)', marks: 1, keywords: ['calculation', 'divide', 'ar', 'mass'] },
+      { id: 'method2', description: 'Correct empirical then molecular (e.g. CH₂O then C₂H₄O₂)', marks: 1, keywords: ['ch2o', 'c2h4o2', 'double', 'n=2'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong empirical formula', 'Not using Mr = 60 for molecular', 'Rounding errors'],
+  },
+  {
+    questionId: 'chem-grade9-bond-energy-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Bonds broken: H–H, Cl–Cl. Bonds formed: 2 × H–Cl', marks: 1, keywords: ['bonds broken', 'bonds formed', 'h-h', 'cl-cl', 'h-cl'] },
+      { id: 'idea2', description: 'ΔH = sum(bonds broken) − sum(bonds formed)', marks: 1, keywords: ['enthalpy', 'broken', 'formed', 'minus'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct substitution: (436 + 243) − (2 × 431) = 679 − 862', marks: 1, keywords: ['436', '243', '431', '862', '679'] },
+      { id: 'method2', description: 'Answer: −183 kJ/mol (or correct value) with unit', marks: 1, keywords: ['-183', 'kj', 'mol', 'exothermic'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong sign', 'Using formed − broken', 'Missing unit'],
+  },
+  {
+    questionId: 'chem-grade9-alkenes-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Test: bromine water (or bromine solution)', marks: 1, keywords: ['bromine', 'water', 'test'] },
+      { id: 'idea2', description: 'Ethene: decolourises (alkenes undergo addition); ethane: no change / stays orange', marks: 1, keywords: ['decolourise', 'ethene', 'ethane', 'no change', 'orange'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Explains alkene has C=C double bond; addition reaction with bromine', marks: 1, keywords: ['double bond', 'addition', 'c=c', 'alkene'] },
+      { id: 'method2', description: 'Alkane (ethane) has only single bonds; no reaction with bromine', marks: 1, keywords: ['alkane', 'single bond', 'no reaction'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong test', 'Saying both decolourise', 'Missing explanation'],
+  },
+  {
+    questionId: 'chem-grade9-equilibrium-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Increasing pressure favours side with fewer moles of gas', marks: 1, keywords: ['pressure', 'fewer moles', 'gas', 'favours'] },
+      { id: 'idea2', description: 'Products have fewer moles of gas than reactants', marks: 1, keywords: ['products', 'reactants', 'moles', 'gas'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Le Chatelier: equilibrium shifts to reduce pressure', marks: 1, keywords: ['le chatelier', 'shift', 'reduce', 'pressure'] },
+      { id: 'method2', description: 'Deduces product side has fewer gas molecules', marks: 1, keywords: ['fewer', 'molecules', 'deduce', 'equation'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying more moles on product side', 'Missing link to pressure', 'Wrong deduction'],
+  },
+  {
+    questionId: 'chem-grade9-atmosphere-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Evidence: CO₂ from ice cores, direct measurements; concentration has increased', marks: 1, keywords: ['ice core', 'measurement', 'concentration', 'increased'] },
+      { id: 'idea2', description: 'Human activity: burning fossil fuels, deforestation', marks: 1, keywords: ['fossil fuels', 'burning', 'deforestation', 'human'] },
+      { id: 'idea3', description: 'Evaluation: correlation vs causation; other factors; reliability of evidence', marks: 1, keywords: ['correlation', 'causation', 'evidence', 'evaluate'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Links industrial revolution to increased fossil fuel use', marks: 1, keywords: ['industrial', 'fossil', 'link'] },
+      { id: 'method2', description: 'Balanced view: strength of evidence and any limitations', marks: 1, keywords: ['balanced', 'limitation', 'strength', 'evidence'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['One-sided answer', 'No evaluation', 'Ignoring human factor'],
+  },
+  {
+    questionId: 'chem-grade9-titration-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Burette rinsed with water: left-over water dilutes the solution added', marks: 1, keywords: ['dilute', 'water', 'rinse', 'burette'] },
+      { id: 'idea2', description: 'Same volume of solution added but it is less concentrated', marks: 1, keywords: ['concentration', 'less', 'volume', 'same'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'More volume of (dilute) solution needed to reach end point', marks: 1, keywords: ['more volume', 'end point', 'titration'] },
+      { id: 'method2', description: 'Calculated concentration would be too high (volume used too large)', marks: 1, keywords: ['too high', 'concentration', 'calculated', 'volume'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying concentration too low', 'Missing link to volume', 'Wrong direction of error'],
+  },
+  {
+    questionId: 'phys-grade9-energy-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Energy conserved: GPE lost = KE gained (or ΔGPE = ΔKE)', marks: 1, keywords: ['conservation', 'gpe', 'ke', 'energy', 'lost', 'gained'] },
+      { id: 'idea2', description: 'Correct equation: GPE = mgh or KE = ½mv²', marks: 1, keywords: ['mgh', '1/2mv2', 'equation'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Finds GPE lost = mgh = 0.5 × 10 × 2 = 10 J; KE = 10 J so ½mv² = 10', marks: 1, keywords: ['10', 'j', 'calculation', 'mgh'] },
+      { id: 'method2', description: 'v² = 40 or v = 6.3 m/s (or √40); unit stated', marks: 1, keywords: ['speed', '6.3', 'root 40', 'm/s'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong height (must use 2 m fallen)', 'Wrong formula', 'Missing unit'],
+  },
+  {
+    questionId: 'phys-grade9-waves-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Wave speed v = f × λ (or v = fλ)', marks: 1, keywords: ['v', 'f', 'lambda', 'wavelength', 'frequency', 'equation'] },
+      { id: 'idea2', description: 'First wave: v = 50 × 0.60 = 30 m/s', marks: 1, keywords: ['30', 'm/s', 'calculation'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Second wave: same v; λ = v/f = 30/100 = 0.30 m', marks: 1, keywords: ['0.30', '30', '100', 'wavelength'] },
+      { id: 'method2', description: 'Units: m/s for speed, m for wavelength', marks: 1, keywords: ['unit', 'm/s', 'm'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong formula', 'Using 50 and 0.60 for second part', 'Unit error'],
+  },
+  {
+    questionId: 'phys-grade9-electricity-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Parallel: 1/R_total = 1/R₁ + 1/R₂; identical so 1/6 = 2/R so R = 12 Ω', marks: 1, keywords: ['parallel', '1/r', 'resistance', 'reciprocal'] },
+      { id: 'idea2', description: 'Each resistor 12 Ω', marks: 1, keywords: ['12', 'ohm', 'each', 'resistor'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct substitution: 1/6 = 2/R → R = 12', marks: 1, keywords: ['calculation', '2/r', '1/6'] },
+      { id: 'method2', description: 'Explains reasoning: two identical in parallel halve resistance', marks: 1, keywords: ['identical', 'halve', 'reasoning', 'explain'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Using series formula', 'Saying 3 Ω', 'No working'],
+  },
+  {
+    questionId: 'phys-grade9-particle-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Temperature increase means particles gain kinetic energy', marks: 1, keywords: ['temperature', 'kinetic energy', 'particles'] },
+      { id: 'idea2', description: 'Particles move faster', marks: 1, keywords: ['faster', 'speed', 'move'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'More frequent collisions with walls of container', marks: 1, keywords: ['collisions', 'walls', 'container', 'frequent'] },
+      { id: 'method2', description: 'Harder collisions (greater force) → pressure increases', marks: 1, keywords: ['pressure', 'force', 'increase', 'harder'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying particles expand', 'Not linking to collisions', 'Missing link to pressure'],
+  },
+  {
+    questionId: 'phys-grade9-radioactivity-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Half-life: time for activity (or count rate / number of nuclei) to halve', marks: 1, keywords: ['half-life', 'halve', 'activity', 'time'] },
+      { id: 'idea2', description: '15 years = 3 half-lives; fraction remaining = (½)³ = 1/8', marks: 1, keywords: ['3 half-lives', '1/8', 'fraction', 'remaining'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Correct calculation: 15 ÷ 5 = 3; ½ × ½ × ½ = 1/8', marks: 1, keywords: ['calculation', '3', '1/8'] },
+      { id: 'method2', description: 'Explains meaning in context (e.g. activity drops to one-eighth)', marks: 1, keywords: ['explain', 'activity', 'one eighth'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Wrong fraction', 'Saying half-life is half the time', 'No calculation'],
+  },
+  {
+    questionId: 'phys-grade9-magnetism-001',
+    ideaMarks: [
+      { id: 'idea1', description: 'Current in wire produces magnetic field; wire in external field experiences force', marks: 1, keywords: ['current', 'magnetic field', 'force', 'wire'] },
+      { id: 'idea2', description: 'Force due to interaction of two magnetic fields', marks: 1, keywords: ['interaction', 'two fields', 'fleming', 'motor effect'] },
+    ],
+    methodMarks: [
+      { id: 'method1', description: 'Fleming’s left-hand rule: thumb = force, first finger = field, second = current', marks: 1, keywords: ['fleming', 'left-hand', 'rule', 'direction'] },
+      { id: 'method2', description: 'Reverse force: reverse current OR reverse (direction of) magnetic field', marks: 1, keywords: ['reverse', 'current', 'field', 'direction'] },
+    ],
+    precisionMarks: [],
+    commonPenalties: ['Saying reverse both', 'Missing Fleming’s rule', 'Wrong hand'],
   },
 ];
 
@@ -2668,6 +2994,21 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     independentVariable: 'Type of cell (plant or animal)',
     dependentVariable: 'Cell structures observed',
     controlledVariables: ['Microscope magnification', 'Staining method', 'Slide preparation method'],
+    equipment: [
+      'Light microscope',
+      'Microscope slides and coverslips',
+      'Dropper or pipette',
+      'Iodine solution (stain)',
+      'Forceps',
+      'Scalpel or mounted needle',
+      'Onion or prepared cell sample',
+      'Paper towel',
+    ],
+    setupSteps: [
+      'Ensure microscope is on a stable surface with light source working',
+      'Start with the lowest magnification objective lens (e.g. ×4)',
+      'Clean slide and coverslip if reusing',
+    ],
     methodSteps: [
       'Place a drop of water on a clean slide',
       'Obtain a thin layer of cells (e.g., onion epidermis)',
@@ -2731,6 +3072,21 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       'Substrate concentration',
       'Volume of solutions',
       'Same method for detecting starch (iodine test)',
+    ],
+    equipment: [
+      'Water bath (37°C)',
+      'Test tubes and rack',
+      'Buffer solutions (different pH values)',
+      'Amylase solution',
+      'Starch solution',
+      'Iodine solution',
+      'Stopwatch or timer',
+      'Pipettes or syringes',
+    ],
+    setupSteps: [
+      'Set water bath to 37°C and allow to reach temperature',
+      'Prepare buffer solutions at range of pH (e.g. 4, 5, 6, 7, 8)',
+      'Label test tubes for each pH',
     ],
     methodSteps: [
       'Set up water bath at 37°C',
@@ -3292,6 +3648,374 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
   },
 ];
+
+// ============================================================================
+// PRACTICAL QUIZ QUESTIONS – Test setup, variables, method, risks, evaluation
+// ============================================================================
+
+export const PRACTICAL_QUIZ_QUESTIONS: PracticalQuizQuestion[] = [
+  // ---------- bio-microscopy ----------
+  {
+    id: 'pq-bio-microscopy-setup-1',
+    practicalId: 'bio-microscopy',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'What is the first step when setting up the microscope slide?',
+    options: [
+      'Place the slide on the stage',
+      'Place a drop of water on a clean slide',
+      'Add iodine solution to stain',
+      'Lower the coverslip',
+    ],
+    correctAnswer: 'Place a drop of water on a clean slide',
+    feedback: {
+      correct: 'Correct. You always start with a drop of water on the slide before adding the specimen.',
+      incorrect: 'The first step is to place a drop of water on a clean slide. The specimen is then placed in the water.',
+    },
+  },
+  {
+    id: 'pq-bio-microscopy-setup-2',
+    practicalId: 'bio-microscopy',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'Why do you lower the coverslip at an angle?',
+    options: [
+      'To make the slide look neat',
+      'To avoid trapping air bubbles',
+      'To spread the stain evenly',
+      'To reduce magnification',
+    ],
+    correctAnswer: 'To avoid trapping air bubbles',
+    feedback: {
+      correct: 'Correct. Lowering at an angle pushes air out and avoids bubbles that would obscure the view.',
+      incorrect: 'Lowering the coverslip at an angle reduces air bubbles. Bubbles would block light and make it hard to see cells.',
+    },
+  },
+  {
+    id: 'pq-bio-microscopy-variables',
+    practicalId: 'bio-microscopy',
+    category: 'variables',
+    type: 'multipleChoice',
+    question: 'What is the dependent variable in the microscopy practical?',
+    options: [
+      'Type of cell (plant or animal)',
+      'Cell structures observed',
+      'Microscope magnification',
+      'Staining method',
+    ],
+    correctAnswer: 'Cell structures observed',
+    feedback: {
+      correct: 'Correct. The dependent variable is what you measure or observe – the cell structures you see.',
+      incorrect: 'The dependent variable is what you observe or measure: the cell structures. The type of cell would be the independent variable if you were comparing plant vs animal.',
+    },
+  },
+  {
+    id: 'pq-bio-microscopy-method',
+    practicalId: 'bio-microscopy',
+    category: 'method',
+    type: 'dragOrder',
+    question: 'Put these steps in the correct order.',
+    options: [
+      'Place slide on microscope stage',
+      'Start with lowest magnification',
+      'Add a drop of iodine solution to stain',
+      'Lower coverslip onto the slide at an angle',
+      'Use coarse focus, then fine focus',
+    ],
+    correctAnswer: [
+      'Add a drop of iodine solution to stain',
+      'Lower coverslip onto the slide at an angle',
+      'Place slide on microscope stage',
+      'Start with lowest magnification',
+      'Use coarse focus, then fine focus',
+    ],
+    feedback: {
+      correct: 'Correct. Stain first, then coverslip, then place on stage, then low mag, then focus.',
+      incorrect: 'Order: stain → lower coverslip (at an angle) → place on stage → lowest magnification → coarse then fine focus.',
+    },
+  },
+  {
+    id: 'pq-bio-microscopy-risks',
+    practicalId: 'bio-microscopy',
+    category: 'risks',
+    type: 'multipleChoice',
+    question: 'What is the main risk when using iodine solution and how do you control it?',
+    options: [
+      'Fire – keep away from flames',
+      'Stains skin and clothing – wear lab coat and handle carefully',
+      'Poisoning – do not ingest',
+      'Cuts – use plastic bottles only',
+    ],
+    correctAnswer: 'Stains skin and clothing – wear lab coat and handle carefully',
+    feedback: {
+      correct: 'Correct. Iodine stains are hard to remove; lab coat and care minimise the risk.',
+      incorrect: 'Iodine solution stains skin and clothing. The control is to wear a lab coat and handle it carefully.',
+    },
+  },
+  {
+    id: 'pq-bio-microscopy-eval',
+    practicalId: 'bio-microscopy',
+    category: 'evaluation',
+    type: 'multipleChoice',
+    question: 'Which is a limitation of the light microscope in this practical?',
+    options: [
+      'It is too heavy to move',
+      'Resolution limit – you cannot see smaller structures like ribosomes',
+      'It only works in the dark',
+      'It cannot magnify plant cells',
+    ],
+    correctAnswer: 'Resolution limit – you cannot see smaller structures like ribosomes',
+    feedback: {
+      correct: 'Correct. Resolution is limited by the wavelength of light; smaller organelles need an electron microscope.',
+      incorrect: 'The key limitation is resolution: light microscopes cannot show structures smaller than about 0.2 μm (e.g. ribosomes).',
+    },
+  },
+  // ---------- bio-enzyme-activity ----------
+  {
+    id: 'pq-bio-enzyme-setup-1',
+    practicalId: 'bio-enzyme-activity',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'Before starting the enzyme practical, what must you set up first?',
+    options: [
+      'The starch solution',
+      'A water bath at 37°C',
+      'The iodine test tubes',
+      'The buffer solutions',
+    ],
+    correctAnswer: 'A water bath at 37°C',
+    feedback: {
+      correct: 'Correct. Enzymes work at body temperature; the water bath must be at 37°C before you add enzymes.',
+      incorrect: 'The water bath should be set to 37°C first so it is ready when you add the enzyme and starch.',
+    },
+  },
+  {
+    id: 'pq-bio-enzyme-variables',
+    practicalId: 'bio-enzyme-activity',
+    category: 'variables',
+    type: 'multipleChoice',
+    question: 'In the amylase and starch practical, what is the independent variable?',
+    options: [
+      'Time taken for starch to be broken down',
+      'Rate of reaction',
+      'pH of solution',
+      'Temperature',
+    ],
+    correctAnswer: 'pH of solution',
+    feedback: {
+      correct: 'Correct. You change the pH (e.g. different buffers) to see its effect on the rate.',
+      incorrect: 'The independent variable is the one you change – here, the pH of the solution. Time (or rate) is what you measure (dependent).',
+    },
+  },
+  {
+    id: 'pq-bio-enzyme-method',
+    practicalId: 'bio-enzyme-activity',
+    category: 'method',
+    type: 'multipleChoice',
+    question: 'How do you know when the starch has been broken down in this practical?',
+    options: [
+      'The solution goes cloudy',
+      'The iodine test stays orange (no blue-black colour)',
+      'The solution heats up',
+      'Bubbles appear',
+    ],
+    correctAnswer: 'The iodine test stays orange (no blue-black colour)',
+    feedback: {
+      correct: 'Correct. Iodine turns blue-black with starch. When starch is gone, the iodine test stays orange.',
+      incorrect: 'You use the iodine test: starch gives blue-black with iodine. When the reaction is complete, a sample no longer turns blue-black (stays orange).',
+    },
+  },
+  {
+    id: 'pq-bio-enzyme-risks',
+    practicalId: 'bio-enzyme-activity',
+    category: 'risks',
+    type: 'multipleChoice',
+    question: 'What is the main hazard when using the water bath at 37°C?',
+    options: [
+      'Electric shock',
+      'Burns from hot water',
+      'Spills only',
+      'No significant hazard',
+    ],
+    correctAnswer: 'Burns from hot water',
+    feedback: {
+      correct: 'Correct. Use tongs and allow equipment to cool before handling to avoid burns.',
+      incorrect: 'Hot water can cause burns. Control: use tongs and let equipment cool before touching.',
+    },
+  },
+  {
+    id: 'pq-bio-enzyme-eval',
+    practicalId: 'bio-enzyme-activity',
+    category: 'evaluation',
+    type: 'multipleChoice',
+    question: 'Which improvement would make the results more reliable?',
+    options: [
+      'Using a larger beaker',
+      'Using a colorimeter to measure starch concentration objectively',
+      'Doing the experiment in the dark',
+      'Using more iodine',
+    ],
+    correctAnswer: 'Using a colorimeter to measure starch concentration objectively',
+    feedback: {
+      correct: 'Correct. A colorimeter removes the subjective judgement of when the iodine test becomes negative.',
+      incorrect: 'Judging when the iodine test turns negative is subjective. A colorimeter gives an objective measure of starch concentration.',
+    },
+  },
+  // ---------- bio-osmosis-potato ----------
+  {
+    id: 'pq-bio-osmosis-setup',
+    practicalId: 'bio-osmosis-potato',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'What do you use to cut equal-sized potato cylinders?',
+    options: [
+      'Scalpel only',
+      'Cork borer',
+      'Scissors',
+      'Ruler and knife',
+    ],
+    correctAnswer: 'Cork borer',
+    feedback: {
+      correct: 'Correct. A cork borer gives cylinders of the same diameter; length can be cut to match.',
+      incorrect: 'A cork borer is used to get cylinders of the same diameter so size is controlled.',
+    },
+  },
+  {
+    id: 'pq-bio-osmosis-variables',
+    practicalId: 'bio-osmosis-potato',
+    category: 'variables',
+    type: 'multipleChoice',
+    question: 'What is the independent variable in the potato osmosis practical?',
+    options: [
+      'Change in mass of potato cylinder',
+      'Concentration of sugar solution',
+      'Time left in solution',
+      'Temperature',
+    ],
+    correctAnswer: 'Concentration of sugar solution',
+    feedback: {
+      correct: 'Correct. You change the concentration (e.g. 0%, 5%, 10%) to see its effect on mass change.',
+      incorrect: 'The independent variable is the one you change – the concentration of the sugar solution.',
+    },
+  },
+  {
+    id: 'pq-bio-osmosis-eval',
+    practicalId: 'bio-osmosis-potato',
+    category: 'evaluation',
+    type: 'multipleChoice',
+    question: 'Why might drying the potato with a paper towel before weighing cause error?',
+    options: [
+      'It has no effect',
+      'Inconsistent drying – some cylinders may be drier than others',
+      'Paper towel adds mass',
+      'It makes the potato absorb water',
+    ],
+    correctAnswer: 'Inconsistent drying – some cylinders may be drier than others',
+    feedback: {
+      correct: 'Correct. Inconsistent drying changes the mass you measure; it should be done the same way each time.',
+      incorrect: 'If drying is inconsistent, the final mass you record varies. This is a source of error; use the same method for all cylinders.',
+    },
+  },
+  // ---------- chem-rate-temperature ----------
+  {
+    id: 'pq-chem-rate-setup',
+    practicalId: 'chem-rate-temperature',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'What do you place the conical flask on when doing the disappearing cross experiment?',
+    options: [
+      'A tripod',
+      'A piece of paper with a cross marked on it',
+      'A heatproof mat only',
+      'The bench directly',
+    ],
+    correctAnswer: 'A piece of paper with a cross marked on it',
+    feedback: {
+      correct: 'Correct. The cross is used to judge when the reaction has made the solution opaque.',
+      incorrect: 'The flask sits on paper with a cross so you can time how long until the cross is no longer visible through the solution.',
+    },
+  },
+  {
+    id: 'pq-chem-rate-variables',
+    practicalId: 'chem-rate-temperature',
+    category: 'variables',
+    type: 'multipleChoice',
+    question: 'What is the dependent variable in the sodium thiosulfate and acid practical?',
+    options: [
+      'Temperature',
+      'Concentration of acid',
+      'Time taken for cross to disappear',
+      'Volume of solution',
+    ],
+    correctAnswer: 'Time taken for cross to disappear',
+    feedback: {
+      correct: 'Correct. You measure the time for the cross to disappear as the reaction produces cloudy sulfur.',
+      incorrect: 'The dependent variable is what you measure – the time (in seconds) until the cross can no longer be seen.',
+    },
+  },
+  {
+    id: 'pq-chem-rate-risks',
+    practicalId: 'chem-rate-temperature',
+    category: 'risks',
+    type: 'multipleChoice',
+    question: 'What is the main hazard when using hydrochloric acid in this practical?',
+    options: [
+      'Fire',
+      'Irritant – can damage skin and eyes',
+      'Explosive when heated',
+      'No significant hazard',
+    ],
+    correctAnswer: 'Irritant – can damage skin and eyes',
+    feedback: {
+      correct: 'Correct. Wear eye protection and wash spills; acid is irritant.',
+      incorrect: 'Hydrochloric acid is irritant. Wear eye protection and handle carefully; wash any spills.',
+    },
+  },
+  // ---------- phys-shc-prac ----------
+  {
+    id: 'pq-phys-shc-setup',
+    practicalId: 'phys-shc-prac',
+    category: 'setup',
+    type: 'multipleChoice',
+    question: 'Why do you need to measure the mass of the block before heating in the specific heat capacity practical?',
+    options: [
+      'To know how long to heat it',
+      'The equation requires mass: E = mcΔT',
+      'To choose the right heater',
+      'It is not necessary',
+    ],
+    correctAnswer: 'The equation requires mass: E = mcΔT',
+    feedback: {
+      correct: 'Correct. You need mass (m) to calculate specific heat capacity from E = mcΔT.',
+      incorrect: 'The specific heat capacity equation is E = mcΔT. You need the mass of the block (m) to find c.',
+    },
+  },
+  {
+    id: 'pq-phys-shc-eval',
+    practicalId: 'phys-shc-prac',
+    category: 'evaluation',
+    type: 'multipleChoice',
+    question: 'Why might some energy from the heater not raise the block’s temperature?',
+    options: [
+      'Energy cannot be lost',
+      'Heat is lost to the surroundings (insulation not perfect)',
+      'The thermometer is wrong',
+      'Mass changes during heating',
+    ],
+    correctAnswer: 'Heat is lost to the surroundings (insulation not perfect)',
+    feedback: {
+      correct: 'Correct. Not all electrical energy goes into the block; some is lost, so your value of c may be off.',
+      incorrect: 'Energy is lost to the air and the surroundings. Better insulation or a lid would reduce this systematic error.',
+    },
+  },
+];
+
+/**
+ * Get quiz questions for a given practical (for Test your understanding)
+ */
+export function getPracticalQuizQuestions(practicalId: string): PracticalQuizQuestion[] {
+  return PRACTICAL_QUIZ_QUESTIONS.filter(q => q.practicalId === practicalId);
+}
 
 // ============================================================================
 // BIOLOGY EQUATIONS - Where Relevant (GCSE)
@@ -4050,4 +4774,22 @@ export function getQuestionsWithMethodMarkBreakdowns(
 ): ScienceQuestion[] {
   const all = getQuestionsByFilters(subject, paper, tier, topic);
   return all.filter(q => q.marks >= 4 && QUESTION_IDS_WITH_BREAKDOWNS.has(q.id));
+}
+
+/**
+ * Topics that have at least one 4–6 mark question with a method mark breakdown (for Method Mark Trainer topic picker)
+ */
+export function getTopicsWithMethodMarkQuestions(
+  subject: ScienceSubject,
+  paper?: SciencePaper,
+  tier?: ScienceTier
+): Array<{ topic: string; count: number }> {
+  const questions = getQuestionsWithMethodMarkBreakdowns(subject, paper, tier);
+  const byTopic = new Map<string, number>();
+  for (const q of questions) {
+    byTopic.set(q.topic, (byTopic.get(q.topic) ?? 0) + 1);
+  }
+  return Array.from(byTopic.entries())
+    .map(([topic, count]) => ({ topic, count }))
+    .sort((a, b) => a.topic.localeCompare(b.topic));
 }

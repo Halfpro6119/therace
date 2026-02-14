@@ -12,8 +12,8 @@ import { hasAnimatedDiagram } from '../config/animatedDiagramSlugs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { DiagramRenderer } from './DiagramRenderer';
 
-/** Fully expanded: diagrams fill available card space */
-const DIAGRAM_MIN_HEIGHT = 200;
+/** Minimum space for diagram so it displays without cutting off */
+const DIAGRAM_MIN_HEIGHT = 260;
 
 interface FlashcardDiagramProps {
   /** Diagram slug (e.g. cell_membrane_diffusion) */
