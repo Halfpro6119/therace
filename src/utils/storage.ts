@@ -105,6 +105,8 @@ const STORAGE_KEYS = {
   PSYCHOLOGY_HUB_FLASHCARD_MASTERY: 'grade9sprint_psychology_hub_flashcard_mastery',
   // Hub writing drafts (source lab, interpretation lab, question labs, etc.)
   HUB_WRITING_DRAFTS: 'grade9sprint_hub_writing_drafts',
+  // Full GCSE paper test results (mastery-gated)
+  FULL_GCSE_PAPER_RESULTS: 'grade9sprint_full_gcse_paper_results',
 };
 
 /**
@@ -699,6 +701,65 @@ export const storage = {
     all[key] = existing;
     localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
   },
+
+  // —— Full GCSE Paper Test Results (mastery-gated) ——
+  getFullGcsePaperResults: (): Record<string, {
+    passed: boolean;
+    attempts: Array<{ marksEarned: number; totalMarks: number; percentage: number; completedAt: number }>;
+  }> => {
+    const data = localStorage.getItem(STORAGE_KEYS.FULL_GCSE_PAPER_RESULTS);
+    return data ? JSON.parse(data) : {};
+  },
+  getPaperTestResult: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string
+  ): { passed: boolean; attempts: Array<{ marksEarned: number; totalMarks: number; percentage: number; completedAt: number }> } | undefined => {
+    const key = `${subject}-${paper}-${tier}`;
+    return storage.getFullGcsePaperResults()[key];
+  },
+  setPaperTestResult: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    marksEarned: number,
+    totalMarks: number,
+    passThreshold = 0.7
+  ): boolean => {
+    const all = storage.getFullGcsePaperResults();
+    const key = `${subject}-${paper}-${tier}`;
+    const percentage = totalMarks > 0 ? marksEarned / totalMarks : 0;
+    const passed = percentage >= passThreshold;
+
+    const existing = all[key] || { passed: false, attempts: [] };
+    existing.attempts.push({
+      marksEarned,
+      totalMarks,
+      percentage: Math.round(percentage * 100),
+      completedAt: Date.now(),
+    });
+    existing.passed = existing.passed || passed;
+
+    all[key] = existing;
+    localStorage.setItem(STORAGE_KEYS.FULL_GCSE_PAPER_RESULTS, JSON.stringify(all));
+    return passed;
+  },
+  isPaperPassed: (subject: ScienceSubject, paper: number, tier: string): boolean => {
+    const r = storage.getPaperTestResult(subject, paper, tier);
+    return r?.passed ?? false;
+  },
+  getSubjectFullGcseProgress: (
+    subject: ScienceSubject,
+    tier: string,
+    papers: number[]
+  ): { papersPassed: number[]; allPassed: boolean } => {
+    const passed = papers.filter((p) => storage.isPaperPassed(subject, p, tier));
+    return {
+      papersPassed: passed,
+      allPassed: passed.length === papers.length,
+    };
+  },
+
   calculateTopicFlashcardMastery: (
     subject: ScienceSubject,
     paper: number,

@@ -110,7 +110,7 @@ export function ScienceLabModePage() {
       return;
     }
     if (mode === 'fullGcseTest') {
-      navigate(`${base}/question`);
+      navigate(`${base}/full-gcse`);
       return;
     }
     const routeMap: Record<LabMode, string> = {
@@ -118,7 +118,7 @@ export function ScienceLabModePage() {
       quickCheck: 'quick-check',
       methodMark: 'methodMark',
       topicTest: 'topics',
-      fullGcseTest: 'question',
+      fullGcseTest: 'full-gcse',
       question: 'question',
       practical: 'practical',
       equation: 'equation',

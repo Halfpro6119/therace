@@ -167,10 +167,16 @@ export function ScienceLabFlashcardPage() {
     }
     if (stepIndex >= learnSteps.length - 1) {
       setSessionComplete(true);
+      setPhase('flashcard');
+      setPendingQuickChecks([]);
+      setQuickCheckIndex(0);
       return;
     }
-    setStepIndex((i) => i + 1);
-    const next = learnSteps[stepIndex + 1];
+    const nextIndex = stepIndex + 1;
+    const next = learnSteps[nextIndex];
+    setStepIndex(nextIndex);
+    setPendingQuickChecks([]);
+    setQuickCheckIndex(0);
     if (next?.type === 'flashcard') {
       setPhase('flashcard');
       setIsFlipped(false);
@@ -404,7 +410,7 @@ export function ScienceLabFlashcardPage() {
             </button>
             <button
               type="button"
-              onClick={() => navigate(base + topicTestQuery)}
+              onClick={() => navigate(base + (topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : ''))}
               className="w-full py-3 rounded-xl font-medium transition hover:bg-black/5"
               style={{ color: 'rgb(var(--text-secondary))' }}
             >
@@ -417,7 +423,7 @@ export function ScienceLabFlashcardPage() {
   }
 
   // Quick Check phase
-  if (phase === 'quickCheck' && currentQuickCheck) {
+  if (phase === 'quickCheck' && currentQuickCheck && pendingQuickChecks.length > 0) {
     return (
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
         <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
@@ -771,30 +777,31 @@ export function ScienceLabFlashcardPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-shrink-0 pt-6 mt-6" style={{ borderTop: '1px solid rgb(var(--border))' }} onClick={(e) => e.stopPropagation()}>
-                    <p className="text-[11px] font-semibold mb-3 uppercase tracking-[0.08em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
-                    <div className="flex gap-3">
-                      {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
-                        <motion.button
-                          key={level}
-                          type="button"
-                          onClick={() => handleConfidence(level)}
-                          className="flex-1 py-3 rounded-xl font-semibold text-[14px] text-white min-h-[44px]"
-                          style={{ background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444' }}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          {CONFIDENCE_LABELS[level]}
-                        </motion.button>
-                      ))}
-                    </div>
-                    <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Or press 1, 2, or 3</p>
-                  </div>
                 </div>
               </div>
             </motion.div>
           </motion.div>
         </div>
+
+        {isFlipped && (
+          <div className="mt-6 p-6 rounded-2xl w-full" style={{ background: 'rgb(var(--surface))', border: '1px solid rgb(var(--border))' }}>
+            <p className="text-[11px] font-semibold mb-4 uppercase tracking-[0.08em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+            <div className="flex gap-3">
+              {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
+                <button
+                  key={level}
+                  type="button"
+                  onClick={() => handleConfidence(level)}
+                  className="flex-1 min-h-[88px] py-6 px-6 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[16px] text-white transition active:scale-[0.97]"
+                  style={{ background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444' }}
+                >
+                  {CONFIDENCE_LABELS[level]}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Or press 1, 2, or 3</p>
+          </div>
+        )}
 
         <div className="flex items-center justify-between mt-8 gap-4">
           <motion.button

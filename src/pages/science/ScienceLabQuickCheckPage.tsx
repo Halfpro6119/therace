@@ -109,7 +109,7 @@ export function ScienceLabQuickCheckPage() {
       if (topicFilter) {
         navigate(`${base}/topic-test?topic=${encodeURIComponent(topicFilter)}`);
       } else {
-        navigate(`${base}/question`);
+        navigate(`${base}/full-gcse`);
       }
     }
   };
@@ -135,7 +135,7 @@ export function ScienceLabQuickCheckPage() {
           onClick={() =>
             topicFilter
               ? navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/topic-test?topic=${encodeURIComponent(topicFilter)}`)
-              : navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`)
+              : navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/full-gcse`)
           }
         >
           Go to Quiz

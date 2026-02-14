@@ -884,8 +884,8 @@ function shuffle<T>(arr: T[]): T[] {
 
 /**
  * Get combined topic test items in exam structure: Section A (1-2 mark) → B (3 mark) → C (4-6 mark)
- * Quick Checks count as 1 mark and go in Section A; max 40% of items from Quick Checks.
- * Ensures at least one 4+ mark question when available. Topic is required.
+ * Quick Checks count as 1 mark; max 30% of items from Quick Checks so the test really challenges knowledge.
+ * All extended (4-6 mark) questions are included when available.
  */
 export function getTopicTestItems(
   subject: ScienceSubject,
@@ -895,6 +895,39 @@ export function getTopicTestItems(
 ): TopicTestItem[] {
   const allQuickChecks = getQuickChecksByFilters(subject, paper, tier, topic);
   const allQuestions = getQuestionsByFilters(subject, paper, tier, topic);
+
+  const sectionAQuestions = allQuestions.filter((q) => q.marks >= 1 && q.marks <= 2);
+  const sectionBQuestions = allQuestions.filter((q) => q.marks === 3);
+  const sectionCQuestions = allQuestions.filter((q) => q.marks >= 4 && q.marks <= 6);
+
+  const questionCount = sectionAQuestions.length + sectionBQuestions.length + sectionCQuestions.length;
+  const maxQuickChecks = questionCount > 0
+    ? Math.min(allQuickChecks.length, Math.min(4, Math.floor((3 / 7) * questionCount)) || 0)
+    : allQuickChecks.length;
+  const quickChecks = shuffle(allQuickChecks).slice(0, Math.max(0, maxQuickChecks));
+
+  const sectionA: TopicTestItem[] = [
+    ...quickChecks.map((q): TopicTestItem => ({ type: 'quickCheck', data: q })),
+    ...shuffle(sectionAQuestions).map((q): TopicTestItem => ({ type: 'question', data: q })),
+  ];
+  const sectionB: TopicTestItem[] = shuffle(sectionBQuestions).map((q): TopicTestItem => ({ type: 'question', data: q }));
+  const sectionC: TopicTestItem[] = shuffle(sectionCQuestions).map((q): TopicTestItem => ({ type: 'question', data: q }));
+
+  return [...sectionA, ...sectionB, ...sectionC];
+}
+
+/**
+ * Get full GCSE paper test items: all topics for the given paper, in exam structure.
+ * Section A (1–2 mark + Quick Checks) → Section B (3 mark) → Section C (4–6 mark).
+ * Same logic as getTopicTestItems but scoped to entire paper (no topic filter).
+ */
+export function getFullGcsePaperTestItems(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier
+): TopicTestItem[] {
+  const allQuickChecks = getQuickChecksByFilters(subject, paper, tier, undefined);
+  const allQuestions = getQuestionsByFilters(subject, paper, tier, undefined);
 
   const sectionAQuestions = allQuestions.filter((q) => q.marks >= 1 && q.marks <= 2);
   const sectionBQuestions = allQuestions.filter((q) => q.marks === 3);

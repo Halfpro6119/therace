@@ -59,6 +59,8 @@ import { ScienceLabFlashcardPage } from './pages/science/ScienceLabFlashcardPage
 import { ScienceLabQuickCheckPage } from './pages/science/ScienceLabQuickCheckPage';
 import { ScienceLabTopicsPage } from './pages/science/ScienceLabTopicsPage';
 import { ScienceLabTopicTestPage } from './pages/science/ScienceLabTopicTestPage';
+import { ScienceLabFullGcsePage } from './pages/science/ScienceLabFullGcsePage';
+import { ScienceLabPaperTestPage } from './pages/science/ScienceLabPaperTestPage';
 import { BusinessHubHomePage } from './pages/business/BusinessHubHomePage';
 import { BusinessHubUnitPage } from './pages/business/BusinessHubUnitPage';
 import { BusinessHubTopicsPage } from './pages/business/BusinessHubTopicsPage';
@@ -310,6 +312,8 @@ function App() {
                 <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ScienceLabConceptLabPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/question" element={<ScienceLabQuestionLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/full-gcse" element={<ScienceLabFullGcsePage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/full-gcse/test/:testPaper" element={<ScienceLabPaperTestPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/methodMark" element={<ScienceLabMethodMarkPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/practical" element={<ScienceLabPracticalLabPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/equation" element={<ScienceLabEquationLabPage />} />

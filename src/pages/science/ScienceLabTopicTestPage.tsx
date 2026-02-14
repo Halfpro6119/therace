@@ -3,7 +3,6 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   ChevronLeft,
-  FileQuestion,
   XCircle,
   Calculator,
   BookOpen,
@@ -121,41 +120,117 @@ export function ScienceLabTopicTestPage() {
 
   if (!topicParam) {
     const topics = getTopicsBySubject(normalizedSubject);
-    const topicsWithQuestions = topics.filter((t) => getTopicTestItems(normalizedSubject, paperNum, tierValue, t).length > 0);
+    const topicsWithData = topics
+      .map((t) => {
+        const items = getTopicTestItems(normalizedSubject, paperNum, tierValue, t);
+        const marks = items.reduce((s, i) => s + getItemMarks(i), 0);
+        const extendedCount = items.filter((i) => i.type === 'question' && i.data.marks >= 4).length;
+        const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, t);
+        return {
+          topic: t,
+          questionCount: items.length,
+          totalMarks: marks,
+          extendedCount,
+          score: m?.topicTestScore,
+          completed: m?.topicTestCompleted ?? false,
+        };
+      })
+      .filter((d) => d.questionCount > 0);
+    const firstIncomplete = topicsWithData.find((d) => !d.completed)?.topic ?? topicsWithData[0]?.topic;
+
     return (
-      <div className="max-w-4xl mx-auto p-6 sm:p-8">
-        <button
-          type="button"
-          onClick={() => navigate(base)}
-          className="flex items-center gap-2 text-sm font-medium mb-6"
-          style={{ color: 'rgb(var(--text-secondary))' }}
-        >
-          <ChevronLeft size={18} />
-          Back to Lab
-        </button>
-        <h1 className="text-2xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-          Topic Test
-        </h1>
-        <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Pick a topic — you&apos;ll go straight into the test
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {topicsWithQuestions.map((topic) => (
-            <button
-              key={topic}
-              type="button"
-              onClick={() => navigate(`${base}/topic-test?topic=${encodeURIComponent(topic)}`)}
-              className="p-4 rounded-xl border text-left font-semibold transition hover:shadow-md flex items-center justify-between"
-              style={{
-                background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
-                borderColor: 'transparent',
-                color: 'white',
-              }}
-            >
-              {topic}
-              <ArrowRight size={20} />
-            </button>
-          ))}
+      <div className="min-h-screen">
+        <div className="max-w-4xl mx-auto p-6 sm:p-10">
+          <button
+            type="button"
+            onClick={() => navigate(base)}
+            className="flex items-center gap-2 text-sm font-medium mb-8 transition hover:opacity-80"
+            style={{ color: 'rgb(var(--text-secondary))' }}
+          >
+            <ChevronLeft size={18} />
+            Back to Lab
+          </button>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10"
+          >
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2" style={{ color: 'rgb(var(--text))' }}>
+              Topic Test
+            </h1>
+            <p className="text-base sm:text-lg" style={{ color: 'rgb(var(--text-secondary))' }}>
+              Choose a topic. Mini GCSE paper — recall, explanation & extended response.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {topicsWithData.map((d, i) => {
+              const isRecommended = d.topic === firstIncomplete && !d.completed;
+              return (
+                <motion.button
+                  key={d.topic}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  type="button"
+                  onClick={() => navigate(`${base}/topic-test?topic=${encodeURIComponent(d.topic)}`)}
+                  className="group relative p-6 rounded-2xl text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[rgb(var(--bg))]"
+                  style={{
+                    background: 'rgb(var(--surface))',
+                    borderColor: isRecommended ? 'rgb(34 197 94)' : 'rgb(var(--border))',
+                    borderWidth: isRecommended ? 2 : 1,
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                  }}
+                >
+                  {isRecommended && (
+                    <span
+                      className="absolute -top-2.5 left-4 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider"
+                      style={{ background: 'rgb(34 197 94)', color: 'white' }}
+                    >
+                      Start here
+                    </span>
+                  )}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-lg font-bold mb-2 group-hover:text-indigo-400 transition-colors" style={{ color: 'rgb(var(--text))' }}>
+                        {d.topic}
+                      </h2>
+                      <div className="flex flex-wrap gap-3 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        <span>{d.questionCount} questions</span>
+                        <span>•</span>
+                        <span>{d.totalMarks} marks</span>
+                        {d.extendedCount > 0 && (
+                          <>
+                            <span>•</span>
+                            <span className="text-amber-400">{d.extendedCount} extended (4–6 mark)</span>
+                          </>
+                        )}
+                      </div>
+                      {d.completed && d.score != null && (
+                        <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg" style={{ background: 'rgb(var(--surface-2))' }}>
+                          <span className="text-xs font-semibold">Last score:</span>
+                          <span
+                            className="text-sm font-bold"
+                            style={{
+                              color: d.score >= 70 ? 'rgb(34 197 94)' : d.score >= 50 ? 'rgb(251 146 60)' : 'rgb(239 68 68)',
+                            }}
+                          >
+                            {d.score}%
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-1"
+                      style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}
+                    >
+                      <ArrowRight size={20} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -233,45 +308,73 @@ export function ScienceLabTopicTestPage() {
   // Summary screen
   if (showSummary) {
     const percent = totalMarks > 0 ? Math.round((marksEarned / totalMarks) * 100) : 0;
+    const gradeColor = percent >= 70 ? 'rgb(34 197 94)' : percent >= 50 ? 'rgb(251 146 60)' : 'rgb(239 68 68)';
+    const gradeLabel = percent >= 70 ? 'Strong!' : percent >= 50 ? 'Good progress' : 'Keep practicing';
 
     return (
-      <div className="max-w-4xl mx-auto space-y-8">
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-          style={{
-            background: 'linear-gradient(135deg, #8B5CF6 0%, #10B981 100%)',
-            borderColor: 'transparent',
-          }}
-        >
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Test Complete</h1>
-          <p className="text-white/90 text-sm sm:text-base">Topic: {topicParam}</p>
-        </motion.section>
+      <div className="min-h-screen">
+        <div className="max-w-2xl mx-auto p-6 sm:p-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="rounded-3xl p-8 sm:p-12 text-center overflow-hidden relative"
+            style={{
+              background: 'rgb(var(--surface))',
+              border: '1px solid rgb(var(--border))',
+              boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.4)',
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-5"
+              style={{
+                background: `radial-gradient(circle at 50% 0%, ${gradeColor}, transparent 60%)`,
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="relative"
+            >
+              <Sparkles size={40} className="mx-auto mb-4" style={{ color: gradeColor }} />
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+                {topicParam} — Complete
+              </h1>
+              <p className="text-sm mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
+                {gradeLabel}
+              </p>
+              <motion.p
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.25, type: 'spring', stiffness: 200 }}
+                className="text-5xl sm:text-6xl font-bold mb-2 tabular-nums"
+                style={{ color: gradeColor }}
+              >
+                {marksEarned} / {totalMarks}
+              </motion.p>
+              <p className="text-xl font-semibold mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
+                {percent}%
+              </p>
+              {extendedMarksTotal > 0 && (
+                <p className="text-sm mb-8 px-4 py-2 rounded-xl inline-block" style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}>
+                  Extended questions: {extendedMarksEarned}/{extendedMarksTotal} marks
+                </p>
+              )}
+            </motion.div>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl p-8 border text-center"
-          style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-        >
-          <p className="text-4xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-            {marksEarned} / {totalMarks} marks
-          </p>
-          <p className="text-lg mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {percent}%
-          </p>
-          {extendedMarksTotal > 0 && (
-            <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
-              Extended questions (4–6 marks): {extendedMarksEarned} / {extendedMarksTotal} — review the mark scheme for full marks
-            </p>
-          )}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 flex flex-col sm:flex-row gap-3 justify-center flex-wrap"
+          >
             <button
               type="button"
               onClick={() => navigate(`${base}/topic-test`)}
-              className="px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)' }}
+              className="px-6 py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%)' }}
             >
               <Layers size={18} />
               Choose another topic
@@ -279,33 +382,33 @@ export function ScienceLabTopicTestPage() {
             <button
               type="button"
               onClick={() => navigate(`${base}/flashcard?topic=${encodeURIComponent(topicParam)}`)}
-              className="px-6 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 border"
+              className="px-6 py-4 rounded-xl font-semibold transition flex items-center justify-center gap-2 border hover:shadow-md"
               style={{
-                background: 'rgb(var(--surface-2))',
+                background: 'rgb(var(--surface))',
                 borderColor: 'rgb(var(--border))',
                 color: 'rgb(var(--text))',
               }}
             >
               <BookOpen size={18} />
-              Review topic in Flashcards
+              Review in Flashcards
             </button>
             {extendedMarksTotal > 0 && extendedMarksEarned < extendedMarksTotal && (
               <button
                 type="button"
                 onClick={() => navigate(`${base}/methodMark?topic=${encodeURIComponent(topicParam)}`)}
-                className="px-6 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 border"
+                className="px-6 py-4 rounded-xl font-semibold transition flex items-center justify-center gap-2 border hover:shadow-md"
                 style={{
-                  background: 'rgb(var(--surface-2))',
+                  background: 'rgb(var(--surface))',
                   borderColor: 'rgb(var(--border))',
                   color: 'rgb(var(--text))',
                 }}
               >
                 <ClipboardList size={18} />
-                Try Method Mark for this topic
+                Method Mark practice
               </button>
             )}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     );
   }
@@ -329,62 +432,91 @@ export function ScienceLabTopicTestPage() {
   const progress = ((currentIndex + 1) / items.length) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <motion.section
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl p-4 sm:p-5 border shadow-sm"
-        style={{
-          background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
-          borderColor: 'transparent',
-        }}
-      >
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <button
-            type="button"
-            onClick={() => navigate(`${base}/topic-test`)}
-            className="flex items-center gap-1.5 text-white/90 hover:text-white text-sm"
-          >
-            <ChevronLeft size={16} />
-            Change topic
-          </button>
-          <div className="flex items-center gap-3 text-sm text-white/90">
-            <span>
-              Q {currentIndex + 1} / {items.length} • {marksEarned}/{totalMarks}
-            </span>
-            {timedMode && timeRemainingSec > 0 && (
-              <span className="font-mono font-medium">
-                {Math.floor(timeRemainingSec / 60)}:{String(timeRemainingSec % 60).padStart(2, '0')}
+    <div className="min-h-screen">
+      <div className="max-w-3xl mx-auto p-6 sm:p-10 space-y-8">
+        {/* Header — exam-paper style */}
+        <motion.header
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl p-5 sm:p-6"
+          style={{
+            background: 'rgb(var(--surface))',
+            border: '1px solid rgb(var(--border))',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+          }}
+        >
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <button
+              type="button"
+              onClick={() => navigate(`${base}/topic-test`)}
+              className="flex items-center gap-2 text-sm font-medium transition hover:opacity-80"
+              style={{ color: 'rgb(var(--text-secondary))' }}
+            >
+              <ChevronLeft size={18} />
+              Change topic
+            </button>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                {topicParam}
               </span>
-            )}
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs" title="1 min per mark">
-              <input
-                type="checkbox"
-                checked={timedMode}
-                onChange={(e) => {
-                  const on = e.target.checked;
-                  setTimedMode(on);
-                  if (on && timeRemainingSec === 0) setTimeRemainingSec(Math.ceil(totalMarks) * 60);
-                }}
-                className="rounded"
-              />
-              <Clock size={14} />
-            </label>
+              <span style={{ color: 'rgb(var(--text-secondary))' }}>
+                Q {currentIndex + 1} of {items.length}
+              </span>
+              <span
+                className="px-2.5 py-1 rounded-lg font-mono font-semibold"
+                style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+              >
+                {marksEarned}/{totalMarks}
+              </span>
+              {timedMode && timeRemainingSec > 0 && (
+                <span
+                  className="px-2.5 py-1 rounded-lg font-mono font-semibold"
+                  style={{
+                    background: timeRemainingSec <= 60 ? 'rgb(239 68 68 / 0.2)' : 'rgb(var(--surface-2))',
+                    color: timeRemainingSec <= 60 ? 'rgb(248 113 113)' : 'rgb(var(--text))',
+                  }}
+                >
+                  {Math.floor(timeRemainingSec / 60)}:{String(timeRemainingSec % 60).padStart(2, '0')}
+                </span>
+              )}
+              <label className="flex items-center gap-2 cursor-pointer text-xs" title="1 min per mark">
+                <input
+                  type="checkbox"
+                  checked={timedMode}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setTimedMode(on);
+                    if (on && timeRemainingSec === 0) setTimeRemainingSec(Math.ceil(totalMarks) * 60);
+                  }}
+                  className="rounded border-gray-500"
+                />
+                <Clock size={14} style={{ color: 'rgb(var(--text-secondary))' }} />
+              </label>
+            </div>
           </div>
-        </div>
-        <p className="text-white/90 text-sm font-medium mb-2">{topicParam}</p>
-        <div className="w-full bg-white/20 rounded-full h-1.5">
-          <div
-            className="bg-white rounded-full h-1.5 transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </motion.section>
+          <div className="mt-4 w-full rounded-full h-2 overflow-hidden" style={{ background: 'rgb(var(--surface-2))' }}>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="h-full rounded-full"
+              style={{ background: 'linear-gradient(90deg, rgb(99 102 241), rgb(139 92 246))' }}
+            />
+          </div>
+        </motion.header>
 
-      <div
-        className="rounded-xl p-6 border"
-        style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
-      >
+        {/* Question card — exam-paper aesthetic */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-2xl p-6 sm:p-8"
+          style={{
+            background: 'rgb(var(--surface))',
+            border: '1px solid rgb(var(--border))',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+          }}
+        >
         {isQuickCheck && quickCheck && (
           <>
             <div className="mb-4">
@@ -407,19 +539,31 @@ export function ScienceLabTopicTestPage() {
                     type="button"
                     onClick={() => !showFeedback && setSelectedAnswer(option)}
                     disabled={showFeedback}
-                    className={`w-full p-4 rounded-lg text-left border transition ${
+                    className={`w-full p-4 sm:p-5 rounded-xl text-left border-2 transition-all duration-200 ${
                       selectedAnswer === option
-                        ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700'
-                    } ${showFeedback ? 'opacity-75 cursor-not-allowed' : 'hover:border-blue-300'}`}
+                        ? 'border-indigo-500 ring-2 ring-indigo-500/30 bg-indigo-500/10'
+                        : 'border-transparent hover:border-indigo-500/50'
+                    } ${showFeedback ? 'opacity-80 cursor-not-allowed' : ''}`}
                     style={{
-                      background:
-                        selectedAnswer === option ? 'rgb(var(--surface-2))' : 'rgb(var(--surface))',
+                      background: selectedAnswer === option ? 'rgb(99 102 241 / 0.12)' : 'rgb(var(--surface-2))',
                       color: 'rgb(var(--text))',
                     }}
                   >
-                    {option}
-                    {selectedAnswer === option ? ' ✓' : ''}
+                    <span className="flex items-start gap-3">
+                      <span
+                        className="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold"
+                        style={{
+                          borderColor: selectedAnswer === option ? 'rgb(99 102 241)' : 'rgb(var(--border))',
+                          color: selectedAnswer === option ? 'rgb(99 102 241)' : 'rgb(var(--text-secondary))',
+                        }}
+                      >
+                        {String.fromCharCode(65 + idx)}
+                      </span>
+                      <span className="flex-1">{option}</span>
+                      {selectedAnswer === option && (
+                        <span className="text-indigo-400 font-semibold">✓</span>
+                      )}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -466,8 +610,8 @@ export function ScienceLabTopicTestPage() {
                 type="button"
                 onClick={handleSubmitQuickCheck}
                 disabled={selectedAnswer === null}
-                className="w-full mt-6 px-6 py-3 rounded-lg font-semibold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)' }}
+                className="w-full mt-6 px-6 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+                style={{ background: 'linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%)' }}
               >
                 Submit Answer
               </button>
@@ -477,28 +621,30 @@ export function ScienceLabTopicTestPage() {
 
         {!isQuickCheck && question && (
           <>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-purple-500/20">
-                <FileQuestion size={20} className="text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {question.topic}
-                  {inferCommandWord(question.question) && (
-                    <span className="ml-1 font-medium"> • {inferCommandWord(question.question)}</span>
-                  )}
-                  {' '}• {question.marks} marks
-                  {question.calculatorAllowed && (
-                    <span className="ml-2 flex items-center gap-1">
-                      <Calculator size={14} />
-                      Calculator allowed
-                    </span>
-                  )}
-                </p>
-              </div>
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              {inferCommandWord(question.question) && (
+                <span
+                  className="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider"
+                  style={{ background: 'rgb(99 102 241 / 0.2)', color: 'rgb(165 180 252)' }}
+                >
+                  {inferCommandWord(question.question)}
+                </span>
+              )}
+              <span
+                className="px-2.5 py-1 rounded-lg text-xs font-semibold"
+                style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-secondary))' }}
+              >
+                {question.marks} marks
+              </span>
+              {question.calculatorAllowed && (
+                <span className="flex items-center gap-1.5 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  <Calculator size={14} />
+                  Calculator allowed
+                </span>
+              )}
             </div>
 
-            <h2 className="text-lg font-semibold mb-4" style={{ color: 'rgb(var(--text))' }}>
+            <h2 className="text-lg sm:text-xl font-semibold leading-relaxed mb-6" style={{ color: 'rgb(var(--text))' }}>
               {question.question}
             </h2>
 
@@ -516,25 +662,26 @@ export function ScienceLabTopicTestPage() {
             )}
 
             {!showFeedback && (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <textarea
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder="Enter your answer..."
-                  className="w-full p-4 rounded-lg border resize-none"
+                  placeholder="Write your answer here — use full sentences for extended questions..."
+                  className="w-full p-4 sm:p-5 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
                   style={{
                     background: 'rgb(var(--surface-2))',
                     borderColor: 'rgb(var(--border))',
                     color: 'rgb(var(--text))',
+                    minHeight: (question?.marks ?? 0) >= 4 ? 160 : 120,
                   }}
-                  rows={4}
+                  rows={(question?.marks ?? 0) >= 4 ? 6 : 4}
                 />
                 <button
                   type="button"
                   onClick={handleSubmitQuestion}
                   disabled={!userAnswer.trim()}
-                  className="w-full px-6 py-3 rounded-lg font-semibold text-white transition disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)' }}
+                  className="w-full px-6 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+                  style={{ background: 'linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%)' }}
                 >
                   Submit Answer
                 </button>
@@ -547,13 +694,14 @@ export function ScienceLabTopicTestPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 space-y-4"
+            transition={{ duration: 0.3 }}
+            className="mt-8 space-y-5"
           >
             <div
-              className={`p-4 rounded-lg border flex items-start gap-3 ${
+              className={`p-5 rounded-xl border-2 flex items-start gap-4 ${
                 isCorrect
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                  ? 'border-green-500/50 bg-green-500/10'
+                  : 'border-red-500/50 bg-red-500/10'
               }`}
             >
               {isCorrect ? (
@@ -626,14 +774,15 @@ export function ScienceLabTopicTestPage() {
             <button
               type="button"
               onClick={handleNext}
-              className="w-full px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)' }}
+              className="w-full px-6 py-4 rounded-xl font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+              style={{ background: 'linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%)' }}
             >
               {currentIndex < items.length - 1 ? 'Next Question' : 'See Results'}
-              <ArrowRight size={18} />
+              <ArrowRight size={18} strokeWidth={2.5} />
             </button>
           </motion.div>
         )}
+        </motion.div>
       </div>
     </div>
   );

@@ -21,13 +21,17 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
   const [isCorrect, setIsCorrect] = useState(false);
   const [dragOrder, setDragOrder] = useState<string[]>([]);
 
+  if (!check) return null;
+
   useEffect(() => {
-    if (check.type === 'dragOrder' && check.options) {
+    if (check.type === 'dragOrder' && check.options && Array.isArray(check.options)) {
       setDragOrder([...check.options]);
+    } else {
+      setDragOrder([]);
     }
     setSelectedAnswer(null);
     setShowFeedback(false);
-  }, [check.id, check.type, check.options]);
+  }, [check?.id, check?.type, check?.options]);
 
   const handleAnswerSelect = (answer: string) => {
     if (showFeedback) return;
@@ -44,13 +48,14 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
   };
 
   const handleSubmit = () => {
-    if (selectedAnswer === null) return;
+    if (selectedAnswer === null || !check) return;
     let correct = false;
+    const correctAnswer = check.correctAnswer;
     if (check.type === 'dragOrder') {
-      const correctOrder = Array.isArray(check.correctAnswer) ? check.correctAnswer : [check.correctAnswer];
+      const correctOrder = Array.isArray(correctAnswer) ? correctAnswer : (correctAnswer != null ? [correctAnswer] : []);
       correct = JSON.stringify(dragOrder) === JSON.stringify(correctOrder);
     } else {
-      const correctAns = Array.isArray(check.correctAnswer) ? check.correctAnswer[0] : check.correctAnswer;
+      const correctAns = Array.isArray(correctAnswer) ? correctAnswer[0] : correctAnswer;
       correct = selectedAnswer === correctAns;
     }
     setIsCorrect(correct);
@@ -59,7 +64,7 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
   };
 
   const handleContinue = () => {
-    onComplete(isCorrect);
+    onComplete?.(isCorrect);
   };
 
   return (
@@ -74,13 +79,13 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
           Quick check
         </p>
         <h3 className={compact ? 'text-base font-semibold' : 'text-lg font-semibold'} style={{ color: 'rgb(var(--text))' }}>
-          {check.question}
+          {check.question ?? 'Quick check'}
         </h3>
       </div>
 
       {(check.type === 'multipleChoice' || check.type === 'trueFalse') && (
         <div className="space-y-2">
-          {check.options?.map((option, idx) => (
+          {(check.options ?? []).map((option, idx) => (
             <button
               key={idx}
               type="button"
@@ -174,7 +179,7 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
               <XCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
             )}
             <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>
-              {isCorrect ? check.feedback.correct : check.feedback.incorrect}
+              {isCorrect ? (check.feedback?.correct ?? 'Correct!') : (check.feedback?.incorrect ?? 'Not quite. Review and try again.')}
             </p>
           </div>
           <button

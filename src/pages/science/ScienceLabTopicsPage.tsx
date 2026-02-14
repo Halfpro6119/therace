@@ -116,7 +116,7 @@ export function ScienceLabTopicsPage() {
       >
         <button
           type="button"
-          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`)}
+          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/full-gcse`)}
           className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
           style={{
             background: 'rgb(var(--surface))',
