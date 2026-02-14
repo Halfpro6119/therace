@@ -670,6 +670,35 @@ export const storage = {
     all[key] = existing;
     localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
   },
+  updateBiggerTestCompletion: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string,
+    correctCount: number,
+    totalCount: number
+  ): void => {
+    const all = storage.getTopicMastery();
+    const key = `${subject}-${paper}-${tier}-${topic}`;
+    const existing = all[key] || {
+      subject,
+      paper: paper as 1 | 2,
+      tier: tier as 'Foundation' | 'Higher',
+      topic,
+      flashcardMastery: 0,
+      quickCheckPassed: false,
+      quizUnlocked: false,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const scorePercent = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    existing.biggerTestCompleted = true;
+    existing.biggerTestScore = scorePercent;
+    existing.lastUpdated = new Date().toISOString();
+
+    all[key] = existing;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
+  },
   calculateTopicFlashcardMastery: (
     subject: ScienceSubject,
     paper: number,

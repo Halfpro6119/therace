@@ -1,9 +1,7 @@
 /**
  * Displays a diagram for flashcards.
- * For slugs with an animated version (osmosis, diffusion, etc.), shows the moving
- * diagram unless the user prefers reduced motion. When reduced motion is preferred,
- * renders the static diagram from the Science Lab blueprint (no static asset required).
- * For other slugs, uses static SVG assets from public/assets.
+ * Priority: 1) Animated (when motion allowed), 2) Blueprint (programmatic SVG), 3) Static asset, 4) Description only.
+ * Blueprint-first ensures consistent, improvable diagrams that aid memory.
  */
 
 import { useState } from 'react';
@@ -13,6 +11,9 @@ import { getAnimatedDiagramComponent } from './AnimatedDiagrams';
 import { hasAnimatedDiagram } from '../config/animatedDiagramSlugs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { DiagramRenderer } from './DiagramRenderer';
+
+/** Fully expanded: diagrams fill available card space */
+const DIAGRAM_MIN_HEIGHT = 200;
 
 interface FlashcardDiagramProps {
   /** Diagram slug (e.g. cell_membrane_diffusion) */
@@ -40,41 +41,47 @@ export function FlashcardDiagram({
   const path = getFlashcardDiagramPath(slug);
   const diagramMetadata = getDiagramMetadataForSlug(slug);
 
-  // Animated version when motion is allowed
-  if (AnimatedComponent) {
-    return (
-      <div className={`flashcard-diagram ${fitToContainer ? 'flashcard-diagram-fit' : ''} ${className}`}>
-        <div className={fitToContainer ? 'max-w-full max-h-full flex justify-center' : ''} style={fitToContainer ? { maxHeight: '200px' } : undefined}>
-          <AnimatedComponent />
-        </div>
-        {showDescriptionWithImage && description && (
-          <p className="text-xs leading-relaxed mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {description}
-          </p>
-        )}
-      </div>
-    );
-  }
+  const diagramContainerStyle = fitToContainer
+    ? { minHeight: `${DIAGRAM_MIN_HEIGHT}px`, flex: 1 }
+    : undefined;
 
-  // Reduced motion + slug has animated version → render static from blueprint (no asset needed)
-  if (reducedMotion && hasAnimatedDiagram(slug) && diagramMetadata) {
+  const Caption = description && showDescriptionWithImage ? (
+    <p className="flashcard-diagram-caption text-xs leading-relaxed mt-3 font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+      {description}
+    </p>
+  ) : null;
+
+  // 1. Animated version when motion is allowed
+  if (AnimatedComponent) {
     return (
       <div className={`flashcard-diagram ${fitToContainer ? 'flashcard-diagram-fit' : ''} ${className}`}>
         <div
           className={fitToContainer ? 'max-w-full flex justify-center items-center' : ''}
-          style={fitToContainer ? { maxHeight: '200px', minHeight: '140px' } : undefined}
+          style={diagramContainerStyle}
         >
-          <DiagramRenderer metadata={diagramMetadata} fitToContainer={fitToContainer} />
+          <AnimatedComponent />
         </div>
-        {showDescriptionWithImage && description && (
-          <p className="text-xs leading-relaxed mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {description}
-          </p>
-        )}
+        {Caption}
       </div>
     );
   }
 
+  // 2. Blueprint-first: use programmatic diagram when available (better consistency, memory aids)
+  if (diagramMetadata) {
+    return (
+      <div className={`flashcard-diagram ${fitToContainer ? 'flashcard-diagram-fit' : ''} ${className}`}>
+        <div
+          className={fitToContainer ? 'max-w-full flex justify-center items-center' : ''}
+          style={diagramContainerStyle}
+        >
+          <DiagramRenderer metadata={diagramMetadata} fitToContainer={fitToContainer} />
+        </div>
+        {Caption}
+      </div>
+    );
+  }
+
+  // 3. Fallback: static asset when no blueprint exists
   if (!path) {
     return description ? (
       <p className={`text-sm leading-relaxed ${className}`} style={{ color: 'rgb(var(--text-secondary))' }}>
@@ -93,18 +100,19 @@ export function FlashcardDiagram({
 
   return (
     <div className={`flashcard-diagram ${fitToContainer ? 'flashcard-diagram-fit' : ''} ${className}`}>
-      <img
-        src={path}
-        alt={description ?? `Diagram: ${slug}`}
-        onError={() => setFailed(true)}
-        className={fitToContainer ? 'max-w-full max-h-full w-auto h-auto object-contain' : ''}
-        style={fitToContainer ? { maxHeight: '200px' } : undefined}
-      />
-      {showDescriptionWithImage && description && (
-        <p className="text-xs leading-relaxed mt-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-          {description}
-        </p>
-      )}
+      <div
+        className={fitToContainer ? 'max-w-full flex justify-center items-center' : ''}
+        style={diagramContainerStyle}
+      >
+        <img
+          src={path}
+          alt={description ?? `Diagram: ${slug}`}
+          onError={() => setFailed(true)}
+          className={fitToContainer ? 'max-w-full max-h-full w-auto h-auto object-contain' : ''}
+          style={fitToContainer ? { flex: 1, minHeight: `${DIAGRAM_MIN_HEIGHT}px` } : undefined}
+        />
+      </div>
+      {Caption}
     </div>
   );
 }

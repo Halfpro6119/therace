@@ -315,6 +315,10 @@ export interface TopicMastery {
   topicTestScore?: number;
   /** Last topic test attempt timestamp */
   topicTestLastAttempt?: string;
+  /** Bigger test (3–6 mark) completed in Learn Mode */
+  biggerTestCompleted?: boolean;
+  /** Bigger test score as percentage (0-100) from last attempt */
+  biggerTestScore?: number;
   /** Last updated */
   lastUpdated: string;
 }

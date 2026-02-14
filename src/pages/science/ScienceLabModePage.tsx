@@ -6,7 +6,7 @@ import { storage } from '../../utils/storage';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
 import type { ScienceSubject, SciencePaper, ScienceTier, LabMode } from '../../types/scienceLab';
 
-/** Single learning path: Learn (flashcards only) → Small tests → Bigger tests → Topic test → Full GCSE test */
+/** Learn Mode now merges flashcards + quick checks + bigger tests. Path: Learn → Topic test → Full GCSE */
 const LEARNING_PATH: Array<{
   id: LabMode;
   step: number;
@@ -15,11 +15,9 @@ const LEARNING_PATH: Array<{
   icon: typeof BookOpen;
   color: string;
 }> = [
-  { id: 'flashcard', step: 1, title: 'Learn', description: 'Flashcards – the only learning mode. Learn every concept, process, and equation.', icon: BookOpen, color: '#0EA5E9' },
-  { id: 'quickCheck', step: 2, title: 'Small tests', description: 'Quick checks on what you just learned. Prove understanding before moving on.', icon: Target, color: '#F59E0B' },
-  { id: 'methodMark', step: 3, title: 'Bigger tests', description: 'Higher-mark questions (4–6 marks). Idea marks, method marks, precision.', icon: ClipboardList, color: '#EC4899' },
-  { id: 'topicTest', step: 4, title: 'Topic test', description: 'Full test on one topic. Check your knowledge across a whole unit.', icon: FileQuestion, color: '#8B5CF6' },
-  { id: 'fullGcseTest', step: 5, title: 'Full GCSE test', description: 'Test the entire subject. Exam-style across all topics.', icon: GraduationCap, color: '#10B981' },
+  { id: 'flashcard', step: 1, title: 'Learn', description: 'Flashcards with quick checks per card and bigger tests (3–6 mark) after each topic.', icon: BookOpen, color: '#0EA5E9' },
+  { id: 'topicTest', step: 2, title: 'Topic test', description: 'Full test on one topic. Check your knowledge across a whole unit.', icon: FileQuestion, color: '#8B5CF6' },
+  { id: 'fullGcseTest', step: 3, title: 'Full GCSE test', description: 'Test the entire subject. Exam-style across all topics.', icon: GraduationCap, color: '#10B981' },
 ];
 
 /** Extra practice – not part of the main path */
@@ -30,6 +28,8 @@ const EXTRA_PRACTICE: Array<{
   icon: typeof FlaskConical;
   color: string;
 }> = [
+  { id: 'quickCheck', title: 'Quick Check', description: 'Review all quick checks – MCQ, T/F, drag order', icon: Target, color: '#F59E0B' },
+  { id: 'methodMark', title: 'Method Mark', description: 'Practice 4–6 mark questions with mark scheme breakdown', icon: ClipboardList, color: '#EC4899' },
   { id: 'practical', title: 'Practical Lab', description: 'Required practicals – variables, method, risk assessment', icon: FlaskConical, color: '#10B981' },
   { id: 'equation', title: 'Equation Lab', description: 'Equations, units, rearranging, "spot the wrong unit"', icon: Calculator, color: '#8B5CF6' },
   { id: 'misconception', title: 'Misconception Lab', description: 'Identify and correct classic wrong ideas', icon: AlertTriangle, color: '#EF4444' },
@@ -134,7 +134,7 @@ export function ScienceLabModePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{subjectTitle} Lab</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          One path: Learn with flashcards → Small tests → Bigger tests → Topic test → Full GCSE test
+          Learn (flashcards + quick checks + bigger tests) → Topic test → Full GCSE test
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
           <Zap size={18} className="text-amber-300 flex-shrink-0" />
@@ -239,7 +239,7 @@ export function ScienceLabModePage() {
           Your learning path
         </h2>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Follow in order: Learn (flashcards only) → Small tests → Bigger tests → Topic test → Full GCSE test
+          Follow in order: Learn → Topic test → Full GCSE test
         </p>
         <div className="space-y-3">
           {LEARNING_PATH.map((item, index) => {

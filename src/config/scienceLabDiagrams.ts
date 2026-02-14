@@ -22,11 +22,11 @@ const STYLE = {
   arrow: { stroke: '#6366f1', strokeWidth: 2 },
 };
 
-/** Diffusion: high concentration → low concentration */
+/** Diffusion: HIGH → LOW concentration; net movement down gradient (no ATP) */
 export const cell_membrane_diffusion: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 200 },
-  viewBox: '0 0 400 200',
+  size: { width: 400, height: 220 },
+  viewBox: '0 0 400 220',
   defs: {
     points: {
       left: { x: 80, y: 100 },
@@ -48,10 +48,11 @@ export const cell_membrane_diffusion: CustomDiagramBlueprint = {
         { type: 'circle', cx: 120, cy: 110, r: 6, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.45)' } },
         { type: 'circle', cx: 250, cy: 90, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.3)' } },
         { type: 'circle', cx: 300, cy: 100, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.3)' } },
-        { type: 'arrow', from: { x: 170, y: 100 }, to: { x: 230, y: 100 }, headSize: 8, style: STYLE.arrow },
-        { type: 'text', text: 'High conc', at: { x: 100, y: 30 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Low conc', at: { x: 280, y: 30 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Net movement →', at: { x: 200, y: 175 }, style: STYLE.textCaption },
+        { type: 'arrow', from: { x: 170, y: 100 }, to: { x: 230, y: 100 }, headSize: 10, style: { ...STYLE.arrow, strokeWidth: 2.5 } },
+        { type: 'text', text: 'High concentration', at: { x: 100, y: 30 }, style: { ...STYLE.textLabel, fontWeight: 600 } },
+        { type: 'text', text: 'Low concentration', at: { x: 280, y: 30 }, style: { ...STYLE.textLabel, fontWeight: 600 } },
+        { type: 'text', text: 'Net movement down gradient', at: { x: 200, y: 178 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'text', text: 'No ATP needed – passive', at: { x: 200, y: 198 }, style: STYLE.textTiny },
       ],
     },
   ],
@@ -129,32 +130,43 @@ export const cell_division: CustomDiagramBlueprint = {
   ],
 };
 
-/** Enzyme: lock-and-key model – active site, substrate binding, products; enzyme unchanged */
+/** Enzyme: lock-and-key – 1.Substrate binds 2.Reaction 3.Products released; enzyme UNCHANGED */
 export const enzyme_action: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 200 },
-  viewBox: '0 0 400 200',
+  size: { width: 420, height: 220 },
+  viewBox: '0 0 420 220',
   layers: [
     {
       id: 'enzyme',
       items: [
-        // Enzyme body (protein) – soft amber
-        { type: 'ellipse', cx: 200, cy: 100, rx: 82, ry: 52, style: { stroke: '#b45309', strokeWidth: 1.5, fill: 'rgba(251,191,36,0.2)' } },
-        // Active site (pocket) – distinct cleft where substrate binds
-        { type: 'polygon', points: [{ x: 118, y: 92 }, { x: 156, y: 72 }, { x: 156, y: 108 }], style: { stroke: STYLE.accent, strokeWidth: 1.5, fill: 'rgba(99,102,241,0.2)' } },
-        // Substrate (key) – fits into active site
-        { type: 'polygon', points: [{ x: 122, y: 94 }, { x: 148, y: 78 }, { x: 148, y: 102 }], style: { stroke: STYLE.success, strokeWidth: 1.5, fill: 'rgba(34,197,94,0.35)' } },
-        // Reaction arrow
-        { type: 'arrow', from: { x: 282, y: 100 }, to: { x: 338, y: 100 }, headSize: 8, style: STYLE.arrow },
-        // Products (released)
-        { type: 'circle', cx: 355, cy: 95, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.4)' } },
-        { type: 'circle', cx: 355, cy: 108, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.4)' } },
+        // Enzyme body (protein)
+        { type: 'ellipse', cx: 200, cy: 105, rx: 82, ry: 52, style: { stroke: '#b45309', strokeWidth: 1.5, fill: 'rgba(251,191,36,0.2)' } },
+        // Active site (pocket)
+        { type: 'polygon', points: [{ x: 118, y: 97 }, { x: 156, y: 77 }, { x: 156, y: 113 }], style: { stroke: STYLE.accent, strokeWidth: 1.5, fill: 'rgba(99,102,241,0.2)' } },
+        // Substrate (key)
+        { type: 'polygon', points: [{ x: 122, y: 99 }, { x: 148, y: 83 }, { x: 148, y: 107 }], style: { stroke: STYLE.success, strokeWidth: 1.5, fill: 'rgba(34,197,94,0.35)' } },
+        // Step numbers
+        { type: 'circle', cx: 130, cy: 95, r: 10, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.15)' } },
+        { type: 'text', text: '1', at: { x: 130, y: 100 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'text', text: 'Bind', at: { x: 138, y: 130 }, style: STYLE.textTiny },
+        // Reaction arrow + step 2
+        { type: 'circle', cx: 255, cy: 105, r: 10, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.15)' } },
+        { type: 'text', text: '2', at: { x: 255, y: 110 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'arrow', from: { x: 282, y: 105 }, to: { x: 338, y: 105 }, headSize: 8, style: STYLE.arrow },
+        // Products + step 3
+        { type: 'circle', cx: 355, cy: 100, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.4)' } },
+        { type: 'circle', cx: 355, cy: 115, r: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(100,116,139,0.4)' } },
+        { type: 'circle', cx: 365, cy: 95, r: 10, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.15)' } },
+        { type: 'text', text: '3', at: { x: 365, y: 100 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'text', text: 'Release', at: { x: 365, y: 130 }, style: STYLE.textTiny },
         // Labels
-        { type: 'text', text: 'Enzyme', at: { x: 200, y: 62 }, style: { ...STYLE.textLabel, fontWeight: 600 } },
-        { type: 'text', text: 'Active site', at: { x: 138, y: 78 }, style: { ...STYLE.textCaption, fontSize: 10 } },
-        { type: 'text', text: 'Substrate', at: { x: 136, y: 118 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Enzyme', at: { x: 200, y: 67 }, style: { ...STYLE.textLabel, fontWeight: 600 } },
+        { type: 'text', text: 'Active site', at: { x: 138, y: 82 }, style: { ...STYLE.textCaption, fontSize: 10 } },
+        { type: 'text', text: 'Substrate', at: { x: 136, y: 145 }, style: STYLE.textCaption },
         { type: 'text', text: 'Products', at: { x: 355, y: 78 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Lock-and-key: substrate fits active site → products released; enzyme unchanged', at: { x: 200, y: 182 }, style: STYLE.textCaption },
+        // Key memory: enzyme unchanged
+        { type: 'rect', x: 140, y: 168, width: 160, height: 28, rx: 4, style: { stroke: STYLE.success, fill: 'rgba(34,197,94,0.12)', strokeWidth: 1 } },
+        { type: 'text', text: '✓ Enzyme UNCHANGED – can catalyse again', at: { x: 220, y: 186 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
       ],
     },
   ],
@@ -258,46 +270,67 @@ export const immune_response: CustomDiagramBlueprint = {
   ],
 };
 
-/** Photosynthesis */
+/** Photosynthesis – INPUTS → chlorophyll → OUTPUTS (memory: Light + CO₂ + H₂O → Glucose + O₂) */
 export const photosynthesis: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 160 },
-  viewBox: '0 0 400 160',
+  size: { width: 420, height: 200 },
+  viewBox: '0 0 420 200',
   layers: [
     {
       id: 'photosynthesis',
       items: [
-        { type: 'polygon', points: [{ x: 70, y: 100 }, { x: 90, y: 60 }, { x: 110, y: 100 }], style: { stroke: STYLE.success, fill: 'rgba(34,197,94,0.3)' } },
-        { type: 'line', from: { x: 90, y: 55 }, to: { x: 90, y: 45 }, style: { stroke: STYLE.warning, strokeWidth: 2 } },
-        { type: 'line', from: { x: 85, y: 50 }, to: { x: 95, y: 50 }, style: { stroke: STYLE.warning, strokeWidth: 2 } },
-        { type: 'text', text: 'Light + CO₂ + H₂O', at: { x: 90, y: 125 }, style: STYLE.textCaption },
-        { type: 'arrow', from: { x: 140, y: 80 }, to: { x: 200, y: 80 }, headSize: 10, style: STYLE.arrow },
-        { type: 'ellipse', cx: 300, cy: 80, rx: 60, ry: 35, style: { stroke: STYLE.success, fill: 'rgba(34,197,94,0.2)' } },
-        { type: 'text', text: 'Chlorophyll', at: { x: 300, y: 75 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Glucose + O₂', at: { x: 300, y: 95 }, style: STYLE.textCaption },
+        // INPUTS region
+        { type: 'rect', x: 20, y: 20, width: 130, height: 90, rx: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(251,191,36,0.08)', strokeWidth: 1 } },
+        { type: 'text', text: 'INPUTS', at: { x: 85, y: 38 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'polygon', points: [{ x: 55, y: 95 }, { x: 85, y: 55 }, { x: 115, y: 95 }], style: { stroke: STYLE.success, strokeWidth: 1.5, fill: 'rgba(34,197,94,0.25)' } },
+        { type: 'line', from: { x: 85, y: 50 }, to: { x: 85, y: 38 }, style: { stroke: STYLE.warning, strokeWidth: 2 } },
+        { type: 'line', from: { x: 78, y: 44 }, to: { x: 92, y: 44 }, style: { stroke: STYLE.warning, strokeWidth: 2 } },
+        { type: 'text', text: 'Light', at: { x: 85, y: 72 }, style: STYLE.textTiny },
+        { type: 'text', text: 'CO₂ + H₂O', at: { x: 85, y: 100 }, style: STYLE.textCaption },
+        // Arrow into chlorophyll
+        { type: 'arrow', from: { x: 155, y: 65 }, to: { x: 205, y: 65 }, headSize: 10, style: STYLE.arrow },
+        // Chlorophyll (in chloroplasts)
+        { type: 'ellipse', cx: 265, cy: 65, rx: 55, ry: 32, style: { stroke: STYLE.success, strokeWidth: 2, fill: 'rgba(34,197,94,0.18)' } },
+        { type: 'text', text: 'Chlorophyll', at: { x: 265, y: 58 }, style: { ...STYLE.textLabel, fontWeight: 600 } },
+        { type: 'text', text: '(in chloroplasts)', at: { x: 265, y: 72 }, style: STYLE.textTiny },
+        // Arrow to OUTPUTS
+        { type: 'arrow', from: { x: 325, y: 65 }, to: { x: 365, y: 65 }, headSize: 10, style: STYLE.arrow },
+        // OUTPUTS region
+        { type: 'rect', x: 368, y: 20, width: 44, height: 90, rx: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(34,197,94,0.1)', strokeWidth: 1 } },
+        { type: 'text', text: 'OUTPUTS', at: { x: 390, y: 38 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'text', text: 'Glucose', at: { x: 390, y: 68 }, style: STYLE.textLabel },
+        { type: 'text', text: '+ O₂', at: { x: 390, y: 88 }, style: STYLE.textCaption },
+        // Equation mnemonic
+        { type: 'text', text: '6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂', at: { x: 210, y: 145 }, style: { ...STYLE.textCaption, fontSize: 11 } },
+        { type: 'text', text: 'Recall: inputs = reactants; outputs = products', at: { x: 210, y: 175 }, style: STYLE.textTiny },
       ],
     },
   ],
 };
 
-/** Respiration */
+/** Respiration – INPUTS → OUTPUTS; aerobic (O₂) vs anaerobic (no O₂) */
 export const respiration: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 180 },
-  viewBox: '0 0 400 180',
+  size: { width: 400, height: 200 },
+  viewBox: '0 0 400 200',
   layers: [
     {
       id: 'respiration',
       items: [
-        { type: 'rect', x: 40, y: 40, width: 200, height: 55, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(34,197,94,0.08)' } },
-        { type: 'text', text: 'Glucose + O₂', at: { x: 100, y: 65 }, style: STYLE.textLabel },
-        { type: 'arrow', from: { x: 150, y: 67 }, to: { x: 190, y: 67 }, headSize: 8, style: STYLE.arrow },
-        { type: 'text', text: 'CO₂ + H₂O + ATP', at: { x: 240, y: 65 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Aerobic', at: { x: 140, y: 95 }, style: STYLE.textCaption },
-        { type: 'line', from: { x: 40, y: 105 }, to: { x: 360, y: 105 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
-        { type: 'rect', x: 40, y: 115, width: 200, height: 50, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(251,146,60,0.08)' } },
-        { type: 'text', text: 'Glucose → Lactic acid + ATP', at: { x: 140, y: 140 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Anaerobic', at: { x: 140, y: 170 }, style: STYLE.textCaption },
+        // Aerobic: INPUTS → OUTPUTS
+        { type: 'rect', x: 30, y: 25, width: 120, height: 65, rx: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(34,197,94,0.08)', strokeWidth: 1 } },
+        { type: 'text', text: 'INPUTS', at: { x: 90, y: 42 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'text', text: 'Glucose + O₂', at: { x: 90, y: 68 }, style: STYLE.textLabel },
+        { type: 'arrow', from: { x: 155, y: 57 }, to: { x: 195, y: 57 }, headSize: 8, style: STYLE.arrow },
+        { type: 'rect', x: 200, y: 25, width: 120, height: 65, rx: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(34,197,94,0.08)', strokeWidth: 1 } },
+        { type: 'text', text: 'OUTPUTS', at: { x: 260, y: 42 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'text', text: 'CO₂ + H₂O + ATP', at: { x: 260, y: 68 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Aerobic (with O₂)', at: { x: 260, y: 95 }, style: { ...STYLE.textCaption, fill: STYLE.success } },
+        // Anaerobic
+        { type: 'line', from: { x: 30, y: 108 }, to: { x: 370, y: 108 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
+        { type: 'rect', x: 30, y: 118, width: 340, height: 55, rx: 6, style: { stroke: STYLE.strokeLight, fill: 'rgba(251,146,60,0.08)', strokeWidth: 1 } },
+        { type: 'text', text: 'Anaerobic (no O₂): Glucose → Lactic acid + ATP', at: { x: 200, y: 148 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Less ATP than aerobic; lactic acid causes muscle fatigue', at: { x: 200, y: 178 }, style: STYLE.textTiny },
       ],
     },
   ],
@@ -372,24 +405,26 @@ export const hormone_action: CustomDiagramBlueprint = {
   ],
 };
 
-/** DNA structure */
+/** DNA structure – double helix, base pairs A–T and G–C (complementary pairing) */
 export const dna_structure: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 180 },
-  viewBox: '0 0 400 180',
+  size: { width: 400, height: 200 },
+  viewBox: '0 0 400 200',
   layers: [
     {
       id: 'dna',
       items: [
         { type: 'polyline', points: [{ x: 80, y: 40 }, { x: 120, y: 80 }, { x: 160, y: 40 }, { x: 200, y: 80 }, { x: 240, y: 40 }, { x: 280, y: 80 }, { x: 320, y: 40 }], style: { stroke: STYLE.stroke, fill: 'none', strokeWidth: 2 } },
         { type: 'polyline', points: [{ x: 80, y: 140 }, { x: 120, y: 100 }, { x: 160, y: 140 }, { x: 200, y: 100 }, { x: 240, y: 140 }, { x: 280, y: 100 }, { x: 320, y: 140 }], style: { stroke: STYLE.stroke, fill: 'none', strokeWidth: 2 } },
-        { type: 'line', from: { x: 120, y: 80 }, to: { x: 120, y: 100 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
-        { type: 'line', from: { x: 200, y: 80 }, to: { x: 200, y: 100 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
-        { type: 'line', from: { x: 280, y: 80 }, to: { x: 280, y: 100 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
-        { type: 'text', text: 'A-T', at: { x: 120, y: 92 }, style: STYLE.textTiny },
-        { type: 'text', text: 'G-C', at: { x: 200, y: 92 }, style: STYLE.textTiny },
-        { type: 'text', text: 'A-T', at: { x: 280, y: 92 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Double helix', at: { x: 200, y: 165 }, style: STYLE.textCaption },
+        { type: 'line', from: { x: 120, y: 80 }, to: { x: 120, y: 100 }, style: { stroke: STYLE.accent, strokeWidth: 1.5 } },
+        { type: 'line', from: { x: 200, y: 80 }, to: { x: 200, y: 100 }, style: { stroke: STYLE.accent, strokeWidth: 1.5 } },
+        { type: 'line', from: { x: 280, y: 80 }, to: { x: 280, y: 100 }, style: { stroke: STYLE.accent, strokeWidth: 1.5 } },
+        { type: 'text', text: 'A–T', at: { x: 120, y: 92 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'text', text: 'G–C', at: { x: 200, y: 92 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'text', text: 'T–A', at: { x: 280, y: 92 }, style: { ...STYLE.textLabel, fontSize: 11 } },
+        { type: 'text', text: 'Sugar–phosphate backbone', at: { x: 200, y: 25 }, style: STYLE.textTiny },
+        { type: 'text', text: 'Base pairs: A bonds with T, G bonds with C', at: { x: 200, y: 172 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
+        { type: 'text', text: 'Complementary pairing holds strands together', at: { x: 200, y: 190 }, style: STYLE.textTiny },
       ],
     },
   ],

@@ -12,6 +12,7 @@ import type {
   ScienceQuickCheck,
   QuickCheckType,
   TopicTestItem,
+  ScienceQuestion,
 } from '../types/scienceLab';
 import {
   SCIENCE_CONCEPTS,
@@ -447,38 +448,307 @@ export function getFlashcardsByFilters(
 }
 
 /**
- * Generate Quick Checks from flashcards
+ * Concept-specific application questions for tougher quick checks.
+ * Each tests applied understanding, not just recall.
+ */
+const CONCEPT_APPLICATION_QUESTIONS: Array<{
+  conceptId: string;
+  question: string;
+  correctAnswer: string;
+  distractors: string[];
+}> = [
+  // Cell Biology
+  {
+    conceptId: 'bio-diffusion',
+    question: 'A drop of ink is placed in still water. Which statement correctly explains why it spreads?',
+    correctAnswer: 'Particles move randomly; net movement is from high to low concentration because more particles start there',
+    distractors: [
+      'Particles choose to spread out to fill the space',
+      'Water pushes the ink particles apart',
+      'Particles move only when stirred',
+    ],
+  },
+  {
+    conceptId: 'bio-osmosis',
+    question: 'A plant cell is placed in concentrated salt solution. Water leaves the cell. Why?',
+    correctAnswer: 'The salt solution has lower water concentration than the cytoplasm',
+    distractors: [
+      'The salt solution has less water in total',
+      'Salt pulls water out of the cell',
+      'The cell membrane becomes more permeable',
+    ],
+  },
+  {
+    conceptId: 'bio-active-transport',
+    question: 'Root hair cells absorb mineral ions from dilute soil. Why can\'t diffusion do this?',
+    correctAnswer: 'Ions would need to move from low to high concentration, which requires energy',
+    distractors: [
+      'Diffusion is too slow for minerals',
+      'The cell membrane blocks ions',
+      'Soil has higher concentration than the cell',
+    ],
+  },
+  {
+    conceptId: 'bio-cell-division',
+    question: 'A skin cell divides to heal a cut. Which process produces genetically identical cells?',
+    correctAnswer: 'Mitosis – for growth and repair',
+    distractors: [
+      'Meiosis – produces body cells',
+      'Both mitosis and meiosis produce identical cells',
+      'Neither – cell division always creates variation',
+    ],
+  },
+  // Organisation
+  {
+    conceptId: 'bio-enzyme-action',
+    question: 'An enzyme is heated above 60°C and stops working. Why?',
+    correctAnswer: 'The active site has changed shape so the substrate no longer fits',
+    distractors: [
+      'The enzyme has been used up',
+      'High temperature speeds up the reaction too much',
+      'The substrate has denatured',
+    ],
+  },
+  {
+    conceptId: 'bio-digestive-system',
+    question: 'Bile is not produced. Which type of digestion is most affected?',
+    correctAnswer: 'Fat digestion – bile emulsifies fats to increase surface area for lipase',
+    distractors: [
+      'Carbohydrate digestion – bile breaks down starch',
+      'Protein digestion – bile provides the correct pH',
+      'No effect – bile is not essential',
+    ],
+  },
+  {
+    conceptId: 'bio-circulatory-system',
+    question: 'Which vessel has the thinnest walls and allows exchange of substances?',
+    correctAnswer: 'Capillaries – one cell thick for diffusion',
+    distractors: [
+      'Arteries – carry blood at high pressure',
+      'Veins – return blood to the heart',
+      'All vessels have similar wall thickness',
+    ],
+  },
+  // Infection and Response
+  {
+    conceptId: 'bio-pathogens',
+    question: 'A virus causes disease. How does it differ from a bacterium?',
+    correctAnswer: 'Viruses need a host cell to reproduce; bacteria can reproduce independently',
+    distractors: [
+      'Viruses are larger than bacteria',
+      'Bacteria are always harmful, viruses are not',
+      'Viruses produce toxins; bacteria do not',
+    ],
+  },
+  {
+    conceptId: 'bio-immune-system',
+    question: 'Why does a second infection with the same pathogen cause fewer symptoms?',
+    correctAnswer: 'Memory cells produce antibodies faster, destroying the pathogen before symptoms develop',
+    distractors: [
+      'The first infection used up all the pathogens',
+      'Antibodies from the first infection are still in the blood',
+      'The immune system ignores the pathogen the second time',
+    ],
+  },
+  // Bioenergetics
+  {
+    conceptId: 'bio-photosynthesis',
+    question: 'A plant is moved from dim to bright light. What happens to the rate of photosynthesis and why?',
+    correctAnswer: 'Rate increases – more light energy for the light-dependent reaction',
+    distractors: [
+      'Rate decreases – bright light damages chlorophyll',
+      'Rate stays the same – light is not a limiting factor',
+      'Rate increases – more carbon dioxide is produced',
+    ],
+  },
+  {
+    conceptId: 'bio-respiration',
+    question: 'During vigorous exercise, muscles respire anaerobically. What is the disadvantage?',
+    correctAnswer: 'Lactic acid builds up, causing muscle fatigue and oxygen debt',
+    distractors: [
+      'Less glucose is released',
+      'Carbon dioxide cannot be removed',
+      'No disadvantage – anaerobic releases more energy',
+    ],
+  },
+  // Chemistry
+  {
+    conceptId: 'chem-rate-reaction',
+    question: 'Concentration of a reactant is doubled. Why does the reaction rate increase?',
+    correctAnswer: 'More particles per unit volume means more collisions per second',
+    distractors: [
+      'Particles move faster at higher concentration',
+      'The activation energy is lower',
+      'Concentration has no effect on rate',
+    ],
+  },
+  {
+    conceptId: 'chem-bonding',
+    question: 'Sodium chloride conducts electricity when molten but not when solid. Why?',
+    correctAnswer: 'Ions are fixed in the solid lattice; molten ions can move and carry charge',
+    distractors: [
+      'Electrons can move in the solid',
+      'The melting process creates free electrons',
+      'Solid NaCl has covalent bonds',
+    ],
+  },
+  {
+    conceptId: 'chem-electrolysis',
+    question: 'During electrolysis of copper sulfate, where does copper metal form and why?',
+    correctAnswer: 'At the cathode – Cu²⁺ ions gain electrons and are reduced to Cu',
+    distractors: [
+      'At the anode – copper loses electrons there',
+      'In the solution – ions combine in the middle',
+      'Copper does not form – only oxygen is produced',
+    ],
+  },
+  {
+    conceptId: 'chem-reactivity-series',
+    question: 'Zinc is added to silver nitrate solution. What happens and why?',
+    correctAnswer: 'Zinc displaces silver – zinc is more reactive, so the reaction occurs',
+    distractors: [
+      'No reaction – silver is more reactive',
+      'Both metals dissolve equally',
+      'Zinc coating forms on the silver',
+    ],
+  },
+  // Physics
+  {
+    conceptId: 'phys-electricity',
+    question: 'Two identical resistors are connected in series. How does total resistance compare to one resistor?',
+    correctAnswer: 'Total resistance doubles – R_total = R₁ + R₂',
+    distractors: [
+      'Total resistance halves',
+      'Total resistance stays the same',
+      'It depends on the voltage',
+    ],
+  },
+  {
+    conceptId: 'phys-forces',
+    question: 'A constant force acts on an object. The mass is doubled. What happens to acceleration?',
+    correctAnswer: 'Acceleration halves – a = F/m, so doubling m halves a',
+    distractors: [
+      'Acceleration doubles',
+      'Acceleration stays the same',
+      'Acceleration becomes zero',
+    ],
+  },
+  {
+    conceptId: 'phys-energy-stores',
+    question: 'A ball\'s speed doubles. What happens to its kinetic energy?',
+    correctAnswer: 'Kinetic energy quadruples – KE ∝ v², so (2v)² = 4 × original KE',
+    distractors: [
+      'Kinetic energy doubles',
+      'Kinetic energy stays the same',
+      'Kinetic energy halves',
+    ],
+  },
+];
+
+/**
+ * Infer outcome direction from scenario explanation (for application MCQs)
+ */
+function inferScenarioOutcome(explanation: string): { direction: 'increase' | 'decrease' | 'other'; outcome?: string } {
+  const lower = explanation.toLowerCase();
+  if (/\b(increase|faster|higher|more|enters?|swells?|turgid|quadruple|double)\b/.test(lower)) return { direction: 'increase' };
+  if (/\b(decrease|slower|lower|less|leaves?|shrinks?|plasmolysed|stops?|halves?|halve)\b/.test(lower)) return { direction: 'decrease' };
+  return { direction: 'other' };
+}
+
+/**
+ * Generate Quick Checks from flashcards – application-focused, tougher questions
  */
 export function generateQuickChecks(
   subject: ScienceSubject,
   paper: SciencePaper,
   tier: ScienceTier
 ): ScienceQuickCheck[] {
-  const flashcards = getFlashcardsByFilters(subject, paper, tier);
   const quickChecks: ScienceQuickCheck[] = [];
-
-  // Generate misconception checks (MC with improved options)
-  // Use only wrong statements as distractors: the misconception itself + other misconceptions.
-  // Avoid whyWrong/example - they often restate the correct understanding and create duplicate "correct" options.
+  const concepts = SCIENCE_CONCEPTS.filter(c => c.subject === subject);
   const misconceptions = getMisconceptionsBySubject(subject);
+
+  // 1. Concept application checks – test applied understanding, not just recall
+  const conceptAppConfigs = CONCEPT_APPLICATION_QUESTIONS.filter(c => 
+    concepts.some(concept => concept.id === c.conceptId)
+  );
+  conceptAppConfigs.forEach(config => {
+    const concept = concepts.find(c => c.id === config.conceptId);
+    if (!concept) return;
+    const options = [config.correctAnswer, ...config.distractors].sort(() => Math.random() - 0.5);
+    quickChecks.push({
+      id: `quickcheck-apply-${config.conceptId}`,
+      subject,
+      paper,
+      tier,
+      topic: concept.topic,
+      type: 'multipleChoice',
+      question: config.question,
+      options,
+      correctAnswer: config.correctAnswer,
+      feedback: {
+        correct: `Correct! This shows you understand ${getConceptLabel(concept)} in context.`,
+        incorrect: `Think about the mechanism. ${concept.coreIdea}`,
+        ideaReference: concept.coreIdea,
+      },
+      relatedFlashcardIds: [`flashcard-${config.conceptId}`],
+    });
+  });
+
+  // 2. Scenario application checks – "if X then what?" with plausible distractors
+  concepts.forEach(concept => {
+    concept.changeScenarios.forEach((scenario, idx) => {
+      const { direction } = inferScenarioOutcome(scenario.explanation);
+      const steps = scenario.explanation.split('→').map(s => s.trim());
+      const lastPart = steps[steps.length - 1] ?? '';
+      const isRateOutcome = /\b(rate|speed|activity|movement)\b/i.test(lastPart);
+      let correctAnswer: string;
+      const wrongOptions: string[] = [];
+      if (direction === 'increase') {
+        correctAnswer = isRateOutcome ? 'The rate increases' : lastPart;
+        wrongOptions.push(isRateOutcome ? 'The rate decreases' : 'The opposite effect occurs', 'No change', 'It depends on other factors');
+      } else if (direction === 'decrease') {
+        correctAnswer = isRateOutcome ? 'The rate decreases' : lastPart;
+        wrongOptions.push(isRateOutcome ? 'The rate increases' : 'The opposite effect occurs', 'No change', 'It depends on other factors');
+      } else {
+        correctAnswer = lastPart;
+        wrongOptions.push('The opposite effect occurs', 'No change', 'The mechanism is different');
+      }
+      const plausibleWrong = wrongOptions.filter(w => w !== correctAnswer && w.length > 0).slice(0, 2);
+      const allOptions = [correctAnswer, ...plausibleWrong];
+      if (allOptions.length < 2) return;
+      const options = [...allOptions].sort(() => Math.random() - 0.5);
+      quickChecks.push({
+        id: `quickcheck-scenario-${concept.id}-${idx}`,
+        subject,
+        paper,
+        tier,
+        topic: concept.topic,
+        type: 'multipleChoice',
+        question: `${scenario.prompt} What is the correct outcome?`,
+        options,
+        correctAnswer,
+        feedback: {
+          correct: `Correct! ${scenario.explanation}`,
+          incorrect: `The full chain is: ${scenario.explanation}`,
+          ideaReference: scenario.explanation,
+        },
+        relatedFlashcardIds: [`flashcard-${concept.id}-scenario-${idx}`],
+      });
+    });
+  });
+
+  // 3. Misconception checks – application style: "A student says X. What would you tell them?"
   misconceptions.forEach(misconception => {
-    const sameTopicWrong = misconceptions
-      .filter(m => m.id !== misconception.id && m.topic === misconception.topic)
-      .map(m => m.misconception);
-    const otherTopicWrong = misconceptions
-      .filter(m => m.id !== misconception.id && m.topic !== misconception.topic)
-      .map(m => m.misconception);
+    const misconceptionQuote = misconception.misconception.length > 100
+      ? misconception.misconception.slice(0, 97) + '…'
+      : misconception.misconception;
+    const question = `A student says: "${misconceptionQuote}" What is the best correction?`;
+    const sameTopic = misconceptions.filter(m => m.topic === misconception.topic && m.id !== misconception.id);
     const distractors = [
       misconception.misconception,
-      ...sameTopicWrong,
-      ...otherTopicWrong,
+      ...sameTopic.slice(0, 2).map(m => m.correctUnderstanding),
     ].filter((v, i, a) => a.indexOf(v) === i && v !== misconception.correctUnderstanding);
     const options = [misconception.correctUnderstanding, ...distractors.slice(0, 2)].sort(() => Math.random() - 0.5);
-    // Use the misconception as context so the question is specific, not "what is true about [topic]"
-    const misconceptionQuote = misconception.misconception.length > 120
-      ? misconception.misconception.slice(0, 117) + '…'
-      : misconception.misconception;
-    const question = `A student thinks: "${misconceptionQuote}" Which is the correct understanding?`;
     quickChecks.push({
       id: `quickcheck-misconception-${misconception.id}`,
       subject,
@@ -491,57 +761,37 @@ export function generateQuickChecks(
       correctAnswer: misconception.correctUnderstanding,
       feedback: {
         correct: `Correct! ${misconception.correctUnderstanding}`,
-        incorrect: `Incorrect. ${misconception.whyWrong}`,
-        ideaReference: misconception.correctUnderstanding,
-      },
-      relatedFlashcardIds: [`flashcard-misconception-${misconception.id}`],
-    });
-    // True/False: "True or False: [misconception]"
-    quickChecks.push({
-      id: `quickcheck-tf-${misconception.id}`,
-      subject,
-      paper,
-      tier,
-      topic: misconception.topic,
-      type: 'trueFalse',
-      question: `True or False: "${misconception.misconception}"`,
-      options: ['True', 'False'],
-      correctAnswer: 'False',
-      feedback: {
-        correct: `Correct! This is a misconception. ${misconception.correctUnderstanding}`,
-        incorrect: `False. This is wrong. ${misconception.whyWrong}`,
+        incorrect: `Consider: ${misconception.whyWrong}`,
         ideaReference: misconception.correctUnderstanding,
       },
       relatedFlashcardIds: [`flashcard-misconception-${misconception.id}`],
     });
   });
 
-  // Generate process chain checks (drag to order)
-  const concepts = SCIENCE_CONCEPTS.filter(c => c.subject === subject);
+  // 4. Process chain checks (drag order) – for ALL scenarios with 3+ steps
   concepts.forEach(concept => {
-    if (concept.changeScenarios.length > 0) {
-      const scenario = concept.changeScenarios[0];
-      const steps = scenario.explanation.split('→').map(s => s.trim());
+    concept.changeScenarios.forEach((scenario, idx) => {
+      const steps = scenario.explanation.split('→').map(s => s.trim()).filter(Boolean);
       if (steps.length >= 3) {
         quickChecks.push({
-          id: `quickcheck-process-${concept.id}`,
+          id: `quickcheck-process-${concept.id}-${idx}`,
           subject,
           paper,
           tier,
           topic: concept.topic,
           type: 'dragOrder',
-          question: `Put these steps in the correct order for: ${scenario.prompt}`,
-          options: [...steps].sort(() => Math.random() - 0.5), // Shuffled
+          question: `Put the mechanism in the correct order: ${scenario.prompt}`,
+          options: [...steps].sort(() => Math.random() - 0.5),
           correctAnswer: steps,
           feedback: {
-            correct: 'Correct! You understand the process chain.',
-            incorrect: `Incorrect. The correct order is: ${steps.join(' → ')}`,
+            correct: 'Correct! You understand the causal chain.',
+            incorrect: `The correct sequence: ${steps.join(' → ')}`,
             ideaReference: scenario.explanation,
           },
-          relatedFlashcardIds: [`flashcard-${concept.id}`, `flashcard-${concept.id}-scenario-0`],
+          relatedFlashcardIds: [`flashcard-${concept.id}`, `flashcard-${concept.id}-scenario-${idx}`],
         });
       }
-    }
+    });
   });
 
   return quickChecks;
@@ -559,6 +809,67 @@ export function getQuickChecksByFilters(
   const all = generateQuickChecks(subject, paper, tier);
   if (topic) return all.filter(q => q.topic === topic);
   return all;
+}
+
+/**
+ * Get Quick Checks related to a flashcard (by relatedFlashcardIds).
+ * If none, returns topic-level Quick Checks for that flashcard's topic as fallback.
+ */
+export function getQuickChecksForFlashcard(
+  flashcardId: string,
+  flashcardTopic: string,
+  quickChecks: ScienceQuickCheck[],
+  useTopicFallback = true
+): ScienceQuickCheck[] {
+  const direct = quickChecks.filter(
+    q => q.relatedFlashcardIds?.includes(flashcardId)
+  );
+  if (direct.length > 0) return direct.slice(0, 2); // Max 2 per card
+  if (useTopicFallback) {
+    const topicFallback = quickChecks.filter(q => q.topic === flashcardTopic);
+    return topicFallback.slice(0, 1); // 1 fallback
+  }
+  return [];
+}
+
+/**
+ * Group flashcards by topic for Learn Mode flow.
+ * Returns ordered groups; when topicFilter is set, only that topic's group is returned.
+ */
+export function getFlashcardsGroupedByTopic(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier,
+  topicFilter?: string
+): Array<{ topic: string; flashcards: ScienceFlashcard[] }> {
+  const all = getFlashcardsByFilters(subject, paper, tier);
+  const byTopic = new Map<string, ScienceFlashcard[]>();
+  all.forEach((f) => {
+    const list = byTopic.get(f.topic) ?? [];
+    list.push(f);
+    byTopic.set(f.topic, list);
+  });
+  let topics = Array.from(byTopic.keys()).sort();
+  if (topicFilter) topics = topics.filter(t => t === topicFilter);
+  return topics.map((topic) => ({
+    topic,
+    flashcards: byTopic.get(topic) ?? [],
+  }));
+}
+
+/**
+ * Get 3–6 mark questions for a topic (for bigger test phase).
+ */
+export function getBiggerTestQuestionsForTopic(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier,
+  topic: string,
+  count = 2
+): ScienceQuestion[] {
+  const questions = getQuestionsByFilters(subject, paper, tier, topic);
+  const extended = questions.filter((q) => q.marks >= 3 && q.marks <= 6);
+  return extended.slice(0, count);
 }
 
 /**
