@@ -252,13 +252,10 @@ export const storage = {
     }
   },
 
-  getTheme: (): 'light' | 'dark' => {
-    const theme = localStorage.getItem(STORAGE_KEYS.THEME);
-    return (theme as 'light' | 'dark') || 'dark';
-  },
+  getTheme: (): 'light' | 'dark' => 'dark',
 
-  setTheme: (theme: 'light' | 'dark'): void => {
-    localStorage.setItem(STORAGE_KEYS.THEME, theme);
+  setTheme: (_theme: 'light' | 'dark'): void => {
+    /* App is dark-only; no-op for compatibility */
   },
 
   getSavedQuizzes: (): string[] => {
@@ -638,6 +635,36 @@ export const storage = {
 
     // Unlock quiz if flashcard mastery >= 70% and quick check passed
     existing.quizUnlocked = existing.flashcardMastery >= 70 && existing.quickCheckPassed;
+    existing.lastUpdated = new Date().toISOString();
+
+    all[key] = existing;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
+  },
+  updateTopicTestCompletion: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string,
+    correctCount: number,
+    totalCount: number
+  ): void => {
+    const all = storage.getTopicMastery();
+    const key = `${subject}-${paper}-${tier}-${topic}`;
+    const existing = all[key] || {
+      subject,
+      paper: paper as 1 | 2,
+      tier: tier as 'Foundation' | 'Higher',
+      topic,
+      flashcardMastery: 0,
+      quickCheckPassed: false,
+      quizUnlocked: false,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const scorePercent = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    existing.topicTestCompleted = true;
+    existing.topicTestScore = scorePercent;
+    existing.topicTestLastAttempt = new Date().toISOString();
     existing.lastUpdated = new Date().toISOString();
 
     all[key] = existing;

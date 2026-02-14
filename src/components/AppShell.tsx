@@ -1,6 +1,6 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, Trophy, User, Sun, Moon, Zap, Compass } from 'lucide-react';
+import { BookOpen, Trophy, User, Zap, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { StreakFlame } from './StreakFlame';
 import { storage } from '../utils/storage';
@@ -12,22 +12,8 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [theme, setTheme] = useState<'light' | 'dark'>(storage.getTheme());
   const streak = storage.getStreak();
   const profile = storage.getProfile();
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    storage.setTheme(theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
 
   const navItems = [
     { icon: BookOpen, label: 'Subjects', path: '/' },
@@ -82,18 +68,6 @@ export function AppShell({ children }: AppShellProps) {
               <span className="hidden xs:inline whitespace-nowrap">{profile.xpTotal} XP</span>
             </div>
 
-            {/* Theme toggle - always visible */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg transition-all hover:scale-105 min-h-[40px] min-w-[40px] flex items-center justify-center"
-              style={{
-                background: 'rgb(var(--surface-2))',
-                color: 'rgb(var(--text))'
-              }}
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
           </div>
         </div>
       </header>

@@ -1,13 +1,8 @@
 import { useState } from 'react';
-import { Sun, Moon, RotateCcw, AlertTriangle } from 'lucide-react';
+import { RotateCcw, AlertTriangle } from 'lucide-react';
 import { storage } from '../../utils/storage';
 
-interface SettingsCardProps {
-  theme: 'light' | 'dark';
-  onThemeChange: (theme: 'light' | 'dark') => void;
-}
-
-export function SettingsCard({ theme, onThemeChange }: SettingsCardProps) {
+export function SettingsCard() {
   const [showResetModal, setShowResetModal] = useState(false);
 
   const handleReset = () => {
@@ -29,32 +24,6 @@ export function SettingsCard({ theme, onThemeChange }: SettingsCardProps) {
         </div>
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-6 rounded-2xl" style={{ background: 'rgb(var(--surface-2))' }}>
-            <div>
-              <p className="font-bold mb-1" style={{ color: 'rgb(var(--text))' }}>
-                Theme
-              </p>
-              <p className="text-sm font-semibold" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Switch between light and dark mode
-              </p>
-            </div>
-
-            <button
-              onClick={() => onThemeChange(theme === 'dark' ? 'light' : 'dark')}
-              className="relative w-16 h-8 rounded-full transition-all"
-              style={{ background: 'rgb(var(--accent))' }}
-            >
-              <div
-                className="absolute top-1 left-1 w-6 h-6 rounded-full bg-white flex items-center justify-center transition-transform"
-                style={{
-                  transform: theme === 'dark' ? 'translateX(32px)' : 'translateX(0)',
-                }}
-              >
-                {theme === 'dark' ? <Moon size={14} /> : <Sun size={14} />}
-              </div>
-            </button>
-          </div>
-
           <div className="p-6 rounded-2xl border-2" style={{
             background: 'rgba(239, 68, 68, 0.05)',
             borderColor: 'rgb(239, 68, 68)',

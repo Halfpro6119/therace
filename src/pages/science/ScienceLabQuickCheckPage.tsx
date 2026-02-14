@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, CheckCircle, XCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronLeft, XCircle, ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { getQuickChecksByFilters } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier, ScienceQuickCheck } from '../../types/scienceLab';
@@ -18,24 +18,28 @@ export function ScienceLabQuickCheckPage() {
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? parseInt(paper) as SciencePaper : 1;
   const tierValue = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier : 'Higher';
-
-  if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
-    return <div>Invalid subject</div>;
-  }
-
-  const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
   const [searchParams] = useSearchParams();
   const topicFilter = searchParams.get('topic') ?? undefined;
-  const quickChecks = getQuickChecksByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
+  const normalizedSubject: ScienceSubject = subjectId ? (subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject) : 'Biology';
+
+  const quickChecks = useMemo(
+    () => getQuickChecksByFilters(normalizedSubject, paperNum, tierValue, topicFilter),
+    [normalizedSubject, paperNum, tierValue, topicFilter]
+  );
   const currentCheck = quickChecks[currentIndex];
 
   useEffect(() => {
-    if (currentCheck && currentCheck.type === 'dragOrder') {
-      setDragOrder([...currentCheck.options || []]);
+    const check = quickChecks[currentIndex];
+    if (check?.type === 'dragOrder') {
+      setDragOrder([...(check.options || [])]);
     }
     setSelectedAnswer(null);
     setShowFeedback(false);
-  }, [currentIndex, currentCheck]);
+  }, [currentIndex, quickChecks]);
+
+  if (!subjectId || !subject || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
+    return <div>Invalid subject</div>;
+  }
 
   const handleBack = () => {
     const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
@@ -100,18 +104,40 @@ export function ScienceLabQuickCheckPage() {
     if (currentIndex < quickChecks.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // All quick checks completed - navigate to quiz
-      const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`;
-      const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
-      navigate(base + query);
+      // All quick checks completed - navigate to topic test (if topic) or full GCSE (if no topic)
+      const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
+      if (topicFilter) {
+        navigate(`${base}/topic-test?topic=${encodeURIComponent(topicFilter)}`);
+      } else {
+        navigate(`${base}/question`);
+      }
     }
   };
+
+  const handleNextRef = useRef(handleNext);
+  handleNextRef.current = handleNext;
+
+  // Auto-advance to next question after a short celebration when correct
+  useEffect(() => {
+    if (!showFeedback || !isCorrect || !currentCheck) return;
+    const timer = setTimeout(() => {
+      handleNextRef.current();
+    }, 1600);
+    return () => clearTimeout(timer);
+  }, [showFeedback, isCorrect, currentCheck?.id]);
 
   if (!currentCheck) {
     return (
       <div className="max-w-4xl mx-auto p-8">
         <p>No quick checks available. You can proceed to quizzes.</p>
-        <button onClick={() => navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`)}>
+        <button
+          type="button"
+          onClick={() =>
+            topicFilter
+              ? navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/topic-test?topic=${encodeURIComponent(topicFilter)}`)
+              : navigate(`/science-lab/${subject.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`)
+          }
+        >
           Go to Quiz
         </button>
       </div>
@@ -260,61 +286,76 @@ export function ScienceLabQuickCheckPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6"
           >
-            <div
-              className={`p-4 rounded-lg border flex items-start gap-3 ${
-                isCorrect
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-              }`}
-            >
-              {isCorrect ? (
-                <CheckCircle size={24} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-              ) : (
-                <XCircle size={24} className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-              )}
-              <div className="flex-1">
-                <p className="font-semibold mb-2" style={{ color: 'rgb(var(--text))' }}>
-                  {isCorrect ? 'Correct!' : 'Incorrect'}
-                </p>
-                <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {isCorrect ? currentCheck.feedback.correct : currentCheck.feedback.incorrect}
-                </p>
-                <p className="text-xs italic" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {currentCheck.feedback.ideaReference}
-                </p>
-                {!isCorrect && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/flashcard`;
-                      const query = currentCheck.topic ? `?topic=${encodeURIComponent(currentCheck.topic)}` : '';
-                      navigate(base + query);
-                    }}
-                    className="mt-3 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition border"
-                    style={{
-                      background: 'rgb(var(--surface))',
-                      borderColor: 'rgb(var(--border))',
-                      color: 'rgb(var(--text))',
-                    }}
-                  >
-                    <BookOpen size={16} />
-                    Review this topic in Flashcards
-                  </button>
-                )}
+            {isCorrect ? (
+              <div className="p-5 rounded-lg border flex items-start gap-3 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                <Sparkles size={24} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-lg mb-1" style={{ color: 'rgb(var(--text))' }}>
+                    That's right!
+                  </p>
+                  <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    {currentCheck.feedback.correct}
+                  </p>
+                  <p className="text-xs text-green-700 dark:text-green-300">
+                    Next question in a moment…
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="p-4 rounded-lg border flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                  <XCircle size={24} className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold mb-2" style={{ color: 'rgb(var(--text))' }}>
+                      Not quite
+                    </p>
+                    <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {currentCheck.feedback.incorrect}
+                    </p>
+                    <p className="text-sm font-medium mt-3 mb-1" style={{ color: 'rgb(var(--text))' }}>
+                      The right answer:
+                    </p>
+                    <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {Array.isArray(currentCheck.correctAnswer)
+                        ? currentCheck.correctAnswer.join(' → ')
+                        : currentCheck.correctAnswer}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/flashcard`;
+                        const params = new URLSearchParams();
+                        if (currentCheck.topic) params.set('topic', currentCheck.topic);
+                        if (currentCheck.relatedFlashcardIds?.length) params.set('focus', currentCheck.relatedFlashcardIds.join(','));
+                        const query = params.toString() ? `?${params.toString()}` : '';
+                        navigate(base + query);
+                      }}
+                      className="mt-4 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition border"
+                      style={{
+                        background: 'rgb(var(--surface))',
+                        borderColor: 'rgb(var(--border))',
+                        color: 'rgb(var(--text))',
+                      }}
+                    >
+                      <BookOpen size={16} />
+                      Review this topic in Flashcards
+                    </button>
+                  </div>
+                </div>
 
-            <button
-              type="button"
-              onClick={handleNext}
-              className="w-full mt-4 px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
-              style={{
-                background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
-              }}
-            >
-              {currentIndex < quickChecks.length - 1 ? 'Next Check' : 'Proceed to Quiz'}
-              <ArrowRight size={18} />
-            </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="w-full mt-4 px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
+                  style={{
+                    background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
+                  }}
+                >
+                  {currentIndex < quickChecks.length - 1 ? 'Next Check' : 'Proceed to Quiz'}
+                  <ArrowRight size={18} />
+                </button>
+              </>
+            )}
           </motion.div>
         )}
       </motion.div>

@@ -75,32 +75,6 @@ export const brand = {
   },
 
   colors: {
-    light: {
-      bg: '250 250 252',
-      surface: '255 255 255',
-      surface2: '248 249 252',
-      surfaceElevated: '255 255 255',
-      text: '15 23 42',
-      textSecondary: '71 85 105',
-      muted: '148 163 184',
-      border: '226 232 240',
-      borderLight: '241 245 249',
-
-      accent: '99 102 241',
-      accentHover: '79 70 229',
-      accent2: '139 92 246',
-      accentGlow: '165 180 252',
-
-      success: '34 197 94',
-      successLight: '134 239 172',
-      warning: '251 146 60',
-      warningLight: '253 186 116',
-      danger: '239 68 68',
-      dangerLight: '252 165 165',
-
-      elite: '168 85 247',
-      elitePink: '236 72 153',
-    },
     dark: {
       bg: '9 9 11',
       surface: '24 24 27',

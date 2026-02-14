@@ -27,6 +27,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Cell Biology',
     coreIdea: 'Diffusion is the net movement of particles from an area of high concentration to low concentration down a concentration gradient, due to random particle movement.',
+    flashcardPrompt: 'What is diffusion and in which direction do particles move?',
     visualModel: {
       type: 'cell',
       description: 'Particle diagram showing high concentration → random movement → net movement → equilibrium',
@@ -37,14 +38,17 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens to diffusion rate if temperature increases?',
         explanation: 'Particles gain kinetic energy → move faster → more collisions per second → faster net movement → increased diffusion rate',
+        visual: { diagramId: 'particle_model', description: 'Faster particles at higher temperature' },
       },
       {
         prompt: 'What happens to diffusion rate if surface area increases?',
         explanation: 'More area for particles to cross → more particles can diffuse simultaneously → faster overall rate',
+        visual: { diagramId: 'cell_membrane_diffusion', description: 'More membrane area for diffusion' },
       },
       {
         prompt: 'What happens to diffusion rate if membrane thickness increases?',
         explanation: 'Longer distance to travel → particles take longer to cross → slower diffusion rate',
+        visual: { diagramId: 'cell_membrane_diffusion', description: 'Membrane thickness affects diffusion distance' },
       },
     ],
   },
@@ -53,6 +57,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Cell Biology',
     coreIdea: 'Osmosis is the net movement of water molecules from a dilute solution (high water concentration) to a concentrated solution (low water concentration) through a partially permeable membrane.',
+    flashcardPrompt: 'What is osmosis and how does water move across a partially permeable membrane?',
     visualModel: {
       type: 'cell',
       description: 'Water molecules moving through membrane: dilute solution → concentrated solution until equilibrium',
@@ -63,10 +68,12 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens to a plant cell in pure water?',
         explanation: 'Pure water has higher water concentration than cell cytoplasm → water enters by osmosis → cell swells → becomes turgid',
+        visual: { diagramId: 'osmosis_diagram', description: 'Water enters cell by osmosis' },
       },
       {
         prompt: 'What happens to a plant cell in concentrated salt solution?',
         explanation: 'Salt solution has lower water concentration than cytoplasm → water leaves by osmosis → cell shrinks → becomes plasmolysed',
+        visual: { diagramId: 'osmosis_diagram', description: 'Water leaves cell in concentrated solution' },
       },
     ],
   },
@@ -75,6 +82,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Cell Biology',
     coreIdea: 'Active transport moves substances from low to high concentration against the concentration gradient, requiring energy from respiration.',
+    flashcardPrompt: 'How does active transport differ from diffusion, and where does the energy come from?',
     visualModel: {
       type: 'cell',
       description: 'Carrier proteins using ATP to pump molecules against concentration gradient',
@@ -85,6 +93,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if respiration is inhibited?',
         explanation: 'No ATP produced → carrier proteins cannot function → active transport stops → substances accumulate where concentration is already high',
+        visual: { diagramId: 'active_transport', description: 'ATP required for active transport' },
       },
     ],
   },
@@ -93,6 +102,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Cell Biology',
     coreIdea: 'Mitosis produces genetically identical cells for growth and repair. Meiosis produces genetically different gametes with half the chromosome number.',
+    flashcardPrompt: 'What is the difference between mitosis and meiosis, and what is each used for?',
     visualModel: {
       type: 'cell',
       description: 'Mitosis: one cell → two identical cells. Meiosis: one cell → four different gametes',
@@ -103,6 +113,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if mitosis goes wrong?',
         explanation: 'Mutations in DNA → daughter cells have different genetic material → can lead to cancer or developmental issues',
+        visual: { diagramId: 'cell_division', description: 'Mitosis produces identical cells' },
       },
     ],
   },
@@ -113,6 +124,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Organisation',
     coreIdea: 'Enzymes are biological catalysts that speed up reactions by lowering activation energy. They have an active site that binds to specific substrates.',
+    flashcardPrompt: 'How do enzymes speed up reactions, and what is the role of the active site?',
     visualModel: {
       type: 'diagram',
       description: 'Lock-and-key model: substrate fits active site → enzyme-substrate complex → products released → enzyme unchanged',
@@ -123,10 +135,12 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens to enzyme activity if temperature increases above optimum?',
         explanation: 'High temperature → bonds break → active site changes shape → substrate no longer fits → enzyme denatured → activity decreases',
+        visual: { diagramId: 'enzyme_action', description: 'Enzyme active site and denaturation' },
       },
       {
         prompt: 'What happens to enzyme activity if pH changes?',
         explanation: 'pH affects hydrogen bonds → active site shape changes → substrate binding affected → activity decreases',
+        visual: { diagramId: 'enzyme_action', description: 'Enzyme active site and pH effect' },
       },
     ],
   },
@@ -135,6 +149,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Organisation',
     coreIdea: 'The digestive system breaks down large insoluble molecules into small soluble molecules that can be absorbed into the blood.',
+    flashcardPrompt: 'What does the digestive system do to food molecules before they can be absorbed?',
     visualModel: {
       type: 'flow',
       description: 'Food → mouth (mechanical) → stomach (acid + enzymes) → small intestine (enzymes + absorption) → large intestine (water absorption)',
@@ -145,6 +160,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if bile is not produced?',
         explanation: 'No bile → fats not emulsified → smaller surface area → lipase cannot access fats efficiently → fat digestion impaired',
+        visual: { diagramId: 'digestive_system', description: 'Digestive tract and bile' },
       },
     ],
   },
@@ -153,6 +169,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Organisation',
     coreIdea: 'The circulatory system transports substances around the body. The heart pumps blood through arteries (away), capillaries (exchange), and veins (back).',
+    flashcardPrompt: 'What are the roles of arteries, capillaries, and veins in the circulatory system?',
     visualModel: {
       type: 'flow',
       description: 'Heart → arteries → capillaries (exchange) → veins → heart',
@@ -163,6 +180,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if heart rate increases?',
         explanation: 'More beats per minute → more blood pumped → more oxygen delivered to muscles → more carbon dioxide removed',
+        visual: { diagramId: 'circulatory_system', description: 'Heart pumps blood through vessels' },
       },
     ],
   },
@@ -173,6 +191,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Infection and Response',
     coreIdea: 'Pathogens are microorganisms that cause disease. They reproduce rapidly inside the body, producing toxins or damaging cells.',
+    flashcardPrompt: 'What are pathogens and how do they cause disease?',
     visualModel: {
       type: 'cell',
       description: 'Pathogen enters body → reproduces → produces toxins/damages cells → symptoms appear',
@@ -183,6 +202,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if a pathogen mutates?',
         explanation: 'Mutation → different surface proteins → immune system doesn\'t recognize it → can cause new disease or evade vaccines',
+        visual: { diagramId: 'pathogen_infection', description: 'Pathogen entry and replication' },
       },
     ],
   },
@@ -191,6 +211,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Infection and Response',
     coreIdea: 'The immune system produces antibodies that bind to specific antigens on pathogens, marking them for destruction by white blood cells.',
+    flashcardPrompt: 'How do antibodies and antigens work together in the immune response?',
     visualModel: {
       type: 'cell',
       description: 'Pathogen detected → white blood cells produce antibodies → antibodies bind to antigens → pathogen destroyed',
@@ -201,6 +222,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens on second exposure to the same pathogen?',
         explanation: 'Memory cells recognize pathogen → faster antibody production → higher antibody concentration → pathogen destroyed before symptoms',
+        visual: { diagramId: 'immune_response', description: 'Antibodies bind to antigens' },
       },
     ],
   },
@@ -211,6 +233,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Bioenergetics',
     coreIdea: 'Photosynthesis converts light energy into chemical energy stored in glucose. Carbon dioxide + water → glucose + oxygen (in presence of light and chlorophyll).',
+    flashcardPrompt: 'What are the reactants and products of photosynthesis, and what is the role of chlorophyll?',
     visualModel: {
       type: 'flow',
       description: 'Light energy + CO₂ + H₂O → chlorophyll → glucose + O₂',
@@ -221,14 +244,17 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens to photosynthesis rate if light intensity increases?',
         explanation: 'More light energy → more reactions in chloroplasts → more glucose produced → rate increases until another factor becomes limiting',
+        visual: { diagramId: 'photosynthesis_light_graph', description: 'Light intensity vs rate of photosynthesis' },
       },
       {
         prompt: 'What happens to photosynthesis rate if carbon dioxide concentration increases?',
         explanation: 'More CO₂ available → more reactions can occur → more glucose produced → rate increases until light or temperature becomes limiting',
+        visual: { diagramId: 'photosynthesis', description: 'CO₂ + H₂O → glucose + O₂' },
       },
       {
         prompt: 'What happens to photosynthesis rate if temperature increases?',
         explanation: 'Higher temperature → enzymes work faster → rate increases → but above optimum, enzymes denature → rate decreases',
+        visual: { diagramId: 'enzyme_action', description: 'Enzymes and temperature' },
       },
     ],
   },
@@ -237,6 +263,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Bioenergetics',
     coreIdea: 'Respiration releases energy from glucose for cellular processes. Aerobic respiration requires oxygen and produces more ATP than anaerobic.',
+    flashcardPrompt: 'What is the difference between aerobic and anaerobic respiration, and which produces more energy?',
     visualModel: {
       type: 'flow',
       description: 'Glucose + oxygen → carbon dioxide + water + ATP (aerobic) OR Glucose → lactic acid + ATP (anaerobic)',
@@ -247,6 +274,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens during intense exercise?',
         explanation: 'Oxygen demand exceeds supply → cells switch to anaerobic respiration → lactic acid builds up → oxygen debt created',
+        visual: { diagramId: 'respiration', description: 'Aerobic and anaerobic respiration' },
       },
     ],
   },
@@ -257,6 +285,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Homeostasis and Response',
     coreIdea: 'Homeostasis maintains constant internal conditions. Negative feedback detects changes and triggers responses to return to set point.',
+    flashcardPrompt: 'What is homeostasis and how does negative feedback help maintain it?',
     visualModel: {
       type: 'flow',
       description: 'Stimulus → receptor → coordination centre → effector → response → return to normal',
@@ -267,6 +296,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if blood glucose rises?',
         explanation: 'Pancreas detects increase → releases insulin → liver and muscles take up glucose → blood glucose decreases → returns to normal',
+        visual: { diagramId: 'homeostasis', description: 'Negative feedback loop' },
       },
     ],
   },
@@ -275,6 +305,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Homeostasis and Response',
     coreIdea: 'The nervous system uses electrical impulses for rapid responses. Stimulus → receptor → sensory neurone → CNS → motor neurone → effector → response.',
+    flashcardPrompt: 'Describe the pathway of a nervous response from stimulus to response.',
     visualModel: {
       type: 'flow',
       description: 'Stimulus → sensory neurone → CNS → motor neurone → effector → response',
@@ -285,6 +316,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens in a reflex arc?',
         explanation: 'Stimulus detected → sensory neurone → relay neurone in spinal cord → motor neurone → effector → rapid response without brain',
+        visual: { diagramId: 'nervous_system', description: 'Stimulus → receptor → CNS → effector' },
       },
     ],
   },
@@ -293,6 +325,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Homeostasis and Response',
     coreIdea: 'Hormones are chemical messengers produced by endocrine glands, transported in blood, and act on target organs with slower but longer-lasting effects than nerves.',
+    flashcardPrompt: 'How are hormones different from nerve impulses in speed and how they travel?',
     visualModel: {
       type: 'flow',
       description: 'Gland produces hormone → released into blood → travels to target organ → binds to receptors → response',
@@ -303,6 +336,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
       {
         prompt: 'What happens if insulin is not produced?',
         explanation: 'No insulin → glucose not taken up by cells → blood glucose stays high → diabetes symptoms appear',
+        visual: { diagramId: 'hormone_action', description: 'Gland → hormone → target organ' },
       },
     ],
   },
@@ -313,6 +347,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'DNA contains genes that code for proteins. Genes are sections of DNA that determine characteristics. Chromosomes are long molecules of DNA.',
+    flashcardPrompt: 'What is the relationship between DNA, genes, chromosomes, and proteins?',
     visualModel: {
       type: 'cell',
       description: 'Nucleus → chromosomes → DNA → genes → proteins → characteristics',
@@ -331,6 +366,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'Offspring inherit alleles from both parents. Dominant alleles are expressed if present; recessive alleles only expressed if homozygous.',
+    flashcardPrompt: 'How do dominant and recessive alleles determine the phenotype of offspring?',
     visualModel: {
       type: 'diagram',
       description: 'Parent genotypes → gametes → offspring genotypes → phenotypes',
@@ -349,6 +385,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'Evolution occurs by natural selection: variation exists → environmental pressure → advantageous characteristics survive → reproduce → pass on alleles → population changes.',
+    flashcardPrompt: 'Describe how natural selection leads to evolution in a population.',
     visualModel: {
       type: 'flow',
       description: 'Variation → selection pressure → survival of fittest → reproduction → allele frequency changes → evolution',
@@ -369,6 +406,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Ecology',
     coreIdea: 'Ecosystems contain communities of organisms and their environment. Energy flows through food chains; materials cycle through ecosystems.',
+    flashcardPrompt: 'How does energy flow through an ecosystem compared to how materials move?',
     visualModel: {
       type: 'foodChain',
       description: 'Producer → primary consumer → secondary consumer → decomposers (energy decreases, materials cycle)',
@@ -387,6 +425,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Ecology',
     coreIdea: 'Carbon cycles through ecosystems: CO₂ in atmosphere → photosynthesis → carbon in plants → consumption → respiration/decomposition → CO₂ released.',
+    flashcardPrompt: 'Describe the main steps of the carbon cycle.',
     visualModel: {
       type: 'flow',
       description: 'Atmosphere CO₂ → plants (photosynthesis) → animals (consumption) → respiration/decomposition → CO₂ back to atmosphere',
@@ -407,9 +446,11 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Energy stores and transfers',
     coreIdea: 'Energy is transferred between stores, not created or destroyed.',
+    flashcardPrompt: 'What happens to energy when it is transferred between stores in an organism?',
     visualModel: {
       type: 'energy',
       description: 'Sankey diagram showing energy transfer from food to movement, growth, and waste heat',
+      diagramId: 'energy_profile',
     },
     commonMisconception: 'Energy is used up or destroyed.',
     changeScenarios: [
@@ -425,9 +466,11 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Ecology',
     coreIdea: 'Bioaccumulation is the build-up of toxins in an organism over time. Biomagnification is the increase in toxin concentration up the food chain, as each trophic level consumes many organisms from the level below.',
+    flashcardPrompt: 'What is the difference between bioaccumulation and biomagnification?',
     visualModel: {
       type: 'flow',
       description: 'Food chain: plankton (low toxin) → small fish (more) → large fish (more) → predator (highest). Toxin concentration increases at each level.',
+      diagramId: 'ecosystem',
     },
     commonMisconception: 'Toxins are diluted as they move up the food chain (actually they concentrate).',
     changeScenarios: [
@@ -443,6 +486,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Cell Biology',
     coreIdea: 'Stem cells are undifferentiated cells that can divide to produce more stem cells or differentiate into specialised cells. Embryonic stem cells can become any cell type; adult stem cells are more limited.',
+    flashcardPrompt: 'What are stem cells and how do embryonic and adult stem cells differ?',
     visualModel: {
       type: 'flow',
       description: 'Stem cell → mitosis → more stem cells OR differentiation → specialised cell (e.g. nerve, muscle, blood)',
@@ -462,6 +506,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Infection and Response',
     coreIdea: 'Monoclonal antibodies are identical antibodies produced from a single clone of cells. They bind to specific antigens and are used in pregnancy tests, cancer treatment, and targeted drug delivery.',
+    flashcardPrompt: 'What are monoclonal antibodies and give two uses for them.',
     visualModel: {
       type: 'cell',
       description: 'Hybridoma (fused mouse B-cell + tumour cell) → produces identical antibodies → bind to specific antigen',
@@ -481,6 +526,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Bioenergetics',
     coreIdea: 'When light intensity is limiting, rate of photosynthesis is proportional to light intensity. At very high light, another factor (CO₂ or temperature) becomes limiting. Light intensity follows inverse square law with distance.',
+    flashcardPrompt: 'Why might doubling light intensity not double the rate of photosynthesis?',
     visualModel: {
       type: 'graph',
       description: 'Graph: light intensity (x) vs rate of photosynthesis (y)—linear at low light, plateaus when another factor limits',
@@ -500,6 +546,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Homeostasis and Response',
     coreIdea: 'Thyroxine controls metabolic rate. Low thyroxine → pituitary releases TSH → thyroid releases more thyroxine. High thyroxine → inhibits TSH release. This negative feedback maintains thyroxine within a set range.',
+    flashcardPrompt: 'How does negative feedback control thyroxine levels?',
     visualModel: {
       type: 'flow',
       description: 'Low thyroxine → pituitary (TSH) → thyroid (thyroxine) → metabolic rate rises. High thyroxine → inhibits pituitary → less TSH.',
@@ -519,6 +566,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'Genetic engineering inserts genes from one organism into another. Benefits: insulin production, disease-resistant crops. Ethical concerns: unknown long-term effects, impact on ecosystems, designer babies.',
+    flashcardPrompt: 'What is genetic engineering and give one benefit and one ethical concern.',
     visualModel: {
       type: 'flow',
       description: 'Gene isolated → inserted into vector (plasmid) → vector inserted into host cell → host produces protein',
@@ -538,6 +586,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Ecology',
     coreIdea: 'Biodiversity can be measured by species richness (number of species) and species evenness (how evenly distributed). Quadrat sampling and transects allow systematic sampling. Simpson\'s index combines richness and evenness.',
+    flashcardPrompt: 'What do we mean by species richness and species evenness when measuring biodiversity?',
     visualModel: {
       type: 'diagram',
       description: 'Grid of quadrats; different species in each; transect line across habitat',
@@ -556,9 +605,11 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Rate of reaction',
     coreIdea: 'Rate depends on collision frequency and energy of collisions.',
+    flashcardPrompt: 'What two factors determine the rate of a chemical reaction?',
     visualModel: {
       type: 'particle',
       description: 'Particle diagram showing faster-moving particles at higher temperature',
+      diagramId: 'particle_model',
     },
     commonMisconception: 'More particles always means faster reaction (ignoring collision energy).',
     changeScenarios: [
@@ -573,9 +624,11 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Energy stores and transfers',
     coreIdea: 'Energy is stored in different forms and transferred between stores.',
+    flashcardPrompt: 'What happens to energy when it is transferred between stores?',
     visualModel: {
       type: 'energy',
       description: 'Energy transfer diagram: kinetic → gravitational potential → kinetic',
+      diagramId: 'energy_profile',
     },
     commonMisconception: 'Energy is used up or disappears.',
     changeScenarios: [
@@ -591,7 +644,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Atomic structure',
     coreIdea: 'Atoms have a nucleus (protons + neutrons) surrounded by electrons in shells. Atomic number = protons; mass number = protons + neutrons.',
-    visualModel: { type: 'diagram', description: 'Bohr model: nucleus in centre, electron shells around' },
+    flashcardPrompt: 'What do atomic number and mass number tell you about an atom?',
+    visualModel: { type: 'diagram', description: 'Bohr model: nucleus in centre, electron shells around', diagramId: 'bohr_model' },
     commonMisconception: 'Electrons orbit like planets or are inside the nucleus.',
     changeScenarios: [
       { prompt: 'What happens to the atom if it gains an electron?', explanation: 'Atom becomes negative ion (anion); same number of protons' },
@@ -602,7 +656,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Bonding',
     coreIdea: 'Ionic bonding: metal + non-metal, transfer of electrons. Covalent: non-metals share electrons. Metallic: sea of delocalised electrons.',
-    visualModel: { type: 'diagram', description: 'Ionic: Na⁺ and Cl⁻ lattice. Covalent: shared pair between atoms' },
+    flashcardPrompt: 'How does ionic bonding differ from covalent bonding in terms of electrons?',
+    visualModel: { type: 'diagram', description: 'Ionic: Na⁺ and Cl⁻ lattice. Covalent: shared pair between atoms', diagramId: 'ionic_covalent_bonding' },
     commonMisconception: 'Covalent bonds share one electron each (they share pairs).',
     changeScenarios: [
       { prompt: 'Why do ionic compounds conduct when molten?', explanation: 'Ions free to move and carry charge; solid lattice prevents movement' },
@@ -614,7 +669,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Electricity',
     coreIdea: 'Current (I) = charge per second. Potential difference (V) = energy per coulomb. Resistance opposes current. V = IR.',
-    visualModel: { type: 'flow', description: 'Circuit: cell → wire → component → wire → cell. Current same in series.' },
+    flashcardPrompt: 'What is the relationship between potential difference, current, and resistance (V = IR)?',
+    visualModel: { type: 'flow', description: 'Circuit: cell → wire → component → wire → cell. Current same in series.', diagramId: 'circuit_diagram' },
     commonMisconception: 'Current is used up in a circuit.',
     changeScenarios: [
       { prompt: 'What happens to total resistance if resistors are added in series?', explanation: 'Total resistance increases; R_total = R₁ + R₂ + ...' },
@@ -625,7 +681,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Forces',
     coreIdea: 'Force = mass × acceleration (F = ma). Resultant force causes acceleration. Newton\'s third law: equal and opposite forces on different objects.',
-    visualModel: { type: 'diagram', description: 'Free body diagram: arrows for forces, resultant determines motion' },
+    flashcardPrompt: 'What does F = ma tell you, and what is Newton\'s third law?',
+    visualModel: { type: 'diagram', description: 'Free body diagram: arrows for forces, resultant determines motion', diagramId: 'free_body_diagram' },
     commonMisconception: 'Bigger object always exerts bigger force.',
     changeScenarios: [
       { prompt: 'What happens to acceleration if mass doubles and force stays same?', explanation: 'a = F/m, so acceleration halves' },
@@ -638,7 +695,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Quantitative chemistry',
     coreIdea: 'The mole is the unit for amount of substance. One mole contains 6.02 × 10²³ particles. Mass (g) = Mr × moles.',
-    visualModel: { type: 'diagram', description: 'Balance: mass in grams, Mr, and moles linked by formula' },
+    flashcardPrompt: 'What is a mole and how do you convert between mass and moles?',
+    visualModel: { type: 'diagram', description: 'Balance: mass in grams, Mr, and moles linked by formula', diagramId: 'moles_diagram' },
     commonMisconception: 'Mole is a mass or a volume.',
     changeScenarios: [
       { prompt: 'What happens to number of moles if mass doubles?', explanation: 'Moles = mass ÷ Mr → doubling mass doubles moles (Mr constant)' },
@@ -649,7 +707,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Quantitative chemistry',
     coreIdea: 'Concentration (g/dm³) = mass of solute ÷ volume of solution. Concentration (mol/dm³) = moles ÷ volume (dm³).',
-    visualModel: { type: 'flow', description: 'Solute + solvent → solution; concentration = mass/volume or moles/volume' },
+    flashcardPrompt: 'How do you calculate concentration in g/dm³ and in mol/dm³?',
+    visualModel: { type: 'flow', description: 'Solute + solvent → solution; concentration = mass/volume or moles/volume', diagramId: 'moles_diagram' },
     commonMisconception: 'Concentration is the same as amount of solute.',
     changeScenarios: [
       { prompt: 'What happens to concentration if you add more water?', explanation: 'Volume increases → concentration decreases (same mass of solute)' },
@@ -662,7 +721,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemical changes',
     coreIdea: 'Acids produce H⁺ ions in solution; alkalis produce OH⁻ ions. pH scale 0–14; neutralisation: acid + base → salt + water.',
-    visualModel: { type: 'flow', description: 'Acid + base → salt + water; H⁺ + OH⁻ → H₂O' },
+    flashcardPrompt: 'What ions do acids and alkalis produce, and what is the product of neutralisation?',
+    visualModel: { type: 'flow', description: 'Acid + base → salt + water; H⁺ + OH⁻ → H₂O', diagramId: 'half_equations' },
     commonMisconception: 'Acids contain oxygen or are always dangerous.',
     changeScenarios: [
       { prompt: 'What happens to pH when acid is added to alkali?', explanation: 'H⁺ reacts with OH⁻ → OH⁻ concentration decreases → pH decreases towards 7' },
@@ -673,7 +733,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemical changes',
     coreIdea: 'Metals can be ordered by reactivity. More reactive metals displace less reactive metals from compounds. Carbon and hydrogen are used in extraction.',
-    visualModel: { type: 'flow', description: 'Reactivity series: K Na Ca Mg Al C Zn Fe H Cu Ag Au; displacement reactions' },
+    flashcardPrompt: 'What happens when a more reactive metal is added to a compound of a less reactive metal?',
+    visualModel: { type: 'flow', description: 'Reactivity series: K Na Ca Mg Al C Zn Fe H Cu Ag Au; displacement reactions', diagramId: 'flame_test_colours' },
     commonMisconception: 'All metals react with water or acid the same way.',
     changeScenarios: [
       { prompt: 'What happens when magnesium is added to copper sulfate solution?', explanation: 'Magnesium more reactive than copper → magnesium displaces copper → copper metal forms → solution colour fades' },
@@ -684,7 +745,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemical changes',
     coreIdea: 'Electrolysis uses electricity to decompose compounds. Positive ions move to cathode (gain electrons); negative ions move to anode (lose electrons).',
-    visualModel: { type: 'flow', description: 'Battery → electrodes in solution; cations → cathode, anions → anode; products at each electrode' },
+    flashcardPrompt: 'During electrolysis, which electrode do positive ions move to and what do they gain there?',
+    visualModel: { type: 'flow', description: 'Battery → electrodes in solution; cations → cathode, anions → anode; products at each electrode', diagramId: 'electrolysis_diagram' },
     commonMisconception: 'Electrons flow through the solution.',
     changeScenarios: [
       { prompt: 'What happens at the cathode during electrolysis of molten lead bromide?', explanation: 'Pb²⁺ ions gain electrons → lead metal forms at cathode' },
@@ -697,7 +759,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Energy changes',
     coreIdea: 'Exothermic reactions release energy (temperature rises). Endothermic reactions take in energy (temperature falls). Bond breaking absorbs energy; bond making releases it.',
-    visualModel: { type: 'graph', description: 'Energy profile: reactants → activation energy → products; exothermic drops, endothermic rises' },
+    flashcardPrompt: 'What is the difference between exothermic and endothermic reactions in terms of energy and temperature?',
+    visualModel: { type: 'graph', description: 'Energy profile: reactants → activation energy → products; exothermic drops, endothermic rises', diagramId: 'energy_profile' },
     commonMisconception: 'Exothermic means no activation energy needed.',
     changeScenarios: [
       { prompt: 'What happens to temperature in an exothermic reaction?', explanation: 'Energy released to surroundings → temperature of mixture increases' },
@@ -710,7 +773,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Organic chemistry',
     coreIdea: 'Crude oil is a mixture of hydrocarbons. Fractional distillation separates it by boiling point. Alkanes are saturated (C-C single bonds); alkenes have C=C double bonds.',
-    visualModel: { type: 'flow', description: 'Crude oil → fractionating column → fractions (gases, petrol, kerosene, diesel, etc.)' },
+    flashcardPrompt: 'How does fractional distillation separate crude oil, and how do alkanes differ from alkenes?',
+    visualModel: { type: 'flow', description: 'Crude oil → fractionating column → fractions (gases, petrol, kerosene, diesel, etc.)', diagramId: 'fractionating_column' },
     commonMisconception: 'Crude oil is a single compound.',
     changeScenarios: [
       { prompt: 'What happens to boiling point down the fractionating column?', explanation: 'Longer chain molecules → higher boiling point → condense lower down the column' },
@@ -723,7 +787,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemical analysis',
     coreIdea: 'Flame tests identify metal ions by colour. Precipitation reactions identify sulfate and halide ions. Pure substances melt and boil at fixed temperatures.',
-    visualModel: { type: 'diagram', description: 'Flame test colours: Li red, Na yellow, K lilac, Ca brick red, Cu green' },
+    visualModel: { type: 'diagram', description: 'Flame test colours: Li red, Na yellow, K lilac, Ca brick red, Cu green', diagramId: 'flame_test_colours' },
     commonMisconception: 'Impurities always lower melting point.',
     changeScenarios: [
       { prompt: 'What does a persistent yellow flame suggest?', explanation: 'Sodium ions present (even in trace) → sodium contaminates many compounds' },
@@ -736,7 +800,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemistry of the atmosphere',
     coreIdea: 'Earth\'s early atmosphere had little oxygen; it increased due to photosynthesis. Greenhouse gases (CO₂, methane) absorb IR and warm the Earth. Human activity increases CO₂.',
-    visualModel: { type: 'flow', description: 'Sun → short wavelength in → Earth radiates IR → greenhouse gases absorb IR → temperature rises' },
+    flashcardPrompt: 'How do greenhouse gases cause the Earth to warm?',
+    visualModel: { type: 'flow', description: 'Sun → short wavelength in → Earth radiates IR → greenhouse gases absorb IR → temperature rises', diagramId: 'carbon_cycle' },
     commonMisconception: 'Greenhouse effect is the same as ozone depletion.',
     changeScenarios: [
       { prompt: 'What happens when greenhouse gas concentration increases?', explanation: 'More IR absorbed and re-radiated → average global temperature increases → climate change' },
@@ -749,7 +814,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Using resources',
     coreIdea: 'Life cycle assessment (LCA) evaluates environmental impact of a product from raw materials to disposal. Recycling reduces use of raw materials and energy.',
-    visualModel: { type: 'flow', description: 'Extract → manufacture → use → dispose; LCA considers each stage' },
+    flashcardPrompt: 'What does a life cycle assessment (LCA) consider?',
+    visualModel: { type: 'flow', description: 'Extract → manufacture → use → dispose; LCA considers each stage', diagramId: 'fractionating_column' },
     commonMisconception: 'Recycling always saves energy.',
     changeScenarios: [
       { prompt: 'What does LCA consider?', explanation: 'Raw material extraction → manufacture → transport → use → disposal → overall impact on environment' },
@@ -762,6 +828,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Rate and extent of chemical change',
     coreIdea: 'Le Chatelier\'s principle: if a system at equilibrium is disturbed, the position of equilibrium shifts to oppose the change. Increase concentration of reactant → equilibrium shifts to products; increase temperature for endothermic reaction → shifts to products.',
+    flashcardPrompt: 'What does Le Chatelier\'s principle say about how equilibrium responds to a change?',
     visualModel: { type: 'energy', description: 'Energy profile for reversible reaction; arrows showing shift when conditions change', diagramId: 'le_chatelier' },
     commonMisconception: 'Changing conditions always increases the yield.',
     changeScenarios: [
@@ -773,6 +840,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Chemical changes',
     coreIdea: 'Half-equations show oxidation and reduction separately. At anode: oxidation (loss of electrons). At cathode: reduction (gain of electrons). Electrons must balance when combining half-equations.',
+    flashcardPrompt: 'At which electrode does oxidation happen, and what happens to electrons there?',
     visualModel: { type: 'flow', description: 'Anode: 2Cl⁻ → Cl₂ + 2e⁻. Cathode: 2H⁺ + 2e⁻ → H₂. Electrons flow through circuit.', diagramId: 'half_equations' },
     commonMisconception: 'Electrons flow through the solution.',
     changeScenarios: [
@@ -784,6 +852,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Quantitative chemistry',
     coreIdea: 'Empirical formula is the simplest whole-number ratio of atoms. Molecular formula is the actual number of atoms. Molecular formula = (empirical formula)ₙ. Find n from Mr ÷ empirical mass.',
+    flashcardPrompt: 'What is the difference between empirical and molecular formula, and how do you find n?',
     visualModel: { type: 'diagram', description: 'Mass % → moles → divide by smallest → ratio → empirical formula. Mr ÷ empirical mass = n.', diagramId: 'empirical_molecular' },
     commonMisconception: 'Empirical and molecular formula are always the same.',
     changeScenarios: [
@@ -795,6 +864,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Organic chemistry',
     coreIdea: 'Alkenes have C=C double bond; they undergo addition reactions. Bromine water decolourises (test for unsaturation). Hydrogen adds to form alkane. Steam adds to form alcohol. Polymerisation: many monomers → polymer.',
+    flashcardPrompt: 'Why does bromine water decolourise with alkenes but not with alkanes?',
     visualModel: { type: 'flow', description: 'Ethene + Br₂ → dibromoethane. Ethene + H₂O (catalyst) → ethanol. Many ethene → poly(ethene).', diagramId: 'alkene_addition' },
     commonMisconception: 'Alkenes and alkanes react the same way.',
     changeScenarios: [
@@ -806,6 +876,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Energy changes',
     coreIdea: 'Bond breaking is endothermic (energy in). Bond making is exothermic (energy out). ΔH = sum(bonds broken) − sum(bonds made). Negative ΔH = exothermic.',
+    flashcardPrompt: 'Is bond breaking endothermic or exothermic, and how do you calculate ΔH from bond energies?',
     visualModel: { type: 'energy', description: 'Energy level diagram: reactants → activation energy → products. ΔH = products − reactants.', diagramId: 'bond_energy' },
     commonMisconception: 'Breaking bonds releases energy.',
     changeScenarios: [
@@ -819,7 +890,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Particle model of matter',
     coreIdea: 'Density = mass ÷ volume. Particles in a gas are far apart and move randomly; pressure is caused by collisions with the walls. Changing state requires energy (latent heat).',
-    visualModel: { type: 'particle', description: 'Solid: fixed positions. Liquid: touching, sliding. Gas: far apart, random motion' },
+    flashcardPrompt: 'What causes gas pressure, and what is the formula for density?',
+    visualModel: { type: 'particle', description: 'Solid: fixed positions. Liquid: touching, sliding. Gas: far apart, random motion', diagramId: 'particle_model' },
     commonMisconception: 'Particles expand when heated.',
     changeScenarios: [
       { prompt: 'What happens to pressure if gas temperature increases at constant volume?', explanation: 'Particles gain kinetic energy → move faster → more frequent and harder collisions with walls → pressure increases' },
@@ -830,7 +902,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Particle model of matter',
     coreIdea: 'Specific heat capacity is the energy needed to raise 1 kg of a substance by 1°C. E = mcΔT. Different materials need different amounts of energy to warm up.',
-    visualModel: { type: 'energy', description: 'Energy in → temperature rise; slope of graph = 1/(mc)' },
+    flashcardPrompt: 'What is specific heat capacity and what is the equation E = mcΔT?',
+    visualModel: { type: 'energy', description: 'Energy in → temperature rise; slope of graph = 1/(mc)', diagramId: 'energy_profile' },
     commonMisconception: 'All materials heat up at the same rate for the same energy input.',
     changeScenarios: [
       { prompt: 'What happens to temperature rise if mass doubles and same energy is supplied?', explanation: 'E = mcΔT → ΔT = E/(mc) → doubling mass halves temperature rise' },
@@ -843,7 +916,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Atomic structure',
     coreIdea: 'Atom: nucleus (protons + neutrons) and electrons. Isotopes have same protons, different neutrons. Radioactive decay is random; alpha, beta, gamma have different penetration.',
-    visualModel: { type: 'diagram', description: 'Nucleus with protons/neutrons; electron shells; alpha stopped by paper, beta by metal, gamma by lead' },
+    flashcardPrompt: 'What are isotopes, and how do alpha, beta, and gamma radiation differ in penetration?',
+    visualModel: { type: 'diagram', description: 'Nucleus with protons/neutrons; electron shells; alpha stopped by paper, beta by metal, gamma by lead', diagramId: 'bohr_model' },
     commonMisconception: 'Radioactivity is the same as radiation (e.g. waves).',
     changeScenarios: [
       { prompt: 'What happens when an atom emits alpha radiation?', explanation: 'Nucleus loses 2 protons and 2 neutrons → mass number decreases by 4, atomic number by 2 → new element formed' },
@@ -856,7 +930,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Waves',
     coreIdea: 'Waves transfer energy without transferring matter. v = f × λ. Transverse: oscillations perpendicular to direction (light, EM). Longitudinal: parallel (sound).',
-    visualModel: { type: 'diagram', description: 'Transverse wave: crest, trough, wavelength, amplitude. Longitudinal: compression, rarefaction' },
+    flashcardPrompt: 'What is the wave equation v = f × λ, and how do transverse and longitudinal waves differ?',
+    visualModel: { type: 'diagram', description: 'Transverse wave: crest, trough, wavelength, amplitude. Longitudinal: compression, rarefaction', diagramId: 'wave_types' },
     commonMisconception: 'Waves carry matter from one place to another.',
     changeScenarios: [
       { prompt: 'What happens to wavelength if frequency doubles and wave speed is constant?', explanation: 'v = fλ → λ = v/f → doubling frequency halves wavelength' },
@@ -867,7 +942,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Waves',
     coreIdea: 'EM spectrum: radio, microwave, infrared, visible, ultraviolet, X-ray, gamma. All travel at same speed in vacuum. Frequency increases, wavelength decreases across spectrum.',
-    visualModel: { type: 'flow', description: 'Radio → microwave → IR → visible → UV → X-ray → gamma; frequency increases' },
+    flashcardPrompt: 'How does wavelength change as you move from radio waves to gamma rays?',
+    visualModel: { type: 'flow', description: 'Radio → microwave → IR → visible → UV → X-ray → gamma; frequency increases', diagramId: 'em_spectrum' },
     commonMisconception: 'Different EM waves travel at different speeds in vacuum.',
     changeScenarios: [
       { prompt: 'What happens to energy of photons as you move from radio to gamma?', explanation: 'Higher frequency → higher energy per photon (E = hf)' },
@@ -880,7 +956,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Magnetism and electromagnetism',
     coreIdea: 'Like poles repel; unlike attract. Magnetic field lines go from N to S. Current in a wire produces a magnetic field; Fleming\'s left-hand rule for force on current in a field.',
-    visualModel: { type: 'diagram', description: 'Bar magnet with field lines; wire in field with force direction' },
+    flashcardPrompt: 'What is Fleming\'s left-hand rule used for?',
+    visualModel: { type: 'diagram', description: 'Bar magnet with field lines; wire in field with force direction', diagramId: 'electromagnetism' },
     commonMisconception: 'All metals are magnetic.',
     changeScenarios: [
       { prompt: 'What happens to the force on a wire if current doubles?', explanation: 'Force on current in magnetic field is proportional to current → doubling current doubles force' },
@@ -891,7 +968,8 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Magnetism and electromagnetism',
     coreIdea: 'Generator: coil rotates in magnetic field → induced potential difference → a.c. current. Electromagnetic induction: changing magnetic field through coil induces p.d.',
-    visualModel: { type: 'flow', description: 'Coil in field → movement → induced p.d. → current; dynamo produces a.c.' },
+    flashcardPrompt: 'How does a generator produce a potential difference and what type of current does it produce?',
+    visualModel: { type: 'flow', description: 'Coil in field → movement → induced p.d. → current; dynamo produces a.c.', diagramId: 'generator_diagram' },
     commonMisconception: 'Generator creates current without any movement.',
     changeScenarios: [
       { prompt: 'What happens to induced p.d. if coil spins faster?', explanation: 'Rate of change of flux increases → larger induced p.d. → higher peak voltage' },
@@ -904,6 +982,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Forces',
     coreIdea: 'Hooke\'s law: F = kx (force proportional to extension) up to the limit of proportionality. Beyond this, the spring undergoes plastic deformation and may not return to original length. Elastic potential energy = ½kx².',
+    flashcardPrompt: 'What is Hooke\'s law and what happens to a spring beyond the limit of proportionality?',
     visualModel: { type: 'graph', description: 'Force-extension graph: linear region (Hooke\'s law) → limit of proportionality → curve (plastic)', diagramId: 'hookes_law_graph' },
     commonMisconception: 'Springs always obey Hooke\'s law.',
     changeScenarios: [
@@ -915,6 +994,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Waves',
     coreIdea: 'Critical angle: angle of incidence in denser medium when angle of refraction is 90°. Total internal reflection (TIR) occurs when angle of incidence > critical angle. sin(c) = 1/n where n is refractive index.',
+    flashcardPrompt: 'When does total internal reflection occur and what is the formula for critical angle?',
     visualModel: { type: 'diagram', description: 'Ray in glass approaching boundary; at critical angle refracted ray along boundary; beyond that, TIR', diagramId: 'critical_angle_tir' },
     commonMisconception: 'Light always refracts at a boundary.',
     changeScenarios: [
@@ -926,6 +1006,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Atomic structure',
     coreIdea: 'Fission: large nucleus splits into smaller nuclei + neutrons; releases energy (e.g. uranium-235). Fusion: small nuclei join to form larger nucleus; releases energy (e.g. hydrogen → helium). Both convert mass to energy (E=mc²).',
+    flashcardPrompt: 'What is the difference between nuclear fission and nuclear fusion?',
     visualModel: { type: 'flow', description: 'Fission: U-235 + neutron → Ba + Kr + 3 neutrons. Fusion: H + H → He + neutron.', diagramId: 'fission_fusion' },
     commonMisconception: 'Fission and fusion are the same process.',
     changeScenarios: [
@@ -937,6 +1018,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Space physics',
     coreIdea: 'Red-shift: light from distant galaxies is shifted towards red (longer wavelength). Indicates galaxies are moving away. Greater red-shift = faster recession = further away. Evidence for expanding universe and Big Bang.',
+    flashcardPrompt: 'What does red-shift tell us about distant galaxies and the universe?',
     visualModel: { type: 'flow', description: 'Spectrum of distant galaxy: absorption lines shifted towards red compared to lab spectrum. Hubble\'s law: v ∝ d.', diagramId: 'red_shift' },
     commonMisconception: 'Red-shift means the light is red.',
     changeScenarios: [
@@ -953,76 +1035,76 @@ export const METHOD_MARK_BREAKDOWNS: MethodMarkBreakdown[] = [
   {
     questionId: 'bio-immune-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Vaccine introduces dead/weakened pathogen or antigens', marks: 1 },
-      { id: 'idea2', description: 'White blood cells produce antibodies against antigens', marks: 1 },
-      { id: 'idea3', description: 'Memory cells formed that remember specific antigen', marks: 1 },
+      { id: 'idea1', description: 'Vaccine introduces dead/weakened pathogen or antigens', marks: 1, keywords: ['vaccine', 'dead', 'weakened', 'pathogen', 'antigens'] },
+      { id: 'idea2', description: 'White blood cells produce antibodies against antigens', marks: 1, keywords: ['white blood', 'antibodies', 'antigens'] },
+      { id: 'idea3', description: 'Memory cells formed that remember specific antigen', marks: 1, keywords: ['memory cells', 'remember', 'antigen'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Links secondary response to faster antibody production', marks: 1 },
-      { id: 'method2', description: 'Explains pathogen destroyed before symptoms', marks: 1 },
+      { id: 'method1', description: 'Links secondary response to faster antibody production', marks: 1, keywords: ['secondary', 'faster', 'antibody'] },
+      { id: 'method2', description: 'Explains pathogen destroyed before symptoms', marks: 1, keywords: ['pathogen', 'destroyed', 'symptoms'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Uses correct terminology (antibodies, antigens, memory cells)', marks: 1 },
+      { id: 'precision1', description: 'Uses correct terminology (antibodies, antigens, memory cells)', marks: 1, keywords: ['antibodies', 'antigens', 'memory cells'] },
     ],
     commonPenalties: ['Saying vaccine contains live pathogen', 'Missing memory cells', 'Incomplete process chain'],
   },
   {
     questionId: 'bio-blood-glucose-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Pancreas detects increase in blood glucose', marks: 1 },
-      { id: 'idea2', description: 'Releases insulin into blood', marks: 1 },
-      { id: 'idea3', description: 'Liver and muscles take up glucose and store as glycogen', marks: 1 },
+      { id: 'idea1', description: 'Pancreas detects increase in blood glucose', marks: 1, keywords: ['pancreas', 'detects', 'blood glucose'] },
+      { id: 'idea2', description: 'Releases insulin into blood', marks: 1, keywords: ['insulin', 'blood'] },
+      { id: 'idea3', description: 'Liver and muscles take up glucose and store as glycogen', marks: 1, keywords: ['liver', 'muscles', 'glucose', 'glycogen'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Links insulin to target organs (liver, muscles)', marks: 1 },
-      { id: 'method2', description: 'Explains blood glucose decreases and returns to normal', marks: 1 },
+      { id: 'method1', description: 'Links insulin to target organs (liver, muscles)', marks: 1, keywords: ['insulin', 'target', 'liver', 'muscles'] },
+      { id: 'method2', description: 'Explains blood glucose decreases and returns to normal', marks: 1, keywords: ['blood glucose', 'decreases', 'normal'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Mentions negative feedback', marks: 1 },
+      { id: 'precision1', description: 'Mentions negative feedback', marks: 1, keywords: ['negative feedback'] },
     ],
     commonPenalties: ['Missing target organs', 'Confusing insulin with glucagon', 'Not mentioning negative feedback'],
   },
   {
     questionId: 'bio-evolution-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Variation exists in population due to different alleles', marks: 1 },
-      { id: 'idea2', description: 'Selection pressure from environment', marks: 1 },
-      { id: 'idea3', description: 'Individuals with advantageous characteristics survive and reproduce', marks: 1 },
+      { id: 'idea1', description: 'Variation exists in population due to different alleles', marks: 1, keywords: ['variation', 'population', 'alleles'] },
+      { id: 'idea2', description: 'Selection pressure from environment', marks: 1, keywords: ['selection pressure', 'environment'] },
+      { id: 'idea3', description: 'Individuals with advantageous characteristics survive and reproduce', marks: 1, keywords: ['advantageous', 'survive', 'reproduce'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Advantageous alleles passed to offspring', marks: 1 },
-      { id: 'method2', description: 'Allele frequency increases over generations', marks: 1 },
+      { id: 'method1', description: 'Advantageous alleles passed to offspring', marks: 1, keywords: ['alleles', 'offspring'] },
+      { id: 'method2', description: 'Allele frequency increases over generations', marks: 1, keywords: ['allele frequency', 'generations'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Evolution happens to populations, not individuals', marks: 1 },
+      { id: 'precision1', description: 'Evolution happens to populations, not individuals', marks: 1, keywords: ['populations', 'individuals'] },
     ],
     commonPenalties: ['Saying organisms adapt', 'Saying evolution happens to individuals', 'Missing variation or selection pressure'],
   },
   {
     questionId: 'bio-carbon-cycle-001',
     ideaMarks: [
-      { id: 'idea1', description: 'CO₂ taken in by plants during photosynthesis', marks: 1 },
-      { id: 'idea2', description: 'Carbon in plants → animals via consumption/food chains', marks: 1 },
-      { id: 'idea3', description: 'Respiration releases CO₂ back to atmosphere', marks: 1 },
+      { id: 'idea1', description: 'CO₂ taken in by plants during photosynthesis', marks: 1, keywords: ['co2', 'carbon dioxide', 'plants', 'photosynthesis'] },
+      { id: 'idea2', description: 'Carbon in plants → animals via consumption/food chains', marks: 1, keywords: ['carbon', 'animals', 'consumption', 'food chain'] },
+      { id: 'idea3', description: 'Respiration releases CO₂ back to atmosphere', marks: 1, keywords: ['respiration', 'co2', 'atmosphere'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Decomposition also releases CO₂', marks: 1 },
-      { id: 'method2', description: 'Links processes in correct order', marks: 1 },
+      { id: 'method1', description: 'Decomposition also releases CO₂', marks: 1, keywords: ['decomposition', 'co2'] },
+      { id: 'method2', description: 'Links processes in correct order', marks: 1, keywords: ['order', 'cycle', 'process'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Uses correct terms (photosynthesis, respiration, decomposition)', marks: 1 },
+      { id: 'precision1', description: 'Uses correct terms (photosynthesis, respiration, decomposition)', marks: 1, keywords: ['photosynthesis', 'respiration', 'decomposition'] },
     ],
     commonPenalties: ['Missing key processes', 'Confusing carbon with energy', 'Incomplete cycle'],
   },
   {
     questionId: 'bio-photosynthesis-002',
     ideaMarks: [
-      { id: 'idea1', description: 'Light provides energy for photosynthesis', marks: 1 },
-      { id: 'idea2', description: 'Low light = less energy for reactions in chloroplasts', marks: 1 },
+      { id: 'idea1', description: 'Light provides energy for photosynthesis', marks: 1, keywords: ['light', 'energy', 'photosynthesis'] },
+      { id: 'idea2', description: 'Low light = less energy for reactions in chloroplasts', marks: 1, keywords: ['low light', 'chloroplasts', 'reactions'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Light is limiting factor', marks: 1 },
-      { id: 'method2', description: 'Another factor would limit if light increased', marks: 1 },
+      { id: 'method1', description: 'Light is limiting factor', marks: 1, keywords: ['limiting factor', 'light'] },
+      { id: 'method2', description: 'Another factor would limit if light increased', marks: 1, keywords: ['another factor', 'limit', 'increased'] },
     ],
     precisionMarks: [],
     commonPenalties: ['Saying plant cannot photosynthesize', 'Not explaining limiting factor'],
@@ -1030,12 +1112,12 @@ export const METHOD_MARK_BREAKDOWNS: MethodMarkBreakdown[] = [
   {
     questionId: 'bio-enzyme-002',
     ideaMarks: [
-      { id: 'idea1', description: 'Bonds holding enzyme shape break at high temperature', marks: 1 },
-      { id: 'idea2', description: 'Active site changes shape', marks: 1 },
+      { id: 'idea1', description: 'Bonds holding enzyme shape break at high temperature', marks: 1, keywords: ['bonds', 'enzyme', 'shape', 'temperature'] },
+      { id: 'idea2', description: 'Active site changes shape', marks: 1, keywords: ['active site', 'shape'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Substrate no longer fits active site', marks: 1 },
-      { id: 'method2', description: 'Enzyme denatured, cannot catalyse reaction', marks: 1 },
+      { id: 'method1', description: 'Substrate no longer fits active site', marks: 1, keywords: ['substrate', 'active site', 'fit'] },
+      { id: 'method2', description: 'Enzyme denatured, cannot catalyse reaction', marks: 1, keywords: ['denatured', 'catalyse', 'reaction'] },
     ],
     precisionMarks: [],
     commonPenalties: ['Saying enzyme is killed', 'Missing link to active site'],
@@ -1043,12 +1125,12 @@ export const METHOD_MARK_BREAKDOWNS: MethodMarkBreakdown[] = [
   {
     questionId: 'chem-greenhouse-001',
     ideaMarks: [
-      { id: 'idea1', description: 'CO₂ is a greenhouse gas', marks: 1 },
-      { id: 'idea2', description: 'Absorbs infrared radiation from Earth', marks: 1 },
+      { id: 'idea1', description: 'CO₂ is a greenhouse gas', marks: 1, keywords: ['co2', 'carbon dioxide', 'greenhouse'] },
+      { id: 'idea2', description: 'Absorbs infrared radiation from Earth', marks: 1, keywords: ['absorbs', 'infrared', 'radiation', 'earth'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Re-radiates energy (including back to Earth)', marks: 1 },
-      { id: 'method2', description: 'Leads to increase in average temperature / global warming', marks: 1 },
+      { id: 'method1', description: 'Re-radiates energy (including back to Earth)', marks: 1, keywords: ['re-radiate', 'reradiate', 'energy', 'earth'] },
+      { id: 'method2', description: 'Leads to increase in average temperature / global warming', marks: 1, keywords: ['temperature', 'global warming', 'increase'] },
     ],
     precisionMarks: [],
     commonPenalties: ['Confusing with ozone layer', 'Saying CO₂ reflects sunlight', 'Missing link to IR'],
@@ -1056,80 +1138,80 @@ export const METHOD_MARK_BREAKDOWNS: MethodMarkBreakdown[] = [
   {
     questionId: 'bio-grade9-stem-cells-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Bone marrow stem cells: from patient, no rejection, limited differentiation', marks: 1 },
-      { id: 'idea2', description: 'Embryonic stem cells: pluripotent, ethical issues, rejection risk', marks: 1 },
-      { id: 'idea3', description: 'For bone marrow disease, adult stem cells may be sufficient', marks: 1 },
+      { id: 'idea1', description: 'Bone marrow stem cells: from patient, no rejection, limited differentiation', marks: 1, keywords: ['bone marrow', 'patient', 'rejection', 'differentiation'] },
+      { id: 'idea2', description: 'Embryonic stem cells: pluripotent, ethical issues, rejection risk', marks: 1, keywords: ['embryonic', 'pluripotent', 'ethical', 'rejection'] },
+      { id: 'idea3', description: 'For bone marrow disease, adult stem cells may be sufficient', marks: 1, keywords: ['bone marrow', 'adult', 'sufficient'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Compares both sources with pros and cons', marks: 1 },
-      { id: 'method2', description: 'Reaches balanced conclusion for this patient', marks: 1 },
+      { id: 'method1', description: 'Compares both sources with pros and cons', marks: 1, keywords: ['compares', 'pros', 'cons', 'sources'] },
+      { id: 'method2', description: 'Reaches balanced conclusion for this patient', marks: 1, keywords: ['balanced', 'conclusion', 'patient'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Uses correct terminology (pluripotent, multipotent)', marks: 1 },
+      { id: 'precision1', description: 'Uses correct terminology (pluripotent, multipotent)', marks: 1, keywords: ['pluripotent', 'multipotent'] },
     ],
     commonPenalties: ['One-sided argument', 'Missing ethical considerations', 'No comparison'],
   },
   {
     questionId: 'bio-grade9-bioaccumulation-001',
     ideaMarks: [
-      { id: 'idea1', description: 'DDT accumulates in fat, not excreted', marks: 1 },
-      { id: 'idea2', description: 'Biomagnification: concentration increases up food chain', marks: 1 },
-      { id: 'idea3', description: 'Top predators had lethal levels', marks: 1 },
+      { id: 'idea1', description: 'DDT accumulates in fat, not excreted', marks: 1, keywords: ['ddt', 'accumulates', 'fat', 'excreted'] },
+      { id: 'idea2', description: 'Biomagnification: concentration increases up food chain', marks: 1, keywords: ['biomagnification', 'concentration', 'food chain'] },
+      { id: 'idea3', description: 'Top predators had lethal levels', marks: 1, keywords: ['top predators', 'lethal', 'predators'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Links to eggshell thinning', marks: 1 },
-      { id: 'method2', description: 'Explains population decline and recovery', marks: 1 },
+      { id: 'method1', description: 'Links to eggshell thinning', marks: 1, keywords: ['eggshell', 'thinning'] },
+      { id: 'method2', description: 'Explains population decline and recovery', marks: 1, keywords: ['population', 'decline', 'recovery'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Distinguishes bioaccumulation from biomagnification', marks: 1 },
+      { id: 'precision1', description: 'Distinguishes bioaccumulation from biomagnification', marks: 1, keywords: ['bioaccumulation', 'biomagnification'] },
     ],
     commonPenalties: ['Saying toxins dilute', 'Missing link to population', 'Confusing terms'],
   },
   {
     questionId: 'bio-grade9-photosynthesis-respiration-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Day: photosynthesis and respiration both occur', marks: 1 },
-      { id: 'idea2', description: 'Photosynthesis rate > respiration in light → net O₂ production', marks: 1 },
-      { id: 'idea3', description: 'Night: only respiration → O₂ used, concentration falls', marks: 1 },
+      { id: 'idea1', description: 'Day: photosynthesis and respiration both occur', marks: 1, keywords: ['day', 'photosynthesis', 'respiration', 'both'] },
+      { id: 'idea2', description: 'Photosynthesis rate > respiration in light → net O₂ production', marks: 1, keywords: ['photosynthesis', 'respiration', 'light', 'oxygen', 'o2'] },
+      { id: 'idea3', description: 'Night: only respiration → O₂ used, concentration falls', marks: 1, keywords: ['night', 'respiration', 'oxygen', 'concentration'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Links both processes to gas exchange', marks: 1 },
-      { id: 'method2', description: 'Explains balance depends on light', marks: 1 },
+      { id: 'method1', description: 'Links both processes to gas exchange', marks: 1, keywords: ['gas exchange', 'processes'] },
+      { id: 'method2', description: 'Explains balance depends on light', marks: 1, keywords: ['balance', 'light'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Correct gas equations for both processes', marks: 1 },
+      { id: 'precision1', description: 'Correct gas equations for both processes', marks: 1, keywords: ['equation', 'co2', 'o2', 'glucose', 'water'] },
     ],
     commonPenalties: ['Saying plants only photosynthesise', 'Missing respiration at night', 'Incomplete synthesis'],
   },
   {
     questionId: 'bio-grade9-evolution-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Variation: some bacteria have resistance alleles', marks: 1 },
-      { id: 'idea2', description: 'Selection pressure: antibiotics kill non-resistant', marks: 1 },
-      { id: 'idea3', description: 'Resistant survive, reproduce; allele frequency increases', marks: 1 },
+      { id: 'idea1', description: 'Variation: some bacteria have resistance alleles', marks: 1, keywords: ['bacteria', 'resistance', 'alleles', 'variation'] },
+      { id: 'idea2', description: 'Selection pressure: antibiotics kill non-resistant', marks: 1, keywords: ['selection pressure', 'antibiotics', 'non-resistant'] },
+      { id: 'idea3', description: 'Resistant survive, reproduce; allele frequency increases', marks: 1, keywords: ['resistant', 'survive', 'reproduce', 'allele frequency'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Overuse increases selection pressure', marks: 1 },
-      { id: 'method2', description: 'Restricting use reduces resistance spread', marks: 1 },
+      { id: 'method1', description: 'Overuse increases selection pressure', marks: 1, keywords: ['overuse', 'selection pressure'] },
+      { id: 'method2', description: 'Restricting use reduces resistance spread', marks: 1, keywords: ['restricting', 'reduces', 'resistance'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Evolution happens to populations, not individuals', marks: 1 },
+      { id: 'precision1', description: 'Evolution happens to populations, not individuals', marks: 1, keywords: ['populations', 'individuals'] },
     ],
     commonPenalties: ['Saying bacteria choose to evolve', 'Missing stewardship link', 'Individual not population'],
   },
   {
     questionId: 'bio-grade9-immune-001',
     ideaMarks: [
-      { id: 'idea1', description: 'Primary: slow, first exposure, memory cells form', marks: 1 },
-      { id: 'idea2', description: 'Secondary: fast, memory cells respond, no illness', marks: 1 },
-      { id: 'idea3', description: 'Vaccine = artificial primary → memory → real infection = secondary', marks: 1 },
+      { id: 'idea1', description: 'Primary: slow, first exposure, memory cells form', marks: 1, keywords: ['primary', 'slow', 'first exposure', 'memory cells'] },
+      { id: 'idea2', description: 'Secondary: fast, memory cells respond, no illness', marks: 1, keywords: ['secondary', 'fast', 'memory cells', 'no illness'] },
+      { id: 'idea3', description: 'Vaccine = artificial primary → memory → real infection = secondary', marks: 1, keywords: ['vaccine', 'artificial', 'primary', 'secondary', 'infection'] },
     ],
     methodMarks: [
-      { id: 'method1', description: 'Compares speed and antibody level', marks: 1 },
-      { id: 'method2', description: 'Explains vaccination exploits secondary response', marks: 1 },
+      { id: 'method1', description: 'Compares speed and antibody level', marks: 1, keywords: ['speed', 'antibody', 'level', 'compares'] },
+      { id: 'method2', description: 'Explains vaccination exploits secondary response', marks: 1, keywords: ['vaccination', 'secondary', 'response'] },
     ],
     precisionMarks: [
-      { id: 'precision1', description: 'Correct use of memory cells, antibodies, antigens', marks: 1 },
+      { id: 'precision1', description: 'Correct use of memory cells, antibodies, antigens', marks: 1, keywords: ['memory cells', 'antibodies', 'antigens'] },
     ],
     commonPenalties: ['Saying secondary is slower', 'Missing vaccination link', 'Wrong immune pathway'],
   },
@@ -2614,6 +2696,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       headers: ['Cell type', 'Structures observed', 'Magnification'],
     },
     graphExpectations: undefined,
+    visual: { diagramId: 'cell_membrane_diffusion', description: 'Cell structure and diffusion' },
     evaluationQuestions: [
       {
         question: 'What limitations affect the accuracy of this practical?',
@@ -2683,6 +2766,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       type: 'line',
       expectedTrend: 'Rate increases to optimum pH, then decreases (bell-shaped curve)',
     },
+    visual: { diagramId: 'enzyme_action', description: 'Enzyme active site and pH effect' },
     evaluationQuestions: [
       {
         question: 'What makes this experiment unreliable?',
@@ -2746,6 +2830,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       type: 'line',
       expectedTrend: 'Mass decreases as concentration increases (negative correlation), crosses zero at isotonic point',
     },
+    visual: { diagramId: 'osmosis_diagram', description: 'Osmosis in potato cylinders' },
     evaluationQuestions: [
       {
         question: 'What sources of error affect the accuracy of this investigation?',
@@ -2810,6 +2895,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       type: 'scatter',
       expectedTrend: 'Reaction time may decrease with practice (improvement)',
     },
+    visual: { diagramId: 'nervous_system', description: 'Stimulus → receptor → response' },
     evaluationQuestions: [
       {
         question: 'What makes this experiment unreliable?',
@@ -2872,6 +2958,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       type: 'bar',
       expectedTrend: 'Seedlings grow towards light source',
     },
+    visual: { diagramId: 'photosynthesis', description: 'Plant response to light' },
     evaluationQuestions: [
       {
         question: 'What factors could affect the reliability of this investigation?',
@@ -2926,6 +3013,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       headers: ['Distance along transect (m)', 'Abundance (number)', 'Light intensity (lux)'],
       exampleRow: ['0', '5', '200'],
     },
+    visual: { diagramId: 'quadrat_sampling', description: 'Quadrat and transect sampling' },
     graphExpectations: {
       xAxis: 'Light intensity (lux)',
       yAxis: 'Abundance (number per quadrat)',
@@ -2980,6 +3068,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     dataTable: {
       headers: ['Temperature (°C)', 'Time (s)', 'Rate (1/time)'],
     },
+    visual: { diagramId: 'particle_model', description: 'Particles and temperature' },
     graphExpectations: {
       xAxis: 'Temperature (°C)',
       yAxis: 'Rate (1/time)',
@@ -3019,6 +3108,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
     dataTable: { headers: ['Trial', 'Initial burette (cm³)', 'Final burette (cm³)', 'Titre (cm³)'], exampleRow: ['1', '0.0', '24.8', '24.8'] },
     graphExpectations: undefined,
+    visual: { diagramId: 'titration_setup', description: 'Burette, pipette and conical flask setup' },
     evaluationQuestions: [
       {
         question: 'What sources of error affect the accuracy of a titration?',
@@ -3051,6 +3141,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
     dataTable: { headers: ['Solution', 'Cathode product', 'Anode product'] },
     graphExpectations: undefined,
+    visual: { diagramId: 'electrolysis_diagram', description: 'Electrolysis setup and electrodes' },
     evaluationQuestions: [
       {
         question: 'Why might the mass of cathode increase not equal the mass of anode decrease?',
@@ -3084,6 +3175,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
       { hazard: 'Mains or low voltage', risk: 'Overheating', control: 'Use low voltage, do not leave on long' },
     ],
     dataTable: { headers: ['Length (cm)', 'V (V)', 'I (A)', 'R (Ω)'] },
+    visual: { diagramId: 'circuit_diagram', description: 'Circuit with ammeter and voltmeter' },
     graphExpectations: { xAxis: 'Length (cm)', yAxis: 'Resistance (Ω)', type: 'line', expectedTrend: 'Resistance proportional to length' },
     evaluationQuestions: [
       {
@@ -3110,8 +3202,9 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     risks: [{ hazard: 'None significant', risk: 'Low', control: 'Standard lab practice' }],
     dataTable: { headers: ['Mass (g)', 'Length (cm)', 'Width (cm)', 'Height (cm)', 'Volume (cm³)', 'Density (g/cm³)'] },
     graphExpectations: undefined,
+    visual: { diagramId: 'density_measurement', description: 'Balance and ruler for mass and volume' },
     evaluationQuestions: [
-      {
+        {
         question: 'What limits the accuracy of this experiment?',
         expectedPoints: ['Resolution of balance and ruler', 'Irregular shape assumed regular', 'Parallax when reading scale'],
       },
@@ -3138,8 +3231,9 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
     dataTable: { headers: ['Mass (kg)', 'Power (W)', 'Time (s)', 'ΔT (°C)', 'E (J)', 'c (J/kg°C)'] },
     graphExpectations: undefined,
+    visual: { diagramId: 'specific_heat_capacity_setup', description: 'Immersion heater, block and thermometer' },
     evaluationQuestions: [
-      {
+        {
         question: 'Why might the calculated specific heat capacity be higher than the true value?',
         expectedPoints: ['Energy lost to surroundings', 'Not all heat transferred to block', 'Thermometer not at hottest point'],
       },
@@ -3162,6 +3256,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
     risks: [{ hazard: 'Water', risk: 'Slip', control: 'Mop spills' }],
     dataTable: { headers: ['Frequency (Hz)', 'Wavelength (m)', 'Speed (m/s)'] },
+    visual: { diagramId: 'wave_types', description: 'Transverse and longitudinal waves' },
     graphExpectations: { xAxis: 'Frequency (Hz)', yAxis: 'Wavelength (m)', type: 'line', expectedTrend: 'λ decreases as f increases if v constant' },
     evaluationQuestions: [
       {
@@ -3187,6 +3282,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
     ],
     risks: [{ hazard: 'Moving trolley and masses', risk: 'Impact', control: 'Clear area, catch masses' }],
     dataTable: { headers: ['Force F (N)', 'Acceleration a (m/s²)'] },
+    visual: { diagramId: 'free_body_diagram', description: 'Forces and acceleration' },
     graphExpectations: { xAxis: 'Force (N)', yAxis: 'Acceleration (m/s²)', type: 'line', expectedTrend: 'Linear through origin; gradient = 1/mass' },
     evaluationQuestions: [
       {
@@ -3536,6 +3632,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Particles move randomly due to kinetic energy. Net movement occurs because there are more particles on one side, not because particles choose to move.',
     whyWrong: 'Particles do not have intentions. Movement is random, and net movement happens due to probability - more particles on one side means more likely to move to the other side.',
     example: 'In diffusion, particles move randomly in all directions. More particles move from high concentration to low concentration simply because there are more particles there, not because they want to spread out.',
+    diagramId: 'particle_model',
   },
   {
     id: 'bio-osmosis-water-less-water',
@@ -3545,6 +3642,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Water moves from high water concentration to low water concentration. A concentrated solution has low water concentration, not less water.',
     whyWrong: 'This confuses water concentration with amount of water. Osmosis is about water concentration, not total amount.',
     example: 'In a concentrated salt solution, there is actually a lot of water, but the water concentration is low because salt molecules take up space. Water moves from pure water (high water concentration) to salt solution (low water concentration).',
+    diagramId: 'osmosis_diagram',
   },
   {
     id: 'bio-active-transport-faster-diffusion',
@@ -3554,6 +3652,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Active transport moves substances against the concentration gradient using energy. Diffusion moves down the gradient without energy.',
     whyWrong: 'Active transport and diffusion are fundamentally different processes. Active transport requires energy and works against the gradient.',
     example: 'Root hair cells use active transport to absorb mineral ions from soil where concentration is lower than in the cell. This cannot happen by diffusion, which only works down a gradient.',
+    diagramId: 'active_transport',
   },
   
   // ========== ORGANISATION ==========
@@ -3565,6 +3664,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Enzymes are not used up. They remain unchanged and can catalyze many reactions.',
     whyWrong: 'Enzymes are catalysts - they speed up reactions without being changed themselves.',
     example: 'One enzyme molecule can catalyze thousands of reactions. The enzyme remains the same after each reaction.',
+    diagramId: 'enzyme_action',
   },
   {
     id: 'bio-enzymes-make-reactions-happen',
@@ -3574,6 +3674,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Enzymes speed up reactions that would happen anyway, just very slowly. They lower activation energy.',
     whyWrong: 'Enzymes are catalysts - they speed up existing reactions, not create new ones.',
     example: 'Digestion of starch would happen eventually without amylase, but it would take years. Amylase speeds it up to seconds.',
+    diagramId: 'enzyme_action',
   },
   
   // ========== INFECTION AND RESPONSE ==========
@@ -3585,6 +3686,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Most bacteria are harmless or beneficial. Only some bacteria are pathogens that cause disease.',
     whyWrong: 'Many bacteria are essential for life, such as those in our gut that help digestion.',
     example: 'Bacteria in yogurt help digestion. Bacteria in soil break down dead matter. Only pathogenic bacteria cause disease.',
+    diagramId: 'pathogen_infection',
   },
   {
     id: 'bio-bacteria-viruses-same',
@@ -3594,6 +3696,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Bacteria are living cells that can reproduce independently. Viruses are not cells and can only reproduce inside host cells.',
     whyWrong: 'Bacteria and viruses are fundamentally different - bacteria are cells, viruses are not.',
     example: 'Bacteria can be killed by antibiotics. Viruses cannot be killed by antibiotics because they are not cells.',
+    diagramId: 'pathogen_infection',
   },
   
   // ========== BIOENERGETICS ==========
@@ -3605,6 +3708,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Plants make their own food (glucose) by photosynthesis. They get water and minerals from soil, but not food.',
     whyWrong: 'Plants are autotrophs - they make their own food using light energy, not from soil.',
     example: 'A plant in a pot makes glucose from carbon dioxide and water using light. The soil provides water and minerals, but the glucose comes from photosynthesis.',
+    diagramId: 'photosynthesis',
   },
   {
     id: 'bio-light-substance',
@@ -3614,6 +3718,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Light is energy, not a substance. Plants absorb light energy and convert it to chemical energy in glucose.',
     whyWrong: 'Light is electromagnetic radiation (energy), not matter. Plants convert light energy to chemical energy.',
     example: 'During photosynthesis, light energy is converted to chemical energy stored in glucose bonds. Light is not a material that becomes part of the plant.',
+    diagramId: 'photosynthesis',
   },
   {
     id: 'bio-chlorophyll-makes-glucose',
@@ -3623,6 +3728,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Chlorophyll absorbs light energy. The energy is used in reactions that make glucose from carbon dioxide and water.',
     whyWrong: 'Chlorophyll is a pigment that absorbs light. It does not make glucose - it enables the process.',
     example: 'Chlorophyll is like a solar panel - it captures light energy, but the energy is used by other parts of the cell to make glucose.',
+    diagramId: 'photosynthesis',
   },
   {
     id: 'bio-respiration-breathing',
@@ -3632,6 +3738,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Respiration is a chemical process in cells that releases energy from glucose. Breathing is the physical process of moving air.',
     whyWrong: 'Respiration happens in cells, not lungs. Breathing brings oxygen to cells for respiration.',
     example: 'When you breathe, you bring oxygen into your lungs. The oxygen then travels to cells where respiration happens, releasing energy.',
+    diagramId: 'respiration',
   },
   
   // ========== HOMEOSTASIS ==========
@@ -3643,6 +3750,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Homeostasis maintains dynamic equilibrium - values fluctuate around a set point and are corrected when they deviate.',
     whyWrong: 'Internal conditions fluctuate constantly. Homeostasis detects changes and corrects them, maintaining balance around a set point.',
     example: 'Blood glucose rises after eating, then insulin brings it back down. It doesn\'t stay exactly the same - it fluctuates around the normal range.',
+    diagramId: 'homeostasis',
   },
   {
     id: 'bio-hormones-faster-nerves',
@@ -3652,6 +3760,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Nerves use electrical impulses and are much faster than hormones, which travel in blood.',
     whyWrong: 'Electrical impulses travel much faster than blood flow. Nerves provide rapid responses; hormones provide slower, longer-lasting effects.',
     example: 'If you touch something hot, your hand pulls away instantly (nerves). Hormonal responses take seconds or minutes.',
+    diagramId: 'nervous_system',
   },
   
   // ========== INHERITANCE ==========
@@ -3663,6 +3772,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Dominant means the allele is expressed if present. It has nothing to do with how common it is or being stronger.',
     whyWrong: 'Dominance is about which allele is expressed, not frequency or strength. Recessive alleles can be more common.',
     example: 'Huntington\'s disease is caused by a dominant allele but is rare. Most people have the recessive (normal) allele.',
+    diagramId: 'genetic_inheritance',
   },
   {
     id: 'bio-evolution-adapt',
@@ -3672,6 +3782,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Organisms do not adapt or try to evolve. Natural selection acts on existing variation - individuals with advantageous characteristics survive and reproduce.',
     whyWrong: 'Evolution happens to populations over generations, not to individuals. Organisms do not choose to evolve.',
     example: 'A giraffe does not grow a longer neck because it wants to. Giraffes with longer necks (due to variation) survive better and pass on their genes.',
+    diagramId: 'natural_selection',
   },
   {
     id: 'bio-evolution-individuals',
@@ -3681,6 +3792,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Evolution happens to populations over many generations. Individuals do not evolve.',
     whyWrong: 'Evolution is a change in allele frequency in a population over time. Individuals cannot evolve.',
     example: 'A single person cannot evolve to be taller. But over many generations, a population\'s average height may change.',
+    diagramId: 'natural_selection',
   },
   
   // ========== ECOLOGY ==========
@@ -3692,6 +3804,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Energy flows through ecosystems and is lost at each trophic level. Materials (like carbon) are recycled, but energy is not.',
     whyWrong: 'Energy is lost as heat and cannot be recycled. Only materials cycle.',
     example: 'When a plant is eaten, energy flows to the consumer but is lost as heat. Carbon atoms cycle back to plants, but the energy does not.',
+    diagramId: 'ecosystem',
   },
   {
     id: 'bio-all-energy-transferred',
@@ -3701,6 +3814,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Only about 10% of energy is transferred. Most is lost through respiration, movement, waste, and heat.',
     whyWrong: 'Energy is lost at each level through various processes. Only a small percentage is available to the next level.',
     example: 'A rabbit eats grass. Most energy is used for respiration and movement, lost as heat. Only about 10% becomes rabbit biomass.',
+    diagramId: 'ecosystem',
   },
   
   // ========== PHYSICS (keeping existing) ==========
@@ -3712,6 +3826,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Energy is transferred, not destroyed. It moves between stores.',
     whyWrong: 'The law of conservation of energy states energy cannot be created or destroyed.',
     example: 'A ball rolling stops because energy is transferred to thermal energy (friction), not because energy disappears.',
+    diagramId: 'energy_profile',
   },
   // Chemistry misconceptions
   {
@@ -3722,6 +3837,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'In covalent bonding, atoms share pairs of electrons. Each atom contributes one electron to the shared pair.',
     whyWrong: 'Covalent bonds involve sharing, not donation. The electrons are shared between atoms.',
     example: 'In H₂, each hydrogen contributes one electron to form a shared pair. Neither atom "gives" its electron away.',
+    diagramId: 'ionic_covalent_bonding',
   },
   {
     id: 'chem-rate-always-temp',
@@ -3731,6 +3847,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Increasing temperature usually increases rate because particles have more kinetic energy and collide more often with enough energy. Enzymes can denature at very high temperatures.',
     whyWrong: 'For most reactions, yes. But enzymes denature above optimum temperature, which decreases rate.',
     example: 'Amylase works fastest at 37°C. At 80°C it denatures and stops working.',
+    diagramId: 'enzyme_action',
   },
   // Physics misconceptions
   {
@@ -3741,6 +3858,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'Current is the same at all points in a series circuit. Charge is conserved; electrons flow in a loop.',
     whyWrong: 'Current (charge per second) is the same everywhere in a series circuit. Nothing is "used up".',
     example: 'The same current flows through the battery, wire, and bulb. The bulb uses energy, not current.',
+    diagramId: 'circuit_diagram',
   },
 
   // ========== CHEMISTRY: Quantitative chemistry ==========
@@ -3752,6 +3870,7 @@ export const SCIENCE_MISCONCEPTIONS: ScienceMisconception[] = [
     correctUnderstanding: 'A mole is an amount of substance: 6.02 × 10²³ particles. It is linked to mass by M_r (moles = mass ÷ M_r).',
     whyWrong: 'Mole is a counting unit (like dozen). Mass and volume depend on the substance.',
     example: 'One mole of water has a mass of 18 g. One mole of oxygen gas has a mass of 32 g. Same number of particles, different masses.',
+    diagramId: 'moles_diagram',
   },
   // ========== CHEMISTRY: Chemical changes ==========
   {
@@ -3915,4 +4034,20 @@ export function getMisconceptionsBySubject(subject: ScienceSubject): ScienceMisc
  */
 export function getMethodMarkBreakdown(questionId: string): MethodMarkBreakdown | undefined {
   return METHOD_MARK_BREAKDOWNS.find(b => b.questionId === questionId);
+}
+
+/** Question IDs that have method mark breakdowns */
+const QUESTION_IDS_WITH_BREAKDOWNS = new Set(METHOD_MARK_BREAKDOWNS.map(b => b.questionId));
+
+/**
+ * Get 4–6 mark questions that have method mark breakdowns (for Method Mark Trainer)
+ */
+export function getQuestionsWithMethodMarkBreakdowns(
+  subject: ScienceSubject,
+  paper?: SciencePaper,
+  tier?: ScienceTier,
+  topic?: string
+): ScienceQuestion[] {
+  const all = getQuestionsByFilters(subject, paper, tier, topic);
+  return all.filter(q => q.marks >= 4 && QUESTION_IDS_WITH_BREAKDOWNS.has(q.id));
 }

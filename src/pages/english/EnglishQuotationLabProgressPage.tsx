@@ -103,14 +103,38 @@ export function EnglishQuotationLabProgressPage() {
         >
           <ChevronLeft size={24} style={{ color: 'rgb(var(--text))' }} />
         </button>
-        <div>
+        <div className="flex-1 min-w-0">
           <h1 className="text-xl font-bold" style={{ color: 'rgb(var(--text))' }}>
             Progress — {label}
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Quote familiarity heatmap, theme confidence, AO balance, grade ceiling
+            Quote familiarity, theme confidence, AO balance, grade ceiling
           </p>
         </div>
+      </div>
+
+      {/* Source switcher — switch between texts */}
+      <div className="flex flex-wrap gap-2">
+        {QUOTATION_LAB_SOURCE_IDS.map(sid => {
+          const isActive = validSource === sid;
+          return (
+            <button
+              key={sid}
+              type="button"
+              onClick={() => navigate(`/english-campus/literature/quotation-lab/progress/${sid}`)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                isActive ? 'ring-2' : ''
+              }`}
+              style={{
+                background: isActive ? 'var(--gradient-primary)' : 'rgb(var(--surface-2))',
+                color: isActive ? 'white' : 'rgb(var(--text-secondary))',
+                borderColor: isActive ? 'transparent' : 'rgb(var(--border))',
+              }}
+            >
+              {getQuotationLabSourceLabel(sid)}
+            </button>
+          );
+        })}
       </div>
 
       <section className="rounded-xl border p-5" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>

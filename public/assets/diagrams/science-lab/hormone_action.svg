@@ -1,0 +1,14 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" aria-label="Hormone: gland to target organ">
+  <defs>
+    <marker id="arrowho" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#4f46e5"/></marker>
+  </defs>
+  <rect x="44" y="48" width="88" height="64" rx="6" fill="rgba(251,191,36,0.12)" stroke="#b45309" stroke-width="1.5"/>
+  <text x="88" y="82" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Gland</text>
+  <line x1="134" y1="80" x2="174" y2="80" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrowho)"/>
+  <text x="154" y="62" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Hormone</text>
+  <text x="200" y="100" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">(in blood)</text>
+  <line x1="226" y1="80" x2="266" y2="80" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrowho)"/>
+  <rect x="270" y="48" width="86" height="64" rx="6" fill="rgba(34,197,94,0.1)" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="313" y="82" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Target organ</text>
+  <text x="200" y="148" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Hormones are chemical messengers; slower than nervous system but longer-lasting</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-label="Quadrat sampling">
+  <rect x="80" y="40" width="240" height="120" fill="rgba(34,197,94,0.06)" stroke="#334155" stroke-width="1.5"/>
+  <rect x="140" y="70" width="60" height="60" fill="none" stroke="#4f46e5" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="170" y="105" fill="#4f46e5" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Quadrat</text>
+  <circle cx="165" cy="85" r="4" fill="#16a34a"/><circle cx="195" cy="92" r="4" fill="#16a34a"/><circle cx="155" cy="110" r="4" fill="#16a34a"/>
+  <text x="200" y="188" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Random placement; count species; estimate population or distribution</text>
+</svg>

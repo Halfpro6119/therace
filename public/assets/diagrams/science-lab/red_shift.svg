@@ -1,0 +1,9 @@
+<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" aria-label="Red shift and Hubble's law">
+  <rect x="30" y="45" width="140" height="50" rx="4" fill="rgba(100,116,139,0.08)" stroke="#334155" stroke-width="1"/>
+  <text x="100" y="72" fill="#1e293b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Lab spectrum (reference)</text>
+  <rect x="230" y="45" width="140" height="50" rx="4" fill="rgba(248,113,113,0.08)" stroke="#dc2626" stroke-width="1"/>
+  <text x="300" y="72" fill="#1e293b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Distant galaxy (shifted → red)</text>
+  <path d="M50 115 L170 115" stroke="#64748b" stroke-width="1"/>
+  <path d="M250 115 L350 115" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="200" y="155" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Wavelengths longer → galaxy moving away; v ∝ d (Hubble)</text>
+</svg>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Lightbulb, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { QuotationLabSourceId } from '../../types/englishCampus';
@@ -101,15 +101,35 @@ function getFocusTheme(drill: QuotationDrillItem): string {
   return 'Focus';
 }
 
+/** Check if a drill involves the given quoteId */
+function drillInvolvesQuote(drill: QuotationDrillItem, quoteId: string): boolean {
+  if ('quoteId' in drill && drill.quoteId === quoteId) return true;
+  if ('quoteOptionIds' in drill && drill.quoteOptionIds?.includes(quoteId)) return true;
+  if ('quoteIdA' in drill && (drill.quoteIdA === quoteId || drill.quoteIdB === quoteId)) return true;
+  return false;
+}
+
 export function EnglishQuotationLabDrillsPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { sourceId } = useParams<{ sourceId: string }>();
   const validSource = sourceId && QUOTATION_LAB_SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
     ? (sourceId as QuotationLabSourceId)
     : 'Macbeth';
-  const drills = getQuotationLabDrillsBySource(validSource);
+  const allDrills = getQuotationLabDrillsBySource(validSource);
   const label = getQuotationLabSourceLabel(validSource);
+  const focusQuoteId = searchParams.get('quote');
   const [index, setIndex] = useState(0);
+
+  // When ?quote=X, jump to first drill involving that quote
+  useEffect(() => {
+    if (focusQuoteId && allDrills.length > 0) {
+      const idx = allDrills.findIndex(d => drillInvolvesQuote(d, focusQuoteId));
+      if (idx >= 0) setIndex(idx);
+    }
+  }, [focusQuoteId, allDrills]);
+
+  const drills = allDrills;
   const [showWhy, setShowWhy] = useState(false);
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [answer, setAnswer] = useState('');

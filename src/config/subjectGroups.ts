@@ -126,12 +126,10 @@ export const FEATURED_HUBS: SubjectHub[] = [
 ];
 
 /** Order for chosen subjects section. (Geography, Computer Science have dedicated hubs.) */
-export const CHOSEN_SUBJECT_NAMES: string[] = [
-  'Health and Social Studies',
-];
+export const CHOSEN_SUBJECT_NAMES: string[] = [];
 
 /** Languages section. */
-export const LANGUAGE_NAMES: string[] = ['French', 'Spanish'];
+export const LANGUAGE_NAMES: string[] = [];
 
 /** All subject names used in featured hubs (for exclusion from chosen/languages). */
 export const FEATURED_SUBJECT_NAMES = new Set(

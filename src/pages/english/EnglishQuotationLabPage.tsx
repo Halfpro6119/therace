@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Library, BookOpen, Tag, Zap, CheckCircle, RefreshCw, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Library, BookOpen, Tag, Zap, CheckCircle, RefreshCw, AlertTriangle, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   QUOTATION_LAB_TEXT_SOURCE_IDS,
@@ -78,6 +78,7 @@ const TILE_DRILL = {
   subtitle: 'Randomised drills based on your weak areas',
   getPath: (sourceId: string) => `/english-campus/literature/quotation-lab/drills/${sourceId}`,
   hasDrills: (id: string) => getQuotationLabDrillsBySource(id as QuotationLabSourceId).length > 0,
+  getDrillCount: (id: string) => getQuotationLabDrillsBySource(id as QuotationLabSourceId).length,
 };
 
 export function EnglishQuotationLabPage() {
@@ -86,24 +87,55 @@ export function EnglishQuotationLabPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={() => navigate('/english-campus/literature')}
-          className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
-          aria-label="Back"
-        >
-          <ChevronLeft size={24} style={{ color: 'rgb(var(--text))' }} />
-        </button>
-        <div>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => navigate('/english-campus/literature')}
+            className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+            aria-label="Back"
+          >
+            <ChevronLeft size={24} style={{ color: 'rgb(var(--text))' }} />
+          </button>
+          <div>
           <h1 className="text-2xl font-bold" style={{ color: 'rgb(var(--text))' }}>
             Quotation Lab
           </h1>
           <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            Select • Analyse • Deploy
+            Fewer quotes, used better — train selection not recall
           </p>
+          </div>
         </div>
+        <button
+          type="button"
+          onClick={() => navigate(`/english-campus/literature/quotation-lab/progress/${QUOTATION_LAB_TEXT_SOURCE_IDS[0]}`)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+          style={{ background: 'var(--gradient-primary)', color: 'white' }}
+        >
+          <BarChart3 size={18} />
+          My progress
+        </button>
       </div>
+
+      {/* Progress summary bar — consolidated, shown once */}
+      {(mastered > 0 || inProgress > 0 || weakCount > 0) && (
+        <div
+          className="flex flex-wrap items-center gap-4 px-4 py-3 rounded-xl border"
+          style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
+        >
+          <span className="flex items-center gap-1.5 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <CheckCircle size={16} style={{ color: '#059669' }} /> {mastered} mastered
+          </span>
+          <span className="flex items-center gap-1.5 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <RefreshCw size={16} style={{ color: '#2563EB' }} /> {inProgress} in progress
+          </span>
+          {weakCount > 0 && (
+            <span className="flex items-center gap-1.5 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+              <AlertTriangle size={16} style={{ color: '#D97706' }} /> {weakCount} weak themes
+            </span>
+          )}
+        </div>
+      )}
 
       {/* 3-column grid: 4 entry tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -143,19 +175,6 @@ export function EnglishQuotationLabPage() {
                 </button>
               );
             })}
-          </div>
-          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <span className="flex items-center gap-1">
-              <CheckCircle size={14} style={{ color: '#059669' }} /> {mastered} mastered
-            </span>
-            <span className="flex items-center gap-1">
-              <RefreshCw size={14} style={{ color: '#2563EB' }} /> {inProgress} in progress
-            </span>
-            {weakCount > 0 && (
-              <span className="flex items-center gap-1">
-                <AlertTriangle size={14} style={{ color: '#D97706' }} /> {weakCount} weak themes
-              </span>
-            )}
           </div>
         </motion.section>
 
@@ -210,19 +229,6 @@ export function EnglishQuotationLabPage() {
               );
             })}
           </div>
-          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <span className="flex items-center gap-1">
-              <CheckCircle size={14} style={{ color: '#059669' }} /> Quotes mastered
-            </span>
-            <span className="flex items-center gap-1">
-              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
-            </span>
-            {weakCount > 0 && (
-              <span className="flex items-center gap-1">
-                <AlertTriangle size={14} style={{ color: '#D97706' }} /> Weak themes
-              </span>
-            )}
-          </div>
         </motion.section>
 
         {/* By Theme */}
@@ -262,19 +268,6 @@ export function EnglishQuotationLabPage() {
               );
             })}
           </div>
-          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <span className="flex items-center gap-1">
-              <CheckCircle size={14} style={{ color: '#059669' }} /> Mastered
-            </span>
-            <span className="flex items-center gap-1">
-              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
-            </span>
-            {weakCount > 0 && (
-              <span className="flex items-center gap-1">
-                <AlertTriangle size={14} style={{ color: '#D97706' }} /> Weak themes
-              </span>
-            )}
-          </div>
         </motion.section>
 
         {/* Drill Mode — spans full width on 3-col so add as 4th or wrap; spec says 4 tiles, so 2x2 on large or 4th row */}
@@ -302,6 +295,7 @@ export function EnglishQuotationLabPage() {
           <div className="p-4 flex flex-wrap gap-2">
             {QUOTATION_LAB_SOURCE_IDS.map((sourceId: string) => {
               const hasDrills = TILE_DRILL.hasDrills(sourceId);
+              const drillCount = TILE_DRILL.getDrillCount?.(sourceId) ?? 0;
               const label = getQuotationLabSourceLabel(sourceId as QuotationLabSourceId);
               return (
                 <button
@@ -316,22 +310,12 @@ export function EnglishQuotationLabPage() {
                   }}
                 >
                   {label}
+                  {hasDrills && drillCount > 0 && (
+                    <span className="ml-1 opacity-80">({drillCount})</span>
+                  )}
                 </button>
               );
             })}
-          </div>
-          <div className="px-4 pb-3 flex flex-wrap gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <span className="flex items-center gap-1">
-              <CheckCircle size={14} style={{ color: '#059669' }} /> Mastered
-            </span>
-            <span className="flex items-center gap-1">
-              <RefreshCw size={14} style={{ color: '#2563EB' }} /> In progress
-            </span>
-            {weakCount > 0 && (
-              <span className="flex items-center gap-1">
-                <AlertTriangle size={14} style={{ color: '#D97706' }} /> {weakCount} weak themes
-              </span>
-            )}
           </div>
         </motion.section>
       </div>

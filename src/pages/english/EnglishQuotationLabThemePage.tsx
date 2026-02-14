@@ -72,9 +72,26 @@ export function EnglishQuotationLabThemePage() {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-center py-8" style={{ color: 'rgb(var(--text-secondary))' }}>
-          No quotes for {label} yet. Try Power or Guilt.
-        </p>
+        <div className="text-center py-8 space-y-3">
+          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+            No quotes for {label} yet. Try one of these themes:
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {QUOTATION_LAB_THEME_IDS.filter(t => getQuotationLabQuotesByTheme(t as QuotationLabThemeId).length > 0)
+              .slice(0, 4)
+              .map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => navigate(`/english-campus/literature/quotation-lab/theme/${t}`)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium"
+                  style={{ background: 'rgba(37, 99, 235, 0.15)', color: '#2563EB' }}
+                >
+                  {getQuotationLabThemeLabel(t as QuotationLabThemeId)}
+                </button>
+              ))}
+          </div>
+        </div>
       )}
     </div>
   );

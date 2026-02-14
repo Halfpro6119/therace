@@ -1,28 +1,38 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Lightbulb, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap } from 'lucide-react';
+import { ChevronLeft, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap, ClipboardList, GraduationCap } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
 import type { ScienceSubject, SciencePaper, ScienceTier, LabMode } from '../../types/scienceLab';
 
-const LAB_MODES: Array<{
+/** Single learning path: Learn (flashcards only) → Small tests → Bigger tests → Topic test → Full GCSE test */
+const LEARNING_PATH: Array<{
+  id: LabMode;
+  step: number;
+  title: string;
+  description: string;
+  icon: typeof BookOpen;
+  color: string;
+}> = [
+  { id: 'flashcard', step: 1, title: 'Learn', description: 'Flashcards – the only learning mode. Learn every concept, process, and equation.', icon: BookOpen, color: '#0EA5E9' },
+  { id: 'quickCheck', step: 2, title: 'Small tests', description: 'Quick checks on what you just learned. Prove understanding before moving on.', icon: Target, color: '#F59E0B' },
+  { id: 'methodMark', step: 3, title: 'Bigger tests', description: 'Higher-mark questions (4–6 marks). Idea marks, method marks, precision.', icon: ClipboardList, color: '#EC4899' },
+  { id: 'topicTest', step: 4, title: 'Topic test', description: 'Full test on one topic. Check your knowledge across a whole unit.', icon: FileQuestion, color: '#8B5CF6' },
+  { id: 'fullGcseTest', step: 5, title: 'Full GCSE test', description: 'Test the entire subject. Exam-style across all topics.', icon: GraduationCap, color: '#10B981' },
+];
+
+/** Extra practice – not part of the main path */
+const EXTRA_PRACTICE: Array<{
   id: LabMode;
   title: string;
   description: string;
-  icon: typeof Lightbulb;
+  icon: typeof FlaskConical;
   color: string;
-  order: number;
-  group: 'learn' | 'practise';
 }> = [
-  { id: 'concept', title: 'Concept Lab', description: 'Understanding first – visual models, misconceptions, "if this changes" scenarios', icon: Lightbulb, color: '#0EA5E9', order: 1, group: 'learn' },
-  { id: 'flashcard', title: 'Flashcard Mode', description: 'Learn it first – understand processes, not memorize facts. Required before quizzes.', icon: BookOpen, color: '#0EA5E9', order: 2, group: 'learn' },
-  { id: 'quickCheck', title: 'Quick Check', description: 'Do you actually understand? Micro-assessments before quizzes unlock.', icon: Target, color: '#F59E0B', order: 3, group: 'learn' },
-  { id: 'question', title: 'Question Lab', description: 'Exam-faithful questions – unlocks after flashcards mastered and quick checks passed.', icon: FileQuestion, color: '#EC4899', order: 4, group: 'learn' },
-  { id: 'methodMark', title: 'Method Mark Trainer', description: 'Train for 4–6 mark questions – idea marks, method marks, precision marks', icon: Target, color: '#F59E0B', order: 5, group: 'practise' },
-  { id: 'practical', title: 'Practical Lab', description: 'Required practicals – variables, method, risk assessment, evaluation', icon: FlaskConical, color: '#10B981', order: 6, group: 'practise' },
-  { id: 'equation', title: 'Equation Lab', description: 'Equations with units enforcement, rearranging practice, "spot the wrong unit" traps', icon: Calculator, color: '#8B5CF6', order: 7, group: 'practise' },
-  { id: 'misconception', title: 'Misconception Lab', description: 'Identify and correct classic wrong ideas – Grade 9 feature', icon: AlertTriangle, color: '#EF4444', order: 8, group: 'practise' },
+  { id: 'practical', title: 'Practical Lab', description: 'Required practicals – variables, method, risk assessment', icon: FlaskConical, color: '#10B981' },
+  { id: 'equation', title: 'Equation Lab', description: 'Equations, units, rearranging, "spot the wrong unit"', icon: Calculator, color: '#8B5CF6' },
+  { id: 'misconception', title: 'Misconception Lab', description: 'Identify and correct classic wrong ideas', icon: AlertTriangle, color: '#EF4444' },
 ];
 
 export function ScienceLabModePage() {
@@ -50,40 +60,57 @@ export function ScienceLabModePage() {
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
   const [searchParams] = useSearchParams();
   const topicFilter = searchParams.get('topic') ?? undefined;
+  const base = `/science-lab/${subject?.toLowerCase()}/${selectedPaper}/${selectedTier.toLowerCase()}`;
+  const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
 
-  // Recommended next step based on mastery
+  // Recommended next step: start with Learn, then suggest next step by progress
   const recommendedStep = useMemo(() => {
     const questions = getQuestionsByFilters(normalizedSubject, selectedPaper, selectedTier);
     const topics = new Set(questions.map(q => q.topic));
     let hasUnlockedTopic = false;
+    let hasTopicTestNotDone = false;
     topics.forEach(topic => {
       const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
       if (m?.quizUnlocked) hasUnlockedTopic = true;
+      if (m?.quizUnlocked && !m?.topicTestCompleted) hasTopicTestNotDone = true;
     });
-    if (hasUnlockedTopic) return { mode: 'question' as LabMode, label: 'Practice exam questions' };
+    // Suggest topic test when quiz unlocked and at least one topic hasn't had topic test
+    if (hasUnlockedTopic && hasTopicTestNotDone) {
+      return { mode: 'topicTest' as LabMode, label: 'Try a topic test (master a full unit)' };
+    }
+    if (hasUnlockedTopic) return { mode: 'methodMark' as LabMode, label: 'Try bigger tests (Method Mark)' };
     const anyMastery = Array.from(topics).some(topic => {
       const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
       return (m?.flashcardMastery || 0) > 0;
     });
-    if (anyMastery) return { mode: 'quickCheck' as LabMode, label: 'Complete Quick Check to unlock quizzes' };
-    return { mode: 'concept' as LabMode, label: 'Start with Concept Lab' };
+    if (anyMastery) return { mode: 'quickCheck' as LabMode, label: 'Do small tests (Quick Check)' };
+    return { mode: 'flashcard' as LabMode, label: 'Start with Learn (flashcards)' };
   }, [normalizedSubject, selectedPaper, selectedTier]);
 
   const handleEnterLab = (mode: LabMode) => {
+    if (mode === 'topicTest') {
+      navigate(`${base}/topics`);
+      return;
+    }
+    if (mode === 'fullGcseTest') {
+      navigate(`${base}/question`);
+      return;
+    }
     const routeMap: Record<LabMode, string> = {
       flashcard: 'flashcard',
       quickCheck: 'quick-check',
-      question: 'question',
-      concept: 'concept',
       methodMark: 'methodMark',
+      topicTest: 'topics',
+      fullGcseTest: 'question',
+      question: 'question',
       practical: 'practical',
       equation: 'equation',
       misconception: 'misconception',
       fixIt: 'fix-it',
     };
-    const base = `/science-lab/${subject?.toLowerCase()}/${selectedPaper}/${selectedTier.toLowerCase()}/${routeMap[mode]}`;
-    const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
-    navigate(base + query);
+    const path = routeMap[mode];
+    if (!path) return;
+    navigate(`${base}/${path}${query}`);
   };
 
   return (
@@ -107,7 +134,7 @@ export function ScienceLabModePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{subjectTitle} Lab</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          Choose your paper, tier, and lab mode
+          One path: Learn with flashcards → Small tests → Bigger tests → Topic test → Full GCSE test
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
           <Zap size={18} className="text-amber-300 flex-shrink-0" />
@@ -195,7 +222,7 @@ export function ScienceLabModePage() {
         <div className="mt-4">
           <button
             type="button"
-            onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${selectedPaper}/${selectedTier.toLowerCase()}/topics`)}
+            onClick={() => navigate(`${base}/topics`)}
             className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition"
             style={{ background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
           >
@@ -205,82 +232,80 @@ export function ScienceLabModePage() {
         </div>
       </motion.section>
 
-      {/* Lab Modes - Learn (core path) */}
+      {/* Learning path – 5 steps */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
           <BookOpen size={20} style={{ color: '#0EA5E9' }} />
-          Learn — Core Path
+          Your learning path
         </h2>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Follow this order: Concept → Flashcard → Quick Check → Question Lab
+          Follow in order: Learn (flashcards only) → Small tests → Bigger tests → Topic test → Full GCSE test
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {LAB_MODES.filter(m => m.group === 'learn').sort((a, b) => a.order - b.order).map((mode, index) => {
-            const Icon = mode.icon;
+        <div className="space-y-3">
+          {LEARNING_PATH.map((item, index) => {
+            const Icon = item.icon;
             return (
               <motion.button
-                key={mode.id}
+                key={item.id}
                 type="button"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.05 }}
-                onClick={() => handleEnterLab(mode.id)}
-                className="rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex flex-col"
+                onClick={() => handleEnterLab(item.id)}
+                className="w-full rounded-2xl p-5 sm:p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
                 style={{
                   background: 'rgb(var(--surface))',
                   borderColor: 'rgb(var(--border))',
                 }}
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ background: `${mode.color}30`, color: mode.color }}>Step {mode.order}</span>
+                <span
+                  className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
+                  style={{ background: item.color }}
+                >
+                  {item.step}
+                </span>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}20` }}>
+                  <Icon size={24} style={{ color: item.color }} />
                 </div>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${mode.color}20` }}>
-                  <Icon size={24} style={{ color: mode.color }} />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{item.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{item.description}</p>
                 </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>{mode.title}</h3>
-                <p className="text-sm flex-1" style={{ color: 'rgb(var(--text-secondary))' }}>{mode.description}</p>
-                <div className="mt-4 flex items-center gap-1 font-semibold text-sm" style={{ color: mode.color }}>
-                  <span>Enter Lab</span>
-                  <ChevronRight size={16} />
-                </div>
+                <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} className="flex-shrink-0" />
               </motion.button>
             );
           })}
         </div>
       </section>
 
-      {/* Lab Modes - Practise (support) */}
+      {/* Extra practice */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
           <Zap size={20} style={{ color: '#F59E0B' }} />
-          Practise — Strengthen Weak Areas
+          Extra practice
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {LAB_MODES.filter(m => m.group === 'practise').sort((a, b) => a.order - b.order).map((mode, index) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {EXTRA_PRACTICE.map((mode, index) => {
             const Icon = mode.icon;
             return (
               <motion.button
                 key={mode.id}
                 type="button"
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.05 }}
                 onClick={() => handleEnterLab(mode.id)}
-                className="rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex flex-col"
+                className="rounded-xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex flex-col"
                 style={{
                   background: 'rgb(var(--surface))',
                   borderColor: 'rgb(var(--border))',
                 }}
               >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${mode.color}20` }}>
-                  <Icon size={24} style={{ color: mode.color }} />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ background: `${mode.color}20` }}>
+                  <Icon size={20} style={{ color: mode.color }} />
                 </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>{mode.title}</h3>
-                <p className="text-sm flex-1" style={{ color: 'rgb(var(--text-secondary))' }}>{mode.description}</p>
-                <div className="mt-4 flex items-center gap-1 font-semibold text-sm" style={{ color: mode.color }}>
-                  <span>Enter Lab</span>
-                  <ChevronRight size={16} />
-                </div>
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'rgb(var(--text))' }}>{mode.title}</h3>
+                <p className="text-xs flex-1" style={{ color: 'rgb(var(--text-secondary))' }}>{mode.description}</p>
               </motion.button>
             );
           })}

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, BookOpen, Layers } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList } from 'lucide-react';
 import { getTopicsBySubject } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
@@ -28,7 +28,12 @@ export function ScienceLabTopicsPage() {
 
   const getTopicProgress = (topic: string) => {
     const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
-    return { mastery: m?.flashcardMastery || 0, unlocked: m?.quizUnlocked || false };
+    return {
+      mastery: m?.flashcardMastery || 0,
+      unlocked: m?.quizUnlocked || false,
+      topicTestCompleted: m?.topicTestCompleted || false,
+      topicTestScore: m?.topicTestScore,
+    };
   };
 
   return (
@@ -52,8 +57,40 @@ export function ScienceLabTopicsPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Map — {subjectTitle}</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Browse by topic or work on all topics. Paper {paperNum} • {tierValue}
+          Browse by topic, start a topic test, or work on all topics. Paper {paperNum} • {tierValue}
         </p>
+      </motion.section>
+
+      {/* Full GCSE test – all topics */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+      >
+        <button
+          type="button"
+          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/question`)}
+          className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+          style={{
+            background: 'rgb(var(--surface))',
+            borderColor: 'rgb(var(--border))',
+          }}
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500">
+              <FileQuestion size={28} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold mb-1" style={{ color: 'rgb(var(--text))' }}>
+                Full GCSE test
+              </h2>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Test the entire subject – all topics for this paper and tier
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={24} style={{ color: 'rgb(var(--text-secondary))' }} />
+        </button>
       </motion.section>
 
       {/* Work on all topics */}
@@ -97,33 +134,38 @@ export function ScienceLabTopicsPage() {
         <div className="space-y-3">
           {topics.map((topic, index) => {
             const progress = getTopicProgress(topic);
+            const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
             return (
-              <motion.button
+              <motion.div
                 key={topic}
-                type="button"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + index * 0.03 }}
-                onClick={() => {
-                  const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
-                  navigate(`${base}?topic=${encodeURIComponent(topic)}`);
-                }}
-                className="w-full rounded-xl p-5 text-left border shadow-sm hover:shadow-md transition-all"
+                className="rounded-xl p-5 border shadow-sm"
                 style={{
                   background: 'rgb(var(--surface))',
                   borderColor: 'rgb(var(--border))',
                 }}
               >
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-center justify-between gap-4">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`${base}?topic=${encodeURIComponent(topic)}`)}
+                    className="flex-1 min-w-0 text-left"
+                  >
                     <h3 className="text-base font-bold mb-1" style={{ color: 'rgb(var(--text))' }}>
                       {topic}
                     </h3>
-                    <div className="flex items-center gap-3 text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    <div className="flex items-center gap-3 text-sm flex-wrap" style={{ color: 'rgb(var(--text-secondary))' }}>
                       <span>{progress.mastery}% flashcard mastery</span>
                       {progress.unlocked && (
                         <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-500/20 text-green-700 dark:text-green-400">
                           Quiz unlocked
+                        </span>
+                      )}
+                      {progress.topicTestCompleted && progress.topicTestScore != null && (
+                        <span className="px-2 py-0.5 rounded text-xs font-semibold bg-purple-500/20 text-purple-700 dark:text-purple-400">
+                          Topic test: {progress.topicTestScore}%
                         </span>
                       )}
                     </div>
@@ -133,10 +175,40 @@ export function ScienceLabTopicsPage() {
                         style={{ width: `${Math.min(progress.mastery, 100)}%` }}
                       />
                     </div>
+                  </button>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`${base}/methodMark?topic=${encodeURIComponent(topic)}`);
+                      }}
+                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition hover:opacity-90 border"
+                      style={{
+                        background: 'rgb(var(--surface-2))',
+                        borderColor: 'rgb(var(--border))',
+                        color: 'rgb(var(--text))',
+                      }}
+                      title="Bigger tests (4–6 mark)"
+                    >
+                      <ClipboardList size={14} />
+                      Bigger tests
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`${base}/topic-test?topic=${encodeURIComponent(topic)}`);
+                      }}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition hover:opacity-90"
+                      style={{ background: '#8B5CF6', color: 'white' }}
+                    >
+                      <FileQuestion size={16} />
+                      Topic test
+                    </button>
                   </div>
-                  <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
                 </div>
-              </motion.button>
+              </motion.div>
             );
           })}
         </div>

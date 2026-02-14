@@ -1,0 +1,15 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" aria-label="Thyroxine negative feedback">
+  <defs>
+    <marker id="arrowt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#4f46e5"/></marker>
+  </defs>
+  <rect x="30" y="50" width="80" height="60" rx="6" fill="rgba(99,102,241,0.1)" stroke="#4f46e5" stroke-width="1"/>
+  <text x="70" y="85" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Pituitary / TSH</text>
+  <line x1="112" y1="80" x2="152" y2="80" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowt)"/>
+  <rect x="156" y="50" width="88" height="60" rx="6" fill="rgba(251,191,36,0.12)" stroke="#b45309" stroke-width="1"/>
+  <text x="200" y="85" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Thyroid → thyroxine</text>
+  <line x1="246" y1="80" x2="286" y2="80" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowt)"/>
+  <rect x="290" y="50" width="80" height="60" rx="6" fill="rgba(34,197,94,0.1)" stroke="#16a34a" stroke-width="1"/>
+  <text x="330" y="85" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Metabolism</text>
+  <path d="M330 110 L330 130 L70 130 L70 110" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2" fill="none"/>
+  <text x="200" y="152" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">High thyroxine → inhibits TSH (negative feedback)</text>
+</svg>

@@ -922,7 +922,7 @@ export const GOLD_QUOTE_IDS: Record<QuotationLabSourceId, string[]> = {
   London: ['Lon-1'],
   Exposure: ['Exp-1', 'Exp-2', 'EXP-CON-01', 'EXP-FUT-01'],
   CheckingOutMeHistory: ['COMH-ID-01', 'COMH-ID-02'],
-  Kamikaze: [],
+  Kamikaze: ['KAM-ID-01', 'KAM-ID-02', 'KAM-MEM-01'],
   BayonetCharge: ['BC-FEAR-01', 'BC-FEAR-02'],
 };
 
@@ -936,7 +936,7 @@ const QUOTES_BY_SOURCE: Record<QuotationLabSourceId, QuotationLabQuote[]> = (() 
     London: [],
     Exposure: [],
     CheckingOutMeHistory: [],
-    Kamikaze: [],
+    Kamikaze: ['KAM-ID-01', 'KAM-ID-02', 'KAM-MEM-01'],
     BayonetCharge: [],
   };
   for (const q of QUOTATION_LAB_QUOTES) {
@@ -955,7 +955,7 @@ const DRILLS_BY_SOURCE: Record<QuotationLabSourceId, QuotationDrillItem[]> = (()
     London: [],
     Exposure: [],
     CheckingOutMeHistory: [],
-    Kamikaze: [],
+    Kamikaze: ['KAM-ID-01', 'KAM-ID-02', 'KAM-MEM-01'],
     BayonetCharge: [],
   };
   for (const d of QUOTATION_LAB_DRILLS) {

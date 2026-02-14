@@ -1,0 +1,15 @@
+<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" aria-label="Empirical and molecular formula">
+  <defs>
+    <marker id="arrowem" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#4f46e5"/></marker>
+  </defs>
+  <text x="70" y="55" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Mass %</text>
+  <line x1="88" y1="62" x2="118" y2="62" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowem)"/>
+  <text x="103" y="52" fill="#64748b" font-size="9" text-anchor="middle" font-family="system-ui,sans-serif">→ moles</text>
+  <text x="155" y="55" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">÷ smallest</text>
+  <line x1="173" y1="62" x2="203" y2="62" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowem)"/>
+  <text x="238" y="55" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Ratio → empirical</text>
+  <line x1="256" y1="62" x2="286" y2="62" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowem)"/>
+  <text x="328" y="55" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Mᵣ ÷ empirical = n</text>
+  <text x="328" y="72" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">→ molecular</text>
+  <text x="200" y="118" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Empirical = simplest ratio; molecular = whole number multiple</text>
+</svg>

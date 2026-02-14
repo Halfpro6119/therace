@@ -1,0 +1,16 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-label="Free body diagram: forces">
+  <defs>
+    <marker id="arrowf" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#dc2626"/></marker>
+  </defs>
+  <rect x="155" y="70" width="90" height="60" rx="4" fill="rgba(100,116,139,0.08)" stroke="#334155" stroke-width="1.5"/>
+  <text x="200" y="105" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Object</text>
+  <line x1="200" y1="70" x2="200" y2="35" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowf)"/>
+  <text x="230" y="48" fill="#16a34a" font-size="11" font-weight="600" font-family="system-ui,sans-serif">Weight ↓</text>
+  <line x1="200" y1="130" x2="200" y2="165" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrowf)"/>
+  <text x="230" y="152" fill="#4f46e5" font-size="11" font-weight="600" font-family="system-ui,sans-serif">Reaction ↑</text>
+  <line x1="200" y1="100" x2="135" y2="100" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowf)"/>
+  <text x="125" y="88" fill="#ea580c" font-size="10" font-weight="600" text-anchor="end" font-family="system-ui,sans-serif">Friction ←</text>
+  <line x1="200" y1="100" x2="265" y2="100" stroke="#0ea5e9" stroke-width="2" marker-end="url(#arrowf)"/>
+  <text x="275" y="108" fill="#0ea5e9" font-size="10" font-weight="600" font-family="system-ui,sans-serif">Push →</text>
+  <text x="200" y="192" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Arrows show magnitude and direction; resultant determines acceleration</text>
+</svg>

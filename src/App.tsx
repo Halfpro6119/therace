@@ -58,6 +58,7 @@ import { ScienceLabMisconceptionLabPage } from './pages/science/ScienceLabMiscon
 import { ScienceLabFlashcardPage } from './pages/science/ScienceLabFlashcardPage';
 import { ScienceLabQuickCheckPage } from './pages/science/ScienceLabQuickCheckPage';
 import { ScienceLabTopicsPage } from './pages/science/ScienceLabTopicsPage';
+import { ScienceLabTopicTestPage } from './pages/science/ScienceLabTopicTestPage';
 import { BusinessHubHomePage } from './pages/business/BusinessHubHomePage';
 import { BusinessHubUnitPage } from './pages/business/BusinessHubUnitPage';
 import { BusinessHubTopicsPage } from './pages/business/BusinessHubTopicsPage';
@@ -304,6 +305,7 @@ function App() {
                 <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/topic-test" element={<ScienceLabTopicTestPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/flashcard" element={<ScienceLabFlashcardPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ScienceLabConceptLabPage />} />

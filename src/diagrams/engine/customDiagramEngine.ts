@@ -24,6 +24,7 @@ export interface ShapeStyle {
   fontWeight?: string | number;
   dashArray?: string;
   opacity?: number;
+  textAnchor?: 'start' | 'middle' | 'end';
 }
 
 export interface ShapeItem {
@@ -147,7 +148,7 @@ export class CustomDiagramEngine {
           width="${size.width}" 
           height="${size.height}" 
           xmlns="http://www.w3.org/2000/svg"
-          style="background-color: white;"
+          style="background-color: transparent;"
         >
           ${layersHtml}
         </svg>
@@ -428,6 +429,7 @@ export class CustomDiagramEngine {
     if (style.fontWeight) attrs.push(`font-weight="${style.fontWeight}"`);
     if (style.dashArray) attrs.push(`stroke-dasharray="${style.dashArray}"`);
     if (style.opacity) attrs.push(`opacity="${style.opacity}"`);
+    if (style.textAnchor) attrs.push(`text-anchor="${style.textAnchor}"`);
     return attrs.join(' ');
   }
 

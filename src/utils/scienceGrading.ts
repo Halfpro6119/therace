@@ -2,7 +2,15 @@
  * Science Lab answer grading – keyword matching and mark-scheme style checking
  */
 
-import type { ScienceQuestion, ScienceMisconception } from '../types/scienceLab';
+import type { ScienceQuestion, ScienceMisconception, MethodMarkBreakdown, MethodMarkPoint } from '../types/scienceLab';
+
+/** Result of grading an answer against a method mark breakdown */
+export interface MethodMarkGradeResult {
+  obtained: MethodMarkPoint[];
+  missed: MethodMarkPoint[];
+  score: number;
+  totalMarks: number;
+}
 
 /** Extract key science terms from text (words/phrases that matter for grading) */
 function extractKeywords(text: string): string[] {
@@ -82,6 +90,48 @@ export function gradeScienceAnswer(
   const correct = matchCount >= Math.ceil(correctKeywords.length * requiredRatio);
 
   return { correct };
+}
+
+/** Derive keywords from a description when keywords are not provided */
+function deriveKeywordsFromDescription(description: string): string[] {
+  const stopWords = new Set(['the', 'and', 'for', 'from', 'with', 'that', 'this', 'have', 'has', 'into', 'when', 'which', 'would', 'could', 'should', 'also', 'then', 'than']);
+  const normalized = description.toLowerCase().replace(/[^\w\s]/g, ' ');
+  const words = normalized.split(/\s+/).filter(w => w.length >= 4 && !stopWords.has(w));
+  return [...new Set(words)];
+}
+
+/** Check if user answer matches a mark point (via keywords) */
+function answerMatchesMarkPoint(point: MethodMarkPoint, userAnswerLower: string): boolean {
+  const keywords = point.keywords ?? deriveKeywordsFromDescription(point.description);
+  if (keywords.length === 0) return false;
+  const matchCount = keywords.filter(kw => userAnswerLower.includes(kw.toLowerCase())).length;
+  const requiredMatch = Math.max(1, Math.ceil(keywords.length * 0.4));
+  return matchCount >= requiredMatch;
+}
+
+/** Grade an answer against a method mark breakdown */
+export function gradeMethodMarkAnswer(
+  breakdown: MethodMarkBreakdown,
+  userAnswer: string
+): MethodMarkGradeResult {
+  const lower = userAnswer.trim().toLowerCase();
+  const allPoints: MethodMarkPoint[] = [
+    ...breakdown.ideaMarks,
+    ...breakdown.methodMarks,
+    ...breakdown.precisionMarks,
+  ];
+  const obtained: MethodMarkPoint[] = [];
+  const missed: MethodMarkPoint[] = [];
+  for (const point of allPoints) {
+    if (answerMatchesMarkPoint(point, lower)) {
+      obtained.push(point);
+    } else {
+      missed.push(point);
+    }
+  }
+  const score = obtained.reduce((sum, p) => sum + p.marks, 0);
+  const totalMarks = allPoints.reduce((sum, p) => sum + p.marks, 0);
+  return { obtained, missed, score, totalMarks };
 }
 
 /** Grade a misconception correction answer – keyword matching */

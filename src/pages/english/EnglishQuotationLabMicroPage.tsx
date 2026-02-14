@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, CheckCircle, AlertCircle, MessageSquare } from 'lucide-react';
 import type { QuotationLabSourceId } from '../../types/englishCampus';
 import {
@@ -69,8 +69,12 @@ function computeExaminerFeedback(
     feedback.push({ id: 'judge', message: 'Judgement present.', type: 'success' });
   }
 
-  // 5. Context (AO3) — heuristic: Jacobean, Shakespeare, historical, context
-  const contextWords = ['jacobean', 'shakespeare', 'context', 'historical', 'belief', 'society', 'audience'];
+  // 5. Context (AO3) — heuristic: Jacobean, Shakespeare, Victorian, Romantic, historical, etc.
+  const contextWords = [
+    'jacobean', 'shakespeare', 'victorian', 'romantic', 'blake', 'shelley', 'owen',
+    'context', 'historical', 'belief', 'society', 'audience', 'war', 'wwi', 'wwii',
+    'gender', 'class', 'industrial', 'political', 'religious', 'divine',
+  ];
   const hasContext = contextWords.some(w => contentNorm.includes(w));
   if (!hasContext && wordCount > 50) {
     feedback.push({ id: 'context', message: 'Context is relevant but not integrated. Weave it in.', type: 'warning' });
@@ -103,7 +107,10 @@ function computeAOSignals(content: string, quoteText: string, method: string): {
   if (wordCount > 30 && hasMethod && hasJudgement) AO2 = 'ok';
   else if (wordCount > 20 && (hasMethod || hasJudgement)) AO2 = 'warn';
 
-  const contextWords = ['jacobean', 'shakespeare', 'context', 'historical', 'belief', 'society', 'audience'];
+  const contextWords = [
+    'jacobean', 'shakespeare', 'victorian', 'romantic', 'blake', 'shelley', 'owen',
+    'context', 'historical', 'belief', 'society', 'audience', 'war', 'gender', 'class',
+  ];
   const hasContext = contextWords.some(w => contentNorm.includes(w));
   let AO3: AOSignal = 'fail';
   if (wordCount > 50 && hasContext) AO3 = 'ok';
@@ -113,14 +120,23 @@ function computeAOSignals(content: string, quoteText: string, method: string): {
 
 export function EnglishQuotationLabMicroPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { sourceId } = useParams<{ sourceId: string }>();
   const validSource = sourceId && QUOTATION_LAB_SOURCE_IDS.includes(sourceId as QuotationLabSourceId)
     ? (sourceId as QuotationLabSourceId)
     : 'Macbeth';
   const prompts = getMicroParagraphPromptsBySource(validSource);
   const label = getQuotationLabSourceLabel(validSource);
+  const focusQuoteId = searchParams.get('quote');
   const [selectedId, setSelectedId] = useState<string | null>(prompts[0]?.id ?? null);
   const [content, setContent] = useState('');
+
+  useEffect(() => {
+    if (focusQuoteId && prompts.length > 0) {
+      const match = prompts.find(p => p.quoteId === focusQuoteId);
+      if (match) setSelectedId(match.id);
+    }
+  }, [focusQuoteId, prompts]);
 
   const prompt = prompts.find(p => p.id === selectedId) ?? prompts[0];
   const quote = prompt ? getQuotationLabQuoteById(prompt.quoteId) : null;
@@ -210,15 +226,24 @@ export function EnglishQuotationLabMicroPage() {
                 </p>
               </div>
 
-              {/* Live AI feedback — AO1 / AO2 / AO3 signals only (no marks) */}
+              {/* Live AO feedback — AO1 / AO2 / AO3 with tooltips */}
               {aoSignals && (
                 <div className="flex flex-wrap gap-4 pt-2" aria-label="AO feedback">
                   {(['AO1', 'AO2', 'AO3'] as const).map(ao => {
                     const s = aoSignals[ao];
                     const icon = s === 'ok' ? '✔' : s === 'warn' ? '⚠' : '❌';
                     const color = s === 'ok' ? '#10B981' : s === 'warn' ? '#F59E0B' : '#EF4444';
+                    const tooltip =
+                      ao === 'AO1' ? 'AO1: Response to task, evidence selection' :
+                      ao === 'AO2' ? 'AO2: Method, language, effect' :
+                      'AO3: Context, ideas, audience';
                     return (
-                      <span key={ao} className="flex items-center gap-1.5 text-sm font-medium" style={{ color }}>
+                      <span
+                        key={ao}
+                        className="flex items-center gap-1.5 text-sm font-medium cursor-help"
+                        style={{ color }}
+                        title={tooltip}
+                      >
                         <span>{ao}</span>
                         <span>{icon}</span>
                       </span>

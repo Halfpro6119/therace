@@ -1,8 +1,8 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, FileQuestion, CheckCircle, XCircle, Calculator } from 'lucide-react';
-import { getQuestionsByFilters } from '../../config/scienceLabData';
+import { ChevronLeft, FileQuestion, CheckCircle, XCircle, Calculator, ChevronDown, ChevronUp, ClipboardList } from 'lucide-react';
+import { getQuestionsByFilters, getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { gradeScienceAnswer } from '../../utils/scienceGrading';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -13,6 +13,7 @@ export function ScienceLabQuestionLabPage() {
   const [userAnswer, setUserAnswer] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [showMarkScheme, setShowMarkScheme] = useState(false);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? parseInt(paper) as SciencePaper : 1;
@@ -25,8 +26,20 @@ export function ScienceLabQuestionLabPage() {
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
   const [searchParams] = useSearchParams();
   const topicFilter = searchParams.get('topic') ?? undefined;
+
+  // Redirect topic-filtered Question Lab to dedicated Topic Test page
+  useEffect(() => {
+    if (topicFilter && subject) {
+      navigate(
+        `/science-lab/${subject}/${paperNum}/${tierValue}/topic-test?topic=${encodeURIComponent(topicFilter)}`,
+        { replace: true }
+      );
+    }
+  }, [topicFilter, subject, paperNum, tierValue, navigate]);
+
   const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue, topicFilter);
   const currentQuestion = questions[currentQuestionIndex];
+  const methodMarkBreakdown = currentQuestion && currentQuestion.marks >= 4 ? getMethodMarkBreakdown(currentQuestion.id) : undefined;
 
   const handleBack = () => {
     navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);
@@ -51,6 +64,7 @@ export function ScienceLabQuestionLabPage() {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setUserAnswer('');
       setShowFeedback(false);
+      setShowMarkScheme(false);
     }
   };
 
@@ -117,6 +131,64 @@ export function ScienceLabQuestionLabPage() {
           <h2 className="text-lg font-semibold mb-4" style={{ color: 'rgb(var(--text))' }}>
             {currentQuestion.question}
           </h2>
+          {methodMarkBreakdown && (
+            <div className="mb-4">
+              <button
+                type="button"
+                onClick={() => setShowMarkScheme(!showMarkScheme)}
+                className="flex items-center gap-2 text-sm font-medium py-2"
+                style={{ color: 'rgb(var(--text-secondary))' }}
+              >
+                {showMarkScheme ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                <ClipboardList size={16} />
+                {showMarkScheme ? 'Hide' : 'View'} mark scheme (Method Mark Trainer)
+              </button>
+              {showMarkScheme && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="p-4 rounded-lg border overflow-hidden"
+                  style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))' }}
+                >
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Idea marks</p>
+                      <ul className="list-disc list-inside" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        {methodMarkBreakdown.ideaMarks.map((m) => (
+                          <li key={m.id}>{m.description}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Method marks</p>
+                      <ul className="list-disc list-inside" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        {methodMarkBreakdown.methodMarks.map((m) => (
+                          <li key={m.id}>{m.description}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    {methodMarkBreakdown.precisionMarks.length > 0 && (
+                      <div>
+                        <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Precision marks</p>
+                        <ul className="list-disc list-inside" style={{ color: 'rgb(var(--text-secondary))' }}>
+                          {methodMarkBreakdown.precisionMarks.map((m) => (
+                            <li key={m.id}>{m.description}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <Link
+                      to={`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue?.toLowerCase()}/methodMark`}
+                      className="inline-flex items-center gap-1 text-xs font-medium mt-2"
+                      style={{ color: 'rgb(var(--primary))' }}
+                    >
+                      Train with Method Mark Trainer →
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          )}
           {currentQuestion.equations && currentQuestion.equations.length > 0 && (
             <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>

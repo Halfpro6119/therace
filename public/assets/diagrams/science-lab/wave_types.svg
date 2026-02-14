@@ -1,0 +1,11 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-label="Transverse and longitudinal waves">
+  <text x="120" y="35" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Transverse</text>
+  <path d="M40 70 Q80 45 120 70 Q160 95 200 70 Q240 45 280 70 Q320 95 360 70" fill="none" stroke="#4f46e5" stroke-width="2"/>
+  <line x1="120" y1="70" x2="120" y2="95" stroke="#64748b" stroke-width="1"/>
+  <text x="120" y="112" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">λ wavelength</text>
+  <text x="80" y="58" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">crest</text>
+  <text x="200" y="95" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">trough</text>
+  <text x="280" y="35" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Longitudinal</text>
+  <path d="M40 155 L80 155 L90 140 L100 170 L110 140 L120 170 L130 140 L140 170 L150 140 L160 155 L200 155 L210 140 L220 170 L230 140 L240 170 L250 140 L260 170 L270 140 L280 155 L360 155" fill="none" stroke="#0ea5e9" stroke-width="1.5"/>
+  <text x="200" y="188" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Compressions and rarefactions; direction of energy is along wave</text>
+</svg>

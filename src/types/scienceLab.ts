@@ -11,7 +11,7 @@ export type ScienceTier = 'Foundation' | 'Higher';
 
 export type QuestionType = 'shortAnswer' | 'calculation' | 'explanation' | 'practical' | 'graph' | 'mixed';
 
-export type LabMode = 'concept' | 'question' | 'methodMark' | 'practical' | 'equation' | 'misconception' | 'flashcard' | 'quickCheck' | 'fixIt';
+export type LabMode = 'flashcard' | 'quickCheck' | 'methodMark' | 'topicTest' | 'fullGcseTest' | 'question' | 'practical' | 'equation' | 'misconception' | 'fixIt';
 
 export type FlashcardType = 'concept' | 'processChain' | 'equation' | 'practical' | 'graph' | 'misconception';
 
@@ -28,6 +28,8 @@ export interface ScienceConcept {
   topic: string;
   /** Core idea in 1-2 sentences, no waffle */
   coreIdea: string;
+  /** Optional custom flashcard question (one per concept for variety) */
+  flashcardPrompt?: string;
   /** Visual model: diagram, flow, graph description */
   visualModel: {
     type: 'diagram' | 'flow' | 'graph' | 'particle' | 'energy' | 'foodChain' | 'cell';
@@ -41,6 +43,8 @@ export interface ScienceConcept {
   changeScenarios: Array<{
     prompt: string;
     explanation: string;
+    /** Optional diagram for scenario */
+    visual?: { diagramId?: string; description?: string };
   }>;
 }
 
@@ -77,29 +81,26 @@ export interface ScienceQuestion {
   combinedScience?: boolean;
 }
 
+/** A single mark point in a method mark breakdown */
+export interface MethodMarkPoint {
+  id: string;
+  description: string;
+  marks: number;
+  /** Optional keywords for auto-grading; if absent, derived from description */
+  keywords?: string[];
+}
+
 /**
  * Method Mark breakdown for 4-6 mark questions
  */
 export interface MethodMarkBreakdown {
   questionId: string;
   /** Idea marks (conceptual understanding) */
-  ideaMarks: Array<{
-    id: string;
-    description: string;
-    marks: number;
-  }>;
+  ideaMarks: MethodMarkPoint[];
   /** Method marks (working/process) */
-  methodMarks: Array<{
-    id: string;
-    description: string;
-    marks: number;
-  }>;
+  methodMarks: MethodMarkPoint[];
   /** Precision marks (units, significant figures, terminology) */
-  precisionMarks: Array<{
-    id: string;
-    description: string;
-    marks: number;
-  }>;
+  precisionMarks: MethodMarkPoint[];
   /** What examiners punish */
   commonPenalties: string[];
 }
@@ -143,6 +144,8 @@ export interface SciencePractical {
     question: string;
     expectedPoints: string[];
   }>;
+  /** Optional diagram for equipment/setup */
+  visual?: { diagramId?: string; description?: string };
 }
 
 /**
@@ -189,6 +192,8 @@ export interface ScienceMisconception {
   whyWrong: string;
   /** Example of the misconception in action */
   example?: string;
+  /** Optional diagram showing wrong vs right */
+  diagramId?: string;
 }
 
 /**
@@ -238,6 +243,8 @@ export interface ScienceFlashcard {
     misconceptionWarning?: string;
     /** Optional micro-example */
     example?: string;
+    /** Optional diagram on back */
+    visual?: { diagramId?: string; description?: string };
   };
   /** Related concept/question IDs for linking */
   relatedConceptId?: string;
@@ -302,9 +309,22 @@ export interface TopicMastery {
   quickCheckPassed: boolean;
   /** Quiz unlocked */
   quizUnlocked: boolean;
+  /** Topic test completed (mini GCSE quiz for this unit) */
+  topicTestCompleted?: boolean;
+  /** Topic test score as percentage (0-100) from last attempt */
+  topicTestScore?: number;
+  /** Last topic test attempt timestamp */
+  topicTestLastAttempt?: string;
   /** Last updated */
   lastUpdated: string;
 }
+
+/**
+ * Topic test item – either a Quick Check (recall) or exam-style Question
+ */
+export type TopicTestItem =
+  | { type: 'quickCheck'; data: ScienceQuickCheck }
+  | { type: 'question'; data: ScienceQuestion };
 
 /**
  * Progress tracking for a lab session

@@ -1,0 +1,17 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-label="Food chain trophic levels">
+  <defs>
+    <marker id="arrowec" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#16a34a"/></marker>
+  </defs>
+  <circle cx="200" cy="42" r="26" fill="rgba(34,197,94,0.2)" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="200" y="46" fill="#1e293b" font-size="11" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Producer</text>
+  <line x1="185" y1="68" x2="125" y2="98" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowec)"/>
+  <line x1="200" y1="68" x2="200" y2="98" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowec)"/>
+  <line x1="215" y1="68" x2="275" y2="98" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowec)"/>
+  <rect x="95" y="102" width="70" height="44" rx="4" fill="rgba(99,102,241,0.1)" stroke="#4f46e5" stroke-width="1"/>
+  <rect x="165" y="102" width="70" height="44" rx="4" fill="rgba(99,102,241,0.1)" stroke="#4f46e5" stroke-width="1"/>
+  <rect x="235" y="102" width="80" height="44" rx="4" fill="rgba(99,102,241,0.1)" stroke="#4f46e5" stroke-width="1"/>
+  <text x="130" y="128" fill="#1e293b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Primary consumer</text>
+  <text x="200" y="128" fill="#1e293b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Primary consumer</text>
+  <text x="275" y="128" fill="#1e293b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Secondary consumer</text>
+  <text x="200" y="178" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Energy and biomass decrease up the food chain</text>
+</svg>

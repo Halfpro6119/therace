@@ -617,6 +617,23 @@ const SCIENCE_MISTAKES: MistakeItem[] = [
       "Respiration and photosynthesis are different. Plants do both: they release O₂ from photosynthesis (splitting water) and take in O₂ for respiration.",
     correctApproach:
       'In photosynthesis, plants take in CO₂ and water; they produce glucose and O₂. The O₂ comes from splitting water, not from "breathing out" CO₂.',
+    topic: 'Bioenergetics',
+  },
+  {
+    wrongAnswer: 'Particles want to spread out or choose to move',
+    whyStudentsThinkThis: 'We say diffusion happens "from high to low concentration" which sounds intentional.',
+    whyItsWrong:
+      'Particles move randomly due to kinetic energy. Net movement happens because there are more particles on one side—it is random motion, not choice.',
+    correctApproach: 'Diffusion is the net movement of particles from high to low concentration due to random particle movement. No intent or "wanting".',
+    topic: 'Cell Biology',
+  },
+  {
+    wrongAnswer: 'Active transport is just faster diffusion',
+    whyStudentsThinkThis: 'Both move substances across membranes.',
+    whyItsWrong:
+      'Active transport moves against the concentration gradient and requires energy (ATP). Diffusion is passive and down the gradient.',
+    correctApproach: 'Active transport: low → high, needs ATP. Diffusion: high → low, no energy. Different directions and energy requirements.',
+    topic: 'Cell Biology',
   },
 ];
 
@@ -911,16 +928,19 @@ export function getSuperpowersForSubject(subjectId: SubjectId): string[] {
 }
 
 export function getMistakeMuseumItems(subjectId: SubjectId, topic?: string): MistakeItem[] {
-  if (subjectId === 'science') return SCIENCE_MISTAKES;
-  if (subjectId === 'psychology') return PSYCHOLOGY_MISTAKES;
-  if (subjectId === 'business') return BUSINESS_MISTAKES;
-  if (subjectId === 'geography') return GEOGRAPHY_MISTAKES;
-  if (subjectId === 'health') return HEALTH_MISTAKES;
-  if (subjectId === 'religious-studies') return RS_MISTAKES;
-  if (subjectId === 'compute') return COMPUTE_MISTAKES;
-  if (subjectId === 'history') return HISTORY_MISTAKES;
-  if (subjectId === 'english') return ENGLISH_MISTAKES;
-  if (subjectId === 'maths') return MATHS_MISTAKES;
-  if (subjectId === 'languages') return LANGUAGES_MISTAKES;
-  return [];
+  const raw =
+    subjectId === 'science' ? SCIENCE_MISTAKES :
+    subjectId === 'psychology' ? PSYCHOLOGY_MISTAKES :
+    subjectId === 'business' ? BUSINESS_MISTAKES :
+    subjectId === 'geography' ? GEOGRAPHY_MISTAKES :
+    subjectId === 'health' ? HEALTH_MISTAKES :
+    subjectId === 'religious-studies' ? RS_MISTAKES :
+    subjectId === 'compute' ? COMPUTE_MISTAKES :
+    subjectId === 'history' ? HISTORY_MISTAKES :
+    subjectId === 'english' ? ENGLISH_MISTAKES :
+    subjectId === 'maths' ? MATHS_MISTAKES :
+    subjectId === 'languages' ? LANGUAGES_MISTAKES :
+    [];
+  if (!topic) return raw;
+  return raw.filter(item => !item.topic || item.topic.toLowerCase() === topic.toLowerCase());
 }

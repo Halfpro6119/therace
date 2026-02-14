@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ArrowRight } from 'lucide-react';
 import { storage } from '../utils/storage';
@@ -11,20 +10,10 @@ import { SettingsCard } from '../components/profile/SettingsCard';
 
 export function ProfilePage() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<'light' | 'dark'>(storage.getTheme());
   const profile = storage.getProfile();
   const streak = storage.getStreak();
   const attempts = storage.getAttempts();
   const masteryStates = storage.getAllMasteryStates();
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    storage.setTheme(theme);
-  }, [theme]);
 
   const calculateGrade9Readiness = () => {
     const states = Object.values(masteryStates);
@@ -87,7 +76,7 @@ export function ProfilePage() {
 
       <BadgeGrid profile={profile} streak={streak} attempts={attempts} />
 
-      <SettingsCard theme={theme} onThemeChange={setTheme} />
+      <SettingsCard />
     </div>
   );
 }

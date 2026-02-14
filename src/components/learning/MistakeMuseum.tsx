@@ -14,6 +14,8 @@ export interface MistakeItem {
   whyItsWrong: string;
   /** Optional: the correct answer or approach */
   correctApproach?: string;
+  /** Optional: topic for filtering (e.g. "Bioenergetics", "Cell Biology") */
+  topic?: string;
 }
 
 export interface MistakeMuseumProps {

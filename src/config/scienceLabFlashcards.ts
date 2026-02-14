@@ -11,6 +11,7 @@ import type {
   FlashcardType,
   ScienceQuickCheck,
   QuickCheckType,
+  TopicTestItem,
 } from '../types/scienceLab';
 import {
   SCIENCE_CONCEPTS,
@@ -26,6 +27,36 @@ import {
 } from './scienceLabData';
 
 /**
+ * Derive a short, human-readable label from concept id for use in prompts
+ * e.g. 'bio-diffusion' → 'diffusion', 'bio-cell-division' → 'cell division'
+ */
+function getConceptLabel(concept: { id: string }): string {
+  const withoutPrefix = concept.id.replace(/^(bio|chem|phys)-/, '');
+  const withoutSuffix = withoutPrefix.replace(/-00\d+$/, '').replace(/-grade9$/, '');
+  return withoutSuffix.replace(/-/g, ' ');
+}
+
+/**
+ * Get a stable, varied prompt for a concept when no custom flashcardPrompt is set
+ */
+function getConceptPrompt(concept: { id: string; topic: string; coreIdea: string; flashcardPrompt?: string }): string {
+  if (concept.flashcardPrompt) return concept.flashcardPrompt;
+  const label = getConceptLabel(concept);
+  const templates = [
+    () => `What is ${label} and how does it work?`,
+    () => `Explain ${label} in 1–2 sentences.`,
+    () => `What is the key idea behind ${label}?`,
+    () => `What must you understand about ${label}?`,
+    () => `Describe ${label}.`,
+    () => `How would you explain ${label} to another student?`,
+    () => `What is the core concept of ${label}?`,
+    () => `Summarise ${label}.`,
+  ];
+  const idx = concept.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % templates.length;
+  return templates[idx]();
+}
+
+/**
  * Generate flashcards from concepts
  */
 function generateConceptFlashcards(
@@ -39,14 +70,8 @@ function generateConceptFlashcards(
 
   const flashcards: ScienceFlashcard[] = [];
 
-  concepts.forEach((concept, conceptIdx) => {
-    // Varied prompt templates to reduce predictability and strengthen retrieval
-    const promptTemplates = [
-      `What is the core idea behind ${concept.topic}?`,
-      `Explain the key concept of ${concept.topic} in 1–2 sentences.`,
-      `What must you understand about ${concept.topic}?`,
-    ];
-    const prompt = promptTemplates[conceptIdx % promptTemplates.length];
+  concepts.forEach((concept) => {
+    const prompt = getConceptPrompt(concept);
 
     // Main concept card
     flashcards.push({
@@ -83,11 +108,17 @@ function generateConceptFlashcards(
         type: 'processChain',
         front: {
           prompt: scenario.prompt,
+          visual: scenario.visual ? {
+            type: 'diagram',
+            description: scenario.visual.description ?? scenario.explanation,
+            diagramId: scenario.visual.diagramId,
+          } : undefined,
         },
         back: {
           explanation: scenario.explanation,
           keyTerms: extractKeyTerms(scenario.explanation),
           misconceptionWarning: concept.commonMisconception,
+          visual: scenario.visual,
         },
         relatedConceptId: concept.id,
       });
@@ -119,12 +150,18 @@ function generateMisconceptionFlashcards(
       type: 'misconception',
       front: {
         prompt: `What is wrong with this idea: "${misconception.misconception}"?`,
+        visual: misconception.diagramId ? {
+          type: 'diagram',
+          description: misconception.correctUnderstanding,
+          diagramId: misconception.diagramId,
+        } : undefined,
       },
       back: {
         explanation: misconception.correctUnderstanding,
         keyTerms: extractKeyTerms(misconception.correctUnderstanding),
         misconceptionWarning: misconception.misconception,
         example: misconception.example,
+        visual: misconception.diagramId ? { diagramId: misconception.diagramId, description: misconception.correctUnderstanding } : undefined,
       },
     });
 
@@ -139,12 +176,18 @@ function generateMisconceptionFlashcards(
         type: 'misconception',
         front: {
           prompt: `True or False: "${misconception.misconception}"`,
+          visual: misconception.diagramId ? {
+            type: 'diagram',
+            description: misconception.correctUnderstanding,
+            diagramId: misconception.diagramId,
+          } : undefined,
         },
         back: {
           explanation: `False. ${misconception.correctUnderstanding}`,
           keyTerms: extractKeyTerms(misconception.correctUnderstanding),
           misconceptionWarning: misconception.misconception,
           example: misconception.example,
+          visual: misconception.diagramId ? { diagramId: misconception.diagramId, description: misconception.correctUnderstanding } : undefined,
         },
       });
     }
@@ -175,10 +218,16 @@ function generatePracticalFlashcards(
       type: 'practical',
       front: {
         prompt: `What is the purpose of the practical: ${practical.title}?`,
+        visual: practical.visual ? {
+          type: 'diagram',
+          description: practical.visual.description ?? practical.purpose,
+          diagramId: practical.visual.diagramId,
+        } : undefined,
       },
       back: {
         explanation: practical.purpose,
         keyTerms: extractKeyTerms(practical.purpose).length > 0 ? extractKeyTerms(practical.purpose) : ['purpose', 'investigate', 'determine'],
+        visual: practical.visual,
       },
       relatedPracticalId: practical.id,
     });
@@ -425,6 +474,11 @@ export function generateQuickChecks(
       ...otherTopicWrong,
     ].filter((v, i, a) => a.indexOf(v) === i && v !== misconception.correctUnderstanding);
     const options = [misconception.correctUnderstanding, ...distractors.slice(0, 2)].sort(() => Math.random() - 0.5);
+    // Use the misconception as context so the question is specific, not "what is true about [topic]"
+    const misconceptionQuote = misconception.misconception.length > 120
+      ? misconception.misconception.slice(0, 117) + '…'
+      : misconception.misconception;
+    const question = `A student thinks: "${misconceptionQuote}" Which is the correct understanding?`;
     quickChecks.push({
       id: `quickcheck-misconception-${misconception.id}`,
       subject,
@@ -432,7 +486,7 @@ export function generateQuickChecks(
       tier,
       topic: misconception.topic,
       type: 'multipleChoice',
-      question: `Which statement is correct about ${misconception.topic}?`,
+      question,
       options,
       correctAnswer: misconception.correctUnderstanding,
       feedback: {
@@ -505,4 +559,31 @@ export function getQuickChecksByFilters(
   const all = generateQuickChecks(subject, paper, tier);
   if (topic) return all.filter(q => q.topic === topic);
   return all;
+}
+
+/**
+ * Get combined topic test items: Quick Checks (recall) + SCIENCE_QUESTIONS (exam-style)
+ * Shuffled for variety. Topic is required.
+ */
+export function getTopicTestItems(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier,
+  topic: string
+): TopicTestItem[] {
+  const quickChecks = getQuickChecksByFilters(subject, paper, tier, topic);
+  const questions = getQuestionsByFilters(subject, paper, tier, topic);
+
+  const items: TopicTestItem[] = [
+    ...quickChecks.map((q): TopicTestItem => ({ type: 'quickCheck', data: q })),
+    ...questions.map((q): TopicTestItem => ({ type: 'question', data: q })),
+  ];
+
+  // Shuffle for variety
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  return items;
 }

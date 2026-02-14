@@ -1,0 +1,12 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" aria-label="Simple circuit">
+  <rect x="45" y="55" width="30" height="50" rx="2" fill="none" stroke="#334155" stroke-width="2"/>
+  <text x="60" y="85" fill="#1e293b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Cell</text>
+  <line x1="75" y1="80" x2="115" y2="80" stroke="#334155" stroke-width="2"/>
+  <rect x="118" y="68" width="44" height="24" rx="2" fill="none" stroke="#334155" stroke-width="1.5"/>
+  <text x="140" y="85" fill="#1e293b" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">Lamp</text>
+  <line x1="162" y1="80" x2="238" y2="80" stroke="#334155" stroke-width="2"/>
+  <line x1="238" y1="80" x2="238" y2="120" stroke="#334155" stroke-width="2"/>
+  <line x1="238" y1="120" x2="60" y2="120" stroke="#334155" stroke-width="2"/>
+  <line x1="60" y1="120" x2="60" y2="80" stroke="#334155" stroke-width="2"/>
+  <text x="200" y="152" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif">Current same in series; add ammeter in series, voltmeter in parallel</text>
+</svg>

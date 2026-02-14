@@ -21,21 +21,25 @@ const assetCache = new Map<string, Diagram>();
 export function DiagramRenderer({ metadata, className = '', showWarnings = false, fitToContainer = false }: DiagramRendererProps) {
   const [template, setTemplate] = useState<DiagramTemplate | null>(null);
   const [asset, setAsset] = useState<Diagram | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !(metadata.mode === 'custom' && metadata.custom));
   const [error, setError] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadDiagram();
-  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params)]);
+  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.custom)]);
 
   const loadDiagram = async () => {
-    setLoading(true);
     setError(null);
     setWarnings([]);
 
     try {
+      if (metadata.mode === 'custom' && metadata.custom) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
       if (metadata.mode === 'auto') {
         setLoading(false);
       } else if (metadata.mode === 'template' && metadata.templateId) {
@@ -147,7 +151,7 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
     }
 
     return { svg: '', width: 0, height: 0, warnings: [] as string[] };
-  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.overrides), template, asset]);
+  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.overrides), JSON.stringify(metadata.custom), template, asset]);
 
   const renderedSvg = renderResult.svg || '';
 
@@ -185,7 +189,7 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
     );
   }
 
-  if (error || (!template && !asset && metadata.mode !== 'auto')) {
+  if (error || (!template && !asset && metadata.mode !== 'auto' && metadata.mode !== 'custom')) {
     if (showWarnings && error) {
       return (
         <div className="diagram-renderer-error bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">

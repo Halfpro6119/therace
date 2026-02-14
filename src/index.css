@@ -3,54 +3,8 @@
 @tailwind utilities;
 
 @layer base {
+  /* Dark mode only */
   :root {
-    /* Grade9 Sprint Brand Colors - Light Mode */
-    --bg: 250 250 252;
-    --surface: 255 255 255;
-    --surface-2: 248 249 252;
-    --surface-elevated: 255 255 255;
-    --text: 15 23 42;
-    --text-secondary: 51 65 85;
-    --muted: 100 116 139;
-    --border: 226 232 240;
-    --border-light: 241 245 249;
-
-    /* Accent System - Indigo/Purple Elite */
-    --accent: 99 102 241;
-    --accent-hover: 79 70 229;
-    --accent-2: 139 92 246;
-    --accent-glow: 165 180 252;
-
-    /* Semantic Colors */
-    --success: 34 197 94;
-    --success-light: 134 239 172;
-    --warning: 251 146 60;
-    --warning-light: 253 186 116;
-    --danger: 239 68 68;
-    --danger-light: 252 165 165;
-
-    /* Elite Colors */
-    --elite: 168 85 247;
-    --elite-pink: 236 72 153;
-
-    /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%);
-    --gradient-success: linear-gradient(135deg, rgb(34 197 94) 0%, rgb(59 130 246) 100%);
-    --gradient-elite: linear-gradient(135deg, rgb(79 70 229) 0%, rgb(168 85 247) 50%, rgb(236 72 153) 100%);
-    --gradient-subtle: linear-gradient(135deg, rgb(99 102 241 / 0.05) 0%, rgb(139 92 246 / 0.05) 100%);
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-    --shadow-glow: 0 0 20px rgb(99 102 241 / 0.3);
-    --shadow-glow-lg: 0 0 40px rgb(99 102 241 / 0.4);
-  }
-
-  .dark {
     /* Grade9 Sprint Brand Colors - Dark Mode */
     --bg: 9 9 11;
     --surface: 24 24 27;
@@ -62,13 +16,14 @@
     --border: 63 63 70;
     --border-light: 52 52 56;
 
-    /* Accent System - Brighter for Dark */
+    /* Accent System */
     --accent: 129 140 248;
     --accent-hover: 165 180 252;
     --accent-2: 167 139 250;
     --accent-glow: 99 102 241;
+    --accent-light: 99 102 241;
 
-    /* Semantic Colors - Adjusted */
+    /* Semantic Colors */
     --success: 34 197 94;
     --success-light: 74 222 128;
     --warning: 251 146 60;
@@ -80,7 +35,15 @@
     --elite: 192 132 252;
     --elite-pink: 244 114 182;
 
-    /* Shadows - Deeper */
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, rgb(99 102 241) 0%, rgb(139 92 246) 100%);
+    --gradient-success: linear-gradient(135deg, rgb(34 197 94) 0%, rgb(59 130 246) 100%);
+    --gradient-elite: linear-gradient(135deg, rgb(79 70 229) 0%, rgb(168 85 247) 50%, rgb(236 72 153) 100%);
+    --gradient-subtle: linear-gradient(135deg, rgb(99 102 241 / 0.05) 0%, rgb(139 92 246 / 0.05) 100%);
+
+    --decorative-opacity: 0.1;
+
+    /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
@@ -89,22 +52,9 @@
     --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
     --shadow-glow: 0 0 30px rgb(129 140 248 / 0.4);
     --shadow-glow-lg: 0 0 50px rgb(129 140 248 / 0.5);
-    --muted: 148 163 184;
-    --border: 51 51 64;
-    --border-light: 40 40 48;
 
-    /* Brand Colors - adjusted for dark */
-    --accent: 129 140 248;
-    --accent-hover: 165 180 252;
-    --accent-light: 99 102 241;
-
-    /* Shadows for dark mode */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.6);
-    --shadow-glow: 0 0 30px rgb(129 140 248 / 0.4);
+    --bg-decorative: none;
+    --glass-opacity: 0.8;
   }
 
   * {
@@ -114,7 +64,8 @@
   body {
     @apply antialiased;
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: rgb(var(--bg));
+    background-color: rgb(var(--bg));
+    background-image: var(--bg-decorative);
     color: rgb(var(--text));
     font-feature-settings: 'kern' 1, 'liga' 1;
     -webkit-font-smoothing: antialiased;
@@ -204,7 +155,7 @@
 
   /* Glass Effect */
   .glass {
-    background: rgb(var(--surface) / 0.8);
+    background: rgb(var(--surface) / var(--glass-opacity, 0.9));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgb(var(--border) / 0.5);
@@ -411,7 +362,7 @@
     transform: translateX(-50%);
     width: 100%;
     height: 600px;
-    background: radial-gradient(circle at top center, rgb(var(--accent) / 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle at top center, rgb(var(--accent) / var(--decorative-opacity, 0.1)) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
   }
@@ -425,7 +376,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgb(var(--elite) / 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle at center, rgb(var(--elite) / var(--decorative-opacity, 0.1)) 0%, transparent 70%);
     pointer-events: none;
   }
 
@@ -916,9 +867,14 @@
     font-weight: 600;
   }
 
+  /* Dark mode: keep diagram area light so dark strokes/text remain readable */
+  .dark .diagram-svg-wrapper {
+    background: rgb(248 250 252) !important;
+  }
+
   /* Optional: subtle dark-mode text legibility */
   .dark .diagram-svg-wrapper svg text {
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.08));
   }
 
   .diagram-caption {
@@ -953,5 +909,52 @@
 
   .diag-muted {
     opacity: 0.35 !important;
+  }
+
+  /* Science Lab flashcard diagrams – fit within cards */
+  .science-flashcard-diagram {
+    @apply w-full overflow-hidden rounded-lg;
+  }
+
+  .science-flashcard-diagram-front {
+    height: 160px;
+    max-width: 100%;
+  }
+
+  .science-flashcard-diagram-front .diagram-renderer,
+  .science-flashcard-diagram-front .diagram-container,
+  .science-flashcard-diagram-front .diagram-svg-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .science-flashcard-diagram-front .diagram-svg-wrapper svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 160px;
+    object-fit: contain;
+  }
+
+  .science-flashcard-diagram-back {
+    height: 120px;
+    max-width: 100%;
+  }
+
+  .science-flashcard-diagram-back .diagram-renderer,
+  .science-flashcard-diagram-back .diagram-container,
+  .science-flashcard-diagram-back .diagram-svg-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .science-flashcard-diagram-back .diagram-svg-wrapper svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
   }
 }

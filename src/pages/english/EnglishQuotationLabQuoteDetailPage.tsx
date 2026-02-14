@@ -112,22 +112,30 @@ export function EnglishQuotationLabQuoteDetailPage() {
           <nav className="text-xs mb-1" style={{ color: 'rgb(var(--muted))' }}>
             Quotation Lab → {label}
           </nav>
-          <h1 className="text-xl font-bold truncate" style={{ color: 'rgb(var(--text))' }}>
-            "{quote.quote}"
-          </h1>
-          <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {label} · {quote.location ?? '—'}
+          <h1 className="text-lg font-semibold" style={{ color: 'rgb(var(--text))' }}>
+            {label}
+            {quote.location && <span className="font-normal opacity-80"> · {quote.location}</span>}
             {isGold && (
               <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#D97706' }}>
                 Gold quote
               </span>
             )}
-          </p>
+          </h1>
         </div>
       </div>
 
-      {/* Exam Mode default: quote + themes + one-line insight only */}
-      <div className="rounded-lg border p-4" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))' }}>
+      {/* Hero quote block — prominent, exam-ready */}
+      <div
+        className="rounded-xl border-l-4 p-4"
+        style={{
+          borderLeftColor: '#7C3AED',
+          background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, rgba(124, 58, 237, 0.02) 100%)',
+          borderColor: 'rgb(var(--border))',
+        }}
+      >
+        <blockquote className="text-lg italic mb-3" style={{ color: 'rgb(var(--text))' }}>
+          "{quote.quote}"
+        </blockquote>
         <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>{quote.meaning}</p>
         <div className="flex flex-wrap gap-1.5">
           {quote.themes.map(t => (
@@ -161,8 +169,10 @@ export function EnglishQuotationLabQuoteDetailPage() {
           open={openPanel === 'how'}
           onToggle={() => setOpenPanel(openPanel === 'how' ? null : 'how')}
         >
-          <p>{quote.methods?.join(', ') ?? quote.method} → purpose.</p>
-          <p className="mt-2">{quote.method} shows purpose, not just technique spotting.</p>
+          <p>
+            {(quote.methods?.length ? quote.methods.join(', ') : quote.method) || 'Method'}
+            {' '}→ link to purpose and effect, not just technique spotting.
+          </p>
           {quote.commonMisuse && (
             <p className="mt-2 text-amber-600 dark:text-amber-400">Avoid: {quote.commonMisuse}</p>
           )}
@@ -220,25 +230,25 @@ export function EnglishQuotationLabQuoteDetailPage() {
         </AccordionPanel>
       </div>
 
-      {/* Action buttons */}
+      {/* Action buttons — primary CTAs use gradient */}
       <div className="flex flex-wrap gap-3 pt-2">
         <button
           type="button"
-          onClick={() => navigate(`/english-campus/literature/quotation-lab/drills/${validSource}`)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium"
-          style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#7C3AED' }}
+          onClick={() => navigate(`/english-campus/literature/quotation-lab/drills/${validSource}?quote=${quote.id}`)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition hover:opacity-90"
+          style={{ background: 'var(--gradient-primary)', color: 'white' }}
         >
           <FlaskConical size={18} />
-          Start Drills with This Quote
+          Drill this quote
         </button>
         <button
           type="button"
-          onClick={() => navigate(`/english-campus/literature/quotation-lab/micro/${validSource}`)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium"
-          style={{ background: 'rgba(14, 165, 233, 0.2)', color: '#0EA5E9' }}
+          onClick={() => navigate(`/english-campus/literature/quotation-lab/micro/${validSource}?quote=${quote.id}`)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition hover:opacity-90"
+          style={{ background: 'var(--gradient-primary)', color: 'white' }}
         >
           <PenLine size={18} />
-          Build a Paragraph
+          Build a paragraph
         </button>
         <button
           type="button"
