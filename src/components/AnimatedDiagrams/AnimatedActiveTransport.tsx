@@ -19,8 +19,7 @@ export function AnimatedActiveTransport() {
   return (
     <svg
       viewBox={VIEW_BOX}
-      className="w-full h-auto"
-      style={{ maxHeight: 200 }}
+      className="w-full h-full min-h-[200px]"
       aria-label="Active transport: particle moving against concentration gradient with ATP"
     >
       <rect x={30} y={50} width={140} height={100} rx={4} stroke={STROKE} fill={LOW_FILL} strokeWidth={1.5} />

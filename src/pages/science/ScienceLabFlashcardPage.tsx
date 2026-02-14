@@ -52,12 +52,12 @@ type LearnStep =
   | { type: 'biggerTest'; topic: string; questions: ScienceQuestion[]; groupIndex: number };
 
 const CARD_TYPE_STYLE: Record<FlashcardType, { icon: typeof Lightbulb; color: string; bgColor: string; label: string }> = {
-  concept: { icon: Lightbulb, color: '#0EA5E9', bgColor: 'rgba(14, 165, 233, 0.12)', label: 'Concept' },
-  processChain: { icon: GitBranch, color: '#8B5CF6', bgColor: 'rgba(139, 92, 246, 0.12)', label: 'Process' },
-  equation: { icon: Calculator, color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.12)', label: 'Equation' },
-  practical: { icon: FlaskConical, color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.12)', label: 'Practical' },
-  misconception: { icon: AlertTriangle, color: '#EF4444', bgColor: 'rgba(239, 68, 68, 0.12)', label: 'Misconception' },
-  graph: { icon: GitBranch, color: '#6366F1', bgColor: 'rgba(99, 102, 241, 0.12)', label: 'Graph' },
+  concept: { icon: Lightbulb, color: '#38BDF8', bgColor: 'rgba(56, 189, 248, 0.1)', label: 'Concept' },
+  processChain: { icon: GitBranch, color: '#A78BFA', bgColor: 'rgba(167, 139, 250, 0.1)', label: 'Process' },
+  equation: { icon: Calculator, color: '#FBBF24', bgColor: 'rgba(251, 191, 36, 0.1)', label: 'Equation' },
+  practical: { icon: FlaskConical, color: '#34D399', bgColor: 'rgba(52, 211, 153, 0.1)', label: 'Practical' },
+  misconception: { icon: AlertTriangle, color: '#F87171', bgColor: 'rgba(248, 113, 113, 0.1)', label: 'Misconception' },
+  graph: { icon: GitBranch, color: '#818CF8', bgColor: 'rgba(129, 140, 248, 0.1)', label: 'Graph' },
 };
 
 const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
@@ -547,9 +547,20 @@ export function ScienceLabFlashcardPage() {
       ? `Learn: ${currentStep.topic} — Card ${currentFlashcardIndex} of ${totalFlashcards}`
       : '';
 
+  /** Flashcard steps from current+1 until next biggerTest (for deck preview) */
+  const upcomingFlashcardsUntilTest = useMemo(() => {
+    const upcoming: LearnStep[] = [];
+    for (let i = stepIndex + 1; i < learnSteps.length; i++) {
+      const step = learnSteps[i];
+      if (step.type === 'biggerTest') break;
+      upcoming.push(step);
+    }
+    return upcoming;
+  }, [learnSteps, stepIndex]);
+
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
+    <div className="min-h-screen flex flex-col" style={{ background: 'rgb(var(--bg))' }}>
+      <div className="flex-1 w-full max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <button type="button" onClick={handleBack} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
             <ChevronLeft size={18} /> Back
@@ -575,8 +586,8 @@ export function ScienceLabFlashcardPage() {
 
         <div
           ref={cardRef}
-          className="relative w-full cursor-pointer select-none"
-          style={{ minHeight: '440px', perspective: '1200px' }}
+          className="relative w-full flex-1 flex flex-col cursor-pointer select-none overflow-visible"
+          style={{ minHeight: 580, perspective: 1400 }}
           onClick={handleFlip}
           onMouseMove={(e) => {
             const el = cardRef.current;
@@ -603,78 +614,113 @@ export function ScienceLabFlashcardPage() {
             }
           }}
         >
+          {/* Lightweight card-like previews – stacked top-right (behind main card) */}
+          {upcomingFlashcardsUntilTest.slice(0, 3).map((step, i) => {
+            if (step.type !== 'flashcard') return null;
+            const style = CARD_TYPE_STYLE[step.flashcard.type] ?? CARD_TYPE_STYLE.concept;
+            const offset = (i + 1) * 8;
+            return (
+              <div
+                key={`preview-${step.flashcard.id}-${i}`}
+                className="absolute inset-0 rounded-[20px] pointer-events-none"
+                style={{
+                  zIndex: -1 - i,
+                  transform: `translate(${offset}px, -${offset}px)`,
+                  transformOrigin: 'top left',
+                }}
+              >
+                <div
+                  className="w-full h-full rounded-[20px]"
+                  style={{
+                    background: 'rgb(var(--surface))',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.04)',
+                    borderLeft: `4px solid ${style.color}`,
+                  }}
+                />
+              </div>
+            );
+          })}
+          {/* Main card – tilt + flip for clean 3D flip */}
           <motion.div
-            key={currentFlashcard.id}
-            className="relative w-full"
-            style={{ minHeight: '400px', transformStyle: 'preserve-3d', rotateX: tiltRotateXSpring, rotateY: tiltRotateYSpring }}
+            className="absolute inset-0 z-10"
+            style={{ transformStyle: 'preserve-3d', rotateX: tiltRotateXSpring, rotateY: tiltRotateYSpring }}
           >
             <motion.div
-              className="relative w-full h-full"
-              style={{ minHeight: '400px', transformStyle: 'preserve-3d' }}
+              key={currentFlashcard.id}
+              className="absolute inset-0"
+              style={{ transformStyle: 'preserve-3d' }}
               initial={false}
               animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
             >
               {/* Front */}
               <div
-                className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col"
+                className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   background: 'rgb(var(--surface))',
-                  boxShadow: `0 8px 32px -8px rgba(0,0,0,0.12), 0 0 0 1px rgb(var(--border)), 4px 0 0 0 ${typeStyle.color}`,
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.04)',
+                  borderLeft: `5px solid ${typeStyle.color}`,
                 }}
               >
-                <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 flex flex-col justify-center text-center space-y-6">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
-                      <TypeIcon size={14} /> {typeStyle.label}
+                <div className="flex-1 min-h-0 overflow-y-auto px-8 py-10 sm:px-10 sm:py-12 flex flex-col justify-center text-center">
+                  <div className="flex items-center justify-center gap-3 mb-6">
+                    <span
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide"
+                      style={{ background: typeStyle.bgColor, color: typeStyle.color }}
+                    >
+                      <TypeIcon size={14} strokeWidth={2.5} />
+                      {typeStyle.label}
                     </span>
-                    <span className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.topic}</span>
+                    <span className="text-xs font-medium tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {currentFlashcard.topic}
+                    </span>
                   </div>
-                  <h2 className="text-lg sm:text-xl font-semibold leading-snug max-w-lg mx-auto" style={{ color: 'rgb(var(--text))' }}>
+                  <h2 className="text-xl sm:text-2xl font-semibold leading-[1.35] max-w-2xl mx-auto mb-8" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.01em' }}>
                     {currentFlashcard.front.prompt}
                   </h2>
                   {currentFlashcard.front.visual && (
-                    <div className="mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-0 p-4 rounded-xl" style={{ background: typeStyle.bgColor }}>
+                    <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[220px]">
                       {isEquationVisual ? (
-                        <p className="text-xl sm:text-2xl font-mono font-bold" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
+                        <p className="text-2xl sm:text-3xl font-mono font-bold py-4" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
                       ) : currentFlashcard.front.visual.diagramId ? (
                         <div className="science-flashcard-diagram science-flashcard-diagram-front">
                           <FlashcardDiagram slug={currentFlashcard.front.visual.diagramId} description={currentFlashcard.front.visual.description} fitToContainer />
                         </div>
                       ) : (
-                        <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{currentFlashcard.front.visual.description}</p>
+                        <p className="text-[15px] leading-[1.6] py-2" style={{ color: 'rgb(var(--text))' }}>{currentFlashcard.front.visual.description}</p>
                       )}
                     </div>
                   )}
-                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Tap or press Space to reveal</p>
+                  <p className="text-xs font-medium mt-6 tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Tap or press Space to reveal</p>
                 </div>
               </div>
 
               {/* Back */}
               <div
-                className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col"
+                className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                   background: 'rgb(var(--surface))',
-                  boxShadow: `0 8px 32px -8px rgba(0,0,0,0.12), 0 0 0 1px rgb(var(--border)), 4px 0 0 0 ${typeStyle.color}`,
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.04)',
+                  borderLeft: `5px solid ${typeStyle.color}`,
                 }}
               >
-                <div className="flex-1 min-h-0 flex flex-col p-6 sm:p-8">
-                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4">
+                <div className="flex-1 min-h-0 flex flex-col px-8 py-10 sm:px-10 sm:py-12">
+                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-5">
                     <div>
-                      <p className="text-xs font-medium mb-1 uppercase tracking-wider" style={{ color: typeStyle.color }}>Answer</p>
+                      <p className="text-[11px] font-semibold mb-2 uppercase tracking-[0.08em]" style={{ color: typeStyle.color }}>Answer</p>
                       {processSteps ? (
                         <div className="space-y-2">
                           {processSteps.map((step, idx) => (
-                            <div key={idx} className="flex items-start gap-3">
-                              <span className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
+                            <div key={idx} className="flex items-start gap-4">
+                              <span className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[13px] font-bold" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
                                 {idx + 1}
                               </span>
-                              <p className="text-sm leading-relaxed pt-0.5" style={{ color: 'rgb(var(--text))' }}>{step}</p>
+                              <p className="text-[15px] leading-[1.6] pt-0.5" style={{ color: 'rgb(var(--text))' }}>{step}</p>
                             </div>
                           ))}
                         </div>
@@ -682,8 +728,8 @@ export function ScienceLabFlashcardPage() {
                         <p
                           className={
                             currentFlashcard.type === 'equation' && currentFlashcard.back.explanation.includes('=') && currentFlashcard.back.explanation.length < 60
-                              ? 'text-xl sm:text-2xl font-mono font-bold'
-                              : 'text-base leading-relaxed'
+                              ? 'text-2xl font-mono font-bold'
+                              : 'text-[15px] leading-[1.65]'
                           }
                           style={{ color: 'rgb(var(--text))' }}
                         >
@@ -698,7 +744,7 @@ export function ScienceLabFlashcardPage() {
                             key={idx}
                             type="button"
                             onClick={() => navigator.clipboard?.writeText(term)}
-                            className="px-2.5 py-1 rounded-md text-xs font-medium"
+                            className="px-3 py-1.5 rounded-lg text-[13px] font-medium"
                             style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                           >
                             {term}
@@ -707,33 +753,33 @@ export function ScienceLabFlashcardPage() {
                       </div>
                     )}
                     {currentFlashcard.back.misconceptionWarning && (
-                      <div className="p-2.5 rounded-lg flex items-start gap-2" style={{ background: 'rgba(251, 191, 36, 0.15)' }}>
-                        <AlertCircle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: 'rgba(251, 191, 36, 0.1)' }}>
+                        <AlertCircle size={18} className="text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={2} />
                         <div>
-                          <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Common mistake</p>
-                          <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
+                          <p className="text-[13px] font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Common mistake</p>
+                          <p className="text-[13px] leading-[1.5]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
                         </div>
                       </div>
                     )}
                     {currentFlashcard.back.example && (
-                      <div className="p-2.5 rounded-lg flex items-start gap-2" style={{ background: 'rgba(59, 130, 246, 0.08)' }}>
-                        <BookOpen size={16} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: 'rgba(59, 130, 246, 0.06)' }}>
+                        <BookOpen size={18} className="text-blue-500 flex-shrink-0 mt-0.5" strokeWidth={2} />
                         <div>
-                          <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Example</p>
-                          <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
+                          <p className="text-[13px] font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Example</p>
+                          <p className="text-[13px] leading-[1.5]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
                         </div>
                       </div>
                     )}
                   </div>
-                  <div className="flex-shrink-0 pt-4 mt-4" style={{ borderTop: '1px solid rgb(var(--border))' }} onClick={(e) => e.stopPropagation()}>
-                    <p className="text-xs font-medium mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
-                    <div className="flex gap-2">
+                  <div className="flex-shrink-0 pt-6 mt-6" style={{ borderTop: '1px solid rgb(var(--border))' }} onClick={(e) => e.stopPropagation()}>
+                    <p className="text-[11px] font-semibold mb-3 uppercase tracking-[0.08em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+                    <div className="flex gap-3">
                       {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
                         <motion.button
                           key={level}
                           type="button"
                           onClick={() => handleConfidence(level)}
-                          className="flex-1 py-2.5 rounded-xl font-semibold text-sm text-white"
+                          className="flex-1 py-3 rounded-xl font-semibold text-[14px] text-white min-h-[44px]"
                           style={{ background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444' }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.97 }}
@@ -742,7 +788,7 @@ export function ScienceLabFlashcardPage() {
                         </motion.button>
                       ))}
                     </div>
-                    <p className="text-xs mt-2 text-center" style={{ color: 'rgb(var(--text-secondary))' }}>Or press 1, 2, or 3</p>
+                    <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.8 }}>Or press 1, 2, or 3</p>
                   </div>
                 </div>
               </div>
@@ -750,32 +796,32 @@ export function ScienceLabFlashcardPage() {
           </motion.div>
         </div>
 
-        <div className="flex items-center justify-between mt-6 gap-2">
+        <div className="flex items-center justify-between mt-8 gap-4">
           <motion.button
             type="button"
             onClick={() => stepIndex > 0 && setStepIndex(stepIndex - 1)}
             disabled={stepIndex === 0}
-            className="p-3 rounded-xl disabled:opacity-30"
+            className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={24} strokeWidth={2.5} />
           </motion.button>
           <motion.button
             type="button"
             onClick={() => setIsFlipped((p) => !p)}
-            className="text-sm font-medium px-5 py-2.5 rounded-xl"
+            className="text-[14px] font-semibold px-6 py-3 rounded-xl"
             style={{ color: 'rgb(var(--text-secondary))', background: 'rgb(var(--surface-2))' }}
           >
-            <RotateCcw size={16} className="inline mr-1.5 -mt-0.5" /> Flip
+            <RotateCcw size={18} strokeWidth={2.5} className="inline mr-2 -mt-0.5" /> Flip
           </motion.button>
           <motion.button
             type="button"
             onClick={() => stepIndex < learnSteps.length - 1 && setStepIndex(stepIndex + 1)}
             disabled={stepIndex === learnSteps.length - 1}
-            className="p-3 rounded-xl disabled:opacity-30"
+            className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={24} strokeWidth={2.5} />
           </motion.button>
         </div>
         <p className="text-center text-xs mt-3" style={{ color: 'rgb(var(--text-secondary))' }}>

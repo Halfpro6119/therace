@@ -35,8 +35,7 @@ export function AnimatedDiffusion() {
   return (
     <svg
       viewBox={VIEW_BOX}
-      className="w-full h-auto"
-      style={{ maxHeight: 200 }}
+      className="w-full h-full min-h-[200px]"
       aria-label="Diffusion: net movement of particles from high to low concentration"
     >
       <rect x={20} y={40} width={180} height={120} rx={4} stroke={STROKE} fill={HIGH_FILL} strokeWidth={1.5} />

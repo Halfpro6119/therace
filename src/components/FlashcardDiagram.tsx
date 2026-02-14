@@ -46,7 +46,7 @@ export function FlashcardDiagram({
     : undefined;
 
   const Caption = description && showDescriptionWithImage ? (
-    <p className="flashcard-diagram-caption text-xs leading-relaxed mt-3 font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+    <p className="flashcard-diagram-caption mt-4 font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
       {description}
     </p>
   ) : null;

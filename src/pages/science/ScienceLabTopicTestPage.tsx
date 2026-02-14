@@ -1,21 +1,33 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   ChevronLeft,
   FileQuestion,
-  CheckCircle,
   XCircle,
   Calculator,
   BookOpen,
   Sparkles,
   ArrowRight,
   Layers,
+  Clock,
+  ClipboardList,
 } from 'lucide-react';
 import { getTopicTestItems } from '../../config/scienceLabFlashcards';
-import { gradeScienceAnswer } from '../../utils/scienceGrading';
+import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGrading';
+import { getMethodMarkBreakdown, getTopicsBySubject } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
+
+const COMMAND_WORDS = ['State', 'Describe', 'Explain', 'Evaluate', 'Compare', 'Suggest', 'Calculate'];
+function inferCommandWord(questionText: string): string | null {
+  const first = questionText.trim().split(/\s+/)[0];
+  return COMMAND_WORDS.find((w) => first?.startsWith(w)) ?? null;
+}
+
+function getItemMarks(item: { type: string; data: { marks?: number } }): number {
+  return item.type === 'question' ? (item.data.marks ?? 1) : 1;
+}
 
 export function ScienceLabTopicTestPage() {
   const navigate = useNavigate();
@@ -29,8 +41,18 @@ export function ScienceLabTopicTestPage() {
   const [dragOrder, setDragOrder] = useState<string[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
+  const [marksEarned, setMarksEarned] = useState(0);
+  const [extendedMarksEarned, setExtendedMarksEarned] = useState(0);
+  const [extendedMarksTotal, setExtendedMarksTotal] = useState(0);
+  const [methodMarkResult, setMethodMarkResult] = useState<{
+    obtained: { description: string; marks: number }[];
+    missed: { description: string; marks: number }[];
+    score: number;
+    totalMarks: number;
+  } | null>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [timedMode, setTimedMode] = useState(false);
+  const [timeRemainingSec, setTimeRemainingSec] = useState(0);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? (parseInt(paper) as SciencePaper) : 1;
@@ -42,6 +64,7 @@ export function ScienceLabTopicTestPage() {
     return getTopicTestItems(normalizedSubject, paperNum, tierValue, topicParam);
   }, [normalizedSubject, paperNum, tierValue, topicParam]);
 
+  const totalMarks = useMemo(() => items.reduce((s, i) => s + getItemMarks(i), 0), [items]);
   const currentItem = items[currentIndex];
   const isQuickCheck = currentItem?.type === 'quickCheck';
   const quickCheck = isQuickCheck ? currentItem.data : null;
@@ -54,7 +77,36 @@ export function ScienceLabTopicTestPage() {
     setSelectedAnswer(null);
     setUserAnswer('');
     setShowFeedback(false);
+    setMethodMarkResult(null);
   }, [currentIndex, quickCheck?.id]);
+
+  const marksEarnedRef = useRef(marksEarned);
+  marksEarnedRef.current = marksEarned;
+  const timerStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (!timedMode || timeRemainingSec <= 0 || showSummary || timerStartedRef.current) return;
+    timerStartedRef.current = true;
+    const id = setInterval(() => {
+      setTimeRemainingSec((prev) => {
+        if (prev <= 1) {
+          clearInterval(id);
+          storage.updateTopicTestCompletion(
+            normalizedSubject,
+            paperNum,
+            tierValue,
+            topicParam!,
+            marksEarnedRef.current,
+            totalMarks
+          );
+          setShowSummary(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [timedMode, timeRemainingSec, showSummary, normalizedSubject, paperNum, tierValue, topicParam, totalMarks]);
 
   if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
     return (
@@ -65,25 +117,49 @@ export function ScienceLabTopicTestPage() {
     );
   }
 
+  const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
+
   if (!topicParam) {
+    const topics = getTopicsBySubject(normalizedSubject);
+    const topicsWithQuestions = topics.filter((t) => getTopicTestItems(normalizedSubject, paperNum, tierValue, t).length > 0);
     return (
-      <div className="max-w-4xl mx-auto p-8">
-        <p>No topic selected. Please choose a topic from the Topics page.</p>
+      <div className="max-w-4xl mx-auto p-6 sm:p-8">
         <button
           type="button"
-          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}/topics`)}
+          onClick={() => navigate(base)}
+          className="flex items-center gap-2 text-sm font-medium mb-6"
+          style={{ color: 'rgb(var(--text-secondary))' }}
         >
-          Browse Topics
+          <ChevronLeft size={18} />
+          Back to Lab
         </button>
+        <h1 className="text-2xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
+          Topic Test
+        </h1>
+        <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Pick a topic — you&apos;ll go straight into the test
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {topicsWithQuestions.map((topic) => (
+            <button
+              key={topic}
+              type="button"
+              onClick={() => navigate(`${base}/topic-test?topic=${encodeURIComponent(topic)}`)}
+              className="p-4 rounded-xl border text-left font-semibold transition hover:shadow-md flex items-center justify-between"
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+                borderColor: 'transparent',
+                color: 'white',
+              }}
+            >
+              {topic}
+              <ArrowRight size={20} />
+            </button>
+          ))}
+        </div>
       </div>
     );
   }
-
-  const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
-  const topicsPath = `${base}/topics`;
-
-  const handleBackToTopics = () => navigate(topicsPath);
-  const handleBackToModes = () => navigate(base);
 
   const handleSubmitQuickCheck = () => {
     if (!quickCheck || selectedAnswer === null) return;
@@ -101,29 +177,45 @@ export function ScienceLabTopicTestPage() {
     }
     setIsCorrect(correct);
     setShowFeedback(true);
-    if (correct) setCorrectCount((c) => c + 1);
+    if (correct) setMarksEarned((m) => m + 1);
   };
 
   const handleSubmitQuestion = () => {
     if (!question) return;
-    const result = gradeScienceAnswer(question, userAnswer);
-    setIsCorrect(result.correct);
+    const marks = question.marks ?? 1;
+    const breakdown = marks >= 4 ? getMethodMarkBreakdown(question.id) : undefined;
+
+    if (breakdown) {
+      const result = gradeMethodMarkAnswer(breakdown, userAnswer);
+      setMarksEarned((m) => m + result.score);
+      setExtendedMarksEarned((e) => e + result.score);
+      setExtendedMarksTotal((e) => e + result.totalMarks);
+      setMethodMarkResult(result);
+      setIsCorrect(result.score === result.totalMarks);
+    } else {
+      const result = gradeScienceAnswer(question, userAnswer);
+      const earned = result.correct ? marks : 0;
+      setMarksEarned((m) => m + earned);
+      if (marks >= 4) {
+        setExtendedMarksEarned((e) => e + earned);
+        setExtendedMarksTotal((e) => e + marks);
+      }
+      setIsCorrect(result.correct);
+    }
     setShowFeedback(true);
-    if (result.correct) setCorrectCount((c) => c + 1);
   };
 
   const handleNext = () => {
     if (currentIndex < items.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // correctCount already updated in submit handler when user was correct
       storage.updateTopicTestCompletion(
         normalizedSubject,
         paperNum,
         tierValue,
         topicParam,
-        correctCount,
-        items.length
+        marksEarned,
+        totalMarks
       );
       setShowSummary(true);
     }
@@ -140,9 +232,7 @@ export function ScienceLabTopicTestPage() {
 
   // Summary screen
   if (showSummary) {
-    const score = correctCount;
-    const total = items.length;
-    const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+    const percent = totalMarks > 0 ? Math.round((marksEarned / totalMarks) * 100) : 0;
 
     return (
       <div className="max-w-4xl mx-auto space-y-8">
@@ -166,20 +256,25 @@ export function ScienceLabTopicTestPage() {
           style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
         >
           <p className="text-4xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-            {score} / {total}
+            {marksEarned} / {totalMarks} marks
           </p>
-          <p className="text-lg mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
-            {percent}% correct
+          <p className="text-lg mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+            {percent}%
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {extendedMarksTotal > 0 && (
+            <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
+              Extended questions (4–6 marks): {extendedMarksEarned} / {extendedMarksTotal} — review the mark scheme for full marks
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <button
               type="button"
-              onClick={handleBackToTopics}
+              onClick={() => navigate(`${base}/topic-test`)}
               className="px-6 py-3 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2"
               style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)' }}
             >
               <Layers size={18} />
-              Back to Topics
+              Choose another topic
             </button>
             <button
               type="button"
@@ -194,6 +289,21 @@ export function ScienceLabTopicTestPage() {
               <BookOpen size={18} />
               Review topic in Flashcards
             </button>
+            {extendedMarksTotal > 0 && extendedMarksEarned < extendedMarksTotal && (
+              <button
+                type="button"
+                onClick={() => navigate(`${base}/methodMark?topic=${encodeURIComponent(topicParam)}`)}
+                className="px-6 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 border"
+                style={{
+                  background: 'rgb(var(--surface-2))',
+                  borderColor: 'rgb(var(--border))',
+                  color: 'rgb(var(--text))',
+                }}
+              >
+                <ClipboardList size={18} />
+                Try Method Mark for this topic
+              </button>
+            )}
           </div>
         </motion.div>
       </div>
@@ -203,9 +313,14 @@ export function ScienceLabTopicTestPage() {
   if (items.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-8">
-        <p>No questions available for topic &quot;{topicParam}&quot;. Try another topic.</p>
-        <button type="button" onClick={handleBackToTopics}>
-          Browse Topics
+        <p>No questions for &quot;{topicParam}&quot;.</p>
+        <button
+          type="button"
+          onClick={() => navigate(`${base}/topic-test`)}
+          className="mt-4 px-4 py-2 rounded-lg font-semibold text-white"
+          style={{ background: '#8B5CF6' }}
+        >
+          Choose another topic
         </button>
       </div>
     );
@@ -214,35 +329,53 @@ export function ScienceLabTopicTestPage() {
   const progress = ((currentIndex + 1) / items.length) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6">
       <motion.section
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6 sm:p-8 border shadow-sm"
+        className="rounded-xl p-4 sm:p-5 border shadow-sm"
         style={{
           background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
           borderColor: 'transparent',
         }}
       >
-        <button
-          type="button"
-          onClick={handleBackToTopics}
-          className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
-        >
-          <ChevronLeft size={18} />
-          Back to Topics
-        </button>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Test: {topicParam}</h1>
-        <p className="text-white/90 text-sm sm:text-base mb-4">
-          Mini quiz for {topicParam} — master this unit
-        </p>
-        <div className="flex items-center justify-between text-sm text-white/90 mb-2">
-          <span>Question {currentIndex + 1} of {items.length}</span>
-          <span>{correctCount} correct so far</span>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <button
+            type="button"
+            onClick={() => navigate(`${base}/topic-test`)}
+            className="flex items-center gap-1.5 text-white/90 hover:text-white text-sm"
+          >
+            <ChevronLeft size={16} />
+            Change topic
+          </button>
+          <div className="flex items-center gap-3 text-sm text-white/90">
+            <span>
+              Q {currentIndex + 1} / {items.length} • {marksEarned}/{totalMarks}
+            </span>
+            {timedMode && timeRemainingSec > 0 && (
+              <span className="font-mono font-medium">
+                {Math.floor(timeRemainingSec / 60)}:{String(timeRemainingSec % 60).padStart(2, '0')}
+              </span>
+            )}
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs" title="1 min per mark">
+              <input
+                type="checkbox"
+                checked={timedMode}
+                onChange={(e) => {
+                  const on = e.target.checked;
+                  setTimedMode(on);
+                  if (on && timeRemainingSec === 0) setTimeRemainingSec(Math.ceil(totalMarks) * 60);
+                }}
+                className="rounded"
+              />
+              <Clock size={14} />
+            </label>
+          </div>
         </div>
-        <div className="w-full bg-white/20 rounded-full h-2">
+        <p className="text-white/90 text-sm font-medium mb-2">{topicParam}</p>
+        <div className="w-full bg-white/20 rounded-full h-1.5">
           <div
-            className="bg-white rounded-full h-2 transition-all duration-300"
+            className="bg-white rounded-full h-1.5 transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -259,7 +392,7 @@ export function ScienceLabTopicTestPage() {
                 className="text-sm font-medium mb-2"
                 style={{ color: 'rgb(var(--text-secondary))' }}
               >
-                {quickCheck.topic} • {quickCheck.type}
+                {quickCheck.topic} • {quickCheck.type} • 1 mark
               </div>
               <h2 className="text-xl font-semibold mb-6" style={{ color: 'rgb(var(--text))' }}>
                 {quickCheck.question}
@@ -350,7 +483,11 @@ export function ScienceLabTopicTestPage() {
               </div>
               <div>
                 <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {question.topic} • {question.marks} marks
+                  {question.topic}
+                  {inferCommandWord(question.question) && (
+                    <span className="ml-1 font-medium"> • {inferCommandWord(question.question)}</span>
+                  )}
+                  {' '}• {question.marks} marks
                   {question.calculatorAllowed && (
                     <span className="ml-2 flex items-center gap-1">
                       <Calculator size={14} />
@@ -426,7 +563,11 @@ export function ScienceLabTopicTestPage() {
               )}
               <div className="flex-1">
                 <p className="font-semibold mb-2" style={{ color: 'rgb(var(--text))' }}>
-                  {isCorrect ? "That's right!" : 'Not quite'}
+                  {methodMarkResult
+                    ? `${methodMarkResult.score} / ${methodMarkResult.totalMarks} marks`
+                    : isCorrect
+                    ? "That's right!"
+                    : 'Not quite'}
                 </p>
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {isQuickCheck && quickCheck
@@ -439,7 +580,27 @@ export function ScienceLabTopicTestPage() {
                       : question.feedback.incorrect
                     : ''}
                 </p>
-                {!isCorrect && question && (
+                {methodMarkResult && methodMarkResult.obtained.length > 0 && (
+                  <div className="mt-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                    <p className="text-xs font-semibold mb-1 text-green-800 dark:text-green-200">You obtained:</p>
+                    <ul className="text-sm space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {methodMarkResult.obtained.map((p, i) => (
+                        <li key={i}>✓ {p.description} ({p.marks})</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {methodMarkResult && methodMarkResult.missed.length > 0 && (
+                  <div className="mt-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                    <p className="text-xs font-semibold mb-1 text-amber-800 dark:text-amber-200">You missed:</p>
+                    <ul className="text-sm space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {methodMarkResult.missed.map((p, i) => (
+                        <li key={i}>✗ {p.description} ({p.marks})</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {!isCorrect && question && !methodMarkResult && (
                   <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <p className="text-xs font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>
                       Model answer:

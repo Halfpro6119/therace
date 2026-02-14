@@ -36,8 +36,7 @@ export function AnimatedOsmosis() {
   return (
     <svg
       viewBox={VIEW_BOX}
-      className="w-full h-auto"
-      style={{ maxHeight: 200 }}
+      className="w-full h-full min-h-[200px]"
       aria-label="Osmosis: net movement of water from dilute to concentrated solution through a partially permeable membrane"
     >
       {/* Left compartment – dilute */}

@@ -872,9 +872,20 @@ export function getBiggerTestQuestionsForTopic(
   return extended.slice(0, count);
 }
 
+/** Shuffle array in place (Fisher-Yates) */
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 /**
- * Get combined topic test items: Quick Checks (recall) + SCIENCE_QUESTIONS (exam-style)
- * Shuffled for variety. Topic is required.
+ * Get combined topic test items in exam structure: Section A (1-2 mark) → B (3 mark) → C (4-6 mark)
+ * Quick Checks count as 1 mark and go in Section A; max 40% of items from Quick Checks.
+ * Ensures at least one 4+ mark question when available. Topic is required.
  */
 export function getTopicTestItems(
   subject: ScienceSubject,
@@ -882,19 +893,23 @@ export function getTopicTestItems(
   tier: ScienceTier,
   topic: string
 ): TopicTestItem[] {
-  const quickChecks = getQuickChecksByFilters(subject, paper, tier, topic);
-  const questions = getQuestionsByFilters(subject, paper, tier, topic);
+  const allQuickChecks = getQuickChecksByFilters(subject, paper, tier, topic);
+  const allQuestions = getQuestionsByFilters(subject, paper, tier, topic);
 
-  const items: TopicTestItem[] = [
+  const sectionAQuestions = allQuestions.filter((q) => q.marks >= 1 && q.marks <= 2);
+  const sectionBQuestions = allQuestions.filter((q) => q.marks === 3);
+  const sectionCQuestions = allQuestions.filter((q) => q.marks >= 4 && q.marks <= 6);
+
+  const questionCount = sectionAQuestions.length + sectionBQuestions.length + sectionCQuestions.length;
+  const maxQuickChecks = questionCount > 0 ? Math.min(allQuickChecks.length, Math.floor((2 / 3) * questionCount)) : allQuickChecks.length;
+  const quickChecks = shuffle(allQuickChecks).slice(0, Math.max(0, maxQuickChecks));
+
+  const sectionA: TopicTestItem[] = [
     ...quickChecks.map((q): TopicTestItem => ({ type: 'quickCheck', data: q })),
-    ...questions.map((q): TopicTestItem => ({ type: 'question', data: q })),
+    ...shuffle(sectionAQuestions).map((q): TopicTestItem => ({ type: 'question', data: q })),
   ];
+  const sectionB: TopicTestItem[] = shuffle(sectionBQuestions).map((q): TopicTestItem => ({ type: 'question', data: q }));
+  const sectionC: TopicTestItem[] = shuffle(sectionCQuestions).map((q): TopicTestItem => ({ type: 'question', data: q }));
 
-  // Shuffle for variety
-  for (let i = items.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [items[i], items[j]] = [items[j], items[i]];
-  }
-
-  return items;
+  return [...sectionA, ...sectionB, ...sectionC];
 }

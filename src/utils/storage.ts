@@ -645,8 +645,8 @@ export const storage = {
     paper: number,
     tier: string,
     topic: string,
-    correctCount: number,
-    totalCount: number
+    marksEarned: number,
+    totalMarks: number
   ): void => {
     const all = storage.getTopicMastery();
     const key = `${subject}-${paper}-${tier}-${topic}`;
@@ -661,7 +661,7 @@ export const storage = {
       lastUpdated: new Date().toISOString(),
     };
 
-    const scorePercent = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    const scorePercent = totalMarks > 0 ? Math.round((marksEarned / totalMarks) * 100) : 0;
     existing.topicTestCompleted = true;
     existing.topicTestScore = scorePercent;
     existing.topicTestLastAttempt = new Date().toISOString();

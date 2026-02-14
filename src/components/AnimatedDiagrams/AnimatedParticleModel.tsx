@@ -14,8 +14,7 @@ export function AnimatedParticleModel() {
   return (
     <svg
       viewBox={VIEW_BOX}
-      className="w-full h-auto"
-      style={{ maxHeight: 140 }}
+      className="w-full h-full min-h-[200px]"
       aria-label="Particle model: solid vibrate in place, liquid drift, gas move freely"
     >
       {/* Solid */}

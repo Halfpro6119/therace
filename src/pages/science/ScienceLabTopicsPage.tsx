@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList } from 'lucide-react';
-import { getTopicsBySubject } from '../../config/scienceLabData';
+import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList, ArrowRight } from 'lucide-react';
+import { getTopicsBySubject, getQuestionsByFilters } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -25,6 +25,8 @@ export function ScienceLabTopicsPage() {
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
   const topics = getTopicsBySubject(normalizedSubject);
   const subjectTitle = normalizedSubject;
+
+  const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
 
   const getTopicProgress = (topic: string) => {
     const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
@@ -57,9 +59,54 @@ export function ScienceLabTopicsPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Map — {subjectTitle}</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Browse by topic, start a topic test, or work on all topics. Paper {paperNum} • {tierValue}
+          Browse by topic or jump straight into a test. Paper {paperNum} • {tierValue}
         </p>
       </motion.section>
+
+      {/* Start topic test – direct entry */}
+      {(() => {
+        const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue);
+        const topicsWithQuestions = [...new Set(questions.map((q) => q.topic))];
+        const firstIncomplete = topicsWithQuestions.find((topic) => {
+          const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
+          return m?.quizUnlocked && !m?.topicTestCompleted;
+        });
+        const recommendedTopic = firstIncomplete ?? topicsWithQuestions[0];
+        if (topicsWithQuestions.length === 0) return null;
+        return (
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.02 }}
+        >
+          <button
+            type="button"
+            onClick={() => navigate(`${base}/topic-test${recommendedTopic ? `?topic=${encodeURIComponent(recommendedTopic)}` : ''}`)}
+            className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+            style={{
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+              borderColor: 'transparent',
+              color: 'white',
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-4 rounded-xl bg-white/20">
+                <FileQuestion size={28} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold mb-1">
+                  Start topic test
+                </h2>
+                <p className="text-sm text-white/90">
+                  {recommendedTopic ? `Jump straight in — ${recommendedTopic}` : 'Pick a topic and test'}
+                </p>
+              </div>
+            </div>
+            <ArrowRight size={24} />
+          </button>
+        </motion.section>
+        );
+      })()}
 
       {/* Full GCSE test – all topics */}
       <motion.section
@@ -134,7 +181,6 @@ export function ScienceLabTopicsPage() {
         <div className="space-y-3">
           {topics.map((topic, index) => {
             const progress = getTopicProgress(topic);
-            const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
             return (
               <motion.div
                 key={topic}

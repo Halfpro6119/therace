@@ -2,7 +2,7 @@
 
 **Purpose:** Audit the topic test to identify why it is "currently useless" and define how it can reach its full potential as a **difficult mini GCSE paper** that prepares students for real exam conditions and complete mastery of a full topic.
 
-**Status:** Audit complete — implementation recommendations below.
+**Status:** ✅ **IMPLEMENTED** (February 2025) — see implementation summary at end.
 
 ---
 
@@ -247,3 +247,30 @@ Topic test will reach its full potential when:
 | **Preparation** | Feels like a casual quiz | Feels like a mini GCSE paper |
 
 Implementing Phase 1 alone will materially improve the topic test. Phase 2 will make it genuinely exam-like and difficult. Phase 3 will close content and polish gaps.
+
+---
+
+## Implementation Summary (Completed)
+
+### Phase 1 — Marks-Based Scoring and Method Mark Integration
+- **Marks-based total:** `totalMarks` = sum of marks per item; Quick Checks = 1 mark each
+- **Method Mark grading:** For 4–6 mark questions with `METHOD_MARK_BREAKDOWN`, uses `gradeMethodMarkAnswer()` for partial credit
+- **Mark scheme feedback:** Shows "You obtained:" (green) and "You missed:" (amber) for extended questions with breakdowns
+- **Completion summary:** Displays "X / Y marks (Z%)" and extended questions breakdown when applicable
+
+### Phase 2 — Exam Structure and Difficulty
+- **Structured question order:** Section A (1–2 mark recall + Quick Checks) → Section B (3 mark) → Section C (4–6 mark)
+- **Quick Check cap:** Max 40% of items from Quick Checks (max floor(2/3 * questionCount))
+- **Command words:** Inferred from question text (State, Describe, Explain, Evaluate, Compare, Suggest, Calculate) and shown on question card
+- **Optional timer:** "Timed mode" toggle in header; 1 min per mark; when time expires, auto-finish and score completed questions
+- **Header copy:** "Mini GCSE paper for [Topic] — X marks total (~Y min)"
+
+### Phase 3 — Content and Polish (Deferred)
+- Generic fallback breakdown for 4–6 mark questions without specific breakdowns: not implemented; continues to use `gradeScienceAnswer()` (full/zero marks)
+- Required practical questions: not yet included in topic test pool
+- Coverage audit: not yet performed
+
+### Files Changed
+- `src/config/scienceLabFlashcards.ts` — `getTopicTestItems()`: structured sections, Quick Check cap, shuffle within sections
+- `src/utils/storage.ts` — `updateTopicTestCompletion()`: accepts `marksEarned` and `totalMarks` (was `correctCount`, `totalCount`)
+- `src/pages/science/ScienceLabTopicTestPage.tsx` — marks-based scoring, Method Mark integration, mark scheme feedback, command words, optional timer, updated summary and CTAs (Back to Topics, Review in Flashcards, Try Method Mark)
