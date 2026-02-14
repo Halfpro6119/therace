@@ -83,7 +83,7 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
         </h3>
       </div>
 
-      {(check.type === 'multipleChoice' || check.type === 'trueFalse') && (
+      {(check.type === 'multipleChoice' || check.type === 'trueFalse' || check.type === 'whichCorrect') && (
         <div className="space-y-2">
           {(check.options ?? []).map((option, idx) => (
             <button
@@ -107,7 +107,7 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
         </div>
       )}
 
-      {check.type === 'dragOrder' && (
+      {check.type === 'dragOrder' && (check.options?.length ?? 0) > 0 && (
         <div className="space-y-2">
           <p className="text-xs mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
             Drag to order:

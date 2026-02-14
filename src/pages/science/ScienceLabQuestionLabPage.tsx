@@ -256,7 +256,7 @@ export function ScienceLabQuestionLabPage() {
                 <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
                   {isCorrect
                     ? (currentQuestion.feedback?.correct ?? 'Correct!')
-                    : 'Not quite. Review the model answer below.'}
+                    : (currentQuestion.feedback?.incorrect ?? 'Not quite. Review the model answer below.')}
                 </p>
                 {!isCorrect && (
                   <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">

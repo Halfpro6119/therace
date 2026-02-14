@@ -83,6 +83,7 @@ export function ScienceLabFlashcardPage() {
   const [biggerTestShowFeedback, setBiggerTestShowFeedback] = useState(false);
   const [biggerTestIsCorrect, setBiggerTestIsCorrect] = useState(false);
   const answeredQuickCheckIds = useRef<Set<string>>(new Set());
+  const quickCheckStepIndexRef = useRef<number>(-1);
 
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -193,18 +194,8 @@ export function ScienceLabFlashcardPage() {
     (level: ConfidenceLevel) => {
       if (!currentFlashcard || !isFlipped || phase !== 'flashcard') return;
       const cardId = currentFlashcard.id;
-      const cardTopic = currentFlashcard.topic;
-      const related = getQuickChecksForFlashcard(cardId, cardTopic, quickChecksAll, true);
-      const unseen = related.filter((q) => !answeredQuickCheckIds.current.has(q.id));
-      // Update UI immediately so next card appears without delay
-      if (unseen.length > 0) {
-        setPendingQuickChecks(unseen);
-        setQuickCheckIndex(0);
-        setIsFlipped(false);
-        setPhase('quickCheck');
-      } else {
-        advanceStep();
-      }
+      // Always advance immediately — skip quick checks so the flow never gets stuck
+      advanceStep();
       // Defer storage and sound so they don't block the render
       queueMicrotask(() => {
         try {
@@ -215,7 +206,7 @@ export function ScienceLabFlashcardPage() {
         if (level === 3) soundSystem.playCorrect();
       });
     },
-    [currentFlashcard, isFlipped, phase, quickChecksAll, advanceStep]
+    [currentFlashcard, isFlipped, phase, advanceStep]
   );
 
   const handleQuickCheckComplete = useCallback(
@@ -316,10 +307,11 @@ export function ScienceLabFlashcardPage() {
   }, [isFlipped, currentFlashcard, viewStartTime]);
 
   // Sync phase when stepIndex changes (e.g. from prev/next nav or advanceStep)
-  // Must NOT overwrite phase when we're in quickCheck — we transitioned there intentionally
+  // Skip only when in quickCheck AND still on the same flashcard (stepIndex unchanged) — don't overwrite intentional transition.
+  // When stepIndex changes (user nav), always sync so phase matches the new step.
   useEffect(() => {
-    if (phase === 'quickCheck') return;
     const step = learnSteps[stepIndex];
+    if (phase === 'quickCheck' && step?.type === 'flashcard' && stepIndex === quickCheckStepIndexRef.current) return;
     if (step?.type === 'flashcard') {
       setPhase('flashcard');
       setIsFlipped(false);
@@ -429,7 +421,22 @@ export function ScienceLabFlashcardPage() {
     );
   }
 
-  // Quick Check phase
+  if (phase === 'quickCheck' && (pendingQuickChecks.length === 0 || !currentQuickCheck)) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4" style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--text))' }}>
+        <p>Loading next card...</p>
+        <button
+          type="button"
+          onClick={() => advanceStep()}
+          className="px-6 py-3 rounded-xl font-semibold text-white"
+          style={{ background: '#10B981' }}
+        >
+          Continue
+        </button>
+      </div>
+    );
+  }
+
   if (phase === 'quickCheck' && currentQuickCheck && pendingQuickChecks.length > 0) {
     return (
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
@@ -812,7 +819,11 @@ export function ScienceLabFlashcardPage() {
                 <button
                   key={level}
                   type="button"
-                  onClick={() => handleConfidence(level)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleConfidence(level);
+                  }}
                   className="flex-1 min-h-[88px] py-6 px-6 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[16px] text-white transition active:scale-[0.97]"
                   style={{ background: level === 3 ? '#10B981' : level === 2 ? '#F59E0B' : '#EF4444' }}
                 >
