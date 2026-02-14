@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList, ArrowRight } from 'lucide-react';
-import { getTopicsBySubject, getQuestionsByFilters } from '../../config/scienceLabData';
+import { getQuestionsByFilters } from '../../config/scienceLabData';
+import { getTopicsByPaperAndTier } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -23,7 +24,7 @@ export function ScienceLabTopicsPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const topics = getTopicsBySubject(normalizedSubject);
+  const topics = getTopicsByPaperAndTier(normalizedSubject, paperNum, tierValue);
   const subjectTitle = normalizedSubject;
 
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;

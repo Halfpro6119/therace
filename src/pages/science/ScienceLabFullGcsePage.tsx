@@ -13,13 +13,12 @@ import {
   ArrowRight,
   Trophy,
   FileQuestion,
+  Settings,
 } from 'lucide-react';
 import { getGcseScopeForSubject } from '../../config/gcseScope';
 import { getFullGcsePaperTestItems } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
-
-const PAPERS: SciencePaper[] = [1, 2];
 
 export function ScienceLabFullGcsePage() {
   const navigate = useNavigate();
@@ -28,6 +27,9 @@ export function ScienceLabFullGcsePage() {
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? (parseInt(paper) as SciencePaper) : 1;
   const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier) : 'Higher';
+
+  // Only show the paper the user selected (Paper 1 or 2) for their chosen tier
+  const papersToShow: SciencePaper[] = [paperNum];
 
   if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
     return (
@@ -44,15 +46,15 @@ export function ScienceLabFullGcsePage() {
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
 
   const scope = getGcseScopeForSubject(normalizedSubject);
-  const paperDefs = scope?.papers ?? PAPERS.map((p) => ({ paperNumber: p, name: `Paper ${p}` }));
+  const paperDefs = scope?.papers ?? papersToShow.map((p) => ({ paperNumber: p, name: `Paper ${p}` }));
 
-  const progress = storage.getSubjectFullGcseProgress(normalizedSubject, tierValue, PAPERS);
+  const progress = storage.getSubjectFullGcseProgress(normalizedSubject, tierValue, papersToShow);
 
   const getPaperStatus = (p: SciencePaper) => {
     const passed = storage.isPaperPassed(normalizedSubject, p, tierValue);
-    const prevPapers = PAPERS.filter((n) => n < p);
+    const prevPapers = papersToShow.filter((n) => n < p);
     const prevAllPassed = prevPapers.every((prev) => storage.isPaperPassed(normalizedSubject, prev, tierValue));
-    const available = p === 1 || prevAllPassed;
+    const available = p === paperNum || prevAllPassed;
     const items = getFullGcsePaperTestItems(normalizedSubject, p, tierValue);
     const totalMarks = items.reduce((s, i) => s + (i.type === 'question' ? (i.data.marks ?? 1) : 1), 0);
     return { passed, available, totalMarks, paperName: paperDefs.find((d) => d.paperNumber === p)?.name ?? `Paper ${p}` };
@@ -69,24 +71,34 @@ export function ScienceLabFullGcsePage() {
           borderColor: 'transparent',
         }}
       >
-        <button
-          type="button"
-          onClick={() => navigate(base)}
-          className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
-        >
-          <ChevronLeft size={18} />
-          Back to Lab Modes
-        </button>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <button
+            type="button"
+            onClick={() => navigate(base)}
+            className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium"
+          >
+            <ChevronLeft size={18} />
+            Back to Lab Modes
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(base)}
+            className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium ml-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition"
+          >
+            <Settings size={16} />
+            Change paper or tier
+          </button>
+        </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center gap-3">
           <GraduationCap size={32} />
-          Full GCSE Test — {normalizedSubject}
+          Full GCSE Test — {normalizedSubject} Paper {paperNum} ({tierValue})
         </h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          Pass each paper (70% of marks) to unlock the next. Master all papers to achieve subject mastery.
+          Pass this paper (70% of marks) to achieve mastery for {scope?.papers?.find((d) => d.paperNumber === paperNum)?.name ?? `Paper ${paperNum}`}.
         </p>
-        {/* Progress indicator: Paper 1 ✓ | Paper 2 (current) | Paper 3 🔒 */}
+        {/* Progress indicator for selected paper/tier */}
         <div className="flex items-center gap-2 flex-wrap mt-4">
-          {PAPERS.map((p, i) => {
+          {papersToShow.map((p, i) => {
             const { passed, available } = getPaperStatus(p);
             const isCurrent = available && !passed;
             return (
@@ -107,16 +119,16 @@ export function ScienceLabFullGcsePage() {
           >
             <Trophy size={32} className="flex-shrink-0 text-amber-200" />
             <div>
-              <p className="font-bold text-lg">Subject mastery achieved!</p>
-              <p className="text-sm text-white/90">All papers passed. You&apos;ve shown clear understanding of {normalizedSubject}.</p>
+              <p className="font-bold text-lg">Paper mastery achieved!</p>
+              <p className="text-sm text-white/90">You&apos;ve passed {scope?.papers?.find((d) => d.paperNumber === paperNum)?.name ?? `Paper ${paperNum}`} ({tierValue}).</p>
             </div>
           </motion.div>
         )}
       </motion.section>
 
-      {/* Paper list */}
+      {/* Paper list — only the paper user selected for their tier */}
       <div className="space-y-4">
-        {PAPERS.map((p, idx) => {
+        {papersToShow.map((p, idx) => {
           const { passed, available, totalMarks, paperName } = getPaperStatus(p);
           const estMinutes = Math.ceil(totalMarks);
 

@@ -582,7 +582,7 @@ export function ScienceLabPaperTestPage() {
                     : question
                     ? isCorrect
                       ? question.feedback.correct
-                      : question.feedback.incorrect
+                      : (!methodMarkResult ? 'Not quite. Review the model answer below.' : question.feedback.incorrect)
                     : ''}
                 </p>
                 {methodMarkResult && methodMarkResult.obtained.length > 0 && (

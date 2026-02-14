@@ -872,6 +872,23 @@ export function getBiggerTestQuestionsForTopic(
   return extended.slice(0, count);
 }
 
+/**
+ * Get topics that have content (questions or quick checks) for the given subject, paper, and tier.
+ * Use this instead of getTopicsBySubject when the topic list should reflect the selected paper and tier.
+ */
+export function getTopicsByPaperAndTier(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier
+): string[] {
+  const questions = getQuestionsByFilters(subject, paper, tier);
+  const quickChecks = getQuickChecksByFilters(subject, paper, tier);
+  const fromQuestions = new Set(questions.map((q) => q.topic));
+  const fromQuickChecks = new Set(quickChecks.map((q) => q.topic));
+  const combined = new Set([...fromQuestions, ...fromQuickChecks]);
+  return Array.from(combined).sort();
+}
+
 /** Shuffle array in place (Fisher-Yates) */
 function shuffle<T>(arr: T[]): T[] {
   const out = [...arr];

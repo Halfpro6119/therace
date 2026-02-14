@@ -12,9 +12,9 @@ import {
   Clock,
   ClipboardList,
 } from 'lucide-react';
-import { getTopicTestItems } from '../../config/scienceLabFlashcards';
+import { getTopicTestItems, getTopicsByPaperAndTier } from '../../config/scienceLabFlashcards';
 import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGrading';
-import { getMethodMarkBreakdown, getTopicsBySubject } from '../../config/scienceLabData';
+import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -79,6 +79,34 @@ export function ScienceLabTopicTestPage() {
     setMethodMarkResult(null);
   }, [currentIndex, quickCheck?.id]);
 
+  useEffect(() => {
+    if (topicParam && items.length > 0) {
+      storage.setLastTopicTestTopic(normalizedSubject, paperNum, tierValue, topicParam);
+    }
+  }, [topicParam, items.length, normalizedSubject, paperNum, tierValue]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isInputFocused =
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        document.activeElement?.getAttribute('contenteditable') === 'true';
+      if (isInputFocused) return;
+
+      const isMcq = quickCheck && (quickCheck.type === 'multipleChoice' || quickCheck.type === 'trueFalse') && quickCheck.options;
+      if (!isMcq || showFeedback) return;
+
+      const key = e.key;
+      const num = key >= '1' && key <= '9' ? parseInt(key, 10) : 0;
+      if (num >= 1 && num <= quickCheck.options!.length) {
+        e.preventDefault();
+        setSelectedAnswer(quickCheck.options![num - 1]);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quickCheck, showFeedback]);
+
   const marksEarnedRef = useRef(marksEarned);
   marksEarnedRef.current = marksEarned;
   const timerStartedRef = useRef(false);
@@ -119,7 +147,7 @@ export function ScienceLabTopicTestPage() {
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
 
   if (!topicParam) {
-    const topics = getTopicsBySubject(normalizedSubject);
+    const topics = getTopicsByPaperAndTier(normalizedSubject, paperNum, tierValue);
     const topicsWithData = topics
       .map((t) => {
         const items = getTopicTestItems(normalizedSubject, paperNum, tierValue, t);
@@ -133,10 +161,18 @@ export function ScienceLabTopicTestPage() {
           extendedCount,
           score: m?.topicTestScore,
           completed: m?.topicTestCompleted ?? false,
+          lastAttempt: m?.topicTestLastAttempt,
         };
       })
       .filter((d) => d.questionCount > 0);
     const firstIncomplete = topicsWithData.find((d) => !d.completed)?.topic ?? topicsWithData[0]?.topic;
+    const lastTopicFromStorage = storage.getLastTopicTestTopic(normalizedSubject, paperNum, tierValue);
+    const whereLeftOffTopic =
+      (lastTopicFromStorage && topicsWithData.some((d) => d.topic === lastTopicFromStorage) ? lastTopicFromStorage : null) ??
+      topicsWithData
+        .filter((d) => d.lastAttempt)
+        .sort((a, b) => (b.lastAttempt ?? '').localeCompare(a.lastAttempt ?? ''))[0]?.topic ??
+      firstIncomplete;
 
     return (
       <div className="min-h-screen">
@@ -153,7 +189,7 @@ export function ScienceLabTopicTestPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-10"
+            className="mb-8"
           >
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2" style={{ color: 'rgb(var(--text))' }}>
               Topic Test
@@ -163,6 +199,25 @@ export function ScienceLabTopicTestPage() {
             </p>
           </motion.div>
 
+          {whereLeftOffTopic && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              type="button"
+              onClick={() => navigate(`${base}/topic-test?topic=${encodeURIComponent(whereLeftOffTopic)}`)}
+              className="w-full mb-6 px-6 py-4 rounded-xl border-2 text-left font-semibold flex items-center justify-between transition hover:shadow-md hover:border-indigo-500/50"
+              style={{
+                background: 'rgb(var(--surface))',
+                borderColor: 'rgb(var(--border))',
+                color: 'rgb(var(--text))',
+              }}
+            >
+              <span>Return where you left off — {whereLeftOffTopic}</span>
+              <ArrowRight size={20} strokeWidth={2.5} style={{ color: 'rgb(var(--text-secondary))' }} />
+            </motion.button>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {topicsWithData.map((d, i) => {
               const isRecommended = d.topic === firstIncomplete && !d.completed;
@@ -171,25 +226,18 @@ export function ScienceLabTopicTestPage() {
                   key={d.topic}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
+                  transition={{ delay: 0.1 + i * 0.04 }}
                   type="button"
                   onClick={() => navigate(`${base}/topic-test?topic=${encodeURIComponent(d.topic)}`)}
                   className="group relative p-6 rounded-2xl text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[rgb(var(--bg))]"
                   style={{
                     background: 'rgb(var(--surface))',
-                    borderColor: isRecommended ? 'rgb(34 197 94)' : 'rgb(var(--border))',
-                    borderWidth: isRecommended ? 2 : 1,
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                    border: `2px solid ${isRecommended ? 'rgb(34 197 94)' : 'rgb(var(--border))'}`,
+                    boxShadow: isRecommended
+                      ? '0 4px 6px -1px rgb(0 0 0 / 0.2), 0 0 0 1px rgb(34 197 94 / 0.3)'
+                      : '0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                   }}
                 >
-                  {isRecommended && (
-                    <span
-                      className="absolute -top-2.5 left-4 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider"
-                      style={{ background: 'rgb(34 197 94)', color: 'white' }}
-                    >
-                      Start here
-                    </span>
-                  )}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <h2 className="text-lg font-bold mb-2 group-hover:text-indigo-400 transition-colors" style={{ color: 'rgb(var(--text))' }}>
@@ -446,19 +494,24 @@ export function ScienceLabTopicTestPage() {
           }}
         >
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <button
-              type="button"
-              onClick={() => navigate(`${base}/topic-test`)}
-              className="flex items-center gap-2 text-sm font-medium transition hover:opacity-80"
-              style={{ color: 'rgb(var(--text-secondary))' }}
-            >
-              <ChevronLeft size={18} />
-              Change topic
-            </button>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="font-semibold" style={{ color: 'rgb(var(--text))' }}>
+            <div className="flex items-center gap-3">
+              <span
+                className="px-3 py-1.5 rounded-lg font-semibold text-sm"
+                style={{ background: 'rgb(99 102 241 / 0.15)', color: 'rgb(129 140 248)' }}
+              >
                 {topicParam}
               </span>
+              <button
+                type="button"
+                onClick={() => navigate(`${base}/topic-test`)}
+                className="flex items-center gap-2 text-sm font-medium transition hover:opacity-80"
+                style={{ color: 'rgb(var(--text-secondary))' }}
+              >
+                <ChevronLeft size={18} />
+                Change topic
+              </button>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
               <span style={{ color: 'rgb(var(--text-secondary))' }}>
                 Q {currentIndex + 1} of {items.length}
               </span>
@@ -533,6 +586,11 @@ export function ScienceLabTopicTestPage() {
 
             {(quickCheck.type === 'multipleChoice' || quickCheck.type === 'trueFalse') && (
               <div className="space-y-3">
+                {!showFeedback && (
+                  <p className="text-xs mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-black/20 font-mono">1</kbd>–<kbd className="px-1.5 py-0.5 rounded bg-black/20 font-mono">{quickCheck.options?.length ?? 4}</kbd> to select
+                  </p>
+                )}
                 {quickCheck.options?.map((option, idx) => (
                   <button
                     key={idx}
@@ -551,13 +609,14 @@ export function ScienceLabTopicTestPage() {
                   >
                     <span className="flex items-start gap-3">
                       <span
-                        className="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold"
+                        className="flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold"
                         style={{
                           borderColor: selectedAnswer === option ? 'rgb(99 102 241)' : 'rgb(var(--border))',
                           color: selectedAnswer === option ? 'rgb(99 102 241)' : 'rgb(var(--text-secondary))',
                         }}
+                        title={`Press ${idx + 1} to select`}
                       >
-                        {String.fromCharCode(65 + idx)}
+                        {idx + 1}
                       </span>
                       <span className="flex-1">{option}</span>
                       {selectedAnswer === option && (
@@ -725,7 +784,7 @@ export function ScienceLabTopicTestPage() {
                     : question
                     ? isCorrect
                       ? question.feedback.correct
-                      : question.feedback.incorrect
+                      : (!methodMarkResult ? 'Not quite. Review the model answer below.' : question.feedback.incorrect)
                     : ''}
                 </p>
                 {methodMarkResult && methodMarkResult.obtained.length > 0 && (

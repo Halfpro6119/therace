@@ -12,6 +12,7 @@ export function ScienceLabMethodMarkPage() {
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [gradeResult, setGradeResult] = useState<ReturnType<typeof gradeMethodMarkAnswer> | null>(null);
+  const [showMarkScheme, setShowMarkScheme] = useState(false);
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
   const paperNum = paper ? (parseInt(paper) as SciencePaper) : 1;
@@ -41,6 +42,7 @@ export function ScienceLabMethodMarkPage() {
     setSelectedQuestionIndex(idx);
     setUserAnswer('');
     setGradeResult(null);
+    setShowMarkScheme(false);
   };
 
   const handleCheckMarks = () => {
@@ -162,48 +164,70 @@ export function ScienceLabMethodMarkPage() {
             </h2>
           </div>
 
-          {/* Mark breakdown (read-only reference) */}
+          {/* Mark breakdown (read-only reference) — shown only after user clicks "Show mark scheme" */}
           <div className="mb-6">
-            <h3 className="text-base font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
-              Mark scheme reference
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div>
-                <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-                  <CheckCircle size={16} className="text-blue-600 dark:text-blue-400" />
-                  Idea marks
-                </h4>
-                <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {breakdown.ideaMarks.map((m) => (
-                    <li key={m.id}>{m.description} ({m.marks}m)</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-                  <Target size={16} className="text-purple-600 dark:text-purple-400" />
-                  Method marks
-                </h4>
-                <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  {breakdown.methodMarks.map((m) => (
-                    <li key={m.id}>{m.description} ({m.marks}m)</li>
-                  ))}
-                </ul>
-              </div>
-              {breakdown.precisionMarks.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-                    <CheckCircle size={16} className="text-green-600 dark:text-green-400" />
-                    Precision marks
-                  </h4>
-                  <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    {breakdown.precisionMarks.map((m) => (
-                      <li key={m.id}>{m.description} ({m.marks}m)</li>
-                    ))}
-                  </ul>
+            {!showMarkScheme ? (
+              <button
+                type="button"
+                onClick={() => setShowMarkScheme(true)}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-lg font-medium border border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+              >
+                Show mark scheme
+              </button>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-base font-bold" style={{ color: 'rgb(var(--text))' }}>
+                    Mark scheme reference
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setShowMarkScheme(false)}
+                    className="text-sm font-medium"
+                    style={{ color: 'rgb(var(--text-secondary))' }}
+                  >
+                    Hide
+                  </button>
                 </div>
-              )}
-            </div>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+                      <CheckCircle size={16} className="text-blue-600 dark:text-blue-400" />
+                      Idea marks
+                    </h4>
+                    <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {breakdown.ideaMarks.map((m) => (
+                        <li key={m.id}>{m.description} ({m.marks}m)</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+                      <Target size={16} className="text-purple-600 dark:text-purple-400" />
+                      Method marks
+                    </h4>
+                    <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {breakdown.methodMarks.map((m) => (
+                        <li key={m.id}>{m.description} ({m.marks}m)</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {breakdown.precisionMarks.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+                        <CheckCircle size={16} className="text-green-600 dark:text-green-400" />
+                        Precision marks
+                      </h4>
+                      <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        {breakdown.precisionMarks.map((m) => (
+                          <li key={m.id}>{m.description} ({m.marks}m)</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Answer input */}

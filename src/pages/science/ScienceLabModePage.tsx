@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap, ClipboardList, GraduationCap } from 'lucide-react';
 import { storage } from '../../utils/storage';
-import { getQuestionsByFilters, getTopicsBySubject } from '../../config/scienceLabData';
+import { getQuestionsByFilters } from '../../config/scienceLabData';
 import type { ScienceSubject, SciencePaper, ScienceTier, LabMode } from '../../types/scienceLab';
 
 /** Learn Mode now merges flashcards + quick checks + bigger tests. Path: Learn → Topic test → Full GCSE */
@@ -87,26 +87,9 @@ export function ScienceLabModePage() {
     return { mode: 'flashcard' as LabMode, label: 'Start with Learn (flashcards)' };
   }, [normalizedSubject, selectedPaper, selectedTier]);
 
-  const getRecommendedTopicForTest = () => {
-    const topics = getTopicsBySubject(normalizedSubject);
-    const questions = getQuestionsByFilters(normalizedSubject, selectedPaper, selectedTier);
-    const topicsWithQuestions = new Set(questions.map((q) => q.topic));
-    const viableTopics = topics.filter((t) => topicsWithQuestions.has(t));
-    const firstIncomplete = viableTopics.find((topic) => {
-      const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
-      return m?.quizUnlocked && !m?.topicTestCompleted;
-    });
-    return firstIncomplete ?? viableTopics[0];
-  };
-
   const handleEnterLab = (mode: LabMode) => {
     if (mode === 'topicTest') {
-      const recommendedTopic = getRecommendedTopicForTest();
-      if (recommendedTopic) {
-        navigate(`${base}/topic-test?topic=${encodeURIComponent(recommendedTopic)}`);
-      } else {
-        navigate(`${base}/topic-test`);
-      }
+      navigate(`${base}/topic-test`);
       return;
     }
     if (mode === 'fullGcseTest') {

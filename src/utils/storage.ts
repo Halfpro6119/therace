@@ -77,6 +77,7 @@ const STORAGE_KEYS = {
   SCIENCE_LAB_SESSIONS: 'grade9sprint_science_lab_sessions',
   SCIENCE_LAB_FLASHCARD_MASTERY: 'grade9sprint_science_lab_flashcard_mastery',
   SCIENCE_LAB_TOPIC_MASTERY: 'grade9sprint_science_lab_topic_mastery',
+  SCIENCE_LAB_LAST_TOPIC_TEST: 'grade9sprint_science_lab_last_topic_test',
   // Business Hub
   BUSINESS_HUB_TOPIC_PROGRESS: 'grade9sprint_business_hub_topic_progress',
   BUSINESS_HUB_FLASHCARD_MASTERY: 'grade9sprint_business_hub_flashcard_mastery',
@@ -641,6 +642,25 @@ export const storage = {
 
     all[key] = existing;
     localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_TOPIC_MASTERY, JSON.stringify(all));
+  },
+  setLastTopicTestTopic: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string,
+    topic: string
+  ): void => {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_LAST_TOPIC_TEST) || '{}');
+    const key = `${subject}-${paper}-${tier}`;
+    data[key] = topic;
+    localStorage.setItem(STORAGE_KEYS.SCIENCE_LAB_LAST_TOPIC_TEST, JSON.stringify(data));
+  },
+  getLastTopicTestTopic: (
+    subject: ScienceSubject,
+    paper: number,
+    tier: string
+  ): string | undefined => {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCIENCE_LAB_LAST_TOPIC_TEST) || '{}');
+    return data[`${subject}-${paper}-${tier}`];
   },
   updateTopicTestCompletion: (
     subject: ScienceSubject,

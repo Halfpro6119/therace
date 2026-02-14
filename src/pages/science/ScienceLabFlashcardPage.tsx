@@ -192,23 +192,28 @@ export function ScienceLabFlashcardPage() {
   const handleConfidence = useCallback(
     (level: ConfidenceLevel) => {
       if (!currentFlashcard || !isFlipped || phase !== 'flashcard') return;
-      if (level === 3) soundSystem.playCorrect();
-      storage.updateFlashcardMastery(currentFlashcard.id, level, true);
-
-      const related = getQuickChecksForFlashcard(
-        currentFlashcard.id,
-        currentFlashcard.topic,
-        quickChecksAll,
-        true
-      );
+      const cardId = currentFlashcard.id;
+      const cardTopic = currentFlashcard.topic;
+      const related = getQuickChecksForFlashcard(cardId, cardTopic, quickChecksAll, true);
       const unseen = related.filter((q) => !answeredQuickCheckIds.current.has(q.id));
+      // Update UI immediately so next card appears without delay
       if (unseen.length > 0) {
         setPendingQuickChecks(unseen);
         setQuickCheckIndex(0);
+        setIsFlipped(false);
         setPhase('quickCheck');
       } else {
         advanceStep();
       }
+      // Defer storage and sound so they don't block the render
+      queueMicrotask(() => {
+        try {
+          storage.updateFlashcardMastery(cardId, level, true);
+        } catch {
+          /* ignore */
+        }
+        if (level === 3) soundSystem.playCorrect();
+      });
     },
     [currentFlashcard, isFlipped, phase, quickChecksAll, advanceStep]
   );
@@ -310,8 +315,10 @@ export function ScienceLabFlashcardPage() {
     }
   }, [isFlipped, currentFlashcard, viewStartTime]);
 
-  // Sync phase when stepIndex changes (e.g. from prev/next nav)
+  // Sync phase when stepIndex changes (e.g. from prev/next nav or advanceStep)
+  // Must NOT overwrite phase when we're in quickCheck — we transitioned there intentionally
   useEffect(() => {
+    if (phase === 'quickCheck') return;
     const step = learnSteps[stepIndex];
     if (step?.type === 'flashcard') {
       setPhase('flashcard');
@@ -324,7 +331,7 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
     }
-  }, [stepIndex, learnSteps]);
+  }, [stepIndex, learnSteps, phase]);
 
   useEffect(() => {
     if (currentFlashcard && phase === 'flashcard') {
@@ -537,8 +544,22 @@ export function ScienceLabFlashcardPage() {
 
   // Bigger test with 0 questions - skip (effect handles this)
 
-  // Flashcard phase
-  if (!currentFlashcard) return null;
+  // Flashcard phase — if we fall through without a flashcard, show recovery UI
+  if (!currentFlashcard) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--text))' }}>
+        <p className="mb-4">Loading next card...</p>
+        <button
+          type="button"
+          onClick={() => advanceStep()}
+          className="px-6 py-3 rounded-xl font-semibold text-white"
+          style={{ background: '#10B981' }}
+        >
+          Continue
+        </button>
+      </div>
+    );
+  }
 
   const typeStyle = CARD_TYPE_STYLE[currentFlashcard.type] ?? CARD_TYPE_STYLE.concept;
   const TypeIcon = typeStyle.icon;
@@ -657,7 +678,7 @@ export function ScienceLabFlashcardPage() {
               style={{ transformStyle: 'preserve-3d' }}
               initial={false}
               animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              transition={isFlipped ? { type: 'spring', stiffness: 320, damping: 28 } : { duration: 0 }}
             >
               {/* Front */}
               <div
