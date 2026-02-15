@@ -57,7 +57,7 @@ export function ScienceLabSubjectPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Science Lab</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Past-paper-style tests grade you accurately. Flashcards and quizzes help you improve your score.
+          Aiming for Grade 9. Past-paper-style tests grade you accurately. Flashcards and quizzes help you improve your score.
         </p>
       </motion.section>
 
@@ -75,7 +75,7 @@ export function ScienceLabSubjectPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
-                onClick={() => navigate(`/science-lab/${subject.id.toLowerCase()}`)}
+                onClick={() => navigate(`/science-lab/${subject.id.toLowerCase()}/1/higher/topics`)}
                 className="rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex flex-col"
                 style={{
                   background: 'rgb(var(--surface))',

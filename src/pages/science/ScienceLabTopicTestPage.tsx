@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { getTopicTestItems, getTopicsByPaperAndTier } from '../../config/scienceLabFlashcards';
 import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGrading';
+import { marksPercentToGrade } from '../../utils/gradeMapping';
 import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
@@ -378,8 +379,7 @@ export function ScienceLabTopicTestPage() {
   // Summary screen
   if (showSummary) {
     const percent = totalMarks > 0 ? Math.round((marksEarned / totalMarks) * 100) : 0;
-    const gradeColor = percent >= 70 ? 'rgb(34 197 94)' : percent >= 50 ? 'rgb(251 146 60)' : 'rgb(239 68 68)';
-    const gradeLabel = percent >= 70 ? 'Strong!' : percent >= 50 ? 'Good progress' : 'Keep practicing';
+    const { grade, label: gradeLabel, color: gradeColor } = marksPercentToGrade(percent);
 
     return (
       <div className="min-h-screen">
@@ -411,8 +411,8 @@ export function ScienceLabTopicTestPage() {
               <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
                 {topicParam} — Complete
               </h1>
-              <p className="text-sm mb-8" style={{ color: 'rgb(var(--text-secondary))' }}>
-                {gradeLabel}
+              <p className="text-sm mb-2" style={{ color: gradeColor, fontWeight: 600 }}>
+                {grade !== null ? `${gradeLabel} equivalent` : gradeLabel}
               </p>
               <motion.p
                 initial={{ opacity: 0, scale: 0.9 }}

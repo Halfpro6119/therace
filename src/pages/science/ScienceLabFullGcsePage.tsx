@@ -119,7 +119,7 @@ export function ScienceLabFullGcsePage() {
           >
             <Trophy size={32} className="flex-shrink-0 text-amber-200" />
             <div>
-              <p className="font-bold text-lg">Paper mastery achieved!</p>
+              <p className="font-bold text-lg">Grade 9 ready!</p>
               <p className="text-sm text-white/90">You&apos;ve passed {scope?.papers?.find((d) => d.paperNumber === paperNum)?.name ?? `Paper ${paperNum}`} ({tierValue}).</p>
             </div>
           </motion.div>

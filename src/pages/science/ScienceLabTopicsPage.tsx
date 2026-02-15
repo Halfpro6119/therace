@@ -63,7 +63,7 @@ export function ScienceLabTopicsPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Map — {subjectTitle}</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Browse by topic or jump straight into a test. Paper {paperNum} • {tierValue}
+          Aiming for Grade 9. Browse by topic or jump straight into a past-paper-style test. Paper {paperNum} • {tierValue}
         </p>
       </motion.section>
 

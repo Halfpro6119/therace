@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap, ClipboardList, GraduationCap } from 'lucide-react';
+import { ChevronLeft, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap, GraduationCap } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
 import { getDueFlashcardCount } from '../../config/scienceLabFlashcards';
@@ -20,7 +20,7 @@ const TEST_PATH: Array<{
   { id: 'fullGcseTest', step: 2, title: 'Full GCSE test', description: 'Full exam-style paper. Pass each paper (70%) to show subject mastery.', icon: GraduationCap, color: '#10B981' },
 ];
 
-/** Revise to improve – flashcards and quizzes to boost your score on the tests */
+/** Revise to improve – flashcards and quick checks to boost your score on the tests */
 const REVISE_PATH: Array<{
   id: LabMode;
   title: string;
@@ -29,9 +29,10 @@ const REVISE_PATH: Array<{
   color: string;
 }> = [
   { id: 'flashcard', title: 'Revise with flashcards', description: 'Build recall. Use when you need to improve your score on topic or full GCSE tests.', icon: BookOpen, color: '#0EA5E9' },
+  { id: 'quickCheck', title: 'Review quick checks', description: 'MCQ, T/F, drag order – fast recall practice', icon: Target, color: '#F59E0B' },
 ];
 
-/** Extra resources – drills to help increase your score */
+/** Extra resources – focused drills to boost your score (collapsed from 5 to 3) */
 const EXTRA_PRACTICE: Array<{
   id: LabMode;
   title: string;
@@ -39,8 +40,6 @@ const EXTRA_PRACTICE: Array<{
   icon: typeof FlaskConical;
   color: string;
 }> = [
-  { id: 'quickCheck', title: 'Quick Check', description: 'Review all quick checks – MCQ, T/F, drag order', icon: Target, color: '#F59E0B' },
-  { id: 'methodMark', title: 'Method Mark', description: 'Practice 4–6 mark questions with mark scheme breakdown', icon: ClipboardList, color: '#EC4899' },
   { id: 'practical', title: 'Practical Lab', description: 'Required practicals – variables, method, risk assessment', icon: FlaskConical, color: '#10B981' },
   { id: 'equation', title: 'Equation Lab', description: 'Equations, units, rearranging, "spot the wrong unit"', icon: Calculator, color: '#8B5CF6' },
   { id: 'misconception', title: 'Misconception Lab', description: 'Identify and correct classic wrong ideas', icon: AlertTriangle, color: '#EF4444' },
@@ -158,7 +157,7 @@ export function ScienceLabModePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{subjectTitle} Lab</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          Past-paper-style tests grade you accurately. Use flashcards and quizzes to improve your score.
+          Aiming for Grade 9. Past-paper-style tests grade you accurately. Use flashcards and quizzes to improve your score.
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
           <Zap size={18} className="text-amber-300 flex-shrink-0" />

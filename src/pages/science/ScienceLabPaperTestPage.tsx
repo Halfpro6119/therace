@@ -24,6 +24,7 @@ import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGr
 import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { getGcseScopeForSubject } from '../../config/gcseScope';
 import { storage } from '../../utils/storage';
+import { marksPercentToGrade } from '../../utils/gradeMapping';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
 const PASS_THRESHOLD = 0.7;
@@ -247,9 +248,17 @@ export function ScienceLabPaperTestPage() {
           <p className="text-4xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
             {marksEarned} / {totalMarks} marks ({percent}%)
           </p>
-          <p className="text-lg mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
+          {(() => {
+            const { grade, label: gradeLabel, color: gradeColor } = marksPercentToGrade(percent);
+            return (
+              <p className="text-lg font-semibold mb-2" style={{ color: gradeColor }}>
+                {grade !== null ? `${gradeLabel} equivalent` : gradeLabel}
+              </p>
+            );
+          })()}
+          <p className="text-base mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>
             {passed
-              ? `You passed! ${allPassed ? 'Subject mastery achieved.' : 'Next paper unlocked.'}`
+              ? `You passed! ${allPassed ? 'Subject mastery — Grade 9 ready!' : 'Next paper unlocked.'}`
               : `Need ${Math.ceil(PASS_THRESHOLD * 100)}% to pass. Review and retake.`}
           </p>
           {extendedMarksTotal > 0 && (

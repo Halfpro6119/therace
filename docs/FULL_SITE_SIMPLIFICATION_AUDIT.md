@@ -281,10 +281,22 @@ Implementing the high-impact items (1–4 and 5–8) would materially simplify t
 
 ## Implementation Summary (February 2025)
 
-**Past-paper-first reframe implemented:**
+### Phase 1 — Past-paper-first reframe
+- **ScienceLabModePage:** Reordered to Test yourself (Topic test, Full GCSE) first; "Revise to improve" (flashcards + quick checks) second; "Extra resources" (Practical, Equation, Misconception — collapsed from 5 to 3) third. Copy: "Aiming for Grade 9. Past-paper-style tests grade you accurately."
+- **Recommended step:** Topic test first (any topic, no flashcard unlock); Full GCSE when all topic tests done; flashcards when cards due.
+- **Topics page:** "Start topic test" no longer requires quizUnlocked; first incomplete topic recommended. Copy: "Past-paper style", "Get an accurate grade", "Aiming for Grade 9".
+- **Flashcard completion:** Primary CTA = Topic test; Full GCSE goes to `/full-gcse`. Copy: "Try a topic test to see your grade", "Revise more cards".
+- **ScienceLabSubjectPage:** Header: "Aiming for Grade 9. Past-paper-style tests grade you accurately."
+- **Subject click:** Biology/Chemistry/Physics cards now go directly to Topics (Paper 1 Higher), not Mode page.
+- **Route redirects:** `/science-lab/:subject` → Topics; `/question` and `/concept` → topic-test.
 
-- **ScienceLabModePage:** Reordered to Test yourself (Topic test, Full GCSE) first; "Revise to improve" (flashcards) second; "Extra resources" (Quick Check, Method Mark, etc.) third. Copy: "Past-paper-style tests grade you accurately. Use flashcards and quizzes to improve your score."
-- **Recommended step:** Topic test first (any topic, no flashcard unlock); Full GCSE when all topic tests done; flashcards only when cards due.
-- **Topics page:** "Start topic test" no longer requires quizUnlocked; first incomplete topic (by topic test) recommended. Copy: "Past-paper style", "Get an accurate grade".
-- **Flashcard completion:** Primary CTA = Topic test; Full GCSE goes to `/full-gcse` (not `/question`). Copy: "Try a topic test to see your grade", "Revise more cards".
-- **ScienceLabSubjectPage:** Header updated to past-paper-first messaging.
+### Phase 2 — Grade visibility
+- **Grade mapping utility** (`src/utils/gradeMapping.ts`): 70% → Grade 4, 80% → Grade 7, 90% → Grade 9.
+- **Topic test completion:** Shows "Grade 4 equivalent" / "Grade 9 equivalent" / "Keep practicing".
+- **Paper test completion:** Same grade mapping; "Subject mastery — Grade 9 ready!" when all passed.
+- **Full GCSE page:** "Grade 9 ready!" when paper mastery achieved.
+
+### Phase 3 — Home integration
+- **getScienceLabProgressSummary** (`src/utils/scienceLabProgress.ts`): Aggregates topic tests + full GCSE per subject.
+- **Home page:** Science Lab progress card ("Science Lab — Aiming for Grade 9") with per-subject progress (e.g. "Biology 2/8 · Chemistry 0/8").
+- **Primary CTA:** When user has Science Lab progress, main "Start" button becomes "Continue Science Lab" and deep-links to next action.

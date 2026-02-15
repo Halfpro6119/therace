@@ -49,8 +49,7 @@ import { StatisticsHubPage } from './pages/maths/StatisticsHubPage';
 import { ScienceLabSubjectPage } from './pages/science/ScienceLabSubjectPage';
 import { ScienceLabCombinedSciencePage } from './pages/science/ScienceLabCombinedSciencePage';
 import { ScienceLabModePage } from './pages/science/ScienceLabModePage';
-import { ScienceLabConceptLabPage } from './pages/science/ScienceLabConceptLabPage';
-import { ScienceLabQuestionLabPage } from './pages/science/ScienceLabQuestionLabPage';
+import { ScienceLabSubjectToTopicsRedirect, QuestionToTopicTestRedirect, ConceptToTopicTestRedirect } from './pages/science/ScienceLabRedirects';
 import { ScienceLabMethodMarkPage } from './pages/science/ScienceLabMethodMarkPage';
 import { ScienceLabPracticalLabPage } from './pages/science/ScienceLabPracticalLabPage';
 import { ScienceLabEquationLabPage } from './pages/science/ScienceLabEquationLabPage';
@@ -304,14 +303,14 @@ function App() {
                 <Route path="/science-lab" element={<ScienceLabSubjectPage />} />
                 <Route path="/science-lab/subjects" element={<Navigate to="/science-lab" replace />} />
                 <Route path="/science-lab/combined-science" element={<ScienceLabCombinedSciencePage />} />
-                <Route path="/science-lab/:subject" element={<ScienceLabModePage />} />
+                <Route path="/science-lab/:subject" element={<ScienceLabSubjectToTopicsRedirect />} />
                 <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/topic-test" element={<ScienceLabTopicTestPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/flashcard" element={<ScienceLabFlashcardPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ScienceLabConceptLabPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/question" element={<ScienceLabQuestionLabPage />} />
+                <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ConceptToTopicTestRedirect />} />
+                <Route path="/science-lab/:subject/:paper/:tier/question" element={<QuestionToTopicTestRedirect />} />
                 <Route path="/science-lab/:subject/:paper/:tier/full-gcse" element={<ScienceLabFullGcsePage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/full-gcse/test/:testPaper" element={<ScienceLabPaperTestPage />} />
                 <Route path="/science-lab/:subject/:paper/:tier/methodMark" element={<ScienceLabMethodMarkPage />} />

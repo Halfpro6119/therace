@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Zap, Target, TrendingUp, Flame, AlertCircle, BookOpen } from 'lucide-react';
+import { Zap, Target, TrendingUp, Flame, AlertCircle, BookOpen, FlaskConical, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { db } from '../db/client';
 import { SubjectCard } from '../components/SubjectCard';
@@ -10,6 +10,7 @@ import { MasteryLevel, Subject, Quiz } from '../types';
 import { SkeletonCard, SkeletonSubjectCard } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
 import { getNextAction } from '../utils/subjectStats';
+import { getScienceLabProgressSummary } from '../utils/scienceLabProgress';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -100,6 +101,7 @@ export function HomePage() {
 
   const overallReadiness = calculateOverallReadiness();
   const hasMisses = getRecentMisses().length > 0;
+  const scienceLabProgress = getScienceLabProgressSummary();
 
   if (loading) {
     return (
@@ -179,7 +181,13 @@ export function HomePage() {
 
           <div className="flex flex-wrap items-center gap-3">
           <motion.button
-            onClick={() => nextAction && navigate(nextAction.href)}
+            onClick={() => {
+              if (scienceLabProgress.hasProgress && scienceLabProgress.continueHref) {
+                navigate(scienceLabProgress.continueHref);
+              } else if (nextAction) {
+                navigate(nextAction.href);
+              }
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0 }}
@@ -189,7 +197,11 @@ export function HomePage() {
             style={{ color: 'rgb(var(--accent))' }}
           >
             <Zap size={24} />
-            <span>{nextAction?.label ?? "Start Today's Sprint"}</span>
+            <span>
+              {scienceLabProgress.hasProgress && scienceLabProgress.continueHref
+                ? 'Continue Science Lab'
+                : nextAction?.label ?? "Start Today's Sprint"}
+            </span>
           </motion.button>
           <motion.button
             onClick={() => navigate('/subjects')}
@@ -293,6 +305,44 @@ export function HomePage() {
           </motion.div>
         )}
       </div>
+
+      {scienceLabProgress.continueHref && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.42 }}
+          className={`card p-6 ${scienceLabProgress.continueHref ? 'card-hover cursor-pointer' : ''}`}
+          onClick={() => scienceLabProgress.continueHref && navigate(scienceLabProgress.continueHref)}
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="p-2 rounded-lg"
+                style={{ background: 'rgba(34, 197, 94, 0.15)' }}
+              >
+                <FlaskConical size={20} style={{ color: '#22C55E' }} />
+              </div>
+              <div>
+                <h3 className="font-bold" style={{ color: 'rgb(var(--text))' }}>
+                  Science Lab — Aiming for Grade 9
+                </h3>
+                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {scienceLabProgress.subjects
+                    .map((s) =>
+                      s.fullGcsePassed
+                        ? `${s.subject} ✓`
+                        : `${s.subject} ${s.topicTestsCompleted}/${s.topicTestsTotal}`
+                    )
+                    .join(' · ')}
+                </p>
+              </div>
+            </div>
+            {scienceLabProgress.continueHref && (
+              <ArrowRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+            )}
+          </div>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
