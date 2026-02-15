@@ -57,7 +57,7 @@ export function ScienceLabSubjectPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Science Lab</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Triple Science: Biology, Chemistry, Physics. Or Combined Science (6 papers).
+          Past-paper-style tests grade you accurately. Flashcards and quizzes help you improve your score.
         </p>
       </motion.section>
 

@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList, ArrowRight } from 'lucide-react';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
-import { getTopicsByPaperAndTier } from '../../config/scienceLabFlashcards';
+import { getTopicsByPaperAndTier, getDueFlashcardCount } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
@@ -29,13 +29,16 @@ export function ScienceLabTopicsPage() {
 
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
 
+  const mastery = storage.getFlashcardMastery();
   const getTopicProgress = (topic: string) => {
     const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
+    const dueCount = getDueFlashcardCount(normalizedSubject, paperNum, tierValue, topic, mastery);
     return {
       mastery: m?.flashcardMastery || 0,
       unlocked: m?.quizUnlocked || false,
       topicTestCompleted: m?.topicTestCompleted || false,
       topicTestScore: m?.topicTestScore,
+      dueCount,
     };
   };
 
@@ -68,9 +71,10 @@ export function ScienceLabTopicsPage() {
       {(() => {
         const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue);
         const topicsWithQuestions = [...new Set(questions.map((q) => q.topic))];
+        // Past-paper first: recommend first topic without completed topic test (no flashcard unlock required)
         const firstIncomplete = topicsWithQuestions.find((topic) => {
           const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
-          return m?.quizUnlocked && !m?.topicTestCompleted;
+          return !m?.topicTestCompleted;
         });
         const recommendedTopic = firstIncomplete ?? topicsWithQuestions[0];
         if (topicsWithQuestions.length === 0) return null;
@@ -96,10 +100,10 @@ export function ScienceLabTopicsPage() {
               </div>
               <div>
                 <h2 className="text-lg font-bold mb-1">
-                  Start topic test
+                  Start topic test (past-paper style)
                 </h2>
                 <p className="text-sm text-white/90">
-                  {recommendedTopic ? `Jump straight in — ${recommendedTopic}` : 'Pick a topic and test'}
+                  {recommendedTopic ? `Get an accurate grade — ${recommendedTopic}` : 'Pick a topic and test'}
                 </p>
               </div>
             </div>
@@ -205,6 +209,11 @@ export function ScienceLabTopicsPage() {
                     </h3>
                     <div className="flex items-center gap-3 text-sm flex-wrap" style={{ color: 'rgb(var(--text-secondary))' }}>
                       <span>{progress.mastery}% flashcard mastery</span>
+                      {progress.dueCount > 0 && (
+                        <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/20 text-amber-700 dark:text-amber-400">
+                          {progress.dueCount} card{progress.dueCount !== 1 ? 's' : ''} due
+                        </span>
+                      )}
                       {progress.unlocked && (
                         <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-500/20 text-green-700 dark:text-green-400">
                           Quiz unlocked
@@ -224,6 +233,23 @@ export function ScienceLabTopicsPage() {
                     </div>
                   </button>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`${base}/flashcard?topic=${encodeURIComponent(topic)}`);
+                      }}
+                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition hover:opacity-90 border"
+                      style={{
+                        background: progress.dueCount > 0 ? 'rgba(14, 165, 233, 0.15)' : 'rgb(var(--surface-2))',
+                        borderColor: progress.dueCount > 0 ? 'rgb(14, 165, 233)' : 'rgb(var(--border))',
+                        color: progress.dueCount > 0 ? 'rgb(14, 165, 233)' : 'rgb(var(--text))',
+                      }}
+                      title="Learn (flashcards)"
+                    >
+                      <BookOpen size={14} />
+                      Learn
+                    </button>
                     <button
                       type="button"
                       onClick={(e) => {

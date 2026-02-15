@@ -7,21 +7,31 @@ import { getQuestionsByFilters } from '../../config/scienceLabData';
 import { getDueFlashcardCount } from '../../config/scienceLabFlashcards';
 import type { ScienceSubject, SciencePaper, ScienceTier, LabMode } from '../../types/scienceLab';
 
-/** Learn Mode now merges flashcards + quick checks + bigger tests. Path: Learn → Topic test → Full GCSE */
-const LEARNING_PATH: Array<{
+/** Past-paper tests first: Topic test → Full GCSE. Tests grade accurately; extra resources help improve scores. */
+const TEST_PATH: Array<{
   id: LabMode;
   step: number;
+  title: string;
+  description: string;
+  icon: typeof FileQuestion;
+  color: string;
+}> = [
+  { id: 'topicTest', step: 1, title: 'Topic test', description: 'Past-paper-style questions for one topic. Get an accurate grade (marks-based, exam structure).', icon: FileQuestion, color: '#8B5CF6' },
+  { id: 'fullGcseTest', step: 2, title: 'Full GCSE test', description: 'Full exam-style paper. Pass each paper (70%) to show subject mastery.', icon: GraduationCap, color: '#10B981' },
+];
+
+/** Revise to improve – flashcards and quizzes to boost your score on the tests */
+const REVISE_PATH: Array<{
+  id: LabMode;
   title: string;
   description: string;
   icon: typeof BookOpen;
   color: string;
 }> = [
-  { id: 'flashcard', step: 1, title: 'Learn', description: 'Flashcards with quick checks per card and bigger tests (3–6 mark) after each topic.', icon: BookOpen, color: '#0EA5E9' },
-  { id: 'topicTest', step: 2, title: 'Topic test', description: 'Full test on one topic. Check your knowledge across a whole unit.', icon: FileQuestion, color: '#8B5CF6' },
-  { id: 'fullGcseTest', step: 3, title: 'Full GCSE test', description: 'Test the entire subject. Exam-style across all topics.', icon: GraduationCap, color: '#10B981' },
+  { id: 'flashcard', title: 'Revise with flashcards', description: 'Build recall. Use when you need to improve your score on topic or full GCSE tests.', icon: BookOpen, color: '#0EA5E9' },
 ];
 
-/** Extra practice – not part of the main path */
+/** Extra resources – drills to help increase your score */
 const EXTRA_PRACTICE: Array<{
   id: LabMode;
   title: string;
@@ -69,29 +79,37 @@ export function ScienceLabModePage() {
   const base = `/science-lab/${subject?.toLowerCase()}/${selectedPaper}/${selectedTier.toLowerCase()}`;
   const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
 
-  // Recommended next step: start with Learn, then suggest next step by progress
+  // Recommended: tests first (grade accurately), then revise when due
   const recommendedStep = useMemo(() => {
     const questions = getQuestionsByFilters(normalizedSubject, selectedPaper, selectedTier);
-    const topics = new Set(questions.map(q => q.topic));
-    let hasUnlockedTopic = false;
-    let hasTopicTestNotDone = false;
-    topics.forEach(topic => {
+    const topics = [...new Set(questions.map(q => q.topic))];
+    const paperProgress = storage.getSubjectFullGcseProgress(normalizedSubject, selectedTier, [1, 2] as SciencePaper[]);
+
+    // Full GCSE when all topics have topic tests done
+    const allTopicTestsDone = topics.length > 0 && topics.every(topic => {
       const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
-      if (m?.quizUnlocked) hasUnlockedTopic = true;
-      if (m?.quizUnlocked && !m?.topicTestCompleted) hasTopicTestNotDone = true;
+      return m?.topicTestCompleted;
     });
-    // Suggest topic test when quiz unlocked and at least one topic hasn't had topic test
-    if (hasUnlockedTopic && hasTopicTestNotDone) {
-      return { mode: 'topicTest' as LabMode, label: 'Try a topic test (master a full unit)' };
+    if (allTopicTestsDone && !paperProgress.allPassed) {
+      return { mode: 'fullGcseTest' as LabMode, label: 'Take Full GCSE test – exam-style across all topics', topic: undefined as string | undefined };
     }
-    if (hasUnlockedTopic) return { mode: 'methodMark' as LabMode, label: 'Try bigger tests (Method Mark)' };
-    const anyMastery = Array.from(topics).some(topic => {
-      const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
-      return (m?.flashcardMastery || 0) > 0;
-    });
-    if (anyMastery) return { mode: 'quickCheck' as LabMode, label: 'Do small tests (Quick Check)' };
-    return { mode: 'flashcard' as LabMode, label: 'Start with Learn (flashcards)' };
-  }, [normalizedSubject, selectedPaper, selectedTier]);
+
+    // Topic test: find first incomplete topic (no unlock needed – tests grade from scratch)
+    const firstTopic = topics[0];
+    if (firstTopic) {
+      const incompleteTopic = topics.find(topic => {
+        const m = storage.getTopicMasteryByKey(normalizedSubject, selectedPaper, selectedTier, topic);
+        return !m?.topicTestCompleted;
+      }) ?? firstTopic;
+      return { mode: 'topicTest' as LabMode, label: `Start topic test – ${incompleteTopic} (past-paper style)`, topic: incompleteTopic };
+    }
+
+    // Fallback: revise with flashcards if cards due
+    if (dueCount > 0) {
+      return { mode: 'flashcard' as LabMode, label: `${dueCount} card${dueCount !== 1 ? 's' : ''} due – revise to improve your score`, topic: undefined as string | undefined };
+    }
+    return { mode: 'topicTest' as LabMode, label: 'Start a topic test (past-paper style)', topic: firstTopic };
+  }, [normalizedSubject, selectedPaper, selectedTier, dueCount]);
 
   const handleEnterLab = (mode: LabMode) => {
     if (mode === 'topicTest') {
@@ -140,7 +158,7 @@ export function ScienceLabModePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{subjectTitle} Lab</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          Learn (flashcards + quick checks + bigger tests) → Topic test → Full GCSE test
+          Past-paper-style tests grade you accurately. Use flashcards and quizzes to improve your score.
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
           <Zap size={18} className="text-amber-300 flex-shrink-0" />
@@ -148,7 +166,13 @@ export function ScienceLabModePage() {
             <strong>Recommended:</strong> {recommendedStep.label}
             <button
               type="button"
-              onClick={() => handleEnterLab(recommendedStep.mode)}
+              onClick={() => {
+                if (recommendedStep.mode === 'topicTest' && recommendedStep.topic) {
+                  navigate(`${base}/topic-test?topic=${encodeURIComponent(recommendedStep.topic)}`);
+                } else {
+                  handleEnterLab(recommendedStep.mode);
+                }
+              }}
               className="ml-2 underline hover:no-underline font-semibold"
             >
               Start →
@@ -238,17 +262,17 @@ export function ScienceLabModePage() {
         </div>
       </motion.section>
 
-      {/* Learning path – 5 steps */}
+      {/* Test yourself – past-paper style first */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <BookOpen size={20} style={{ color: '#0EA5E9' }} />
-          Your learning path
+          <FileQuestion size={20} style={{ color: '#8B5CF6' }} />
+          Test yourself
         </h2>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Follow in order: Learn → Topic test → Full GCSE test
+          Past-paper-style questions with marks-based grading. Topic test → Full GCSE.
         </p>
         <div className="space-y-3">
-          {LEARNING_PATH.map((item, index) => {
+          {TEST_PATH.map((item, index) => {
             const Icon = item.icon;
             return (
               <motion.button
@@ -257,7 +281,7 @@ export function ScienceLabModePage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.05 }}
-                onClick={() => handleEnterLab(item.id)}
+                onClick={() => item.id === 'topicTest' ? navigate(`${base}/topic-test`) : handleEnterLab(item.id)}
                 className="w-full rounded-2xl p-5 sm:p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
                 style={{
                   background: 'rgb(var(--surface))',
@@ -276,7 +300,47 @@ export function ScienceLabModePage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{item.title}</h3>
                   <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{item.description}</p>
-                  {item.id === 'flashcard' && dueCount > 0 && (
+                </div>
+                <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} className="flex-shrink-0" />
+              </motion.button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Revise to improve – flashcards when you need to boost your score */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+          Revise to improve your score
+        </h2>
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Use these when you need to improve on the tests.
+        </p>
+        <div className="space-y-3">
+          {REVISE_PATH.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.button
+                key={item.id}
+                type="button"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 + index * 0.05 }}
+                onClick={() => handleEnterLab(item.id)}
+                className="w-full rounded-2xl p-5 sm:p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+                style={{
+                  background: 'rgb(var(--surface))',
+                  borderColor: 'rgb(var(--border))',
+                }}
+              >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}20` }}>
+                  <Icon size={24} style={{ color: item.color }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{item.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{item.description}</p>
+                  {dueCount > 0 && (
                     <p className="text-xs mt-1 font-medium" style={{ color: item.color }}>
                       {dueCount} card{dueCount !== 1 ? 's' : ''} due for review
                     </p>
@@ -289,12 +353,15 @@ export function ScienceLabModePage() {
         </div>
       </section>
 
-      {/* Extra practice */}
+      {/* Extra resources – drills to increase your score */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
           <Zap size={20} style={{ color: '#F59E0B' }} />
-          Extra practice
+          Extra resources
         </h2>
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Focused drills to boost your score on the tests.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {EXTRA_PRACTICE.map((mode, index) => {
             const Icon = mode.icon;

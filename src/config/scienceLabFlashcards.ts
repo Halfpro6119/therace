@@ -38,11 +38,33 @@ function getConceptLabel(concept: { id: string }): string {
 }
 
 /**
- * Get a stable, varied prompt for a concept when no custom flashcardPrompt is set
+ * Harder prompts that omit the concept name (desirable difficulty).
+ * Used for ~20% of concept cards when hash % 5 === 0.
+ */
+const CONCEPT_HARDER_PROMPTS: Record<string, string> = {
+  'bio-diffusion': 'What process moves particles from an area of high concentration to low concentration?',
+  'bio-osmosis': 'What happens when water moves across a partially permeable membrane down a water concentration gradient?',
+  'bio-active-transport': 'What process moves substances against the concentration gradient, requiring energy?',
+  'bio-enzyme-action': 'How does an enzyme speed up a reaction? What is the role of the active site?',
+  'bio-photosynthesis': 'What process do plants use to make glucose using light, water and carbon dioxide?',
+  'bio-respiration': 'What process releases energy from glucose in cells?',
+  'bio-cell-division': 'What process produces genetically identical cells for growth and repair?',
+  'chem-rate-reaction': 'What factors increase the rate of a chemical reaction and why?',
+  'chem-bonding': 'Why does sodium chloride conduct when molten but not when solid?',
+  'phys-electricity': 'How do resistors in series affect total resistance?',
+  'phys-forces': 'What happens to acceleration when mass doubles but force stays constant?',
+};
+
+/**
+ * Get a stable, varied prompt for a concept when no custom flashcardPrompt is set.
+ * ~20% of cards use harder prompts (omit topic) for desirable difficulty.
  */
 function getConceptPrompt(concept: { id: string; topic: string; coreIdea: string; flashcardPrompt?: string }): string {
   if (concept.flashcardPrompt) return concept.flashcardPrompt;
   const label = getConceptLabel(concept);
+  const hash = concept.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const useHarder = hash % 5 === 0 && CONCEPT_HARDER_PROMPTS[concept.id];
+  if (useHarder) return CONCEPT_HARDER_PROMPTS[concept.id];
   const templates = [
     () => `What is ${label} and how does it work?`,
     () => `Explain ${label} in 1–2 sentences.`,
@@ -53,7 +75,7 @@ function getConceptPrompt(concept: { id: string; topic: string; coreIdea: string
     () => `What is the core concept of ${label}?`,
     () => `Summarise ${label}.`,
   ];
-  const idx = concept.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % templates.length;
+  const idx = hash % templates.length;
   return templates[idx]();
 }
 
@@ -825,10 +847,14 @@ function seededRandom(seed: number): () => number {
 
 export type SessionOptions = {
   shuffle?: boolean;
-  /** Max flashcard steps in session. Omit = full deck. */
+  /** Max flashcard steps in session. Omit = full deck (or use time limit). */
   sessionLimit?: number;
+  /** Time limit in minutes (5 or 10). When set, session ends when time runs out. */
+  sessionLimitMinutes?: number;
   /** If true, order flashcards by spaced repetition: due first, then new, then later. Pass mastery from storage. */
   useSpacedRepetition?: boolean;
+  /** If true (and no topic filter), interleave cards across all topics instead of topic-by-topic. */
+  interleaveTopics?: boolean;
   /** Flashcard mastery data (from storage.getFlashcardMastery). Required when useSpacedRepetition is true. */
   mastery?: Record<string, { nextReviewDate?: string }>;
 };
@@ -855,8 +881,9 @@ export function getFlashcardsGroupedByTopic(
   let topics = Array.from(byTopic.keys()).sort();
   if (topicFilter) topics = topics.filter(t => t === topicFilter);
 
-  const { shuffle = false, sessionLimit, useSpacedRepetition = false, mastery } = options ?? {};
+  const { shuffle = false, sessionLimit, useSpacedRepetition = false, mastery, interleaveTopics = false } = options ?? {};
   const today = new Date().toISOString().slice(0, 10);
+  const seed = Date.now() % 10000;
 
   const orderFlashcards = (cards: ScienceFlashcard[]): ScienceFlashcard[] => {
     if (!mastery && !shuffle) return cards;
@@ -871,24 +898,48 @@ export function getFlashcardsGroupedByTopic(
         else later.push(f);
       });
       const ordered = [...due, ...newCards, ...later];
-      return shuffle ? shuffleArray(ordered, Date.now() % 10000) : ordered;
+      return shuffle ? shuffleArray(ordered, seed) : ordered;
     }
-    return shuffle ? shuffleArray(cards, Date.now() % 10000) : cards;
+    return shuffle ? shuffleArray(cards, seed) : cards;
   };
 
-  let result = topics.map((topic) => ({
-    topic,
-    flashcards: orderFlashcards(byTopic.get(topic) ?? []),
-  }));
+  let result: Array<{ topic: string; flashcards: ScienceFlashcard[] }>;
+
+  if (interleaveTopics && !topicFilter && topics.length > 1) {
+    const allCards: ScienceFlashcard[] = [];
+    topics.forEach((topic) => {
+      allCards.push(...(byTopic.get(topic) ?? []));
+    });
+    const ordered = orderFlashcards(allCards);
+    const topicsWithCards = new Set(ordered.map((f) => f.topic));
+    const biggerTestGroups: Array<{ topic: string; flashcards: ScienceFlashcard[] }> = [];
+    Array.from(topicsWithCards).sort().forEach((topic) => {
+      const biggerQuestions = getBiggerTestQuestionsForTopic(subject, paper, tier, topic, 2);
+      if (biggerQuestions.length > 0) {
+        biggerTestGroups.push({ topic, flashcards: [] });
+      }
+    });
+    result = [{ topic: '_interleaved', flashcards: ordered }, ...biggerTestGroups];
+  } else {
+    result = topics.map((topic) => ({
+      topic,
+      flashcards: orderFlashcards(byTopic.get(topic) ?? []),
+    }));
+  }
 
   if (sessionLimit && sessionLimit > 0) {
     let count = 0;
     const out: Array<{ topic: string; flashcards: ScienceFlashcard[] }> = [];
     for (const g of result) {
-      if (count >= sessionLimit) break;
-      const take = Math.min(g.flashcards.length, sessionLimit - count);
+      const cards = g.flashcards;
+      if (cards.length === 0) {
+        out.push(g);
+        continue;
+      }
+      if (count >= sessionLimit) continue;
+      const take = Math.min(cards.length, sessionLimit - count);
       if (take > 0) {
-        out.push({ topic: g.topic, flashcards: g.flashcards.slice(0, take) });
+        out.push({ topic: g.topic, flashcards: cards.slice(0, take) });
         count += take;
       }
     }
@@ -957,14 +1008,9 @@ export function getTopicsByPaperAndTier(
   return Array.from(combined).sort();
 }
 
-/** Shuffle array in place (Fisher-Yates) */
+/** Shuffle array (Fisher-Yates). Uses shuffleArray with no seed for randomness. */
 function shuffle<T>(arr: T[]): T[] {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
+  return shuffleArray(arr);
 }
 
 /**

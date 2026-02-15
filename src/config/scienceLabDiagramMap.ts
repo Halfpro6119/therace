@@ -25,6 +25,9 @@ export const CLEAN_FLASHCARD_DIAGRAMS = new Set<string>([
   'dna_structure',
   'cell_division',
   'homeostasis',
+  'digestive_system',
+  'circulatory_system',
+  'pathogen_infection',
 ]);
 
 export function isCleanFlashcardDiagram(slug: string): boolean {

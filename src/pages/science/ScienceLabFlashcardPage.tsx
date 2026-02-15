@@ -32,6 +32,7 @@ import {
 import { FlashcardDiagram } from '../../components/FlashcardDiagram';
 import { isCleanFlashcardDiagram } from '../../config/scienceLabDiagramMap';
 import { QuickCheckInline } from '../../components/science/QuickCheckInline';
+import { useConfirm } from '../../contexts/ConfirmContext';
 import { storage } from '../../utils/storage';
 import { soundSystem } from '../../utils/sounds';
 import { gradeScienceAnswer } from '../../utils/scienceGrading';
@@ -87,12 +88,14 @@ export function ScienceLabFlashcardPage() {
   const [biggerTestShowFeedback, setBiggerTestShowFeedback] = useState(false);
   const [biggerTestIsCorrect, setBiggerTestIsCorrect] = useState(false);
   const [seeAgainToast, setSeeAgainToast] = useState<{ days: number } | null>(null);
+  const { confirm } = useConfirm();
   const [sessionOptions, setSessionOptions] = useState<SessionOptions>(() => {
     const params = new URLSearchParams(window.location.search);
     return {
       shuffle: params.get('shuffle') === '1',
       useSpacedRepetition: params.get('spaced') !== '0',
       sessionLimit: params.has('limit') ? parseInt(params.get('limit') ?? '0', 10) || undefined : undefined,
+      sessionLimitMinutes: params.has('minutes') ? (parseInt(params.get('minutes') ?? '0', 10) || undefined) : undefined,
     };
   });
   const answeredQuickCheckIds = useRef<Set<string>>(new Set());
@@ -167,12 +170,26 @@ export function ScienceLabFlashcardPage() {
     navigate(base + query);
   }, [navigate, subject, paperNum, tierValue, topicFilter]);
 
+  const checkTimeLimitExpired = useCallback((): boolean => {
+    const mins = sessionOptions.sessionLimitMinutes;
+    if (!mins) return false;
+    const elapsed = (Date.now() - sessionStartTimeRef.current) / (60 * 1000);
+    return elapsed >= mins;
+  }, [sessionOptions.sessionLimitMinutes]);
+
   const advanceStep = useCallback(() => {
+    if (checkTimeLimitExpired()) {
+      setSessionComplete(true);
+      setPhase('flashcard');
+      setPendingQuickChecks([]);
+      setQuickCheckIndex(0);
+      return;
+    }
     const current = effectiveSteps[stepIndex];
     const nextIndex = stepIndex + 1;
     const next = effectiveSteps[nextIndex];
 
-    if (current?.type === 'flashcard' && current.topic && stepIndex < learnSteps.length) {
+    if (current?.type === 'flashcard' && current.topic && current.topic !== '_interleaved' && stepIndex < learnSteps.length) {
       const nextNormal = learnSteps[stepIndex + 1];
       if (nextNormal?.type === 'biggerTest') {
         const topicFlashcards = groups
@@ -216,7 +233,7 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
     }
-  }, [stepIndex, effectiveSteps, learnSteps, groups, normalizedSubject, paperNum, tierValue]);
+  }, [stepIndex, effectiveSteps, learnSteps, groups, normalizedSubject, paperNum, tierValue, checkTimeLimitExpired]);
 
   const handleConfidence = useCallback(
     (level: ConfidenceLevel) => {
@@ -257,7 +274,8 @@ export function ScienceLabFlashcardPage() {
 
       const doAdvance = () => {
         clearTimeout(toastTimer);
-        const checks = getQuickChecksForFlashcard(cardId, currentStep.topic, quickChecksAll, true).slice(0, 2);
+        const topicForChecks = currentFlashcard?.topic ?? currentStep.topic;
+        const checks = getQuickChecksForFlashcard(cardId, topicForChecks, quickChecksAll, true).slice(0, 2);
         if (checks.length > 0) {
           quickCheckStepIndexRef.current = stepIndex;
           setPendingQuickChecks(checks);
@@ -402,10 +420,34 @@ export function ScienceLabFlashcardPage() {
     }
   }, [currentFlashcard?.id, phase]);
 
+  /** Session start time for time-based limits */
+  const sessionStartTimeRef = useRef<number>(Date.now());
   useEffect(() => {
-    setStepIndex(0);
-    setNotSureQueue([]);
-  }, [sessionOptions.shuffle, sessionOptions.useSpacedRepetition, sessionOptions.sessionLimit]);
+    sessionStartTimeRef.current = Date.now();
+  }, [sessionOptions.shuffle, sessionOptions.useSpacedRepetition, sessionOptions.sessionLimit, sessionOptions.sessionLimitMinutes, sessionOptions.interleaveTopics]);
+
+  const applySessionOptionChange = useCallback(
+    (updater: (prev: SessionOptions) => SessionOptions) => {
+      const isMidSession = stepIndex > 0 || notSureQueue.length > 0;
+      if (isMidSession) {
+        confirm({
+          title: 'Reset session?',
+          message: 'Changing options will reset your progress and start from the first card. Continue?',
+          confirmLabel: 'Reset & apply',
+          cancelLabel: 'Cancel',
+        }).then((ok) => {
+          if (ok) {
+            setSessionOptions(updater);
+            setStepIndex(0);
+            setNotSureQueue([]);
+          }
+        });
+      } else {
+        setSessionOptions(updater);
+      }
+    },
+    [confirm, stepIndex, notSureQueue.length]
+  );
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -462,6 +504,7 @@ export function ScienceLabFlashcardPage() {
   // Completion screen – choose redo flashcards or topic quiz next
   if (sessionComplete) {
     const handleRedoFlashcards = () => {
+      sessionStartTimeRef.current = Date.now();
       setSessionComplete(false);
       setStepIndex(0);
       setPhase('flashcard');
@@ -490,7 +533,7 @@ export function ScienceLabFlashcardPage() {
           </div>
           <h1 className="text-xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>All done!</h1>
           <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
-            You completed {totalFlashcards} cards with quick checks and bigger tests.
+            You revised {totalFlashcards} cards. Try a topic test to see your grade.
           </p>
           <p className="text-xs font-medium mb-4 uppercase tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
             What next?
@@ -503,23 +546,23 @@ export function ScienceLabFlashcardPage() {
               style={{ background: '#8B5CF6' }}
             >
               <FileQuestion size={20} />
-              {topicFilter ? 'Topic quiz →' : 'Browse topics'}
+              {topicFilter ? 'Topic test → see your grade' : 'Topic test (pick a topic)'}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`${base}/full-gcse`)}
+              className="w-full py-3.5 rounded-xl font-semibold transition border-2"
+              style={{ borderColor: '#10B981', color: '#10B981', background: 'rgba(16, 185, 129, 0.08)' }}
+            >
+              Full GCSE test
             </button>
             <button
               type="button"
               onClick={handleRedoFlashcards}
-              className="w-full py-3.5 rounded-xl font-semibold transition border-2"
-              style={{ borderColor: '#8B5CF6', color: '#8B5CF6', background: 'rgba(139, 92, 246, 0.08)' }}
-            >
-              Redo flashcards
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`${base}/question`)}
               className="w-full py-3 rounded-xl font-medium transition border"
               style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
             >
-              Full GCSE Test
+              Revise more cards
             </button>
             <button
               type="button"
@@ -692,7 +735,7 @@ export function ScienceLabFlashcardPage() {
 
   const progressLabel =
     currentStep?.type === 'flashcard'
-      ? `Learn: ${currentStep.topic} — Card ${currentFlashcardIndex} of ${totalFlashcards}`
+      ? `Learn: ${(currentFlashcard?.topic ?? currentStep.topic).replace('_interleaved', 'All topics')} — Card ${currentFlashcardIndex} of ${totalFlashcards}`
       : '';
 
   return (
@@ -737,7 +780,7 @@ export function ScienceLabFlashcardPage() {
               <input
                 type="checkbox"
                 checked={sessionOptions.shuffle ?? false}
-                onChange={(e) => setSessionOptions((o) => ({ ...o, shuffle: e.target.checked }))}
+                onChange={(e) => applySessionOptionChange((o) => ({ ...o, shuffle: e.target.checked }))}
                 className="rounded"
               />
               Shuffle
@@ -746,15 +789,26 @@ export function ScienceLabFlashcardPage() {
               <input
                 type="checkbox"
                 checked={sessionOptions.useSpacedRepetition ?? true}
-                onChange={(e) => setSessionOptions((o) => ({ ...o, useSpacedRepetition: e.target.checked }))}
+                onChange={(e) => applySessionOptionChange((o) => ({ ...o, useSpacedRepetition: e.target.checked }))}
                 className="rounded"
               />
               Due first
             </label>
+            {!topicFilter && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sessionOptions.interleaveTopics ?? false}
+                  onChange={(e) => applySessionOptionChange((o) => ({ ...o, interleaveTopics: e.target.checked }))}
+                  className="rounded"
+                />
+                Interleave topics
+              </label>
+            )}
             <select
               value={sessionOptions.sessionLimit ?? ''}
               onChange={(e) =>
-                setSessionOptions((o) => ({
+                applySessionOptionChange((o) => ({
                   ...o,
                   sessionLimit: e.target.value ? parseInt(e.target.value, 10) : undefined,
                 }))
@@ -765,6 +819,21 @@ export function ScienceLabFlashcardPage() {
               <option value="">Full deck</option>
               <option value="10">10 cards</option>
               <option value="20">20 cards</option>
+            </select>
+            <select
+              value={sessionOptions.sessionLimitMinutes ?? ''}
+              onChange={(e) =>
+                applySessionOptionChange((o) => ({
+                  ...o,
+                  sessionLimitMinutes: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                }))
+              }
+              className="rounded-lg border px-2 py-1 text-xs"
+              style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+            >
+              <option value="">No time limit</option>
+              <option value="5">5 min</option>
+              <option value="10">10 min</option>
             </select>
           </div>
         </div>
@@ -933,6 +1002,13 @@ export function ScienceLabFlashcardPage() {
                         </p>
                       )}
                     </div>
+                    {currentFlashcard.back.visual?.diagramId && isCleanFlashcardDiagram(currentFlashcard.back.visual.diagramId) && (
+                      <div className="science-flashcard-diagram-back mt-2 flex justify-center">
+                        <div className="w-full max-w-[200px] min-h-[140px]">
+                          <FlashcardDiagram slug={currentFlashcard.back.visual.diagramId} description={currentFlashcard.back.visual.description} fitToContainer preferStatic showDescriptionWithImage={false} />
+                        </div>
+                      </div>
+                    )}
                     {currentFlashcard.back.keyTerms.length > 0 && (
                       <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
                         <span className="text-[10px] font-semibold uppercase tracking-wider w-full" style={{ color: 'rgb(var(--text-secondary))' }}>Key terms</span>
