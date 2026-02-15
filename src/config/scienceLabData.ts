@@ -4008,6 +4008,158 @@ export const PRACTICAL_QUIZ_QUESTIONS: PracticalQuizQuestion[] = [
       incorrect: 'Energy is lost to the air and the surroundings. Better insulation or a lid would reduce this systematic error.',
     },
   },
+
+  // ---------- 6-mark style questions (select all that would get marks) ----------
+  {
+    id: 'pq-bio-microscopy-6mark',
+    practicalId: 'bio-microscopy',
+    category: 'method',
+    type: 'multiSelect',
+    marks: 6,
+    question: 'A 6-mark question asks: "Describe how to prepare a microscope slide and observe cells." Which of these would get a mark? Select all that apply.',
+    options: [
+      'Place a drop of water on a clean slide',
+      'Obtain a thin layer of cells (e.g. onion epidermis)',
+      'Add iodine solution to stain the cells',
+      'Lower the coverslip at an angle to avoid air bubbles',
+      'Start with the lowest magnification objective lens',
+      'Use coarse focus then fine focus to bring cells into view',
+      'Use the highest magnification first to see detail',
+      'Leave the slide to dry before placing on the stage',
+    ],
+    correctAnswer: [
+      'Place a drop of water on a clean slide',
+      'Obtain a thin layer of cells (e.g. onion epidermis)',
+      'Add iodine solution to stain the cells',
+      'Lower the coverslip at an angle to avoid air bubbles',
+      'Start with the lowest magnification objective lens',
+      'Use coarse focus then fine focus to bring cells into view',
+    ],
+    feedback: {
+      correct: 'Full marks. You identified the key method points an examiner would credit.',
+      incorrect: 'Review the method: start with low magnification, use stain, lower coverslip at an angle. Wrong options: highest mag first and leaving to dry are not correct.',
+    },
+  },
+  {
+    id: 'pq-bio-enzyme-6mark',
+    practicalId: 'bio-enzyme-activity',
+    category: 'evaluation',
+    type: 'multiSelect',
+    marks: 6,
+    question: '"Evaluate the reliability of this investigation into the effect of pH on enzyme activity." Which points would get marks? Select all that apply.',
+    options: [
+      'Subjective judgement of when iodine test becomes negative reduces reliability',
+      'Using a colorimeter would give an objective measure of starch concentration',
+      'Repeating each pH and calculating mean would improve reliability',
+      'Controlling temperature with a water bath improves reliability',
+      'pH could change during the reaction – a limitation',
+      'Using more test tubes would make it more reliable',
+      'The same person should judge the end point each time',
+      'Checking pH with a pH meter throughout would improve accuracy',
+    ],
+    correctAnswer: [
+      'Subjective judgement of when iodine test becomes negative reduces reliability',
+      'Using a colorimeter would give an objective measure of starch concentration',
+      'Repeating each pH and calculating mean would improve reliability',
+      'Controlling temperature with a water bath improves reliability',
+      'pH could change during the reaction – a limitation',
+      'Checking pH with a pH meter throughout would improve accuracy',
+    ],
+    feedback: {
+      correct: 'Well done. You covered limitations (subjective end point, pH change) and improvements (colorimeter, repeat and mean, temperature control, pH meter).',
+      incorrect: 'Good answers include: subjective end point; colorimeter for objectivity; repeat and mean; temperature control; pH changing; pH meter. "More test tubes" or "same person" are not the main mark points.',
+    },
+  },
+  {
+    id: 'pq-bio-osmosis-6mark',
+    practicalId: 'bio-osmosis-potato',
+    category: 'evaluation',
+    type: 'multiSelect',
+    marks: 6,
+    question: '"Describe how you would investigate the effect of sugar concentration on the mass of potato cylinders." Which steps would get marks? Select all that apply.',
+    options: [
+      'Cut potato cylinders using a cork borer to keep size the same',
+      'Measure initial mass of each cylinder',
+      'Place each cylinder in a different concentration of sugar solution',
+      'Leave for a set time (e.g. 30 minutes)',
+      'Remove, dry with paper towel, measure final mass',
+      'Calculate percentage change in mass',
+      'Use the same potato for every cylinder',
+      'Heat the solutions to 37°C first',
+    ],
+    correctAnswer: [
+      'Cut potato cylinders using a cork borer to keep size the same',
+      'Measure initial mass of each cylinder',
+      'Place each cylinder in a different concentration of sugar solution',
+      'Leave for a set time (e.g. 30 minutes)',
+      'Remove, dry with paper towel, measure final mass',
+      'Calculate percentage change in mass',
+    ],
+    feedback: {
+      correct: 'Full marks. You identified the key method points: same size (cork borer), initial mass, range of concentrations, same time, dry then final mass, percentage change.',
+      incorrect: 'Mark points: cork borer for same size; initial mass; different concentrations; set time; dry then weigh; percentage change. Same potato is a control, not a separate mark; heating to 37°C is not standard for this practical.',
+    },
+  },
+  {
+    id: 'pq-chem-rate-6mark',
+    practicalId: 'chem-rate-temperature',
+    category: 'method',
+    type: 'multiSelect',
+    marks: 6,
+    question: '"Describe a method to investigate the effect of temperature on the rate of reaction between sodium thiosulfate and hydrochloric acid." Which would get marks? Select all that apply.',
+    options: [
+      'Place conical flask on a cross drawn on paper',
+      'Add measured volume of sodium thiosulfate, then acid; start timer',
+      'Stop timer when the cross can no longer be seen',
+      'Repeat at different temperatures',
+      'Use a water bath to heat the solution to each temperature',
+      'Keep concentration and volume the same when changing temperature',
+      'Stir the mixture to speed up the reaction',
+      'Use the same cross and same lighting each time',
+    ],
+    correctAnswer: [
+      'Place conical flask on a cross drawn on paper',
+      'Add measured volume of sodium thiosulfate, then acid; start timer',
+      'Stop timer when the cross can no longer be seen',
+      'Repeat at different temperatures',
+      'Use a water bath to heat the solution to each temperature',
+      'Keep concentration and volume the same when changing temperature',
+    ],
+    feedback: {
+      correct: 'Full marks. Key points: cross on paper, add solutions and start timer, stop when cross disappears, repeat at different temperatures, water bath for temperature, control concentration and volume.',
+      incorrect: 'Mark points: cross on paper; add solutions and time; stop when cross disappears; repeat at different temperatures; water bath; control variables (concentration, volume). Same cross/lighting is control; stirring is not standard method.',
+    },
+  },
+  {
+    id: 'pq-phys-shc-6mark',
+    practicalId: 'phys-shc-prac',
+    category: 'evaluation',
+    type: 'multiSelect',
+    marks: 6,
+    question: '"Explain how you would find the specific heat capacity of a metal block and evaluate the method." Which points would get marks? Select all that apply.',
+    options: [
+      'Measure mass of block; heat with heater for set time; measure temperature change',
+      'Use E = Pt for energy supplied by heater',
+      'Use c = E / (m × ΔT) to find specific heat capacity',
+      'Heat lost to surroundings is a source of error',
+      'Insulating the block would reduce heat loss',
+      'Repeating and taking mean would improve reliability',
+      'The block must be allowed to cool before weighing',
+      'Use a thermometer with better resolution for accuracy',
+    ],
+    correctAnswer: [
+      'Measure mass of block; heat with heater for set time; measure temperature change',
+      'Use E = Pt for energy supplied by heater',
+      'Use c = E / (m × ΔT) to find specific heat capacity',
+      'Heat lost to surroundings is a source of error',
+      'Insulating the block would reduce heat loss',
+      'Repeating and taking mean would improve reliability',
+    ],
+    feedback: {
+      correct: 'Full marks. You covered method (mass, heat, ΔT; E=Pt; c=E/(mΔT)) and evaluation (heat loss, insulation, repeat and mean).',
+      incorrect: 'Mark points: measure mass and ΔT; E=Pt; c=E/(mΔT); heat loss to surroundings; insulation; repeat and mean. Cooling before weighing and thermometer resolution are minor/not the main 6 points.',
+    },
+  },
 ];
 
 /**
@@ -4070,6 +4222,13 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
         correctRearrangement: 'Image size = Magnification × Actual size',
       },
     ],
+    practiceCalculations: [
+      { prompt: 'An image is 50 mm long. The magnification is 100×. Find the actual size in mm.', answer: 0.5, unit: 'mm' },
+      { prompt: 'Actual size is 0.02 mm, magnification is 250×. Find the image size in mm.', answer: 5, unit: 'mm' },
+      { prompt: 'Image size 8 mm, actual size 0.04 mm. Find the magnification (no unit).', answer: 200, unit: '×' },
+      { prompt: 'Under 400× magnification an object measures 2 mm on the image. Find actual size in mm.', answer: 0.005, unit: 'mm', tolerance: 0.0001 },
+      { prompt: 'A cell is 50 μm across. Drawing is 25 mm. Find magnification.', answer: 500, unit: '×' },
+    ],
   },
   {
     id: 'bio-percentage-change',
@@ -4113,6 +4272,16 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
         prompt: 'Rearrange to find change in mass',
         correctRearrangement: 'Change in mass = (Percentage change ÷ 100) × Original mass',
       },
+      {
+        prompt: 'Rearrange to find original mass',
+        correctRearrangement: 'Original mass = Change in mass ÷ (Percentage change ÷ 100)',
+      },
+    ],
+    practiceCalculations: [
+      { prompt: 'Original mass 20 g, final mass 24 g. Find percentage change in mass.', answer: 20, unit: '%' },
+      { prompt: 'Original mass 50 g, change in mass −10 g. Find percentage change.', answer: -20, unit: '%' },
+      { prompt: 'Percentage change is 25%, original mass is 40 g. Find the change in mass in g.', answer: 10, unit: 'g' },
+      { prompt: 'A potato cylinder went from 2.0 g to 2.5 g. What is the percentage change in mass?', answer: 25, unit: '%' },
     ],
   },
   {
@@ -4152,6 +4321,12 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
         correctRearrangement: 'Time = 1 ÷ Rate',
       },
     ],
+    practiceCalculations: [
+      { prompt: 'A reaction takes 20 s to complete. Find the rate in 1/s.', answer: 0.05, unit: '1/s', tolerance: 0.001 },
+      { prompt: 'Rate of reaction is 0.1 s⁻¹. How long did the reaction take in seconds?', answer: 10, unit: 's' },
+      { prompt: 'Time for reaction is 5 s. Find rate in s⁻¹.', answer: 0.2, unit: '1/s', tolerance: 0.01 },
+      { prompt: 'Rate is 0.025 1/s. Find time in seconds.', answer: 40, unit: 's' },
+    ],
   },
   
   // ========== CHEMISTRY EQUATIONS ==========
@@ -4169,6 +4344,11 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
     ],
     rearrangingPrompts: [
       { prompt: 'Rearrange to find time', correctRearrangement: 'Time = 1 ÷ Rate' },
+    ],
+    practiceCalculations: [
+      { prompt: 'Sodium thiosulfate reaction takes 40 s. Find rate in 1/s.', answer: 0.025, unit: '1/s', tolerance: 0.001 },
+      { prompt: 'Rate of reaction is 0.05 s⁻¹. Find time in seconds.', answer: 20, unit: 's' },
+      { prompt: 'At 50°C the reaction takes 15 s. What is the rate in s⁻¹?', answer: 0.067, unit: '1/s', tolerance: 0.01 },
     ],
   },
   {
@@ -4189,6 +4369,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
       { prompt: 'Rearrange to find mass', correctRearrangement: 'mass = moles × M_r' },
       { prompt: 'Rearrange to find M_r', correctRearrangement: 'M_r = mass ÷ moles' },
     ],
+    practiceCalculations: [
+      { prompt: 'How many grams in 2 moles of water, H₂O? (M_r = 18 g/mol)', answer: 36, unit: 'g' },
+      { prompt: 'A sample has mass 80 g and M_r = 40. Find the number of moles.', answer: 2, unit: 'mol' },
+      { prompt: 'How many moles in 16 g of methane CH₄? (M_r = 16)', answer: 1, unit: 'mol' },
+      { prompt: 'Find mass in g of 3 moles of CO₂. (M_r = 44)', answer: 132, unit: 'g' },
+      { prompt: '0.5 mol of a compound has mass 29 g. Find M_r.', answer: 58, unit: 'No unit' },
+      { prompt: 'Sulfuric acid H₂SO₄ has M_r = 98. What mass in g is 0.25 mol?', answer: 24.5, unit: 'g', tolerance: 0.1 },
+    ],
   },
   {
     id: 'chem-concentration-equation',
@@ -4206,6 +4394,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
     rearrangingPrompts: [
       { prompt: 'Rearrange to find mass', correctRearrangement: 'mass = concentration × volume' },
       { prompt: 'Rearrange to find volume', correctRearrangement: 'volume = mass ÷ concentration' },
+    ],
+    practiceCalculations: [
+      { prompt: 'Concentration is 0.5 g/dm³, volume is 2 dm³. Find the mass of solute in g.', answer: 1, unit: 'g' },
+      { prompt: 'Mass of solute is 10 g, concentration is 2 g/dm³. Find the volume in dm³.', answer: 5, unit: 'dm³' },
+      { prompt: 'Dissolve 5 g in 0.5 dm³. Find concentration in g/dm³.', answer: 10, unit: 'g/dm³' },
+      { prompt: 'Concentration 4 g/dm³, mass 12 g. Find volume in dm³.', answer: 3, unit: 'dm³' },
+      { prompt: '250 cm³ of 2 g/dm³ solution. What mass of solute in g? (0.25 dm³)', answer: 0.5, unit: 'g', tolerance: 0.01 },
+      { prompt: '8 g dissolved to make 2 dm³ solution. Find concentration in g/dm³.', answer: 4, unit: 'g/dm³' },
     ],
   },
 
@@ -4226,6 +4422,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
     rearrangingPrompts: [
       { prompt: 'Rearrange to find resistance', correctRearrangement: 'R = V ÷ I' },
       { prompt: 'Rearrange to find current', correctRearrangement: 'I = V ÷ R' },
+    ],
+    practiceCalculations: [
+      { prompt: 'A resistor has V = 12 V and R = 4 Ω. Find the current I in amperes.', answer: 3, unit: 'A' },
+      { prompt: 'Current is 0.5 A, potential difference is 6 V. Find the resistance in Ω.', answer: 12, unit: 'Ω' },
+      { prompt: '9 V across a 18 Ω resistor. Find current in A.', answer: 0.5, unit: 'A', tolerance: 0.01 },
+      { prompt: 'Current 2 A, resistance 7.5 Ω. Find potential difference in V.', answer: 15, unit: 'V' },
+      { prompt: 'A 24 Ω component has 6 V across it. Find current in A.', answer: 0.25, unit: 'A', tolerance: 0.01 },
+      { prompt: '0.2 A through a resistor with 10 V. Find resistance in Ω.', answer: 50, unit: 'Ω' },
     ],
   },
   {
@@ -4266,6 +4470,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
         correctRearrangement: 'v = √(2E_k/m)',
       },
     ],
+    practiceCalculations: [
+      { prompt: 'A 2 kg object has 36 J of kinetic energy. Find its speed in m/s.', answer: 6, unit: 'm/s', tolerance: 0.1 },
+      { prompt: 'Mass 0.5 kg, speed 4 m/s. Find kinetic energy in J.', answer: 4, unit: 'J' },
+      { prompt: '1 kg object moving at 10 m/s. Find E_k in J.', answer: 50, unit: 'J' },
+      { prompt: 'E_k = 72 J, m = 8 kg. Find speed in m/s.', answer: 3, unit: 'm/s', tolerance: 0.1 },
+      { prompt: 'Car of mass 800 kg has 160 kJ kinetic energy. Find speed in m/s.', answer: 20, unit: 'm/s', tolerance: 0.5 },
+      { prompt: 'Ball 0.2 kg, speed 5 m/s. Find kinetic energy in J.', answer: 2.5, unit: 'J', tolerance: 0.1 },
+    ],
   },
   {
     id: 'phys-density-equation',
@@ -4283,6 +4495,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
     rearrangingPrompts: [
       { prompt: 'Rearrange to find mass', correctRearrangement: 'mass = density × volume' },
       { prompt: 'Rearrange to find volume', correctRearrangement: 'volume = mass ÷ density' },
+    ],
+    practiceCalculations: [
+      { prompt: 'Mass 10 kg, volume 5 m³. Find density in kg/m³.', answer: 2, unit: 'kg/m³' },
+      { prompt: 'Density 4 g/cm³, volume 25 cm³. Find mass in g.', answer: 100, unit: 'g' },
+      { prompt: 'Density 8000 kg/m³, mass 2 kg. Find volume in m³.', answer: 0.00025, unit: 'm³', tolerance: 0.00001 },
+      { prompt: 'Block 0.5 m³, density 2700 kg/m³. Find mass in kg.', answer: 1350, unit: 'kg' },
+      { prompt: 'Liquid: 500 g, 400 cm³. Find density in g/cm³.', answer: 1.25, unit: 'g/cm³', tolerance: 0.01 },
+      { prompt: 'Density 1 g/cm³ (water), volume 30 cm³. Find mass in g.', answer: 30, unit: 'g' },
     ],
   },
   {
@@ -4303,6 +4523,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
       { prompt: 'Rearrange to find c', correctRearrangement: 'c = E ÷ (m × ΔT)' },
       { prompt: 'Rearrange to find ΔT', correctRearrangement: 'ΔT = E ÷ (m × c)' },
     ],
+    practiceCalculations: [
+      { prompt: 'Heat 1 kg of water (c = 4200 J/kg°C) by 10°C. Find energy transferred in J.', answer: 42000, unit: 'J' },
+      { prompt: 'A 2 kg block receives 8400 J. Its c is 420 J/kg°C. Find temperature change in °C.', answer: 10, unit: '°C' },
+      { prompt: 'Heat 0.5 kg aluminium (c = 900 J/kg°C) by 20°C. Find E in J.', answer: 9000, unit: 'J' },
+      { prompt: '5000 J heats 1 kg substance by 5°C. Find c in J/kg°C.', answer: 1000, unit: 'J/kg°C' },
+      { prompt: 'Copper block 3 kg, c = 390 J/kg°C, heated by 50°C. Find energy in J.', answer: 58500, unit: 'J' },
+      { prompt: '10 kJ heats 2 kg water. Temperature rise in °C? (c = 4200 J/kg°C)', answer: 1.19, unit: '°C', tolerance: 0.05 },
+    ],
   },
   {
     id: 'phys-wave-speed',
@@ -4321,6 +4549,14 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
       { prompt: 'Rearrange to find frequency', correctRearrangement: 'f = v ÷ λ' },
       { prompt: 'Rearrange to find wavelength', correctRearrangement: 'λ = v ÷ f' },
     ],
+    practiceCalculations: [
+      { prompt: 'Frequency 50 Hz, wavelength 2 m. Find wave speed in m/s.', answer: 100, unit: 'm/s' },
+      { prompt: 'Wave speed 340 m/s, frequency 170 Hz. Find wavelength in m.', answer: 2, unit: 'm' },
+      { prompt: 'Radio wave: 3×10⁸ m/s, frequency 100 MHz (10⁸ Hz). Find wavelength in m.', answer: 3, unit: 'm' },
+      { prompt: 'Sound: 330 m/s, wavelength 0.5 m. Find frequency in Hz.', answer: 660, unit: 'Hz' },
+      { prompt: 'Wave speed 12 m/s, wavelength 4 m. Find frequency in Hz.', answer: 3, unit: 'Hz' },
+      { prompt: 'Sound in water: speed 1500 m/s, wavelength 0.75 m. Find frequency in Hz.', answer: 2000, unit: 'Hz' },
+    ],
   },
   {
     id: 'phys-force-acceleration',
@@ -4338,6 +4574,96 @@ export const SCIENCE_EQUATIONS: ScienceEquation[] = [
     rearrangingPrompts: [
       { prompt: 'Rearrange to find acceleration', correctRearrangement: 'a = F ÷ m' },
       { prompt: 'Rearrange to find mass', correctRearrangement: 'm = F ÷ a' },
+    ],
+    practiceCalculations: [
+      { prompt: 'A 5 kg object is pushed with 10 N. Find its acceleration in m/s².', answer: 2, unit: 'm/s²' },
+      { prompt: 'Force 20 N causes 4 m/s² acceleration. Find mass in kg.', answer: 5, unit: 'kg' },
+      { prompt: 'Mass 12 kg, acceleration 0.5 m/s². Find resultant force in N.', answer: 6, unit: 'N' },
+      { prompt: '100 N accelerates a car at 2 m/s². Find mass in kg.', answer: 50, unit: 'kg' },
+      { prompt: '0.5 kg ball, acceleration 20 m/s². Find force in N.', answer: 10, unit: 'N' },
+      { prompt: 'Force 15 N on 3 kg object. Find acceleration in m/s².', answer: 5, unit: 'm/s²' },
+    ],
+  },
+  // ---------- Extra physics equations (GCSE) ----------
+  {
+    id: 'phys-gpe-equation',
+    subject: 'Physics',
+    topic: 'Energy stores and transfers',
+    equation: 'E_p = mgh',
+    symbols: [
+      { symbol: 'E_p', name: 'Gravitational potential energy', unit: 'J', description: 'Energy stored due to height' },
+      { symbol: 'm', name: 'Mass', unit: 'kg', description: 'Mass of object' },
+      { symbol: 'g', name: 'Gravitational field strength', unit: 'N/kg', description: 'About 10 N/kg on Earth' },
+      { symbol: 'h', name: 'Height', unit: 'm', description: 'Height above reference level' },
+    ],
+    unitTraps: [
+      { wrongUnit: 'Height in cm', correctUnit: 'm', explanation: 'Use metres for g in N/kg' },
+      { wrongUnit: 'Mass in g', correctUnit: 'kg', explanation: 'Use kg for energy in joules' },
+    ],
+    rearrangingPrompts: [
+      { prompt: 'Rearrange to find height h', correctRearrangement: 'h = E_p ÷ (m × g)' },
+      { prompt: 'Rearrange to find mass m', correctRearrangement: 'm = E_p ÷ (g × h)' },
+    ],
+    practiceCalculations: [
+      { prompt: '2 kg mass raised 5 m. g = 10 N/kg. Find GPE in J.', answer: 100, unit: 'J' },
+      { prompt: 'GPE = 500 J, m = 10 kg, g = 10 N/kg. Find height in m.', answer: 5, unit: 'm' },
+      { prompt: 'Object 4 kg at height 3 m. Find GPE in J. (g = 10 N/kg)', answer: 120, unit: 'J' },
+      { prompt: '200 J GPE, height 4 m, g = 10 N/kg. Find mass in kg.', answer: 5, unit: 'kg' },
+      { prompt: '1.5 kg book on shelf 2 m high. GPE in J? (g = 10 N/kg)', answer: 30, unit: 'J' },
+      { prompt: 'GPE 80 J, mass 2 kg. Find height in m. (g = 10 N/kg)', answer: 4, unit: 'm' },
+    ],
+  },
+  {
+    id: 'phys-power-equation',
+    subject: 'Physics',
+    topic: 'Energy stores and transfers',
+    equation: 'P = E ÷ t',
+    symbols: [
+      { symbol: 'P', name: 'Power', unit: 'W (watts)', description: 'Energy transferred per second' },
+      { symbol: 'E', name: 'Energy transferred', unit: 'J', description: 'Total energy' },
+      { symbol: 't', name: 'Time', unit: 's', description: 'Time taken' },
+    ],
+    unitTraps: [
+      { wrongUnit: 'Time in minutes', correctUnit: 's', explanation: 'Convert time to seconds for power in watts' },
+    ],
+    rearrangingPrompts: [
+      { prompt: 'Rearrange to find energy E', correctRearrangement: 'E = P × t' },
+      { prompt: 'Rearrange to find time t', correctRearrangement: 't = E ÷ P' },
+    ],
+    practiceCalculations: [
+      { prompt: '100 J transferred in 5 s. Find power in W.', answer: 20, unit: 'W' },
+      { prompt: 'Heater 2000 W runs for 30 s. Find energy in J.', answer: 60000, unit: 'J' },
+      { prompt: '60 W bulb. How many seconds to transfer 1200 J?', answer: 20, unit: 's' },
+      { prompt: 'Motor 500 W for 10 s. Energy transferred in J?', answer: 5000, unit: 'J' },
+      { prompt: '3600 J in 2 minutes (120 s). Find power in W.', answer: 30, unit: 'W' },
+      { prompt: 'Power 15 W. Time in s to transfer 90 J?', answer: 6, unit: 's' },
+    ],
+  },
+  {
+    id: 'phys-charge-equation',
+    subject: 'Physics',
+    topic: 'Electricity',
+    equation: 'Q = It',
+    symbols: [
+      { symbol: 'Q', name: 'Charge', unit: 'C (coulombs)', description: 'Charge flowing' },
+      { symbol: 'I', name: 'Current', unit: 'A', description: 'Current' },
+      { symbol: 't', name: 'Time', unit: 's', description: 'Time' },
+    ],
+    unitTraps: [
+      { wrongUnit: 'Time in minutes', correctUnit: 's', explanation: 'Convert to seconds for charge in coulombs' },
+      { wrongUnit: 'Current in mA', correctUnit: 'A', explanation: 'Convert mA to A (÷1000)' },
+    ],
+    rearrangingPrompts: [
+      { prompt: 'Rearrange to find current I', correctRearrangement: 'I = Q ÷ t' },
+      { prompt: 'Rearrange to find time t', correctRearrangement: 't = Q ÷ I' },
+    ],
+    practiceCalculations: [
+      { prompt: 'Current 2 A for 5 s. Find charge in C.', answer: 10, unit: 'C' },
+      { prompt: 'Charge 60 C, time 12 s. Find current in A.', answer: 5, unit: 'A' },
+      { prompt: '0.5 A for 20 s. Charge in coulombs?', answer: 10, unit: 'C' },
+      { prompt: '120 C passed in 1 minute (60 s). Find current in A.', answer: 2, unit: 'A' },
+      { prompt: 'Current 3 A. How many seconds for 15 C?', answer: 5, unit: 's' },
+      { prompt: 'Charge 0.24 C in 2 s. Find current in A.', answer: 0.12, unit: 'A', tolerance: 0.01 },
     ],
   },
 ];

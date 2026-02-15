@@ -22,6 +22,7 @@ export interface ShapeStyle {
   fill?: string;
   fontSize?: number;
   fontWeight?: string | number;
+  fontFamily?: string;
   dashArray?: string;
   opacity?: number;
   textAnchor?: 'start' | 'middle' | 'end';
@@ -427,6 +428,7 @@ export class CustomDiagramEngine {
     if (style.fill) attrs.push(`fill="${style.fill}"`);
     if (style.fontSize) attrs.push(`font-size="${style.fontSize}"`);
     if (style.fontWeight) attrs.push(`font-weight="${style.fontWeight}"`);
+    if (style.fontFamily) attrs.push(`font-family="${this.escapeHtml(style.fontFamily)}"`);
     if (style.dashArray) attrs.push(`stroke-dasharray="${style.dashArray}"`);
     if (style.opacity) attrs.push(`opacity="${style.opacity}"`);
     if (style.textAnchor) attrs.push(`text-anchor="${style.textAnchor}"`);

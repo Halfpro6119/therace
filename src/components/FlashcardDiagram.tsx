@@ -26,6 +26,8 @@ interface FlashcardDiagramProps {
   fitToContainer?: boolean;
   /** If true, show description below the image when diagram loads. Use false when parent shows description separately. */
   showDescriptionWithImage?: boolean;
+  /** If true, use static blueprint only (no animated component). Use on long sessions to avoid memory/RAF buildup from Framer Motion. */
+  preferStatic?: boolean;
 }
 
 export function FlashcardDiagram({
@@ -34,10 +36,11 @@ export function FlashcardDiagram({
   className = '',
   fitToContainer = false,
   showDescriptionWithImage = true,
+  preferStatic = false,
 }: FlashcardDiagramProps) {
   const [failed, setFailed] = useState(false);
   const reducedMotion = useReducedMotion();
-  const AnimatedComponent = !reducedMotion ? getAnimatedDiagramComponent(slug) : null;
+  const AnimatedComponent = !preferStatic && !reducedMotion ? getAnimatedDiagramComponent(slug) : null;
   const path = getFlashcardDiagramPath(slug);
   const diagramMetadata = getDiagramMetadataForSlug(slug);
 

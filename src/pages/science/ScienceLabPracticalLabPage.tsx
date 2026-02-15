@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, FlaskConical, AlertTriangle, Wrench, ClipboardCheck, Sparkles, XCircle, RotateCcw, Award } from 'lucide-react';
 import { getPracticalsBySubject, getPracticalQuizQuestions } from '../../config/scienceLabData';
-import type { ScienceSubject, PracticalQuizQuestion } from '../../types/scienceLab';
+import type { ScienceSubject, PracticalQuizQuestion, SciencePractical } from '../../types/scienceLab';
 
-type TabStep = 'overview' | 'setup' | 'method' | 'risks' | 'data' | 'evaluation' | 'test';
+type TabStep = 'overview' | 'setup' | 'method' | 'risks' | 'data' | 'evaluation' | 'test' | 'describe';
 type TestPhase = 'intro' | 'active' | 'results';
 
 /** Fisher–Yates shuffle */
@@ -145,6 +145,14 @@ export function ScienceLabPracticalLabPage() {
     setTestResults([]);
   };
 
+  const [describeResponse, setDescribeResponse] = useState('');
+  const [describeShowModel, setDescribeShowModel] = useState(false);
+
+  useEffect(() => {
+    setDescribeShowModel(false);
+    setDescribeResponse('');
+  }, [selectedPracticalId]);
+
   const tabs: { key: TabStep; label: string }[] = [
     { key: 'overview', label: 'Overview' },
     { key: 'setup', label: 'Setup' },
@@ -153,6 +161,7 @@ export function ScienceLabPracticalLabPage() {
     { key: 'data', label: 'Data' },
     { key: 'evaluation', label: 'Evaluation' },
     { key: 'test', label: 'Test' },
+    { key: 'describe', label: 'Describe' },
   ];
 
   return (
@@ -535,11 +544,123 @@ export function ScienceLabPracticalLabPage() {
                   )}
                 </div>
               )}
+
+              {currentStep === 'describe' && (
+                <PracticalDescribeSection
+                  practical={selectedPractical}
+                  response={describeResponse}
+                  onResponseChange={setDescribeResponse}
+                  showModel={describeShowModel}
+                  onShowModel={() => setDescribeShowModel(true)}
+                />
+              )}
             </div>
           </div>
         </motion.section>
       )}
     </div>
+  );
+}
+
+// --- Describe the practical: written response then compare with model answer ---
+function PracticalDescribeSection({
+  practical,
+  response,
+  onResponseChange,
+  showModel,
+  onShowModel,
+}: {
+  practical: SciencePractical;
+  response: string;
+  onResponseChange: (value: string) => void;
+  showModel: boolean;
+  onShowModel: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+        <ClipboardCheck size={20} className="text-green-600 dark:text-green-400" />
+        Describe the practical
+      </h3>
+      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+        In the exam you may be asked to describe how you would conduct this practical. Write your answer below, then compare with the model answer.
+      </p>
+      <p className="text-sm font-medium" style={{ color: 'rgb(var(--text))' }}>
+        Describe how you would conduct: <strong>{practical.title}</strong>. Include: aim, variables (independent, dependent, controls), key method steps, and risks with controls.
+      </p>
+      <textarea
+        value={response}
+        onChange={(e) => onResponseChange(e.target.value)}
+        placeholder="Type your answer here..."
+        rows={8}
+        className="w-full rounded-xl p-4 border text-sm resize-y min-h-[160px]"
+        style={{
+          background: 'rgb(var(--surface))',
+          borderColor: 'rgb(var(--border))',
+          color: 'rgb(var(--text))',
+        }}
+      />
+      {!showModel ? (
+        <button
+          type="button"
+          onClick={onShowModel}
+          className="px-5 py-2.5 rounded-lg font-semibold text-sm text-white"
+          style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' }}
+        >
+          Show model answer
+        </button>
+      ) : (
+        <div className="space-y-4">
+          {response.trim() && (
+            <div className="rounded-xl p-4 border" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))' }}>
+              <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
+                Your response
+              </p>
+              <p className="text-sm whitespace-pre-wrap" style={{ color: 'rgb(var(--text))' }}>{response.trim()}</p>
+            </div>
+          )}
+          <div className="rounded-xl p-5 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/15">
+            <p className="text-xs font-semibold mb-3 uppercase tracking-wide text-green-700 dark:text-green-400">
+              Model answer (key points)
+            </p>
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Aim</p>
+                <p style={{ color: 'rgb(var(--text-secondary))' }}>{practical.purpose}</p>
+              </div>
+              <div>
+                <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Variables</p>
+                <ul className="list-disc list-inside space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  <li><strong>Independent:</strong> {practical.independentVariable}</li>
+                  <li><strong>Dependent:</strong> {practical.dependentVariable}</li>
+                  <li><strong>Controls:</strong> {practical.controlledVariables.join('; ')}</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Method</p>
+                <ol className="list-decimal list-inside space-y-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {practical.methodSteps.map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+              <div>
+                <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>Risks and controls</p>
+                <ul className="space-y-1" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {practical.risks.map((r, i) => (
+                    <li key={i}><strong>{r.hazard}:</strong> {r.risk} → Control: {r.control}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 }
 

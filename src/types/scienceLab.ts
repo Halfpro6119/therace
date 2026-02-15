@@ -207,6 +207,14 @@ export interface ScienceEquation {
     prompt: string;
     correctRearrangement: string;
   }>;
+  /** Optional numerical practice: substitute and calculate */
+  practiceCalculations?: Array<{
+    prompt: string;
+    answer: number;
+    unit: string;
+    /** Optional tolerance for decimal answers (default 0.01) */
+    tolerance?: number;
+  }>;
 }
 
 /**

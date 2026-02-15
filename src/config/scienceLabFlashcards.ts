@@ -165,33 +165,6 @@ function generateMisconceptionFlashcards(
         visual: misconception.diagramId ? { diagramId: misconception.diagramId, description: misconception.correctUnderstanding } : undefined,
       },
     });
-
-    // Card 2: "True or False" – tests quick recognition (every other misconception to avoid doubling deck size)
-    if (idx % 2 === 0) {
-      cards.push({
-        id: `flashcard-misconception-${misconception.id}-tf`,
-        subject,
-        paper,
-        tier,
-        topic: misconception.topic,
-        type: 'misconception',
-        front: {
-          prompt: `True or False: "${misconception.misconception}"`,
-          visual: misconception.diagramId ? {
-            type: 'diagram',
-            description: misconception.correctUnderstanding,
-            diagramId: misconception.diagramId,
-          } : undefined,
-        },
-        back: {
-          explanation: `False. ${misconception.correctUnderstanding}`,
-          keyTerms: extractKeyTerms(misconception.correctUnderstanding),
-          misconceptionWarning: misconception.misconception,
-          example: misconception.example,
-          visual: misconception.diagramId ? { diagramId: misconception.diagramId, description: misconception.correctUnderstanding } : undefined,
-        },
-      });
-    }
   });
 
   return cards;
@@ -832,15 +805,45 @@ export function getQuickChecksForFlashcard(
   return [];
 }
 
+/** Shuffle array (Fisher-Yates). Returns new array. */
+function shuffleArray<T>(arr: T[], seed?: number): T[] {
+  const out = [...arr];
+  const rng = seed !== undefined ? seededRandom(seed) : Math.random;
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function seededRandom(seed: number): () => number {
+  return () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+}
+
+export type SessionOptions = {
+  shuffle?: boolean;
+  /** Max flashcard steps in session. Omit = full deck. */
+  sessionLimit?: number;
+  /** If true, order flashcards by spaced repetition: due first, then new, then later. Pass mastery from storage. */
+  useSpacedRepetition?: boolean;
+  /** Flashcard mastery data (from storage.getFlashcardMastery). Required when useSpacedRepetition is true. */
+  mastery?: Record<string, { nextReviewDate?: string }>;
+};
+
 /**
  * Group flashcards by topic for Learn Mode flow.
  * Returns ordered groups; when topicFilter is set, only that topic's group is returned.
+ * With options: can shuffle, limit session length, and apply spaced-repetition ordering.
  */
 export function getFlashcardsGroupedByTopic(
   subject: ScienceSubject,
   paper: SciencePaper,
   tier: ScienceTier,
-  topicFilter?: string
+  topicFilter?: string,
+  options?: SessionOptions
 ): Array<{ topic: string; flashcards: ScienceFlashcard[] }> {
   const all = getFlashcardsByFilters(subject, paper, tier);
   const byTopic = new Map<string, ScienceFlashcard[]>();
@@ -851,10 +854,75 @@ export function getFlashcardsGroupedByTopic(
   });
   let topics = Array.from(byTopic.keys()).sort();
   if (topicFilter) topics = topics.filter(t => t === topicFilter);
-  return topics.map((topic) => ({
+
+  const { shuffle = false, sessionLimit, useSpacedRepetition = false, mastery } = options ?? {};
+  const today = new Date().toISOString().slice(0, 10);
+
+  const orderFlashcards = (cards: ScienceFlashcard[]): ScienceFlashcard[] => {
+    if (!mastery && !shuffle) return cards;
+    if (useSpacedRepetition && mastery) {
+      const due: ScienceFlashcard[] = [];
+      const newCards: ScienceFlashcard[] = [];
+      const later: ScienceFlashcard[] = [];
+      cards.forEach((f) => {
+        const m = mastery[f.id];
+        if (!m?.nextReviewDate) newCards.push(f);
+        else if (m.nextReviewDate.slice(0, 10) <= today) due.push(f);
+        else later.push(f);
+      });
+      const ordered = [...due, ...newCards, ...later];
+      return shuffle ? shuffleArray(ordered, Date.now() % 10000) : ordered;
+    }
+    return shuffle ? shuffleArray(cards, Date.now() % 10000) : cards;
+  };
+
+  let result = topics.map((topic) => ({
     topic,
-    flashcards: byTopic.get(topic) ?? [],
+    flashcards: orderFlashcards(byTopic.get(topic) ?? []),
   }));
+
+  if (sessionLimit && sessionLimit > 0) {
+    let count = 0;
+    const out: Array<{ topic: string; flashcards: ScienceFlashcard[] }> = [];
+    for (const g of result) {
+      if (count >= sessionLimit) break;
+      const take = Math.min(g.flashcards.length, sessionLimit - count);
+      if (take > 0) {
+        out.push({ topic: g.topic, flashcards: g.flashcards.slice(0, take) });
+        count += take;
+      }
+    }
+    result = out;
+  }
+
+  return result;
+}
+
+/**
+ * Get count of flashcards due for review today (nextReviewDate <= today or never seen).
+ */
+export function getDueFlashcardCount(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier,
+  topicFilter?: string,
+  mastery?: Record<string, { nextReviewDate?: string }>
+): number {
+  const all = getFlashcardsByFilters(subject, paper, tier);
+  const filtered = topicFilter ? all.filter(f => f.topic === topicFilter) : all;
+  const today = new Date().toISOString().slice(0, 10);
+  return filtered.filter((f) => {
+    const m = mastery?.[f.id];
+    if (!m) return true;
+    return !m.nextReviewDate || m.nextReviewDate.slice(0, 10) <= today;
+  }).length;
+}
+
+/**
+ * Days until next review for a given confidence level (for "See again in X days").
+ */
+export function getDaysUntilNextReview(level: 1 | 2 | 3): number {
+  return level === 3 ? 7 : level === 2 ? 3 : 1;
 }
 
 /**

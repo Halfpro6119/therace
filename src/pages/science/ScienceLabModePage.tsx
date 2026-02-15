@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, FileQuestion, Target, FlaskConical, Calculator, AlertTriangle, ChevronRight, BookOpen, Zap, ClipboardList, GraduationCap } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getQuestionsByFilters } from '../../config/scienceLabData';
+import { getDueFlashcardCount } from '../../config/scienceLabFlashcards';
 import type { ScienceSubject, SciencePaper, ScienceTier, LabMode } from '../../types/scienceLab';
 
 /** Learn Mode now merges flashcards + quick checks + bigger tests. Path: Learn → Topic test → Full GCSE */
@@ -60,6 +61,11 @@ export function ScienceLabModePage() {
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
   const [searchParams] = useSearchParams();
   const topicFilter = searchParams.get('topic') ?? undefined;
+
+  const dueCount = useMemo(
+    () => getDueFlashcardCount(normalizedSubject, selectedPaper, selectedTier, topicFilter, storage.getFlashcardMastery()),
+    [normalizedSubject, selectedPaper, selectedTier, topicFilter]
+  );
   const base = `/science-lab/${subject?.toLowerCase()}/${selectedPaper}/${selectedTier.toLowerCase()}`;
   const query = topicFilter ? `?topic=${encodeURIComponent(topicFilter)}` : '';
 
@@ -270,6 +276,11 @@ export function ScienceLabModePage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{item.title}</h3>
                   <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{item.description}</p>
+                  {item.id === 'flashcard' && dueCount > 0 && (
+                    <p className="text-xs mt-1 font-medium" style={{ color: item.color }}>
+                      {dueCount} card{dueCount !== 1 ? 's' : ''} due for review
+                    </p>
+                  )}
                 </div>
                 <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} className="flex-shrink-0" />
               </motion.button>

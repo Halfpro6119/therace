@@ -26,8 +26,11 @@ import {
   getQuickChecksByFilters,
   getQuickChecksForFlashcard,
   getBiggerTestQuestionsForTopic,
+  getDaysUntilNextReview,
+  type SessionOptions,
 } from '../../config/scienceLabFlashcards';
 import { FlashcardDiagram } from '../../components/FlashcardDiagram';
+import { isCleanFlashcardDiagram } from '../../config/scienceLabDiagramMap';
 import { QuickCheckInline } from '../../components/science/QuickCheckInline';
 import { storage } from '../../utils/storage';
 import { soundSystem } from '../../utils/sounds';
@@ -44,8 +47,9 @@ import type {
 } from '../../types/scienceLab';
 
 const SWIPE_THRESHOLD = 60;
-const MIN_VIEW_MS = 500;
+const MIN_VIEW_MS = 1500;
 const TILT_MAX = 12;
+const SEE_AGAIN_TOAST_MS = 1200;
 
 type LearnStep =
   | { type: 'flashcard'; flashcard: ScienceFlashcard; topic: string; groupIndex: number }
@@ -82,8 +86,18 @@ export function ScienceLabFlashcardPage() {
   const [biggerTestUserAnswer, setBiggerTestUserAnswer] = useState('');
   const [biggerTestShowFeedback, setBiggerTestShowFeedback] = useState(false);
   const [biggerTestIsCorrect, setBiggerTestIsCorrect] = useState(false);
+  const [seeAgainToast, setSeeAgainToast] = useState<{ days: number } | null>(null);
+  const [sessionOptions, setSessionOptions] = useState<SessionOptions>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      shuffle: params.get('shuffle') === '1',
+      useSpacedRepetition: params.get('spaced') !== '0',
+      sessionLimit: params.has('limit') ? parseInt(params.get('limit') ?? '0', 10) || undefined : undefined,
+    };
+  });
   const answeredQuickCheckIds = useRef<Set<string>>(new Set());
   const quickCheckStepIndexRef = useRef<number>(-1);
+  const [notSureQueue, setNotSureQueue] = useState<LearnStep[]>([]);
 
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -99,9 +113,17 @@ export function ScienceLabFlashcardPage() {
   const normalizedSubject = subjectId ? (subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject) : 'Biology';
   const isValidSubject = subjectId && subject && ['biology', 'chemistry', 'physics'].includes(subject.toLowerCase());
 
+  const masteryForOrdering = useMemo(
+    () => (sessionOptions.useSpacedRepetition ? storage.getFlashcardMastery() : undefined),
+    [sessionOptions.useSpacedRepetition]
+  );
+
   const groups = useMemo(
-    () => getFlashcardsGroupedByTopic(normalizedSubject, paperNum, tierValue, topicFilter),
-    [normalizedSubject, paperNum, tierValue, topicFilter]
+    () => getFlashcardsGroupedByTopic(normalizedSubject, paperNum, tierValue, topicFilter, {
+      ...sessionOptions,
+      mastery: sessionOptions.useSpacedRepetition ? masteryForOrdering : undefined,
+    }),
+    [normalizedSubject, paperNum, tierValue, topicFilter, sessionOptions, masteryForOrdering]
   );
 
   const learnSteps = useMemo((): LearnStep[] => {
@@ -123,14 +145,19 @@ export function ScienceLabFlashcardPage() {
     [normalizedSubject, paperNum, tierValue, topicFilter]
   );
 
-  const currentStep = learnSteps[stepIndex];
+  const effectiveSteps = useMemo(
+    () => [...learnSteps, ...notSureQueue],
+    [learnSteps, notSureQueue]
+  );
+  const currentStep = effectiveSteps[stepIndex];
   const currentFlashcard = currentStep?.type === 'flashcard' ? currentStep.flashcard : null;
+  const isReviewingAgainCard = stepIndex >= learnSteps.length;
   const currentQuickCheck = pendingQuickChecks[quickCheckIndex] ?? null;
   const currentBiggerTest = currentStep?.type === 'biggerTest' ? currentStep : null;
   const currentBiggerQuestion = currentBiggerTest?.questions[biggerTestQuestionIndex] ?? null;
 
-  const totalFlashcards = learnSteps.filter((s) => s.type === 'flashcard').length;
-  const currentFlashcardIndex = learnSteps
+  const totalFlashcards = effectiveSteps.filter((s) => s.type === 'flashcard').length;
+  const currentFlashcardIndex = effectiveSteps
     .slice(0, stepIndex + 1)
     .filter((s) => s.type === 'flashcard').length;
 
@@ -141,10 +168,13 @@ export function ScienceLabFlashcardPage() {
   }, [navigate, subject, paperNum, tierValue, topicFilter]);
 
   const advanceStep = useCallback(() => {
-    const current = learnSteps[stepIndex];
-    if (current?.type === 'flashcard' && stepIndex < learnSteps.length - 1) {
-      const next = learnSteps[stepIndex + 1];
-      if (next?.type === 'biggerTest') {
+    const current = effectiveSteps[stepIndex];
+    const nextIndex = stepIndex + 1;
+    const next = effectiveSteps[nextIndex];
+
+    if (current?.type === 'flashcard' && current.topic && stepIndex < learnSteps.length) {
+      const nextNormal = learnSteps[stepIndex + 1];
+      if (nextNormal?.type === 'biggerTest') {
         const topicFlashcards = groups
           .find((g) => g.topic === current.topic)
           ?.flashcards.map((f) => f.id) ?? [];
@@ -166,15 +196,13 @@ export function ScienceLabFlashcardPage() {
         );
       }
     }
-    if (stepIndex >= learnSteps.length - 1) {
+    if (nextIndex >= effectiveSteps.length) {
       setSessionComplete(true);
       setPhase('flashcard');
       setPendingQuickChecks([]);
       setQuickCheckIndex(0);
       return;
     }
-    const nextIndex = stepIndex + 1;
-    const next = learnSteps[nextIndex];
     setStepIndex(nextIndex);
     setPendingQuickChecks([]);
     setQuickCheckIndex(0);
@@ -188,15 +216,31 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
     }
-  }, [stepIndex, learnSteps, groups, normalizedSubject, paperNum, tierValue]);
+  }, [stepIndex, effectiveSteps, learnSteps, groups, normalizedSubject, paperNum, tierValue]);
 
   const handleConfidence = useCallback(
     (level: ConfidenceLevel) => {
-      if (!currentFlashcard || !isFlipped || phase !== 'flashcard') return;
+      if (!currentFlashcard || !currentStep || !isFlipped || phase !== 'flashcard') return;
       const cardId = currentFlashcard.id;
-      // Always advance immediately — skip quick checks so the flow never gets stuck
-      advanceStep();
-      // Defer storage and sound so they don't block the render
+
+      // Re-queue "Again" cards: add to notSureQueue for review before session end
+      if (level === 1 && stepIndex < learnSteps.length) {
+        setNotSureQueue((q) => [...q, currentStep]);
+      }
+
+      // If reviewing an "Again" card, remove from queue (re-render shows next or completes)
+      if (isReviewingAgainCard) {
+        setNotSureQueue((q) => {
+          const next = q.slice(1);
+          if (next.length === 0) setTimeout(() => setSessionComplete(true), 0);
+          return next;
+        });
+        setSeeAgainToast({ days: getDaysUntilNextReview(level) });
+        setTimeout(() => setSeeAgainToast(null), SEE_AGAIN_TOAST_MS);
+        return;
+      }
+
+      // Storage and sound
       queueMicrotask(() => {
         try {
           storage.updateFlashcardMastery(cardId, level, true);
@@ -205,8 +249,37 @@ export function ScienceLabFlashcardPage() {
         }
         if (level === 3) soundSystem.playCorrect();
       });
+
+      // "See again in X days" toast, then advance or show Quick Check
+      const days = getDaysUntilNextReview(level);
+      setSeeAgainToast({ days });
+      const toastTimer = setTimeout(() => setSeeAgainToast(null), SEE_AGAIN_TOAST_MS);
+
+      const doAdvance = () => {
+        clearTimeout(toastTimer);
+        const checks = getQuickChecksForFlashcard(cardId, currentStep.topic, quickChecksAll, true).slice(0, 2);
+        if (checks.length > 0) {
+          quickCheckStepIndexRef.current = stepIndex;
+          setPendingQuickChecks(checks);
+          setPhase('quickCheck');
+        } else {
+          advanceStep();
+        }
+      };
+
+      setTimeout(doAdvance, SEE_AGAIN_TOAST_MS);
     },
-    [currentFlashcard, isFlipped, phase, advanceStep]
+    [
+      currentFlashcard,
+      currentStep,
+      isFlipped,
+      phase,
+      stepIndex,
+      learnSteps.length,
+      isReviewingAgainCard,
+      quickChecksAll,
+      advanceStep,
+    ]
   );
 
   const handleQuickCheckComplete = useCallback(
@@ -307,10 +380,8 @@ export function ScienceLabFlashcardPage() {
   }, [isFlipped, currentFlashcard, viewStartTime]);
 
   // Sync phase when stepIndex changes (e.g. from prev/next nav or advanceStep)
-  // Skip only when in quickCheck AND still on the same flashcard (stepIndex unchanged) — don't overwrite intentional transition.
-  // When stepIndex changes (user nav), always sync so phase matches the new step.
   useEffect(() => {
-    const step = learnSteps[stepIndex];
+    const step = effectiveSteps[stepIndex];
     if (phase === 'quickCheck' && step?.type === 'flashcard' && stepIndex === quickCheckStepIndexRef.current) return;
     if (step?.type === 'flashcard') {
       setPhase('flashcard');
@@ -323,13 +394,18 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
     }
-  }, [stepIndex, learnSteps, phase]);
+  }, [stepIndex, effectiveSteps, phase]);
 
   useEffect(() => {
     if (currentFlashcard && phase === 'flashcard') {
       setViewStartTime(Date.now());
     }
   }, [currentFlashcard?.id, phase]);
+
+  useEffect(() => {
+    setStepIndex(0);
+    setNotSureQueue([]);
+  }, [sessionOptions.shuffle, sessionOptions.useSpacedRepetition, sessionOptions.sessionLimit]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -349,6 +425,17 @@ export function ScienceLabFlashcardPage() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [phase, currentFlashcard, isFlipped, viewStartTime, handleConfidence]);
+
+  /** Flashcard steps from current+1 until next biggerTest (for deck preview). Must run every render (hooks rule). */
+  const upcomingFlashcardsUntilTest = useMemo(() => {
+    const upcoming: LearnStep[] = [];
+    for (let i = stepIndex + 1; i < effectiveSteps.length; i++) {
+      const step = effectiveSteps[i];
+      if (step.type === 'biggerTest') break;
+      upcoming.push(step);
+    }
+    return upcoming;
+  }, [effectiveSteps, stepIndex]);
 
   if (!isValidSubject) {
     return (
@@ -372,8 +459,23 @@ export function ScienceLabFlashcardPage() {
 
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
 
-  // Completion screen
+  // Completion screen – choose redo flashcards or topic quiz next
   if (sessionComplete) {
+    const handleRedoFlashcards = () => {
+      setSessionComplete(false);
+      setStepIndex(0);
+      setPhase('flashcard');
+      setIsFlipped(false);
+      setViewStartTime(Date.now());
+      setPendingQuickChecks([]);
+      setQuickCheckIndex(0);
+      setBiggerTestQuestionIndex(0);
+      setBiggerTestCorrectCount(0);
+      setBiggerTestUserAnswer('');
+      setBiggerTestShowFeedback(false);
+      setNotSureQueue([]);
+    };
+
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--surface-2)) 100%)' }}>
         <motion.div
@@ -390,14 +492,26 @@ export function ScienceLabFlashcardPage() {
           <p className="text-sm mb-6" style={{ color: 'rgb(var(--text-secondary))' }}>
             You completed {totalFlashcards} cards with quick checks and bigger tests.
           </p>
+          <p className="text-xs font-medium mb-4 uppercase tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
+            What next?
+          </p>
           <div className="flex flex-col gap-3">
             <button
               type="button"
               onClick={() => topicFilter ? navigate(`${base}/topic-test?topic=${encodeURIComponent(topicFilter)}`) : navigate(`${base}/topics`)}
-              className="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90"
+              className="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center justify-center gap-2"
               style={{ background: '#8B5CF6' }}
             >
-              {topicFilter ? 'Topic Test →' : 'Browse Topics'}
+              <FileQuestion size={20} />
+              {topicFilter ? 'Topic quiz →' : 'Browse topics'}
+            </button>
+            <button
+              type="button"
+              onClick={handleRedoFlashcards}
+              className="w-full py-3.5 rounded-xl font-semibold transition border-2"
+              style={{ borderColor: '#8B5CF6', color: '#8B5CF6', background: 'rgba(139, 92, 246, 0.08)' }}
+            >
+              Redo flashcards
             </button>
             <button
               type="button"
@@ -581,40 +695,77 @@ export function ScienceLabFlashcardPage() {
       ? `Learn: ${currentStep.topic} — Card ${currentFlashcardIndex} of ${totalFlashcards}`
       : '';
 
-  /** Flashcard steps from current+1 until next biggerTest (for deck preview) */
-  const upcomingFlashcardsUntilTest = useMemo(() => {
-    const upcoming: LearnStep[] = [];
-    for (let i = stepIndex + 1; i < learnSteps.length; i++) {
-      const step = learnSteps[i];
-      if (step.type === 'biggerTest') break;
-      upcoming.push(step);
-    }
-    return upcoming;
-  }, [learnSteps, stepIndex]);
-
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'rgb(var(--bg))' }}>
       <div className="flex-1 w-full max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col">
-        <div className="flex items-center justify-between mb-6">
-          <button type="button" onClick={handleBack} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <ChevronLeft size={18} /> Back
-          </button>
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex items-center justify-between">
+            <button type="button" onClick={handleBack} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
+              <ChevronLeft size={18} /> Back
+            </button>
+            <div className="flex items-center gap-3">
             <span className="text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }}>
               {progressLabel || `${currentFlashcardIndex} / ${totalFlashcards}`}
             </span>
             <div className="flex gap-1 max-w-48 overflow-x-auto py-1">
-              {learnSteps.slice(0, 40).map((s, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 w-2 h-2 rounded-full"
-                  style={{
-                    background: i === stepIndex ? typeStyle.color : 'rgb(var(--border))',
-                    opacity: i === stepIndex ? 1 : 0.5,
-                  }}
-                />
-              ))}
+              {(() => {
+                const dotCount = 20;
+                const start = Math.min(
+                  Math.max(0, stepIndex - Math.floor(dotCount / 2)),
+                  Math.max(0, effectiveSteps.length - dotCount)
+                );
+                const windowSteps = effectiveSteps.slice(start, start + dotCount);
+                return windowSteps.map((_s, i) => {
+                  const stepI = start + i;
+                  return (
+                    <div
+                      key={stepI}
+                      className="flex-shrink-0 w-2 h-2 rounded-full"
+                      style={{
+                        background: stepI === stepIndex ? typeStyle.color : 'rgb(var(--border))',
+                        opacity: stepI === stepIndex ? 1 : 0.5,
+                      }}
+                    />
+                  );
+                });
+              })()}
             </div>
+          </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sessionOptions.shuffle ?? false}
+                onChange={(e) => setSessionOptions((o) => ({ ...o, shuffle: e.target.checked }))}
+                className="rounded"
+              />
+              Shuffle
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sessionOptions.useSpacedRepetition ?? true}
+                onChange={(e) => setSessionOptions((o) => ({ ...o, useSpacedRepetition: e.target.checked }))}
+                className="rounded"
+              />
+              Due first
+            </label>
+            <select
+              value={sessionOptions.sessionLimit ?? ''}
+              onChange={(e) =>
+                setSessionOptions((o) => ({
+                  ...o,
+                  sessionLimit: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                }))
+              }
+              className="rounded-lg border px-2 py-1 text-xs"
+              style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+            >
+              <option value="">Full deck</option>
+              <option value="10">10 cards</option>
+              <option value="20">20 cards</option>
+            </select>
           </div>
         </div>
 
@@ -644,7 +795,7 @@ export function ScienceLabFlashcardPage() {
               else if (isFlipped) setIsFlipped(false);
             } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
               if (dx > 0 && stepIndex > 0) setStepIndex(stepIndex - 1);
-              else if (dx < 0 && stepIndex < learnSteps.length - 1) setStepIndex(stepIndex + 1);
+              else if (dx < 0 && stepIndex < effectiveSteps.length - 1) setStepIndex(stepIndex + 1);
             }
           }}
         >
@@ -717,17 +868,28 @@ export function ScienceLabFlashcardPage() {
                   {currentFlashcard.front.visual && (
                     <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
                       {isEquationVisual ? (
-                        <p className="text-2xl sm:text-3xl font-mono font-bold py-4" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
-                      ) : currentFlashcard.front.visual.diagramId ? (
-                        <div className="science-flashcard-diagram science-flashcard-diagram-front">
-                          <FlashcardDiagram slug={currentFlashcard.front.visual.diagramId} description={currentFlashcard.front.visual.description} fitToContainer />
+                        <p className="text-2xl sm:text-3xl font-mono font-bold py-4 text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
+                      ) : currentFlashcard.front.visual.diagramId && isCleanFlashcardDiagram(currentFlashcard.front.visual.diagramId) ? (
+                        <div className="science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0">
+                          <FlashcardDiagram slug={currentFlashcard.front.visual.diagramId} description={currentFlashcard.front.visual.description} fitToContainer preferStatic />
                         </div>
                       ) : (
-                        <p className="text-[15px] leading-[1.6] py-2" style={{ color: 'rgb(var(--text))' }}>{currentFlashcard.front.visual.description}</p>
+                        <div className="flex-1 flex items-center justify-center min-h-[200px] px-4">
+                          {currentFlashcard.front.visual.description ? (
+                            <p
+                              className="text-base leading-relaxed text-center max-w-md line-clamp-4 tracking-tight"
+                              style={{ color: 'rgb(var(--text-secondary))' }}
+                            >
+                              {currentFlashcard.front.visual.description}
+                            </p>
+                          ) : null}
+                        </div>
                       )}
                     </div>
                   )}
-                  <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>Tap or Space to reveal</p>
+                  <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
+                    Try to recall first, then tap or Space to reveal
+                  </p>
                 </div>
               </div>
 
@@ -806,43 +968,60 @@ export function ScienceLabFlashcardPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Rate & continue – fixed to bottom of card back */}
+                  <div className="flex-shrink-0 pt-6 mt-4 border-t border-[rgb(var(--border))] flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+                    <div className="flex gap-2 sm:gap-3">
+                      {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleConfidence(level);
+                          }}
+                          className="flex-1 min-h-[72px] py-4 px-3 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[14px] text-white transition hover:opacity-95 active:scale-[0.98]"
+                          style={{
+                            background: level === 3 ? 'linear-gradient(180deg, #059669 0%, #047857 100%)' : level === 2 ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
+                            boxShadow: level === 3 ? '0 2px 8px rgba(5, 150, 105, 0.3)' : level === 2 ? '0 2px 8px rgba(217, 119, 6, 0.25)' : '0 2px 8px rgba(220, 38, 38, 0.25)',
+                          }}
+                        >
+                          {CONFIDENCE_LABELS[level]}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        advanceStep();
+                      }}
+                      className="w-full py-3 rounded-xl font-semibold text-[14px] transition border-2 hover:opacity-90"
+                      style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))', background: 'rgb(var(--surface-2))' }}
+                    >
+                      Continue without rating
+                    </button>
+                    <p className="text-[10px] text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.75 }}>Or press 1, 2, or 3</p>
+                    {seeAgainToast && (
+                      <p className="text-xs text-center font-medium mt-2" style={{ color: 'rgb(var(--text))' }}>
+                        ✓ See again in {seeAgainToast.days} day{seeAgainToast.days !== 1 ? 's' : ''}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
           </motion.div>
         </div>
 
-        {isFlipped && (
-          <div className="mt-6 p-6 rounded-2xl w-full" style={{ background: 'rgb(var(--surface))', border: '1px solid rgb(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-            <p className="text-[10px] font-semibold mb-4 uppercase tracking-[0.12em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
-            <div className="flex gap-3">
-              {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
-                <button
-                  key={level}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    handleConfidence(level);
-                  }}
-                  className="flex-1 min-h-[80px] py-5 px-4 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-2xl font-semibold text-[15px] text-white transition hover:opacity-95 active:scale-[0.98]"
-                  style={{
-                    background: level === 3 ? 'linear-gradient(180deg, #059669 0%, #047857 100%)' : level === 2 ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
-                    boxShadow: level === 3 ? '0 2px 8px rgba(5, 150, 105, 0.3)' : level === 2 ? '0 2px 8px rgba(217, 119, 6, 0.25)' : '0 2px 8px rgba(220, 38, 38, 0.25)',
-                  }}
-                >
-                  {CONFIDENCE_LABELS[level]}
-                </button>
-              ))}
-            </div>
-            <p className="text-[11px] mt-3 text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.75 }}>Or press 1, 2, or 3</p>
-          </div>
-        )}
-
         <div className="flex items-center justify-between mt-8 gap-4">
           <motion.button
             type="button"
-            onClick={() => stepIndex > 0 && setStepIndex(stepIndex - 1)}
+            data-testid="flashcard-prev"
+            onClick={() => stepIndex > 0 && setStepIndex((i) => i - 1)}
             disabled={stepIndex === 0}
             className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
@@ -859,8 +1038,9 @@ export function ScienceLabFlashcardPage() {
           </motion.button>
           <motion.button
             type="button"
-            onClick={() => stepIndex < learnSteps.length - 1 && setStepIndex(stepIndex + 1)}
-            disabled={stepIndex === learnSteps.length - 1}
+            data-testid="flashcard-next"
+            onClick={() => stepIndex < effectiveSteps.length - 1 && setStepIndex((i) => i + 1)}
+            disabled={stepIndex === effectiveSteps.length - 1}
             className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
           >
