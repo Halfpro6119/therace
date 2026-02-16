@@ -482,6 +482,8 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
   question: string;
   correctAnswer: string;
   distractors: string[];
+  /** Optional: richer feedback when incorrect. If absent, uses coreIdea. */
+  feedbackIncorrect?: string;
 }> = [
   // Cell Biology
   {
@@ -493,6 +495,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Water pushes the ink particles apart',
       'Particles move only when stirred',
     ],
+    feedbackIncorrect: 'Diffusion: particles move randomly. Because there are more particles in the ink drop, more move out than in → net movement from high to low concentration until even.',
   },
   {
     conceptId: 'bio-osmosis',
@@ -503,6 +506,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Salt pulls water out of the cell',
       'The cell membrane becomes more permeable',
     ],
+    feedbackIncorrect: 'Osmosis is water moving down its concentration gradient. Concentrated salt solution has fewer free water molecules than cytoplasm → water leaves the cell through the partially permeable membrane.',
   },
   {
     conceptId: 'bio-active-transport',
@@ -513,6 +517,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'The cell membrane blocks ions',
       'Soil has higher concentration than the cell',
     ],
+    feedbackIncorrect: 'Diffusion moves substances from high to low concentration. Minerals in soil are dilute (low concentration); inside the cell they are higher. Moving low → high goes against the gradient and needs energy (ATP from respiration) and carrier proteins.',
   },
   {
     conceptId: 'bio-cell-division',
@@ -534,6 +539,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'High temperature speeds up the reaction too much',
       'The substrate has denatured',
     ],
+    feedbackIncorrect: 'Above optimum temperature, bonds holding the enzyme\'s shape break → active site changes shape → substrate no longer fits → enzyme is denatured and cannot catalyse the reaction.',
   },
   {
     conceptId: 'bio-digestive-system',
@@ -544,6 +550,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Protein digestion – bile provides the correct pH',
       'No effect – bile is not essential',
     ],
+    feedbackIncorrect: 'Bile (from the liver) emulsifies fats: breaks large globules into smaller droplets → larger surface area → lipase can break down fats efficiently. Without bile, fat digestion is impaired.',
   },
   {
     conceptId: 'bio-circulatory-system',
@@ -565,6 +572,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Bacteria are always harmful, viruses are not',
       'Viruses produce toxins; bacteria do not',
     ],
+    feedbackIncorrect: 'Viruses: non-living, invade host cells and use them to replicate. Bacteria: living cells, can reproduce by binary fission outside a host. Bacteria can also be beneficial (e.g. in gut).',
   },
   {
     conceptId: 'bio-immune-system',
@@ -575,6 +583,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Antibodies from the first infection are still in the blood',
       'The immune system ignores the pathogen the second time',
     ],
+    feedbackIncorrect: 'First infection: antigens trigger primary response → antibodies produced slowly → memory cells formed. Second infection: memory cells recognise antigens → faster antibody production (secondary response) → pathogen destroyed before symptoms develop.',
   },
   // Bioenergetics
   {
@@ -586,6 +595,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Rate stays the same – light is not a limiting factor',
       'Rate increases – more carbon dioxide is produced',
     ],
+    feedbackIncorrect: 'Light is energy for the light-dependent reaction in chloroplasts. In dim light, light is limiting. More light → more energy for splitting water and making ATP/NADPH → more glucose produced. Rate increases until another factor (CO₂, temperature) limits.',
   },
   {
     conceptId: 'bio-respiration',
@@ -596,6 +606,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Carbon dioxide cannot be removed',
       'No disadvantage – anaerobic releases more energy',
     ],
+    feedbackIncorrect: 'Anaerobic respiration: glucose → lactic acid (no oxygen). Less ATP per glucose than aerobic. Lactic acid builds up → muscle fatigue. Oxygen debt: extra oxygen needed later to oxidise lactic acid.',
   },
   // Chemistry
   {
@@ -679,6 +690,7 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'The pancreas stops producing insulin',
       'Nothing – glucose returns on its own',
     ],
+    feedbackIncorrect: 'High glucose → pancreas releases insulin. Insulin causes liver and muscle cells to take up glucose and store as glycogen. Blood glucose decreases. Glucagon raises glucose (opposite effect); it is released when glucose is low.',
   },
   {
     conceptId: 'bio-nervous-system',
@@ -896,7 +908,7 @@ export function generateQuickChecks(
       correctAnswer: config.correctAnswer,
       feedback: {
         correct: `Correct! This shows you understand ${getConceptLabel(concept)} in context.`,
-        incorrect: `Think about the mechanism. ${concept.coreIdea}`,
+        incorrect: config.feedbackIncorrect ?? `Think about the mechanism. ${concept.coreIdea}`,
         ideaReference: concept.coreIdea,
       },
       relatedFlashcardIds: [`flashcard-${config.conceptId}`],
@@ -970,7 +982,7 @@ export function generateQuickChecks(
       correctAnswer: misconception.correctUnderstanding,
       feedback: {
         correct: `Correct! ${misconception.correctUnderstanding}`,
-        incorrect: `Consider: ${misconception.whyWrong}`,
+        incorrect: `Consider: ${misconception.whyWrong} The correct idea: ${misconception.correctUnderstanding}`,
         ideaReference: misconception.correctUnderstanding,
       },
       relatedFlashcardIds: [`flashcard-misconception-${misconception.id}`],
@@ -994,7 +1006,7 @@ export function generateQuickChecks(
           correctAnswer: steps,
           feedback: {
             correct: 'Correct! You understand the causal chain.',
-            incorrect: '', // Header already shows "Not quite"; correct answer shown separately
+            incorrect: `The steps follow a cause-and-effect order. The correct sequence is: ${steps.join(' → ')}`,
             ideaReference: scenario.explanation,
           },
           relatedFlashcardIds: [`flashcard-${concept.id}`, `flashcard-${concept.id}-scenario-${idx}`],
@@ -1039,6 +1051,22 @@ export function getQuickChecksForFlashcard(
     return topicFallback.slice(0, 1); // 1 fallback
   }
   return [];
+}
+
+/**
+ * Get a shuffled batch of Quick Checks for a topic (e.g. after all flashcards for that topic).
+ * Excludes already-answered IDs and returns up to max items.
+ */
+export function getQuickChecksForTopicBatch(
+  quickChecks: ScienceQuickCheck[],
+  topic: string,
+  options?: { excludeIds?: Set<string>; max?: number }
+): ScienceQuickCheck[] {
+  const { excludeIds, max = 5 } = options ?? {};
+  const filtered = quickChecks.filter(
+    (q) => q.topic === topic && !excludeIds?.has(q.id)
+  );
+  return shuffle(filtered).slice(0, max);
 }
 
 /** Shuffle array (Fisher-Yates). Returns new array. */

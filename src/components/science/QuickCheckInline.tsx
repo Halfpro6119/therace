@@ -178,9 +178,18 @@ export function QuickCheckInline({ check, onComplete, onSkip, compact }: QuickCh
             ) : (
               <XCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
             )}
-            <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>
-              {isCorrect ? (check.feedback?.correct ?? 'Correct!') : (check.feedback?.incorrect ?? 'Not quite. Review and try again.')}
-            </p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>
+                {isCorrect ? (check.feedback?.correct ?? 'Correct!') : (check.feedback?.incorrect || 'Not quite.')}
+              </p>
+              {!isCorrect && check.correctAnswer != null && (
+                <p className="text-sm font-medium mt-2" style={{ color: 'rgb(var(--text))' }}>
+                  Correct answer: {Array.isArray(check.correctAnswer)
+                    ? check.correctAnswer.join(' → ')
+                    : check.correctAnswer}
+                </p>
+              )}
+            </div>
           </div>
           <button
             type="button"

@@ -971,13 +971,12 @@
     overflow: hidden;
   }
 
-  /* Inner “figure” well: single neutral light surface so SVG stays readable; clean edge */
-  /* When parent sets --well-accent, show a subtle left border in card-type color */
+  /* Inner “figure” well: cool light by default so diagram strokes stay readable */
   .science-flashcard-diagram-front .diagram-svg-wrapper {
     width: 100%;
     min-height: 240px;
     flex: 1 1 auto;
-    background: rgb(248 250 252);
+    background: rgb(226 232 240);
     border-radius: 10px;
     padding: 24px 20px;
     border: 1px solid rgb(var(--border));
@@ -988,6 +987,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Dark well for diagrams that use light-on-dark palette (e.g. enzyme_action) */
+  .science-flashcard-diagram-front.science-flashcard-diagram-dark-well .diagram-svg-wrapper {
+    background: rgb(30 41 59);
   }
 
   .science-flashcard-diagram-front .diagram-svg-wrapper svg {
@@ -1016,7 +1020,7 @@
     width: 100%;
     min-height: 140px;
     flex: 1;
-    background: rgb(248 250 252);
+    background: rgb(226 232 240);
     border-radius: 8px;
     padding: 16px;
     border: 1px solid rgb(var(--border));
@@ -1028,6 +1032,10 @@
     justify-content: center;
   }
 
+  .science-flashcard-diagram-back.science-flashcard-diagram-dark-well .diagram-svg-wrapper {
+    background: rgb(30 41 59);
+  }
+
   .science-flashcard-diagram-back .diagram-svg-wrapper svg {
     width: 100% !important;
     height: 100% !important;
@@ -1037,7 +1045,7 @@
     filter: none;
   }
 
-  /* Description-only block: same frame so text and diagram feel like one system */
+  /* Description-only block: dark well to match site; text uses --text */
   .science-flashcard-description-well {
     width: 100%;
     min-height: 200px;
@@ -1046,7 +1054,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px 20px;
-    background: rgb(248 250 252);
+    background: rgb(39 39 42);
     border-radius: 10px;
     border: 1px solid rgb(var(--border));
     border-left-width: 3px;
@@ -1076,6 +1084,58 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     box-shadow: var(--shadow-md);
+  }
+
+  /* Science Lab flashcard typography scale – one label, one body, one prompt (audit §1.2) */
+  .flashcard-meta-topic {
+    font-size: 0.875rem; /* 14px – primary context */
+    font-weight: 500;
+    color: rgb(var(--text-secondary));
+  }
+  .flashcard-meta-chip {
+    font-size: 0.625rem; /* 10px – secondary */
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .flashcard-prompt {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: rgb(var(--text));
+  }
+  @media (min-width: 640px) {
+    .flashcard-prompt {
+      font-size: 1.5rem;
+    }
+  }
+  .flashcard-body {
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.6;
+    color: rgb(var(--text));
+  }
+  .flashcard-label {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .flashcard-hint {
+    font-size: 0.6875rem;
+    opacity: 0.6;
+    color: rgb(var(--text-secondary));
+  }
+  .flashcard-callout-title {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .flashcard-callout-body {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: rgb(var(--text-secondary));
   }
 
   /* Flashcard visual – diagram/equation container */

@@ -60,6 +60,12 @@
 - **Card shadow:** `.flashcard-face` uses `box-shadow: var(--shadow-md)`; inline shadow removed so the design token controls depth.
 - **Back callouts:** Misconception and Example use semantic tokens: `.science-flashcard-callout-misconception` (warning), `.science-flashcard-callout-example` (accent) with `rgb(var(--warning))` / `rgb(var(--accent))` for borders, backgrounds, and icons. One consistent system for all callouts.
 
+## Diagram type: prefer clean graphs; only when relevant
+
+- **Avoid messy flowcharts** on flashcards (e.g. INPUTS → Chlorophyll → OUTPUTS with mixed shapes, light icons, and busy labels).
+- **Prioritise clean graphs for "what happens to x if y" questions:** rate vs factor (photosynthesis vs light/CO₂/temperature, enzyme activity vs temperature/pH, diffusion rate vs temperature, force vs extension). For most of these, a graph is the best fit.
+- **Only include a diagram when it directly illustrates the card content.** If the question is about reactants/products/chlorophyll, show a short description in the well and no diagram (use a non-CLEAN diagramId so the flowchart is not shown). Use a graph only for prompts about that relationship (e.g. rate vs light → photosynthesis_light_graph; rate vs temperature → photosynthesis_temperature_graph). For “rate vs CO₂”, rate vs CO₂ uses the same limiting-factor curve. Bioenergetics misconception cards have no diagram; the seedlings practical (direction of growth) has no diagram, since the rate-of-photosynthesis graph does not illustrate that investigation.
+
 ## Optional Next Steps
 
 - **Dark-mode diagram variant:** If the product goes full dark-for-everything, add a second blueprint palette (lighter strokes/text) or a small CSS pipeline that adapts SVG fills/strokes from design tokens so the figure well can be dark too.

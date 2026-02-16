@@ -57,6 +57,27 @@ const STYLE = {
   arrowAccent: { stroke: '#059669', strokeWidth: 2.5 },
 };
 
+/** Shared light-well palette – clean, minimalist, matches photosynthesis_temperature_graph design */
+const LIGHT = {
+  bg: '#fafbfc',
+  axis: '#1f2937',
+  stroke: '#1f2937',
+  strokeMuted: '#4b5563',
+  text: '#111827',
+  textMuted: '#4b5563',
+  labelBg: '#1f2937',
+};
+
+/** Graph-specific palette – plot area, axes, curve, labels */
+const GRAPH_LIGHT = {
+  bg: '#fafbfc',
+  axis: '#1f2937',
+  curve: '#be185d',
+  text: '#111827',
+  textMuted: '#4b5563',
+  labelBg: '#1f2937',
+};
+
 /** Diffusion: HIGH → LOW concentration; net movement down gradient (no ATP) */
 export const cell_membrane_diffusion: CustomDiagramBlueprint = {
   version: 1,
@@ -66,14 +87,14 @@ export const cell_membrane_diffusion: CustomDiagramBlueprint = {
     {
       id: 'diffusion',
       items: [
-        // Subtle outer frame
-        { type: 'rect', x: 12, y: 20, width: 416, height: 228, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        // Plot area – light background
+        { type: 'rect', x: 12, y: 20, width: 416, height: 228, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Compartments
-        { type: 'rect', x: 24, y: 52, width: 172, height: 128, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.cell } },
-        { type: 'rect', x: 244, y: 52, width: 172, height: 128, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
+        { type: 'rect', x: 24, y: 52, width: 172, height: 128, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.cell } },
+        { type: 'rect', x: 244, y: 52, width: 172, height: 128, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
         // Membrane (bilayer hint)
-        { type: 'rect', x: 196, y: 52, width: 8, height: 128, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(15, 23, 42, 0.12)', strokeWidth: 1 } },
-        { type: 'line', from: { x: 200, y: 52 }, to: { x: 200, y: 180 }, style: { stroke: STYLE.stroke, strokeWidth: 1.5 } },
+        { type: 'rect', x: 196, y: 52, width: 8, height: 128, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(31, 41, 55, 0.08)', strokeWidth: 1 } },
+        { type: 'line', from: { x: 200, y: 52 }, to: { x: 200, y: 180 }, style: { stroke: LIGHT.axis, strokeWidth: 1.5 } },
         // Particles (high concentration - denser)
         { type: 'circle', cx: 65, cy: 88, r: 7, style: { stroke: STYLE.bio.primary, fill: STYLE.bio.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 95, cy: 98, r: 7, style: { stroke: STYLE.bio.primary, fill: STYLE.bio.primaryLight, strokeWidth: 1.5 } },
@@ -84,14 +105,14 @@ export const cell_membrane_diffusion: CustomDiagramBlueprint = {
         // Particles (low concentration - sparse)
         { type: 'circle', cx: 270, cy: 92, r: 7, style: { stroke: STYLE.strokeLight, fill: 'rgba(100, 116, 139, 0.25)', strokeWidth: 1.5 } },
         { type: 'circle', cx: 320, cy: 105, r: 7, style: { stroke: STYLE.strokeLight, fill: 'rgba(100, 116, 139, 0.25)', strokeWidth: 1.5 } },
-        { type: 'circle', cx: 358, cy: 88, r: 7, style: { stroke: STYLE.strokeLight, fill: 'rgba(100, 116, 139, 0.25)', strokeWidth: 1.5 } },
+        { type: 'circle', cx: 358, cy: 88, r: 7, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(75, 85, 99, 0.25)', strokeWidth: 1.5 } },
         // Net movement arrow
         { type: 'arrow', from: { x: 188, y: 114 }, to: { x: 232, y: 114 }, headSize: 12, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
         // Labels
-        { type: 'text', text: 'High concentration', at: { x: 110, y: 38 }, style: { ...STYLE.textLabel, fill: STYLE.bio.primary } },
-        { type: 'text', text: 'Low concentration', at: { x: 330, y: 38 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Net movement down gradient', at: { x: 220, y: 218 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
-        { type: 'text', text: 'Passive · No ATP needed', at: { x: 220, y: 236 }, style: STYLE.textTiny },
+        { type: 'text', text: 'High concentration', at: { x: 110, y: 38 }, style: { fontSize: 11, fill: STYLE.bio.primary, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Low concentration', at: { x: 330, y: 38 }, style: { fontSize: 11, fill: LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Net movement down gradient', at: { x: 220, y: 218 }, style: { fontSize: 10, fill: LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: 'Passive · No ATP needed', at: { x: 220, y: 236 }, style: { fontSize: 9, fill: LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
       ],
     },
   ],
@@ -106,14 +127,14 @@ export const osmosis_diagram: CustomDiagramBlueprint = {
     {
       id: 'osmosis',
       items: [
-        { type: 'rect', x: 12, y: 20, width: 416, height: 208, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 20, width: 416, height: 208, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Dilute solution (more water)
-        { type: 'rect', x: 28, y: 52, width: 162, height: 116, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(14, 165, 233, 0.08)' } },
+        { type: 'rect', x: 28, y: 52, width: 162, height: 116, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(14, 165, 233, 0.08)' } },
         // Concentrated solution
-        { type: 'rect', x: 250, y: 52, width: 162, height: 116, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.08)' } },
+        { type: 'rect', x: 250, y: 52, width: 162, height: 116, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.08)' } },
         // Membrane
-        { type: 'rect', x: 208, y: 52, width: 12, height: 116, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(15, 23, 42, 0.12)', strokeWidth: 1 } },
-        { type: 'line', from: { x: 214, y: 52 }, to: { x: 214, y: 168 }, style: { stroke: STYLE.stroke, strokeWidth: 1.5 } },
+        { type: 'rect', x: 208, y: 52, width: 12, height: 116, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(31, 41, 55, 0.08)', strokeWidth: 1 } },
+        { type: 'line', from: { x: 214, y: 52 }, to: { x: 214, y: 168 }, style: { stroke: LIGHT.axis, strokeWidth: 1.5 } },
         // Water molecules – dilute side
         { type: 'circle', cx: 65, cy: 98, r: 9, style: { stroke: '#0ea5e9', fill: 'rgba(14, 165, 233, 0.28)', strokeWidth: 1.5 } },
         { type: 'circle', cx: 95, cy: 118, r: 9, style: { stroke: '#0ea5e9', fill: 'rgba(14, 165, 233, 0.28)', strokeWidth: 1.5 } },
@@ -124,9 +145,9 @@ export const osmosis_diagram: CustomDiagramBlueprint = {
         { type: 'circle', cx: 355, cy: 95, r: 9, style: { stroke: STYLE.warning, fill: 'rgba(217, 119, 6, 0.15)', strokeWidth: 1.5 } },
         // Water flow arrow (dilute → concentrated)
         { type: 'arrow', from: { x: 196, y: 112 }, to: { x: 232, y: 112 }, headSize: 10, style: { stroke: '#0ea5e9', strokeWidth: 2.5 } },
-        { type: 'text', text: 'Dilute', at: { x: 109, y: 38 }, style: { ...STYLE.textLabel, fill: '#0ea5e9' } },
-        { type: 'text', text: 'Concentrated', at: { x: 331, y: 38 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Partially permeable membrane', at: { x: 220, y: 212 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Dilute', at: { x: 109, y: 38 }, style: { fontSize: 11, fill: '#0ea5e9', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Concentrated', at: { x: 331, y: 38 }, style: { fontSize: 11, fill: LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Partially permeable membrane', at: { x: 220, y: 212 }, style: { fontSize: 10, fill: LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
       ],
     },
   ],
@@ -141,11 +162,11 @@ export const active_transport: CustomDiagramBlueprint = {
     {
       id: 'active',
       items: [
-        { type: 'rect', x: 12, y: 20, width: 416, height: 208, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 20, width: 416, height: 208, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Low concentration side
-        { type: 'rect', x: 28, y: 52, width: 152, height: 116, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
+        { type: 'rect', x: 28, y: 52, width: 152, height: 116, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
         // High concentration side
-        { type: 'rect', x: 260, y: 52, width: 152, height: 116, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.cell } },
+        { type: 'rect', x: 260, y: 52, width: 152, height: 116, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.cell } },
         // Carrier protein
         { type: 'rect', x: 188, y: 72, width: 64, height: 76, rx: 10, style: { stroke: STYLE.bio.primary, strokeWidth: 2, fill: STYLE.bio.primaryLight } },
         { type: 'text', text: 'Carrier', at: { x: 220, y: 104 }, style: { ...STYLE.textCaption, fill: STYLE.bio.primary } },
@@ -155,9 +176,9 @@ export const active_transport: CustomDiagramBlueprint = {
         // ATP badge
         { type: 'rect', x: 196, y: 32, width: 48, height: 24, rx: 6, style: { stroke: STYLE.success, fill: 'rgba(5, 150, 105, 0.12)', strokeWidth: 1.5 } },
         { type: 'text', text: 'ATP', at: { x: 220, y: 50 }, style: { ...STYLE.textLabel, fill: STYLE.success, fontSize: 12 } },
-        { type: 'text', text: 'Low', at: { x: 104, y: 114 }, style: STYLE.textLabel },
-        { type: 'text', text: 'High', at: { x: 336, y: 114 }, style: { ...STYLE.textLabel, fill: STYLE.bio.primary } },
-        { type: 'text', text: 'Against concentration gradient', at: { x: 220, y: 218 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Low', at: { x: 104, y: 114 }, style: { fontSize: 11, fill: LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'High', at: { x: 336, y: 114 }, style: { fontSize: 11, fill: STYLE.bio.primary, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Against concentration gradient', at: { x: 220, y: 218 }, style: { fontSize: 10, fill: LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
       ],
     },
   ],
@@ -172,7 +193,7 @@ export const cell_division: CustomDiagramBlueprint = {
     {
       id: 'division',
       items: [
-        { type: 'rect', x: 12, y: 16, width: 496, height: 232, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 16, width: 496, height: 232, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Parent cell
         { type: 'circle', cx: 100, cy: 118, r: 40, style: { stroke: STYLE.stroke, strokeWidth: 2, fill: STYLE.bio.cell } },
         { type: 'text', text: '1 cell', at: { x: 100, y: 112 }, style: STYLE.textLabel },
@@ -198,44 +219,51 @@ export const cell_division: CustomDiagramBlueprint = {
   ],
 };
 
-/** Enzyme: lock-and-key – 1.Substrate binds 2.Reaction 3.Products released; enzyme UNCHANGED */
+/** Enzyme: lock-and-key – simple flow 1.Bind 2.Reaction 3.Release; enzyme UNCHANGED. Light-on-dark for flashcard well. */
+const DARK = {
+  stroke: '#94a3b8',
+  strokeMuted: '#64748b',
+  text: '#e2e8f0',
+  textMuted: '#94a3b8',
+  accent: '#818cf8',
+  accentFill: 'rgba(129, 140, 248, 0.2)',
+  success: '#34d399',
+  successFill: 'rgba(52, 211, 153, 0.15)',
+  surface: 'rgba(51, 65, 85, 0.4)',
+};
+
 export const enzyme_action: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 500, height: 300 },
-  viewBox: '0 0 500 300',
+  size: { width: 500, height: 260 },
+  viewBox: '0 0 500 260',
   layers: [
     {
       id: 'enzyme',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 476, height: 274, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
-        // Enzyme body (protein)
-        { type: 'ellipse', cx: 240, cy: 132, rx: 92, ry: 58, style: { stroke: '#b45309', strokeWidth: 2, fill: 'rgba(251, 191, 36, 0.12)' } },
-        // Active site (pocket)
-        { type: 'polygon', points: [{ x: 138, y: 120 }, { x: 178, y: 94 }, { x: 178, y: 146 }], style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: STYLE.chem.primaryLight } },
-        // Substrate (key)
-        { type: 'polygon', points: [{ x: 142, y: 122 }, { x: 170, y: 104 }, { x: 170, y: 134 }], style: { stroke: STYLE.success, strokeWidth: 2, fill: 'rgba(5, 150, 105, 0.25)' } },
-        // Step 1
-        { type: 'circle', cx: 158, cy: 120, r: 12, style: { stroke: STYLE.chem.primary, fill: 'rgba(124, 58, 237, 0.1)', strokeWidth: 1.5 } },
-        { type: 'text', text: '1', at: { x: 158, y: 124 }, style: { ...STYLE.textLabel, fontSize: 11 } },
-        { type: 'text', text: 'Bind', at: { x: 158, y: 162 }, style: STYLE.textTiny },
-        // Step 2 arrow
-        { type: 'arrow', from: { x: 308, y: 132 }, to: { x: 368, y: 132 }, headSize: 10, style: { stroke: STYLE.chem.primary, strokeWidth: 2.5 } },
-        { type: 'circle', cx: 298, cy: 132, r: 12, style: { stroke: STYLE.chem.primary, fill: 'rgba(124, 58, 237, 0.1)', strokeWidth: 1.5 } },
-        { type: 'text', text: '2', at: { x: 298, y: 136 }, style: { ...STYLE.textLabel, fontSize: 11 } },
-        { type: 'text', text: 'Reaction', at: { x: 333, y: 110 }, style: STYLE.textTiny },
-        // Step 3 products
-        { type: 'circle', cx: 408, cy: 120, r: 8, style: { stroke: STYLE.strokeMuted, fill: 'rgba(100, 116, 139, 0.35)', strokeWidth: 1.5 } },
-        { type: 'circle', cx: 408, cy: 140, r: 8, style: { stroke: STYLE.strokeMuted, fill: 'rgba(100, 116, 139, 0.35)', strokeWidth: 1.5 } },
-        { type: 'circle', cx: 422, cy: 120, r: 12, style: { stroke: STYLE.chem.primary, fill: 'rgba(124, 58, 237, 0.1)', strokeWidth: 1.5 } },
-        { type: 'text', text: '3', at: { x: 422, y: 124 }, style: { ...STYLE.textLabel, fontSize: 11 } },
-        { type: 'text', text: 'Release', at: { x: 422, y: 162 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Enzyme', at: { x: 240, y: 86 }, style: { ...STYLE.textTitle } },
-        { type: 'text', text: 'Active site', at: { x: 162, y: 102 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Substrate', at: { x: 162, y: 182 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Products', at: { x: 415, y: 102 }, style: STYLE.textCaption },
-        // Key takeaway
-        { type: 'rect', x: 160, y: 232, width: 240, height: 40, rx: 8, style: { stroke: STYLE.success, fill: 'rgba(5, 150, 105, 0.08)', strokeWidth: 1.5 } },
-        { type: 'text', text: '✓ Enzyme UNCHANGED – can catalyse again', at: { x: 280, y: 257 }, style: { ...STYLE.textCaption, fontWeight: 600, fill: STYLE.success } },
+        { type: 'rect', x: 12, y: 12, width: 476, height: 236, rx: 12, style: { stroke: DARK.strokeMuted, strokeWidth: 1, fill: 'transparent' } },
+        // Step 1: Substrate (single clean box)
+        { type: 'rect', x: 48, y: 72, width: 88, height: 56, rx: 8, style: { stroke: DARK.accent, strokeWidth: 2, fill: DARK.accentFill } },
+        { type: 'text', text: '1', at: { x: 92, y: 52 }, style: { fontSize: 11, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Substrate', at: { x: 92, y: 98 }, style: { fontSize: 12, fill: DARK.text, textAnchor: 'middle' as const, fontWeight: 500, fontFamily: FONT } },
+        { type: 'text', text: 'Bind', at: { x: 92, y: 118 }, style: { fontSize: 10, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        // Arrow 1→2
+        { type: 'arrow', from: { x: 136, y: 100 }, to: { x: 176, y: 100 }, headSize: 10, style: { stroke: DARK.stroke, strokeWidth: 2 } },
+        // Step 2: Enzyme (single clean box)
+        { type: 'rect', x: 186, y: 56, width: 128, height: 88, rx: 10, style: { stroke: DARK.accent, strokeWidth: 2, fill: DARK.accentFill } },
+        { type: 'text', text: '2', at: { x: 250, y: 44 }, style: { fontSize: 11, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Enzyme', at: { x: 250, y: 92 }, style: { fontSize: 13, fill: DARK.text, textAnchor: 'middle' as const, fontWeight: 600, fontFamily: FONT } },
+        { type: 'text', text: 'Active site', at: { x: 250, y: 112 }, style: { fontSize: 10, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Reaction', at: { x: 250, y: 132 }, style: { fontSize: 10, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        // Arrow 2→3
+        { type: 'arrow', from: { x: 314, y: 100 }, to: { x: 354, y: 100 }, headSize: 10, style: { stroke: DARK.stroke, strokeWidth: 2 } },
+        // Step 3: Products (single clean box)
+        { type: 'rect', x: 364, y: 72, width: 88, height: 56, rx: 8, style: { stroke: DARK.stroke, strokeWidth: 2, fill: DARK.surface } },
+        { type: 'text', text: '3', at: { x: 408, y: 52 }, style: { fontSize: 11, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Products', at: { x: 408, y: 98 }, style: { fontSize: 12, fill: DARK.text, textAnchor: 'middle' as const, fontWeight: 500, fontFamily: FONT } },
+        { type: 'text', text: 'Release', at: { x: 408, y: 118 }, style: { fontSize: 10, fill: DARK.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        // Key takeaway – cooler teal/success
+        { type: 'rect', x: 120, y: 198, width: 260, height: 40, rx: 8, style: { stroke: DARK.success, fill: DARK.successFill, strokeWidth: 1.5 } },
+        { type: 'text', text: 'Enzyme UNCHANGED – can catalyse again', at: { x: 250, y: 223 }, style: { fontSize: 11, fontWeight: 600, fill: DARK.success, textAnchor: 'middle' as const, fontFamily: FONT } },
       ],
     },
   ],
@@ -250,12 +278,12 @@ export const digestive_system: CustomDiagramBlueprint = {
     {
       id: 'digestive',
       items: [
-        { type: 'rect', x: 12, y: 16, width: 496, height: 172, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
-        { type: 'rect', x: 28, y: 44, width: 72, height: 56, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
-        { type: 'rect', x: 118, y: 44, width: 76, height: 56, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
-        { type: 'rect', x: 212, y: 44, width: 92, height: 56, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
-        { type: 'rect', x: 322, y: 44, width: 92, height: 56, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
-        { type: 'rect', x: 432, y: 44, width: 60, height: 56, rx: 8, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.08)' } },
+        { type: 'rect', x: 12, y: 16, width: 496, height: 172, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 28, y: 44, width: 72, height: 56, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
+        { type: 'rect', x: 118, y: 44, width: 76, height: 56, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
+        { type: 'rect', x: 212, y: 44, width: 92, height: 56, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
+        { type: 'rect', x: 322, y: 44, width: 92, height: 56, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.1)' } },
+        { type: 'rect', x: 432, y: 44, width: 60, height: 56, rx: 8, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.08)' } },
         { type: 'arrow', from: { x: 102, y: 72 }, to: { x: 118, y: 72 }, headSize: 8, style: { stroke: STYLE.warning, strokeWidth: 2 } },
         { type: 'arrow', from: { x: 196, y: 72 }, to: { x: 212, y: 72 }, headSize: 8, style: { stroke: STYLE.warning, strokeWidth: 2 } },
         { type: 'arrow', from: { x: 306, y: 72 }, to: { x: 322, y: 72 }, headSize: 8, style: { stroke: STYLE.warning, strokeWidth: 2 } },
@@ -279,7 +307,7 @@ export const circulatory_system: CustomDiagramBlueprint = {
     {
       id: 'circulatory',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 436, height: 254, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 12, width: 436, height: 254, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Heart
         { type: 'ellipse', cx: 230, cy: 138, rx: 54, ry: 50, style: { stroke: '#dc2626', strokeWidth: 2.5, fill: 'rgba(220, 38, 38, 0.15)' } },
         { type: 'text', text: 'Heart', at: { x: 230, y: 144 }, style: { ...STYLE.textTitle, fill: '#dc2626' } },
@@ -309,7 +337,7 @@ export const pathogen_infection: CustomDiagramBlueprint = {
       id: 'pathogen',
       items: [
         { type: 'rect', x: 12, y: 16, width: 476, height: 232, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
-        { type: 'rect', x: 32, y: 60, width: 140, height: 96, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(148, 163, 184, 0.08)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 32, y: 60, width: 140, height: 96, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(148, 163, 184, 0.08)', strokeWidth: 1.5 } },
         { type: 'circle', cx: 82, cy: 112, r: 20, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.25)' } },
         { type: 'text', text: 'Entry', at: { x: 102, y: 178 }, style: STYLE.textCaption },
         { type: 'arrow', from: { x: 176, y: 112 }, to: { x: 228, y: 112 }, headSize: 10, style: { stroke: STYLE.danger, strokeWidth: 2.5 } },
@@ -333,7 +361,7 @@ export const immune_response: CustomDiagramBlueprint = {
     {
       id: 'immune',
       items: [
-        { type: 'rect', x: 12, y: 16, width: 496, height: 232, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 16, width: 496, height: 232, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'circle', cx: 95, cy: 122, r: 32, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.2)' } },
         { type: 'text', text: 'Pathogen', at: { x: 95, y: 172 }, style: STYLE.textCaption },
         { type: 'arrow', from: { x: 130, y: 122 }, to: { x: 182, y: 122 }, headSize: 10, style: { stroke: STYLE.phys.primary, strokeWidth: 2.5 } },
@@ -360,7 +388,7 @@ export const photosynthesis: CustomDiagramBlueprint = {
       items: [
         { type: 'rect', x: 12, y: 12, width: 496, height: 254, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
         // INPUTS
-        { type: 'rect', x: 28, y: 32, width: 152, height: 116, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(251, 191, 36, 0.06)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 28, y: 32, width: 152, height: 116, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(251, 191, 36, 0.06)', strokeWidth: 1.5 } },
         { type: 'text', text: 'INPUTS', at: { x: 104, y: 56 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
         { type: 'polygon', points: [{ x: 72, y: 106 }, { x: 104, y: 66 }, { x: 136, y: 106 }], style: { stroke: '#d97706', strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.15)' } },
         { type: 'line', from: { x: 104, y: 62 }, to: { x: 104, y: 52 }, style: { stroke: '#d97706', strokeWidth: 2 } },
@@ -374,7 +402,7 @@ export const photosynthesis: CustomDiagramBlueprint = {
         { type: 'text', text: '(in chloroplasts)', at: { x: 300, y: 136 }, style: STYLE.textTiny },
         { type: 'arrow', from: { x: 366, y: 86 }, to: { x: 414, y: 86 }, headSize: 10, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
         // OUTPUTS
-        { type: 'rect', x: 418, y: 32, width: 84, height: 116, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(5, 150, 105, 0.08)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 418, y: 32, width: 84, height: 116, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(5, 150, 105, 0.08)', strokeWidth: 1.5 } },
         { type: 'text', text: 'OUTPUTS', at: { x: 460, y: 56 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
         { type: 'text', text: 'Glucose', at: { x: 460, y: 86 }, style: { ...STYLE.textLabel, fill: STYLE.bio.primary } },
         { type: 'text', text: '+ O₂', at: { x: 460, y: 112 }, style: STYLE.textCaption },
@@ -394,19 +422,19 @@ export const respiration: CustomDiagramBlueprint = {
     {
       id: 'respiration',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 476, height: 254, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 12, width: 476, height: 254, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Aerobic
-        { type: 'rect', x: 32, y: 36, width: 148, height: 84, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(5, 150, 105, 0.06)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 32, y: 36, width: 148, height: 84, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(5, 150, 105, 0.06)', strokeWidth: 1.5 } },
         { type: 'text', text: 'INPUTS', at: { x: 106, y: 58 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
         { type: 'text', text: 'Glucose + O₂', at: { x: 106, y: 86 }, style: STYLE.textLabel },
         { type: 'arrow', from: { x: 184, y: 76 }, to: { x: 232, y: 76 }, headSize: 10, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
-        { type: 'rect', x: 248, y: 36, width: 148, height: 84, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(5, 150, 105, 0.06)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 248, y: 36, width: 148, height: 84, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(5, 150, 105, 0.06)', strokeWidth: 1.5 } },
         { type: 'text', text: 'OUTPUTS', at: { x: 322, y: 58 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
         { type: 'text', text: 'CO₂ + H₂O + ATP', at: { x: 322, y: 86 }, style: STYLE.textLabel },
         { type: 'text', text: 'Aerobic (with O₂)', at: { x: 322, y: 122 }, style: { ...STYLE.textCaption, fill: STYLE.success } },
-        { type: 'line', from: { x: 32, y: 142 }, to: { x: 468, y: 142 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
+        { type: 'line', from: { x: 32, y: 142 }, to: { x: 468, y: 142 }, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1 } },
         // Anaerobic
-        { type: 'rect', x: 32, y: 156, width: 436, height: 84, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(217, 119, 6, 0.06)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 32, y: 156, width: 436, height: 84, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(217, 119, 6, 0.06)', strokeWidth: 1.5 } },
         { type: 'text', text: 'Anaerobic (no O₂): Glucose → Lactic acid + ATP', at: { x: 250, y: 196 }, style: STYLE.textLabel },
         { type: 'text', text: 'Less ATP than aerobic · lactic acid causes muscle fatigue', at: { x: 250, y: 248 }, style: STYLE.textTiny },
       ],
@@ -423,7 +451,7 @@ export const homeostasis: CustomDiagramBlueprint = {
     {
       id: 'homeostasis',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 476, height: 254, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 12, width: 476, height: 254, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'text', text: 'Stimulus', at: { x: 100, y: 62 }, style: STYLE.textLabel },
         { type: 'arrow', from: { x: 100, y: 76 }, to: { x: 100, y: 112 }, headSize: 8, style: { stroke: STYLE.bio.primary, strokeWidth: 2 } },
         { type: 'text', text: 'Receptor', at: { x: 100, y: 132 }, style: STYLE.textCaption },
@@ -434,7 +462,7 @@ export const homeostasis: CustomDiagramBlueprint = {
         { type: 'text', text: 'Effector', at: { x: 398, y: 112 }, style: STYLE.textCaption },
         { type: 'arrow', from: { x: 398, y: 132 }, to: { x: 398, y: 172 }, headSize: 8, style: { stroke: STYLE.bio.primary, strokeWidth: 2 } },
         { type: 'text', text: 'Response', at: { x: 398, y: 192 }, style: STYLE.textCaption },
-        { type: 'line', from: { x: 398, y: 202 }, to: { x: 100, y: 202 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1.5, dashArray: '6,4' } },
+        { type: 'line', from: { x: 398, y: 202 }, to: { x: 100, y: 202 }, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, dashArray: '6,4' } },
         { type: 'text', text: 'Negative feedback: return to normal', at: { x: 249, y: 258 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
       ],
     },
@@ -450,7 +478,7 @@ export const nervous_system: CustomDiagramBlueprint = {
     {
       id: 'nervous',
       items: [
-        { type: 'rect', x: 12, y: 16, width: 496, height: 192, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 16, width: 496, height: 192, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'text', text: 'Stimulus', at: { x: 68, y: 108 }, style: STYLE.textLabel },
         { type: 'arrow', from: { x: 118, y: 108 }, to: { x: 168, y: 108 }, headSize: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2 } },
         { type: 'text', text: 'Receptor', at: { x: 138, y: 88 }, style: STYLE.textCaption },
@@ -474,7 +502,7 @@ export const hormone_action: CustomDiagramBlueprint = {
     {
       id: 'hormone',
       items: [
-        { type: 'rect', x: 12, y: 16, width: 476, height: 206, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 16, width: 476, height: 206, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'rect', x: 40, y: 60, width: 100, height: 88, rx: 10, style: { stroke: STYLE.warning, strokeWidth: 2, fill: 'rgba(217, 119, 6, 0.08)' } },
         { type: 'text', text: 'Gland', at: { x: 90, y: 106 }, style: { ...STYLE.textLabel, fill: STYLE.warning } },
         { type: 'arrow', from: { x: 144, y: 104 }, to: { x: 196, y: 104 }, headSize: 10, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
@@ -497,10 +525,10 @@ export const dna_structure: CustomDiagramBlueprint = {
     {
       id: 'dna',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 416, height: 214, rx: 12, style: { stroke: STYLE.strokeLight, strokeWidth: 1, fill: 'rgba(248, 250, 252, 0.6)' } },
+        { type: 'rect', x: 12, y: 12, width: 416, height: 214, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Sugar-phosphate backbones (slightly thicker)
-        { type: 'polyline', points: [{ x: 70, y: 52 }, { x: 115, y: 92 }, { x: 160, y: 52 }, { x: 220, y: 92 }, { x: 280, y: 52 }, { x: 325, y: 92 }, { x: 370, y: 52 }], style: { stroke: STYLE.stroke, fill: 'none', strokeWidth: 2.5 } },
-        { type: 'polyline', points: [{ x: 70, y: 168 }, { x: 115, y: 128 }, { x: 160, y: 168 }, { x: 220, y: 128 }, { x: 280, y: 168 }, { x: 325, y: 128 }, { x: 370, y: 168 }], style: { stroke: STYLE.stroke, fill: 'none', strokeWidth: 2.5 } },
+        { type: 'polyline', points: [{ x: 70, y: 52 }, { x: 115, y: 92 }, { x: 160, y: 52 }, { x: 220, y: 92 }, { x: 280, y: 52 }, { x: 325, y: 92 }, { x: 370, y: 52 }], style: { stroke: LIGHT.axis, fill: 'none', strokeWidth: 2.5 } },
+        { type: 'polyline', points: [{ x: 70, y: 168 }, { x: 115, y: 128 }, { x: 160, y: 168 }, { x: 220, y: 128 }, { x: 280, y: 168 }, { x: 325, y: 128 }, { x: 370, y: 168 }], style: { stroke: LIGHT.axis, fill: 'none', strokeWidth: 2.5 } },
         // Base pairs
         { type: 'line', from: { x: 115, y: 92 }, to: { x: 115, y: 128 }, style: { stroke: STYLE.chem.primary, strokeWidth: 2 } },
         { type: 'line', from: { x: 220, y: 92 }, to: { x: 220, y: 128 }, style: { stroke: STYLE.chem.primary, strokeWidth: 2 } },
@@ -603,11 +631,12 @@ export const carbon_cycle: CustomDiagramBlueprint = {
     {
       id: 'carbon',
       items: [
-        { type: 'ellipse', cx: 95, cy: 54, rx: 56, ry: 28, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
+        { type: 'rect', x: 12, y: 12, width: 456, height: 236, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'ellipse', cx: 95, cy: 54, rx: 56, ry: 28, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: 'rgba(148, 163, 184, 0.08)' } },
         { type: 'text', text: 'CO₂ atmosphere', at: { x: 95, y: 60 }, style: STYLE.textCaption },
         { type: 'arrow', from: { x: 118, y: 78 }, to: { x: 162, y: 108 }, headSize: 8, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
         { type: 'text', text: 'Photosynthesis', at: { x: 132, y: 92 }, style: STYLE.textTiny },
-        { type: 'rect', x: 188, y: 98, width: 96, height: 60, rx: 10, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.primaryLight } },
+        { type: 'rect', x: 188, y: 98, width: 96, height: 60, rx: 10, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, fill: STYLE.bio.primaryLight } },
         { type: 'text', text: 'Plants', at: { x: 236, y: 132 }, style: { ...STYLE.textCaption, fill: STYLE.bio.primary } },
         { type: 'arrow', from: { x: 288, y: 128 }, to: { x: 348, y: 82 }, headSize: 8, style: { stroke: STYLE.semantic.danger, strokeWidth: 2.5 } },
         { type: 'text', text: 'Respiration', at: { x: 308, y: 108 }, style: STYLE.textTiny },
@@ -662,21 +691,210 @@ export const monoclonal_antibodies: CustomDiagramBlueprint = {
   ],
 };
 
-/** Photosynthesis light graph */
+/** Rate of photosynthesis vs light intensity – plateau at limiting factor */
 export const photosynthesis_light_graph: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 380, height: 220 },
-  viewBox: '0 0 380 220',
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
   layers: [
     {
-      id: 'graph',
+      id: 'rateLight',
       items: [
-        { type: 'line', from: { x: 55, y: 172 }, to: { x: 325, y: 172 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'line', from: { x: 55, y: 172 }, to: { x: 55, y: 35 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'polyline', points: [{ x: 55, y: 172 }, { x: 128, y: 108 }, { x: 212, y: 58 }, { x: 296, y: 52 }, { x: 325, y: 52 }], style: { stroke: STYLE.bio.primary, fill: 'none', strokeWidth: 2.5 } },
-        { type: 'text', text: 'Rate', at: { x: 28, y: 102 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
-        { type: 'text', text: 'Light intensity', at: { x: 190, y: 198 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Limiting factor', at: { x: 296, y: 78 }, style: { ...STYLE.textTiny, fill: STYLE.bio.primary } },
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'polyline', points: [{ x: 70, y: 172 }, { x: 155, y: 95 }, { x: 252, y: 52 }, { x: 370, y: 52 }], style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'rect', x: 280, y: 42, width: 70, height: 34, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Limiting factor', at: { x: 315, y: 58 }, style: { fontSize: 9, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: '(CO₂ or temp)', at: { x: 315, y: 68 }, style: { fontSize: 8, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Rate of', at: { x: 32, y: 98 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'photosynthesis', at: { x: 32, y: 114 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Light intensity', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+      ],
+    },
+  ],
+};
+
+/** Rate of photosynthesis vs CO₂ concentration – same curve shape as light; plateau when light or temperature limits */
+export const photosynthesis_co2_graph: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
+  layers: [
+    {
+      id: 'rateCO2',
+      items: [
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'polyline', points: [{ x: 70, y: 172 }, { x: 155, y: 95 }, { x: 252, y: 52 }, { x: 370, y: 52 }], style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'rect', x: 280, y: 42, width: 70, height: 34, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Limiting factor', at: { x: 315, y: 58 }, style: { fontSize: 9, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: '(light or temp)', at: { x: 315, y: 68 }, style: { fontSize: 8, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Rate of', at: { x: 32, y: 98 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'photosynthesis', at: { x: 32, y: 114 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Carbon dioxide concentration', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+      ],
+    },
+  ],
+};
+
+/** Rate vs temperature graph (photosynthesis): crystal clear – curve first, no grid, strong labels */
+export const photosynthesis_temperature_graph: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
+  layers: [
+    {
+      id: 'rateTemp',
+      items: [
+        // Plot area – plain light background, no border
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        // Axes – clear and bold
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        // X-axis scale: 0, 20, 35, 60 °C (peak aligns with 35)
+        ...([70, 170, 245, 370] as const).map((x) => ({
+          type: 'line' as const,
+          from: { x, y: 180 },
+          to: { x, y: 185 },
+          style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 },
+        })),
+        { type: 'text', text: '0', at: { x: 70, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '20', at: { x: 170, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '35', at: { x: 245, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '60', at: { x: 370, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        // Y-axis: 0 only
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 65, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } },
+        { type: 'line', from: { x: 70, y: 35 }, to: { x: 65, y: 35 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } },
+        { type: 'text', text: '0', at: { x: 60, y: 184 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'end' as const, fontFamily: FONT, fontWeight: 500 } },
+        // Curve – peak at 35°C (x=245)
+        { type: 'path', d: 'M 70 180 C 115 180 195 58 245 50 C 295 55 355 165 370 176', style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'circle', cx: 245, cy: 50, r: 6, style: { stroke: GRAPH_LIGHT.curve, fill: GRAPH_LIGHT.curve, strokeWidth: 2 } },
+        { type: 'line', from: { x: 245, y: 50 }, to: { x: 245, y: 180 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        { type: 'line', from: { x: 245, y: 50 }, to: { x: 134, y: 50 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        // Optimum label
+        { type: 'rect', x: 72, y: 34, width: 60, height: 38, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Optimum', at: { x: 102, y: 51 }, style: { fontSize: 10, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: '~35°C', at: { x: 102, y: 65 }, style: { fontSize: 10, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'polygon', points: [{ x: 134, y: 46 }, { x: 134, y: 62 }, { x: 140, y: 54 }], style: { stroke: GRAPH_LIGHT.labelBg, fill: GRAPH_LIGHT.labelBg, strokeWidth: 1 } },
+        // Region labels
+        { type: 'text', text: 'Rate increases', at: { x: 135, y: 138 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Denaturation', at: { x: 308, y: 132 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        // Y-axis label – left margin in viewBox ensures "Rate of photosynthesis" is fully visible
+        { type: 'text', text: 'Rate of', at: { x: 32, y: 98 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'photosynthesis', at: { x: 32, y: 114 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Temperature (°C)', at: { x: 220, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+      ],
+    },
+  ],
+};
+
+/** Enzyme activity vs temperature – same bell curve as photosynthesis; optimum ~37°C */
+export const enzyme_activity_temperature_graph: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
+  layers: [
+    {
+      id: 'rateTemp',
+      items: [
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        ...([70, 150, 252, 370] as const).map((x) => ({ type: 'line' as const, from: { x, y: 180 }, to: { x, y: 185 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } })),
+        { type: 'text', text: '0', at: { x: 70, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '20', at: { x: 150, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '37', at: { x: 252, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '60', at: { x: 370, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 65, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } },
+        { type: 'line', from: { x: 70, y: 35 }, to: { x: 65, y: 35 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } },
+        { type: 'text', text: '0', at: { x: 60, y: 184 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'end' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'path', d: 'M 70 180 C 118 180 198 55 252 48 C 306 52 358 162 370 174', style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'circle', cx: 252, cy: 48, r: 6, style: { stroke: GRAPH_LIGHT.curve, fill: GRAPH_LIGHT.curve, strokeWidth: 2 } },
+        { type: 'line', from: { x: 252, y: 48 }, to: { x: 252, y: 180 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        { type: 'line', from: { x: 252, y: 48 }, to: { x: 141, y: 48 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        { type: 'rect', x: 72, y: 34, width: 56, height: 38, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Optimum', at: { x: 100, y: 51 }, style: { fontSize: 10, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: '~37°C', at: { x: 100, y: 65 }, style: { fontSize: 10, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'polygon', points: [{ x: 141, y: 46 }, { x: 141, y: 62 }, { x: 147, y: 54 }], style: { stroke: GRAPH_LIGHT.labelBg, fill: GRAPH_LIGHT.labelBg, strokeWidth: 1 } },
+        { type: 'text', text: 'Rate increases', at: { x: 140, y: 138 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Denaturation', at: { x: 316, y: 132 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Enzyme', at: { x: 32, y: 92 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'activity', at: { x: 32, y: 108 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Temperature (°C)', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+      ],
+    },
+  ],
+};
+
+/** Enzyme activity vs pH – inverted U with optimum around pH 7 */
+export const enzyme_activity_ph_graph: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
+  layers: [
+    {
+      id: 'ratePh',
+      items: [
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        ...([70, 140, 210, 280, 350, 370] as const).map((x) => ({ type: 'line' as const, from: { x, y: 180 }, to: { x, y: 185 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } })),
+        { type: 'text', text: '0', at: { x: 70, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '4', at: { x: 140, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '7', at: { x: 210, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '10', at: { x: 280, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '14', at: { x: 350, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'path', d: 'M 70 165 C 100 165 170 55 210 48 C 250 55 310 165 350 165', style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'circle', cx: 210, cy: 48, r: 6, style: { stroke: GRAPH_LIGHT.curve, fill: GRAPH_LIGHT.curve, strokeWidth: 2 } },
+        { type: 'line', from: { x: 210, y: 48 }, to: { x: 210, y: 180 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        { type: 'rect', x: 72, y: 34, width: 50, height: 34, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Optimum', at: { x: 97, y: 51 }, style: { fontSize: 10, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: 'pH ~7', at: { x: 97, y: 63 }, style: { fontSize: 9, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Enzyme', at: { x: 32, y: 92 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'activity', at: { x: 32, y: 108 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'pH', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+      ],
+    },
+  ],
+};
+
+/** Diffusion rate vs temperature – increases with temperature (no denaturation) */
+export const diffusion_rate_temperature_graph: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
+  layers: [
+    {
+      id: 'diffTemp',
+      items: [
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        ...([70, 175, 280, 370] as const).map((x) => ({ type: 'line' as const, from: { x, y: 180 }, to: { x, y: 185 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 1.5 } })),
+        { type: 'text', text: '0', at: { x: 70, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '25', at: { x: 175, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '50', at: { x: 280, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: '60', at: { x: 370, y: 197 }, style: { fontSize: 11, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'path', d: 'M 70 175 Q 130 150 220 100 T 370 55', style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'text', text: 'KE ↑ → faster', at: { x: 175, y: 138 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'particles', at: { x: 175, y: 150 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Diffusion', at: { x: 32, y: 95 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'rate', at: { x: 32, y: 111 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Temperature (°C)', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
       ],
     },
   ],
@@ -697,7 +915,7 @@ export const thyroxine_feedback: CustomDiagramBlueprint = {
         { type: 'arrow', from: { x: 272, y: 88 }, to: { x: 316, y: 88 }, headSize: 8, style: { stroke: STYLE.bio.primary, strokeWidth: 2.5 } },
         { type: 'text', text: 'Thyroid', at: { x: 352, y: 72 }, style: STYLE.textCaption },
         { type: 'text', text: 'Thyroxine ↑', at: { x: 352, y: 102 }, style: { ...STYLE.textCaption, fill: STYLE.success } },
-        { type: 'line', from: { x: 352, y: 118 }, to: { x: 88, y: 118 }, style: { stroke: STYLE.strokeLight, strokeWidth: 1.5, dashArray: '6,4' } },
+        { type: 'line', from: { x: 352, y: 118 }, to: { x: 88, y: 118 }, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1.5, dashArray: '6,4' } },
         { type: 'text', text: 'Negative feedback', at: { x: 220, y: 142 }, style: { ...STYLE.textCaption, fontWeight: 600 } },
       ],
     },
@@ -760,6 +978,7 @@ export const bohr_model: CustomDiagramBlueprint = {
     {
       id: 'bohr',
       items: [
+        { type: 'rect', x: 12, y: 12, width: 236, height: 236, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'circle', cx: 130, cy: 130, r: 75, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
         { type: 'circle', cx: 130, cy: 130, r: 48, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
         { type: 'circle', cx: 130, cy: 130, r: 20, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.2)' } },
@@ -808,7 +1027,8 @@ export const free_body_diagram: CustomDiagramBlueprint = {
     {
       id: 'fbd',
       items: [
-        { type: 'rect', x: 110, y: 85, width: 120, height: 70, rx: 10, style: { stroke: STYLE.stroke, strokeWidth: 2, fill: 'rgba(148, 163, 184, 0.1)' } },
+        { type: 'rect', x: 12, y: 12, width: 316, height: 216, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 110, y: 85, width: 120, height: 70, rx: 10, style: { stroke: LIGHT.axis, strokeWidth: 2, fill: 'rgba(148, 163, 184, 0.1)' } },
         { type: 'arrow', from: { x: 170, y: 85 }, to: { x: 170, y: 40 }, headSize: 10, style: { stroke: STYLE.danger, strokeWidth: 2.5 } },
         { type: 'arrow', from: { x: 170, y: 155 }, to: { x: 170, y: 115 }, headSize: 10, style: { stroke: STYLE.phys.primary, strokeWidth: 2.5 } },
         { type: 'arrow', from: { x: 170, y: 155 }, to: { x: 170, y: 200 }, headSize: 10, style: { stroke: STYLE.success, strokeWidth: 2.5 } },
@@ -832,22 +1052,23 @@ export const particle_model: CustomDiagramBlueprint = {
     {
       id: 'particle',
       items: [
+        { type: 'rect', x: 12, y: 12, width: 416, height: 116, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         // Solid
-        { type: 'rect', x: 24, y: 44, width: 118, height: 82, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 24, y: 44, width: 118, height: 82, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
         { type: 'text', text: 'Solid', at: { x: 83, y: 35 }, style: { ...STYLE.textLabel, fill: STYLE.chem.primary } },
         { type: 'circle', cx: 55, cy: 75, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 88, cy: 68, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 75, cy: 105, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'text', text: 'Vibrate in place', at: { x: 83, y: 132 }, style: STYLE.textTiny },
         // Liquid
-        { type: 'rect', x: 158, y: 44, width: 118, height: 82, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 158, y: 44, width: 118, height: 82, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
         { type: 'text', text: 'Liquid', at: { x: 217, y: 35 }, style: STYLE.textLabel },
         { type: 'circle', cx: 195, cy: 78, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 230, cy: 72, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 218, cy: 102, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'text', text: 'Slide past each other', at: { x: 217, y: 132 }, style: STYLE.textTiny },
         // Gas
-        { type: 'rect', x: 292, y: 44, width: 124, height: 82, rx: 10, style: { stroke: STYLE.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
+        { type: 'rect', x: 292, y: 44, width: 124, height: 82, rx: 10, style: { stroke: LIGHT.strokeMuted, fill: 'rgba(124, 58, 237, 0.04)', strokeWidth: 1.5 } },
         { type: 'text', text: 'Gas', at: { x: 354, y: 35 }, style: STYLE.textLabel },
         { type: 'circle', cx: 318, cy: 62, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
         { type: 'circle', cx: 365, cy: 88, r: 9, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
@@ -913,13 +1134,14 @@ export const wave_types: CustomDiagramBlueprint = {
     {
       id: 'waves',
       items: [
+        { type: 'rect', x: 12, y: 12, width: 376, height: 136, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'polyline', points: [{ x: 50, y: 80 }, { x: 100, y: 50 }, { x: 150, y: 80 }, { x: 200, y: 110 }, { x: 250, y: 80 }], style: { stroke: STYLE.accent, fill: 'none', strokeWidth: 2 } },
         { type: 'text', text: 'Transverse', at: { x: 150, y: 130 }, style: STYLE.textCaption },
         { type: 'text', text: 'Longitudinal', at: { x: 320, y: 45 }, style: STYLE.textCaption },
-        { type: 'rect', x: 265, y: 55, width: 18, height: 50, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.15)' } },
-        { type: 'rect', x: 288, y: 60, width: 18, height: 40, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.35)' } },
-        { type: 'rect', x: 311, y: 65, width: 18, height: 30, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.5)' } },
-        { type: 'rect', x: 334, y: 70, width: 18, height: 20, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.25)' } },
+        { type: 'rect', x: 265, y: 55, width: 18, height: 50, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(99,102,241,0.15)' } },
+        { type: 'rect', x: 288, y: 60, width: 18, height: 40, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(99,102,241,0.35)' } },
+        { type: 'rect', x: 311, y: 65, width: 18, height: 30, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(99,102,241,0.5)' } },
+        { type: 'rect', x: 334, y: 70, width: 18, height: 20, rx: 2, style: { stroke: LIGHT.axis, fill: 'rgba(99,102,241,0.25)' } },
         { type: 'text', text: 'C', at: { x: 274, y: 115 }, style: STYLE.textTiny },
         { type: 'text', text: 'R', at: { x: 297, y: 108 }, style: STYLE.textTiny },
         { type: 'text', text: 'C', at: { x: 320, y: 102 }, style: STYLE.textTiny },
@@ -938,7 +1160,7 @@ export const electromagnetism: CustomDiagramBlueprint = {
     {
       id: 'em',
       items: [
-        { type: 'rect', x: 80, y: 40, width: 40, height: 100, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(148,163,184,0.2)' } },
+        { type: 'rect', x: 80, y: 40, width: 40, height: 100, rx: 4, style: { stroke: LIGHT.axis, fill: 'rgba(148,163,184,0.2)' } },
         { type: 'text', text: 'N', at: { x: 100, y: 30 }, style: STYLE.textLabel },
         { type: 'text', text: 'S', at: { x: 100, y: 155 }, style: STYLE.textLabel },
         { type: 'polyline', points: [{ x: 130, y: 50 }, { x: 200, y: 90 }, { x: 270, y: 50 }], style: { stroke: STYLE.accent, fill: 'none', strokeWidth: 2 } },
@@ -1104,21 +1326,29 @@ export const bond_energy: CustomDiagramBlueprint = {
   ],
 };
 
-/** Hooke's law graph */
+/** Hooke's law: Force vs extension – linear then curve at elastic limit */
 export const hookes_law_graph: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 350, height: 200 },
-  viewBox: '0 0 350 200',
+  size: { width: 440, height: 260 },
+  viewBox: '-28 0 448 260',
   layers: [
     {
       id: 'hookes',
       items: [
-        { type: 'line', from: { x: 50, y: 160 }, to: { x: 320, y: 160 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'line', from: { x: 50, y: 160 }, to: { x: 50, y: 30 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'polyline', points: [{ x: 50, y: 160 }, { x: 150, y: 80 }, { x: 200, y: 50 }, { x: 280, y: 35 }], style: { stroke: STYLE.accent, fill: 'none', strokeWidth: 2 } },
-        { type: 'text', text: 'Force', at: { x: 25, y: 95 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
-        { type: 'text', text: 'Extension', at: { x: 185, y: 185 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Elastic limit', at: { x: 200, y: 65 }, style: STYLE.textTiny },
+        { type: 'rect', x: 70, y: 35, width: 300, height: 145, rx: 0, style: { stroke: 'none', fill: GRAPH_LIGHT.bg } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 365, y: 180 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 365, y: 180 }, to: { x: 372, y: 180 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 70, y: 38 }, style: { stroke: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'arrow', from: { x: 70, y: 38 }, to: { x: 70, y: 28 }, headSize: 8, style: { stroke: GRAPH_LIGHT.axis, fill: GRAPH_LIGHT.axis, strokeWidth: 2 } },
+        { type: 'line', from: { x: 70, y: 180 }, to: { x: 210, y: 70 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 3 } },
+        { type: 'path', d: 'M 210 70 Q 240 55 280 48 Q 320 42 365 38', style: { stroke: GRAPH_LIGHT.curve, fill: 'none', strokeWidth: 3 } },
+        { type: 'circle', cx: 210, cy: 70, r: 5, style: { stroke: GRAPH_LIGHT.curve, fill: GRAPH_LIGHT.curve, strokeWidth: 2 } },
+        { type: 'line', from: { x: 210, y: 70 }, to: { x: 210, y: 180 }, style: { stroke: GRAPH_LIGHT.curve, strokeWidth: 1.5, dashArray: '6,5' } },
+        { type: 'rect', x: 72, y: 68, width: 72, height: 30, rx: 6, style: { stroke: GRAPH_LIGHT.labelBg, strokeWidth: 1, fill: GRAPH_LIGHT.labelBg } },
+        { type: 'text', text: 'Elastic limit', at: { x: 108, y: 84 }, style: { fontSize: 9, fill: '#fff', textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 600 } },
+        { type: 'text', text: 'Force ∝ extension', at: { x: 155, y: 145 }, style: { fontSize: 10, fill: GRAPH_LIGHT.textMuted, textAnchor: 'middle' as const, fontFamily: FONT } },
+        { type: 'text', text: 'Force', at: { x: 32, y: 100 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
+        { type: 'text', text: 'Extension', at: { x: 218, y: 212 }, style: { fontSize: 12, fill: GRAPH_LIGHT.text, textAnchor: 'middle' as const, fontFamily: FONT, fontWeight: 500 } },
       ],
     },
   ],
@@ -1155,15 +1385,16 @@ export const circuit_diagram: CustomDiagramBlueprint = {
     {
       id: 'circuit',
       items: [
+        { type: 'rect', x: 12, y: 12, width: 336, height: 136, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'rect', x: 28, y: 52, width: 52, height: 52, rx: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2, fill: 'rgba(14, 165, 233, 0.1)' } },
         { type: 'text', text: 'Cell', at: { x: 54, y: 82 }, style: { ...STYLE.textCaption, fill: STYLE.phys.primary } },
-        { type: 'line', from: { x: 80, y: 78 }, to: { x: 128, y: 78 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'rect', x: 128, y: 48, width: 90, height: 60, rx: 8, style: { stroke: STYLE.stroke, strokeWidth: 2, fill: 'rgba(148, 163, 184, 0.12)' } },
+        { type: 'line', from: { x: 80, y: 78 }, to: { x: 128, y: 78 }, style: { stroke: LIGHT.axis, strokeWidth: 2.5 } },
+        { type: 'rect', x: 128, y: 48, width: 90, height: 60, rx: 8, style: { stroke: LIGHT.axis, strokeWidth: 2, fill: 'rgba(148, 163, 184, 0.12)' } },
         { type: 'text', text: 'Component', at: { x: 173, y: 78 }, style: STYLE.textCaption },
-        { type: 'line', from: { x: 218, y: 78 }, to: { x: 268, y: 78 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'line', from: { x: 268, y: 78 }, to: { x: 268, y: 118 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'line', from: { x: 268, y: 118 }, to: { x: 80, y: 118 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'line', from: { x: 80, y: 118 }, to: { x: 80, y: 78 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
+        { type: 'line', from: { x: 218, y: 78 }, to: { x: 268, y: 78 }, style: { stroke: LIGHT.axis, strokeWidth: 2.5 } },
+        { type: 'line', from: { x: 268, y: 78 }, to: { x: 268, y: 118 }, style: { stroke: LIGHT.axis, strokeWidth: 2.5 } },
+        { type: 'line', from: { x: 268, y: 118 }, to: { x: 80, y: 118 }, style: { stroke: LIGHT.axis, strokeWidth: 2.5 } },
+        { type: 'line', from: { x: 80, y: 118 }, to: { x: 80, y: 78 }, style: { stroke: LIGHT.axis, strokeWidth: 2.5 } },
         { type: 'text', text: 'Current same in series', at: { x: 173, y: 148 }, style: STYLE.textCaption },
       ],
     },
@@ -1200,6 +1431,7 @@ export const electrolysis_diagram: CustomDiagramBlueprint = {
     {
       id: 'electrolysis',
       items: [
+        { type: 'rect', x: 12, y: 12, width: 316, height: 156, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
         { type: 'rect', x: 28, y: 32, width: 56, height: 112, rx: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2, fill: 'rgba(14, 165, 233, 0.08)' } },
         { type: 'text', text: 'Battery', at: { x: 56, y: 92 }, style: { ...STYLE.textCaption, fill: STYLE.phys.primary } },
         { type: 'rect', x: 115, y: 24, width: 36, height: 128, rx: 6, style: { stroke: STYLE.phys.secondary, strokeWidth: 2, fill: 'rgba(59, 130, 246, 0.1)' } },
@@ -1245,17 +1477,18 @@ export const em_spectrum: CustomDiagramBlueprint = {
     {
       id: 'em',
       items: [
-        { type: 'rect', x: 20, y: 30, width: 40, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(147,197,253,0.3)' } },
-        { type: 'rect', x: 65, y: 30, width: 35, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(167,139,250,0.3)' } },
-        { type: 'rect', x: 105, y: 30, width: 30, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(251,146,60,0.3)' } },
-        { type: 'rect', x: 140, y: 30, width: 60, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(34,197,94,0.3)' } },
-        { type: 'rect', x: 205, y: 30, width: 35, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(234,179,8,0.3)' } },
-        { type: 'rect', x: 245, y: 30, width: 45, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(239,68,68,0.3)' } },
-        { type: 'rect', x: 295, y: 30, width: 65, height: 30, style: { stroke: STYLE.stroke, fill: 'rgba(139,92,246,0.3)' } },
+        { type: 'rect', x: 12, y: 12, width: 356, height: 66, rx: 10, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 20, y: 30, width: 40, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(147,197,253,0.3)' } },
+        { type: 'rect', x: 65, y: 30, width: 35, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(167,139,250,0.3)' } },
+        { type: 'rect', x: 105, y: 30, width: 30, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(251,146,60,0.3)' } },
+        { type: 'rect', x: 140, y: 30, width: 60, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(34,197,94,0.3)' } },
+        { type: 'rect', x: 205, y: 30, width: 35, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(234,179,8,0.3)' } },
+        { type: 'rect', x: 245, y: 30, width: 45, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(239,68,68,0.3)' } },
+        { type: 'rect', x: 295, y: 30, width: 65, height: 30, style: { stroke: LIGHT.axis, fill: 'rgba(139,92,246,0.3)' } },
         { type: 'text', text: 'Radio', at: { x: 40, y: 75 }, style: STYLE.textTiny },
         { type: 'text', text: 'Visible', at: { x: 165, y: 75 }, style: STYLE.textTiny },
         { type: 'text', text: 'Gamma', at: { x: 320, y: 75 }, style: STYLE.textTiny },
-        { type: 'arrow', from: { x: 25, y: 85 }, to: { x: 355, y: 85 }, headSize: 6, style: { stroke: STYLE.strokeLight, strokeWidth: 1 } },
+        { type: 'arrow', from: { x: 25, y: 85 }, to: { x: 355, y: 85 }, headSize: 6, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1 } },
         { type: 'text', text: 'λ increases →', at: { x: 190, y: 88 }, style: STYLE.textTiny },
       ],
     },

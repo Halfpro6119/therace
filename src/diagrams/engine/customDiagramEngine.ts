@@ -208,6 +208,8 @@ export class CustomDiagramEngine {
           return this.renderArrow(props);
         case 'arc':
           return this.renderArc(props);
+        case 'path':
+          return this.renderPath(props);
         case 'angleMarker':
           return this.renderAngleMarker(props);
         case 'tickMark':
@@ -342,6 +344,12 @@ export class CustomDiagramEngine {
     const largeArc = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
     const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x} ${end.y}`;
 
+    return `<path d="${d}" ${style} />`;
+  }
+
+  private renderPath(props: any): string {
+    const d = this.resolver.resolveString(props.d) || '';
+    const style = this.styleToString(props.style || { stroke: '#000', fill: 'none' });
     return `<path d="${d}" ${style} />`;
   }
 

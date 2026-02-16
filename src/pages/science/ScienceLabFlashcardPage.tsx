@@ -1,6 +1,6 @@
 /**
  * Science Lab Flashcard Page - Learn Mode (Merged)
- * Flow: Flashcard → Quick check (when related) → … → Bigger test (3–6 mark) after each topic
+ * Flow: Multiple flashcards per topic → batch of Quick checks for that topic → Bigger test (3–6 mark) → next topic
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   RotateCcw,
   AlertCircle,
   Lightbulb,
@@ -24,7 +25,7 @@ import {
 import {
   getFlashcardsGroupedByTopic,
   getQuickChecksByFilters,
-  getQuickChecksForFlashcard,
+  getQuickChecksForTopicBatch,
   getBiggerTestQuestionsForTopic,
   getDaysUntilNextReview,
   type SessionOptions,
@@ -37,7 +38,8 @@ import { storage } from '../../utils/storage';
 import { soundSystem } from '../../utils/sounds';
 
 const XP_FLASHCARD_SESSION = 20;
-import { gradeScienceAnswer } from '../../utils/scienceGrading';
+import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGrading';
+import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import type {
   ScienceSubject,
   SciencePaper,
@@ -50,7 +52,6 @@ import type {
 } from '../../types/scienceLab';
 
 const SWIPE_THRESHOLD = 60;
-const MIN_VIEW_MS = 1500;
 const TILT_MAX = 12;
 const SEE_AGAIN_TOAST_MS = 1200;
 const SESSION_OPTIONS_STORAGE_KEY = 'grade9sprint_science_lab_flashcard_session_options';
@@ -123,7 +124,14 @@ export function ScienceLabFlashcardPage() {
   const [biggerTestUserAnswer, setBiggerTestUserAnswer] = useState('');
   const [biggerTestShowFeedback, setBiggerTestShowFeedback] = useState(false);
   const [biggerTestIsCorrect, setBiggerTestIsCorrect] = useState(false);
+  const [biggerTestMethodMarkResult, setBiggerTestMethodMarkResult] = useState<{
+    obtained: { description: string; marks: number }[];
+    missed: { description: string; marks: number }[];
+    score: number;
+    totalMarks: number;
+  } | null>(null);
   const [seeAgainToast, setSeeAgainToast] = useState<{ days: number } | null>(null);
+  const [sessionOptionsOpen, setSessionOptionsOpen] = useState(false);
   const { confirm } = useConfirm();
   const [sessionOptions, setSessionOptions] = useState<SessionOptions>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -340,7 +348,16 @@ export function ScienceLabFlashcardPage() {
       const doAdvance = () => {
         clearTimeout(toastTimer);
         const topicForChecks = currentFlashcard?.topic ?? currentStep.topic;
-        const checks = getQuickChecksForFlashcard(cardId, topicForChecks, quickChecksAll, true).slice(0, 2);
+        const nextStep = effectiveSteps[stepIndex + 1];
+        const isLastFlashcardOfTopic =
+          nextStep?.type === 'biggerTest' && nextStep.topic === topicForChecks;
+        const checks =
+          isLastFlashcardOfTopic
+            ? getQuickChecksForTopicBatch(quickChecksAll, topicForChecks, {
+                excludeIds: answeredQuickCheckIds.current,
+                max: 5,
+              })
+            : [];
         if (checks.length > 0) {
           quickCheckStepIndexRef.current = stepIndex;
           setPendingQuickChecks(checks);
@@ -358,6 +375,7 @@ export function ScienceLabFlashcardPage() {
       isFlipped,
       phase,
       stepIndex,
+      effectiveSteps,
       learnSteps.length,
       isReviewingAgainCard,
       quickChecksAll,
@@ -416,12 +434,27 @@ export function ScienceLabFlashcardPage() {
 
   const handleBiggerTestSubmit = useCallback(() => {
     if (!currentBiggerQuestion || !currentBiggerTest) return;
-    const result = gradeScienceAnswer(currentBiggerQuestion, biggerTestUserAnswer.trim());
-    setBiggerTestIsCorrect(result.correct);
-    setBiggerTestShowFeedback(true);
-    if (result.correct) {
-      setBiggerTestCorrectCount((c) => c + 1);
-      soundSystem.playCorrect();
+    const marks = currentBiggerQuestion.marks ?? 1;
+    const breakdown = marks >= 4 ? getMethodMarkBreakdown(currentBiggerQuestion.id) : undefined;
+
+    if (breakdown) {
+      const result = gradeMethodMarkAnswer(breakdown, biggerTestUserAnswer.trim());
+      setBiggerTestMethodMarkResult(result);
+      setBiggerTestIsCorrect(result.score === result.totalMarks);
+      setBiggerTestShowFeedback(true);
+      if (result.score === result.totalMarks) {
+        setBiggerTestCorrectCount((c) => c + 1);
+        soundSystem.playCorrect();
+      }
+    } else {
+      setBiggerTestMethodMarkResult(null);
+      const result = gradeScienceAnswer(currentBiggerQuestion, biggerTestUserAnswer.trim());
+      setBiggerTestIsCorrect(result.correct);
+      setBiggerTestShowFeedback(true);
+      if (result.correct) {
+        setBiggerTestCorrectCount((c) => c + 1);
+        soundSystem.playCorrect();
+      }
     }
   }, [currentBiggerQuestion, currentBiggerTest, biggerTestUserAnswer]);
 
@@ -431,6 +464,7 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestQuestionIndex((i) => i + 1);
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
+      setBiggerTestMethodMarkResult(null);
     } else {
       storage.updateBiggerTestCompletion(
         normalizedSubject,
@@ -458,11 +492,10 @@ export function ScienceLabFlashcardPage() {
     if (isFlipped) {
       setIsFlipped(false);
     } else if (currentFlashcard) {
-      if (Date.now() - viewStartTime < MIN_VIEW_MS) return;
       if (useTypeToReveal) return; // type-to-reveal: only "Show answer" button flips
       setIsFlipped(true);
     }
-  }, [isFlipped, currentFlashcard, viewStartTime, useTypeToReveal]);
+  }, [isFlipped, currentFlashcard, useTypeToReveal]);
 
   // Sync phase when stepIndex changes (e.g. from prev/next nav or advanceStep)
   useEffect(() => {
@@ -478,6 +511,7 @@ export function ScienceLabFlashcardPage() {
       setBiggerTestCorrectCount(0);
       setBiggerTestUserAnswer('');
       setBiggerTestShowFeedback(false);
+      setBiggerTestMethodMarkResult(null);
     }
   }, [stepIndex, effectiveSteps, phase]);
 
@@ -492,14 +526,11 @@ export function ScienceLabFlashcardPage() {
     saveSessionOptionsToStorage(sessionOptions);
   }, [sessionOptions]);
 
-  /** Min-view elapsed tick (so we can show "Think…" and progress) */
+  /** Elapsed time on front (for optional future use; no min-view blocker) */
   useEffect(() => {
     if (phase !== 'flashcard' || isFlipped || !currentFlashcard) return;
     const start = viewStartTime;
-    const tick = () => {
-      const elapsed = Math.min(Date.now() - start, MIN_VIEW_MS);
-      setElapsedViewMs(elapsed);
-    };
+    const tick = () => setElapsedViewMs(Date.now() - start);
     tick();
     const id = setInterval(tick, 100);
     return () => clearInterval(id);
@@ -573,9 +604,7 @@ export function ScienceLabFlashcardPage() {
         if (e.key === ' ') {
           e.preventDefault();
           if (isFlipped) setIsFlipped(false);
-          else if (Date.now() - viewStartTime >= MIN_VIEW_MS) {
-            setIsFlipped(true);
-          }
+          else if (!useTypeToReveal) setIsFlipped(true);
         } else if (isFlipped && ['1', '2', '3'].includes(e.key)) {
           handleConfidence(parseInt(e.key) as ConfidenceLevel);
         }
@@ -583,7 +612,7 @@ export function ScienceLabFlashcardPage() {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [phase, currentFlashcard, isFlipped, viewStartTime, handleConfidence]);
+  }, [phase, currentFlashcard, isFlipped, useTypeToReveal, handleConfidence]);
 
   /** Flashcard steps from current+1 until next biggerTest (for deck preview). Must run every render (hooks rule). */
   const upcomingFlashcardsUntilTest = useMemo(() => {
@@ -793,14 +822,38 @@ export function ScienceLabFlashcardPage() {
                   }`}
                 >
                   {biggerTestIsCorrect ? <Sparkles size={24} className="text-green-600 flex-shrink-0" /> : <XCircle size={24} className="text-red-600 flex-shrink-0" />}
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold mb-1" style={{ color: 'rgb(var(--text))' }}>
-                      {biggerTestIsCorrect ? "That's right!" : 'Not quite'}
+                      {biggerTestMethodMarkResult
+                        ? `${biggerTestMethodMarkResult.score} / ${biggerTestMethodMarkResult.totalMarks} marks`
+                        : biggerTestIsCorrect
+                        ? "That's right!"
+                        : 'Not quite'}
                     </p>
                     <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                       {biggerTestIsCorrect ? currentBiggerQuestion.feedback.correct : currentBiggerQuestion.feedback.incorrect}
                     </p>
-                    {!biggerTestIsCorrect && (
+                    {biggerTestMethodMarkResult && biggerTestMethodMarkResult.obtained.length > 0 && (
+                      <div className="mt-3 p-3 rounded-lg bg-green-100/50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                        <p className="text-xs font-semibold mb-1 text-green-800 dark:text-green-200">You obtained:</p>
+                        <ul className="text-sm space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                          {biggerTestMethodMarkResult.obtained.map((p, i) => (
+                            <li key={i}>✓ {p.description} ({p.marks})</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {biggerTestMethodMarkResult && biggerTestMethodMarkResult.missed.length > 0 && (
+                      <div className="mt-3 p-3 rounded-lg bg-amber-100/50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                        <p className="text-xs font-semibold mb-1 text-amber-800 dark:text-amber-200">You missed:</p>
+                        <ul className="text-sm space-y-0.5" style={{ color: 'rgb(var(--text-secondary))' }}>
+                          {biggerTestMethodMarkResult.missed.map((p, i) => (
+                            <li key={i}>✗ {p.description} ({p.marks})</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {!biggerTestIsCorrect && !biggerTestMethodMarkResult && (
                       <p className="text-sm mt-2" style={{ color: 'rgb(var(--text))' }}>
                         Model answer: {Array.isArray(currentBiggerQuestion.correctAnswer) ? currentBiggerQuestion.correctAnswer[0] : currentBiggerQuestion.correctAnswer}
                       </p>
@@ -853,43 +906,41 @@ export function ScienceLabFlashcardPage() {
 
   const progressLabel =
     currentStep?.type === 'flashcard'
-      ? `Learn: ${(currentFlashcard?.topic ?? currentStep.topic).replace('_interleaved', 'All topics')} — Card ${currentFlashcardIndex} of ${totalFlashcards}`
+      ? `${currentFlashcardIndex} / ${totalFlashcards}`
       : '';
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'rgb(var(--bg))' }}>
       <div className="flex-1 w-full max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col">
+        {/* §3.1 Header: Back + short progress (X / Y) + optional time; §3.2 Options collapsed */}
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between">
             <button type="button" onClick={handleBack} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'rgb(var(--text-secondary))' }}>
               <ChevronLeft size={18} /> Back
             </button>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
             {remainingSeconds !== null && (
-              <span className="text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }} aria-live="polite">
-                {Math.floor(remainingSeconds / 60)}:{String(remainingSeconds % 60).padStart(2, '0')} left
+              <span className="text-xs sm:text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }} aria-live="polite">
+                {Math.floor(remainingSeconds / 60)}:{String(remainingSeconds % 60).padStart(2, '0')}
               </span>
             )}
-            <span className="text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }}>
+            <span className="text-xs sm:text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }}>
               {progressLabel || `${currentFlashcardIndex} / ${totalFlashcards}`}
             </span>
-            <div className="flex gap-1 max-w-48 overflow-x-auto py-1">
+            <div className="hidden sm:flex gap-0.5 max-w-32 overflow-x-auto py-0.5" aria-hidden="true">
               {(() => {
-                const dotCount = 20;
-                const start = Math.min(
-                  Math.max(0, stepIndex - Math.floor(dotCount / 2)),
-                  Math.max(0, effectiveSteps.length - dotCount)
-                );
+                const dotCount = 10;
+                const start = Math.min(Math.max(0, stepIndex - dotCount + 1), Math.max(0, effectiveSteps.length - dotCount));
                 const windowSteps = effectiveSteps.slice(start, start + dotCount);
                 return windowSteps.map((_s, i) => {
                   const stepI = start + i;
                   return (
                     <div
                       key={stepI}
-                      className="flex-shrink-0 w-2 h-2 rounded-full"
+                      className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
                       style={{
                         background: stepI === stepIndex ? typeStyle.color : 'rgb(var(--border))',
-                        opacity: stepI === stepIndex ? 1 : 0.5,
+                        opacity: stepI === stepIndex ? 1 : 0.4,
                       }}
                     />
                   );
@@ -898,75 +949,89 @@ export function ScienceLabFlashcardPage() {
             </div>
           </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={sessionOptions.shuffle ?? false}
-                onChange={(e) => applySessionOptionChange((o) => ({ ...o, shuffle: e.target.checked }))}
-                className="rounded"
-              />
-              Shuffle
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={sessionOptions.useSpacedRepetition ?? true}
-                onChange={(e) => applySessionOptionChange((o) => ({ ...o, useSpacedRepetition: e.target.checked }))}
-                className="rounded"
-              />
-              Due first
-            </label>
-            {!topicFilter && (
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={sessionOptions.interleaveTopics ?? false}
-                  onChange={(e) => applySessionOptionChange((o) => ({ ...o, interleaveTopics: e.target.checked }))}
-                  className="rounded"
-                />
-                Interleave topics
-              </label>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setSessionOptionsOpen((o) => !o)}
+              className="flashcard-label flex items-center gap-1.5 self-start py-1 px-0 border-0 rounded"
+              style={{ color: 'rgb(var(--text-secondary))', background: 'transparent' }}
+              aria-expanded={sessionOptionsOpen}
+            >
+              <ChevronDown size={14} className={`transition-transform ${sessionOptionsOpen ? 'rotate-180' : ''}`} />
+              Options
+            </button>
+            {sessionOptionsOpen && (
+              <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={sessionOptions.shuffle ?? false}
+                    onChange={(e) => applySessionOptionChange((o) => ({ ...o, shuffle: e.target.checked }))}
+                    className="rounded"
+                  />
+                  Shuffle
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={sessionOptions.useSpacedRepetition ?? true}
+                    onChange={(e) => applySessionOptionChange((o) => ({ ...o, useSpacedRepetition: e.target.checked }))}
+                    className="rounded"
+                  />
+                  Due first
+                </label>
+                {!topicFilter && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={sessionOptions.interleaveTopics ?? false}
+                      onChange={(e) => applySessionOptionChange((o) => ({ ...o, interleaveTopics: e.target.checked }))}
+                      className="rounded"
+                    />
+                    Interleave
+                  </label>
+                )}
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={sessionOptions.typeToReveal ?? false}
+                    onChange={(e) => setSessionOptions((o) => ({ ...o, typeToReveal: e.target.checked }))}
+                    className="rounded"
+                  />
+                  Type to reveal
+                </label>
+                <select
+                  value={sessionOptions.sessionLimit ?? ''}
+                  onChange={(e) =>
+                    applySessionOptionChange((o) => ({
+                      ...o,
+                      sessionLimit: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                    }))
+                  }
+                  className="rounded border px-2 py-1 text-xs"
+                  style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+                >
+                  <option value="">Full deck</option>
+                  <option value="10">10 cards</option>
+                  <option value="20">20 cards</option>
+                </select>
+                <select
+                  value={sessionOptions.sessionLimitMinutes ?? ''}
+                  onChange={(e) =>
+                    applySessionOptionChange((o) => ({
+                      ...o,
+                      sessionLimitMinutes: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                    }))
+                  }
+                  className="rounded border px-2 py-1 text-xs"
+                  style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
+                >
+                  <option value="">No time limit</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+              </div>
             )}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={sessionOptions.typeToReveal ?? false}
-                onChange={(e) => setSessionOptions((o) => ({ ...o, typeToReveal: e.target.checked }))}
-                className="rounded"
-              />
-              Type to reveal
-            </label>
-            <select
-              value={sessionOptions.sessionLimit ?? ''}
-              onChange={(e) =>
-                applySessionOptionChange((o) => ({
-                  ...o,
-                  sessionLimit: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                }))
-              }
-              className="rounded-lg border px-2 py-1 text-xs"
-              style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
-            >
-              <option value="">Full deck</option>
-              <option value="10">10 cards</option>
-              <option value="20">20 cards</option>
-            </select>
-            <select
-              value={sessionOptions.sessionLimitMinutes ?? ''}
-              onChange={(e) =>
-                applySessionOptionChange((o) => ({
-                  ...o,
-                  sessionLimitMinutes: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                }))
-              }
-              className="rounded-lg border px-2 py-1 text-xs"
-              style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface-2))', color: 'rgb(var(--text))' }}
-            >
-              <option value="">No time limit</option>
-              <option value="5">5 min</option>
-              <option value="10">10 min</option>
-            </select>
           </div>
         </div>
 
@@ -992,7 +1057,7 @@ export function ScienceLabFlashcardPage() {
             const dy = e.changedTouches[0].clientY - touchStart.current.y;
             touchStart.current = null;
             if (Math.abs(dy) > SWIPE_THRESHOLD && Math.abs(dy) > Math.abs(dx) && dy < 0) {
-              if (!isFlipped && Date.now() - viewStartTime >= MIN_VIEW_MS && !useTypeToReveal) setIsFlipped(true);
+              if (!isFlipped && !useTypeToReveal) setIsFlipped(true);
               else if (isFlipped) setIsFlipped(false);
             } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
               if (dx > 0 && stepIndex > 0) setStepIndex(stepIndex - 1);
@@ -1039,7 +1104,7 @@ export function ScienceLabFlashcardPage() {
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={isFlipped ? { type: 'spring', stiffness: 320, damping: 28 } : { duration: 0 }}
             >
-              {/* Front – handcrafted card with clear hierarchy, design tokens */}
+              {/* Front – handcrafted card with clear hierarchy, design tokens. pointer-events: none when flipped so back face receives clicks. */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
@@ -1047,92 +1112,77 @@ export function ScienceLabFlashcardPage() {
                   WebkitBackfaceVisibility: 'hidden',
                   background: 'rgb(var(--surface))',
                   borderLeft: `6px solid ${typeStyle.color}`,
+                  pointerEvents: isFlipped ? 'none' : 'auto',
                 }}
               >
-                <div className="flex-1 min-h-0 overflow-y-auto px-8 py-10 sm:px-10 sm:py-12 flex flex-col text-center">
-                  <div className="flex items-center justify-center gap-3 mb-5 flex-shrink-0">
+                <div className="flex-1 min-h-0 overflow-hidden px-8 py-10 sm:px-10 sm:py-12 flex flex-col text-center">
+                  {/* §1.1 Single meta line: topic primary, type subtle chip */}
+                  <div className="flex items-center justify-center gap-2 mb-4 flex-shrink-0">
+                    <span className="flashcard-meta-topic">
+                      {currentFlashcard.topic.replace('_interleaved', 'All topics')}
+                    </span>
                     <span
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide"
+                      className="flashcard-meta-chip inline-flex items-center gap-1.5 px-2 py-1 rounded-lg opacity-80"
                       style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                     >
-                      <TypeIcon size={14} strokeWidth={2.5} />
+                      <TypeIcon size={10} strokeWidth={2.5} />
                       {typeStyle.label}
                     </span>
-                    <span className="text-xs font-medium tracking-wide" style={{ color: 'rgb(var(--text-secondary))' }}>
-                      {currentFlashcard.topic}
-                    </span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-semibold leading-[1.4] max-w-2xl mx-auto mb-6 flex-shrink-0" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.02em' }}>
-                    {currentFlashcard.front.prompt}
-                  </h2>
-                  {currentFlashcard.front.visual && (
-                    <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
-                      {isEquationVisual ? (
-                        <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                          <p className="text-2xl sm:text-3xl font-mono font-bold text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
+                  {/* §1.2 Prompt: centered when no diagram/equation; otherwise above visual */}
+                  {(() => {
+                    const hasDiagramOrEquation =
+                      currentFlashcard.front.visual &&
+                      (isEquationVisual ||
+                        (currentFlashcard.front.visual.diagramId && isCleanFlashcardDiagram(currentFlashcard.front.visual.diagramId)));
+                    return (
+                      <>
+                        <div className={hasDiagramOrEquation ? 'flex-shrink-0' : 'flex-1 flex flex-col justify-center'}>
+                          <h2 className="flashcard-prompt max-w-2xl mx-auto mb-6">
+                            {currentFlashcard.front.prompt}
+                          </h2>
                         </div>
-                      ) : currentFlashcard.front.visual.diagramId && isCleanFlashcardDiagram(currentFlashcard.front.visual.diagramId) ? (
-                        <div className="science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                          <span className="science-diagram-label" aria-hidden="true">Diagram</span>
-                          <FlashcardDiagram slug={currentFlashcard.front.visual.diagramId} description={currentFlashcard.front.visual.description} fitToContainer preferStatic />
-                        </div>
-                      ) : (
-                        <div className="science-flashcard-description-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                          {currentFlashcard.front.visual.description ? (
-                            <p
-                              className="text-base leading-relaxed text-center max-w-md line-clamp-4 tracking-tight"
-                              style={{ color: 'rgb(51 65 85)' }}
-                            >
-                              {currentFlashcard.front.visual.description}
-                            </p>
-                          ) : null}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {/* Min-view feedback: "Think…" + progress; type-to-reveal: "Show answer" button */}
-                  {elapsedViewMs < MIN_VIEW_MS ? (
-                    <div className="mt-6 flex flex-col items-center gap-3">
-                      <p className="text-sm font-medium tracking-wide animate-pulse" style={{ color: 'rgb(var(--text-secondary))' }}>
-                        Think…
-                      </p>
-                      <div className="w-32 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--border))' }} role="progressbar" aria-valuenow={Math.round((elapsedViewMs / MIN_VIEW_MS) * 100)} aria-valuemin={0} aria-valuemax={100}>
-                        <div
-                          className="h-full rounded-full transition-all duration-100"
-                          style={{
-                            width: `${Math.min(100, (elapsedViewMs / MIN_VIEW_MS) * 100)}%`,
-                            background: typeStyle.color,
-                          }}
-                        />
-                      </div>
-                      <p className="text-[10px] font-medium tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
-                        {(MIN_VIEW_MS - elapsedViewMs) / 1000}s to reveal
-                      </p>
-                    </div>
-                  ) : (sessionOptions.typeToReveal ?? false) && (currentFlashcard.type === 'concept' || currentFlashcard.type === 'equation') ? (
-                    <div className="mt-6 flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                        {hasDiagramOrEquation && (
+                          <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
+                            {isEquationVisual ? (
+                              <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
+                                <p className="text-2xl sm:text-3xl font-mono font-bold text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual!.description}</p>
+                              </div>
+                            ) : (
+                              <div
+                                className={`science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0 ${currentFlashcard.front.visual!.diagramId === 'enzyme_action' ? 'science-flashcard-diagram-dark-well' : ''}`}
+                                style={{ ['--well-accent' as string]: typeStyle.color }}
+                              >
+                                <FlashcardDiagram slug={currentFlashcard.front.visual!.diagramId!} description={currentFlashcard.front.visual!.description} fitToContainer preferStatic />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                  {/* Type-to-reveal: "Show answer" button; otherwise tap/space to flip */}
+                  {(sessionOptions.typeToReveal ?? false) && (currentFlashcard.type === 'concept' || currentFlashcard.type === 'equation') ? (
+                    <div className="mt-6 flex flex-col items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); e.preventDefault(); setIsFlipped(true); }}
-                        className="px-8 py-3.5 rounded-xl font-semibold text-white transition hover:opacity-95 active:scale-[0.98]"
+                        className="px-6 py-3 rounded-xl font-semibold text-sm text-white transition hover:opacity-95 active:scale-[0.98]"
                         style={{ background: typeStyle.color }}
                         aria-label="Show answer"
                       >
                         Show answer
                       </button>
-                      <p className="text-[10px] font-medium tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
-                        When you've recalled, click to reveal
-                      </p>
                     </div>
                   ) : (
-                    <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
-                      Try to recall first, then tap or Space to reveal
+                    <p className="flashcard-hint mt-6">
+                      Tap or Space to reveal
                     </p>
                   )}
                 </div>
               </div>
 
-              {/* Back – structured answer, key terms, callouts; design tokens */}
+              {/* Back – structured answer, key terms, callouts; design tokens. pointer-events: none when not flipped so front face receives clicks. */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
@@ -1141,20 +1191,21 @@ export function ScienceLabFlashcardPage() {
                   transform: 'rotateY(180deg)',
                   background: 'rgb(var(--surface))',
                   borderLeft: `6px solid ${typeStyle.color}`,
+                  pointerEvents: isFlipped ? 'auto' : 'none',
                 }}
               >
                 <div className="flex-1 min-h-0 flex flex-col px-8 py-10 sm:px-10 sm:py-12">
-                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-6">
+                  <div className="flex-1 min-h-0 overflow-hidden flex flex-col gap-5">
+                    {/* §2.1 No "Answer" label; §2.2 smaller step markers; §1.2 body scale */}
                     <div>
-                      <p className="text-[10px] font-semibold mb-3 uppercase tracking-[0.12em]" style={{ color: typeStyle.color }}>Answer</p>
                       {processSteps ? (
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                           {processSteps.map((step, idx) => (
-                            <div key={idx} className="flex items-start gap-4">
-                              <span className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-[13px] font-bold" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
+                            <div key={idx} className="flex items-start gap-3">
+                              <span className="flashcard-label flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center" style={{ background: typeStyle.bgColor, color: typeStyle.color }}>
                                 {idx + 1}
                               </span>
-                              <p className="text-[15px] leading-[1.65] pt-1" style={{ color: 'rgb(var(--text))' }}>{step}</p>
+                              <p className="flashcard-body pt-0.5">{step}</p>
                             </div>
                           ))}
                         </div>
@@ -1163,7 +1214,7 @@ export function ScienceLabFlashcardPage() {
                           className={
                             currentFlashcard.type === 'equation' && currentFlashcard.back.explanation.includes('=') && currentFlashcard.back.explanation.length < 60
                               ? 'text-2xl font-mono font-bold'
-                              : 'text-[15px] leading-[1.65]'
+                              : 'flashcard-body'
                           }
                           style={{ color: 'rgb(var(--text))' }}
                         >
@@ -1171,22 +1222,16 @@ export function ScienceLabFlashcardPage() {
                         </p>
                       )}
                     </div>
-                    {currentFlashcard.back.visual?.diagramId && isCleanFlashcardDiagram(currentFlashcard.back.visual.diagramId) && (
-                      <div className="science-flashcard-diagram-back mt-2 flex justify-center" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                        <div className="w-full max-w-[200px] min-h-[140px]">
-                          <FlashcardDiagram slug={currentFlashcard.back.visual.diagramId} description={currentFlashcard.back.visual.description} fitToContainer preferStatic showDescriptionWithImage={false} />
-                        </div>
-                      </div>
-                    )}
+                    {/* §2.3 Compact key terms row; §1.2 label scale */}
                     {currentFlashcard.back.keyTerms.length > 0 && (
-                      <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider w-full" style={{ color: 'rgb(var(--text-secondary))' }}>Key terms</span>
+                      <div className="flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <span className="flashcard-label mr-1" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.9 }}>Terms</span>
                         {currentFlashcard.back.keyTerms.map((term, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => navigator.clipboard?.writeText(term)}
-                            className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition hover:opacity-90"
+                            className="flashcard-callout-body px-2.5 py-1 rounded-lg font-medium transition hover:opacity-90"
                             style={{ background: typeStyle.bgColor, color: typeStyle.color }}
                           >
                             {term}
@@ -1194,29 +1239,29 @@ export function ScienceLabFlashcardPage() {
                         ))}
                       </div>
                     )}
+                    {/* §2.4 Callouts: smaller titles, supporting body */}
                     {currentFlashcard.back.misconceptionWarning && (
-                      <div className="science-flashcard-callout-misconception p-4 flex items-start gap-3" onClick={(e) => e.stopPropagation()}>
-                        <AlertCircle size={18} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--warning))' }} />
-                        <div>
-                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(var(--warning))' }}>Common mistake</p>
-                          <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
+                      <div className="science-flashcard-callout-misconception p-3 flex items-start gap-2.5" onClick={(e) => e.stopPropagation()}>
+                        <AlertCircle size={14} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--warning))' }} />
+                        <div className="min-w-0">
+                          <p className="flashcard-callout-title mb-0.5" style={{ color: 'rgb(var(--warning))' }}>Common mistake</p>
+                          <p className="flashcard-callout-body">{currentFlashcard.back.misconceptionWarning}</p>
                         </div>
                       </div>
                     )}
                     {currentFlashcard.back.example && (
-                      <div className="science-flashcard-callout-example p-4 flex items-start gap-3" onClick={(e) => e.stopPropagation()}>
-                        <BookOpen size={18} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--accent))' }} />
-                        <div>
-                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(var(--accent))' }}>Example</p>
-                          <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
+                      <div className="science-flashcard-callout-example p-3 flex items-start gap-2.5" onClick={(e) => e.stopPropagation()}>
+                        <BookOpen size={14} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--accent))' }} />
+                        <div className="min-w-0">
+                          <p className="flashcard-callout-title mb-0.5" style={{ color: 'rgb(var(--accent))' }}>Example</p>
+                          <p className="flashcard-callout-body">{currentFlashcard.back.example}</p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  {/* Rate & continue – fixed to bottom of card back */}
-                  <div className="flex-shrink-0 pt-6 mt-4 border-t border-[rgb(var(--border))] flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
+                  {/* §2.5 Rating primary; Continue without rating = link; keyboard hint muted */}
+                  <div className="flex-shrink-0 pt-5 mt-4 border-t border-[rgb(var(--border))] flex flex-col gap-2.5" onClick={(e) => e.stopPropagation()}>
                     <div className="flex gap-2 sm:gap-3" role="group" aria-label="Rate your recall">
                       {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
                         <button
@@ -1227,7 +1272,7 @@ export function ScienceLabFlashcardPage() {
                             e.preventDefault();
                             handleConfidence(level);
                           }}
-                          className="flex-1 min-h-[72px] py-4 px-3 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[14px] text-white transition hover:opacity-95 active:scale-[0.98]"
+                          className="flex-1 min-h-[60px] py-3 px-2 flex items-center justify-center cursor-pointer touch-manipulation select-none rounded-xl font-semibold text-[13px] text-white transition hover:opacity-95 active:scale-[0.98]"
                           style={{
                             background: level === 3 ? 'linear-gradient(180deg, #059669 0%, #047857 100%)' : level === 2 ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
                             boxShadow: level === 3 ? '0 2px 8px rgba(5, 150, 105, 0.3)' : level === 2 ? '0 2px 8px rgba(217, 119, 6, 0.25)' : '0 2px 8px rgba(220, 38, 38, 0.25)',
@@ -1238,19 +1283,21 @@ export function ScienceLabFlashcardPage() {
                         </button>
                       ))}
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        advanceStep();
-                      }}
-                      className="w-full py-3 rounded-xl font-semibold text-[14px] transition border-2 hover:opacity-90"
-                      style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))', background: 'rgb(var(--surface-2))' }}
-                    >
-                      Continue without rating
-                    </button>
-                    <p className="text-[10px] text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.75 }}>Or press 1, 2, or 3</p>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          advanceStep();
+                        }}
+                        className="flashcard-callout-body font-medium underline underline-offset-2 hover:no-underline transition"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        Continue without rating
+                      </button>
+                      <span className="flashcard-hint" style={{ opacity: 0.7 }} aria-hidden="true">· 1 2 3</span>
+                    </div>
                     {seeAgainToast && (
                       <p className="text-xs text-center font-medium mt-2" style={{ color: 'rgb(var(--text))' }} aria-live="polite" role="status">
                         ✓ See again in {seeAgainToast.days} day{seeAgainToast.days !== 1 ? 's' : ''}
@@ -1296,8 +1343,9 @@ export function ScienceLabFlashcardPage() {
             <ChevronRight size={24} strokeWidth={2.5} />
           </motion.button>
         </div>
-        <p className="text-center text-xs mt-3" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Tap card to flip · Swipe left/right · 1 2 3 to rate
+        {/* §4 Footer: short hint */}
+        <p className="flashcard-hint text-center mt-2">
+          Tap to flip · 1 2 3 to rate
         </p>
       </div>
     </div>

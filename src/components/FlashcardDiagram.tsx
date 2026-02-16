@@ -71,11 +71,23 @@ export function FlashcardDiagram({
 
   // 2. Blueprint-first: use programmatic diagram when available (better consistency, memory aids)
   if (diagramMetadata) {
+    const GRAPH_ARIA: Record<string, string> = {
+      photosynthesis_temperature_graph: 'Graph: rate of photosynthesis versus temperature. Curve rises to optimum at 35°C then falls due to denaturation.',
+      photosynthesis_light_graph: 'Graph: rate of photosynthesis versus light intensity. Rate rises then plateaus where another factor limits.',
+      photosynthesis_co2_graph: 'Graph: rate of photosynthesis versus carbon dioxide concentration. Rate rises then plateaus when light or temperature limits.',
+      enzyme_activity_temperature_graph: 'Graph: enzyme activity versus temperature. Bell curve with optimum around 37°C; denaturation above.',
+      enzyme_activity_ph_graph: 'Graph: enzyme activity versus pH. Optimum around pH 7.',
+      diffusion_rate_temperature_graph: 'Graph: diffusion rate versus temperature. Rate increases as temperature rises; faster particles.',
+      hookes_law_graph: 'Graph: force versus extension. Linear region shows Hooke\'s law; elastic limit marked where curve bends.',
+    };
+    const ariaLabel = GRAPH_ARIA[slug];
+    const wrapperProps = ariaLabel ? { role: 'img' as const, 'aria-label': ariaLabel } : {};
     return (
       <div className={`flashcard-diagram ${fitToContainer ? 'flashcard-diagram-fit' : ''} ${className}`}>
         <div
           className={fitToContainer ? 'max-w-full flex justify-center items-center' : ''}
           style={diagramContainerStyle}
+          {...wrapperProps}
         >
           <DiagramRenderer metadata={diagramMetadata} fitToContainer={fitToContainer} />
         </div>
