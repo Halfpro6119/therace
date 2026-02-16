@@ -30,6 +30,9 @@ export function ScienceLabPracticalLabPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
+  const paperNum = paper ? parseInt(paper, 10) as 1 | 2 : 1;
+  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1)) as 'Foundation' | 'Higher' : 'Higher';
+  const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
   const practicals = getPracticalsBySubject(normalizedSubject);
   const selectedPractical = practicals.find(p => p.id === selectedPracticalId);
   const quizQuestions = selectedPracticalId ? getPracticalQuizQuestions(selectedPracticalId) : [];
@@ -52,7 +55,7 @@ export function ScienceLabPracticalLabPage() {
   const currentUserAnswer = currentTestQuestion ? testAnswers[currentTestQuestion.id] : undefined;
 
   const handleBack = () => {
-    navigate(`/science-lab/${subject.toLowerCase()}`);
+    navigate(base);
   };
 
   const startTest = () => {

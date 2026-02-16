@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, ArrowRight } from 'lucide-react';
+import { BarChart3, ArrowRight, FlaskConical } from 'lucide-react';
 import { storage } from '../utils/storage';
+import { getScienceLabProgressSummary } from '../utils/scienceLabProgress';
 import { ProfileHeaderCard } from '../components/profile/ProfileHeaderCard';
 import { StreakWidget } from '../components/profile/StreakWidget';
 import { MasteryProgressCard } from '../components/profile/MasteryProgressCard';
@@ -23,7 +24,27 @@ export function ProfilePage() {
     return Math.round((masteredCount / states.length) * 100);
   };
 
-  const grade9ReadinessPct = calculateGrade9Readiness();
+  const dbReadinessPct = calculateGrade9Readiness();
+  const scienceLabProgress = getScienceLabProgressSummary();
+  const scienceLabReadinessPct =
+    scienceLabProgress.subjects.length > 0
+      ? Math.round(
+          scienceLabProgress.subjects.reduce((sum, s) => sum + s.progressPercent, 0) /
+            scienceLabProgress.subjects.length
+        )
+      : 0;
+  const grade9ReadinessPct =
+    dbReadinessPct > 0 && scienceLabReadinessPct > 0
+      ? Math.round((dbReadinessPct + scienceLabReadinessPct) / 2)
+      : dbReadinessPct > 0
+        ? dbReadinessPct
+        : scienceLabReadinessPct;
+  const grade9ReadinessLabel =
+    dbReadinessPct > 0 && scienceLabReadinessPct > 0
+      ? 'Grade 9 Readiness (quizzes + past papers)'
+      : scienceLabReadinessPct > 0
+        ? 'Grade 9 Readiness (past papers)'
+        : 'Grade 9 Readiness';
 
   const handleViewHeatmap = () => {
     navigate('/subjects');
@@ -35,7 +56,44 @@ export function ProfilePage() {
         profile={profile}
         streak={streak}
         grade9ReadinessPct={grade9ReadinessPct}
+        grade9ReadinessLabel={grade9ReadinessLabel}
       />
+
+      {scienceLabProgress.hasProgress && (
+        <button
+          type="button"
+          onClick={() => scienceLabProgress.continueHref && navigate(scienceLabProgress.continueHref)}
+          className="w-full rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all hover:shadow-md active:scale-[0.99] min-h-[72px] text-left"
+          style={{
+            background: 'rgb(var(--surface))',
+            borderColor: 'rgb(var(--border))',
+          }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+              <div className="p-3 sm:p-4 rounded-xl flex-shrink-0" style={{ background: 'rgba(16, 185, 129, 0.15)' }}>
+                <FlaskConical size={24} className="sm:w-8 sm:h-8" style={{ color: '#10B981' }} />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>
+                  Science Lab — Past-paper progress
+                </h2>
+                <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+                  {scienceLabProgress.subjects
+                    .map((s) => `${s.subject} ${s.topicTestsCompleted}/${s.topicTestsTotal}${s.fullGcsePassed ? ' ✓' : ''}`)
+                    .join(' · ')}
+                </p>
+              </div>
+            </div>
+            {scienceLabProgress.continueHref && (
+              <span className="flex items-center gap-1 font-semibold shrink-0" style={{ color: 'rgb(var(--accent))' }}>
+                Continue
+                <ArrowRight size={20} />
+              </span>
+            )}
+          </div>
+        </button>
+      )}
 
       <button
         onClick={() => navigate('/profile/subjects')}

@@ -14,6 +14,7 @@ const DIAGRAM_BLUEPRINTS: Record<string, object> = diagrams as unknown as Record
  * Diagrams with clean blueprints suitable for flashcards (simple, clear, not cluttered).
  * All other diagram slugs show description text only. Expanded per FLASHCARD_FULL_AUDIT.
  */
+/** Per SCIENCE_LAB_FLASHCARD_FULL_REVIEW: high-traffic diagrams with clean blueprints. */
 export const CLEAN_FLASHCARD_DIAGRAMS = new Set<string>([
   'cell_membrane_diffusion',
   'osmosis_diagram',
@@ -28,6 +29,17 @@ export const CLEAN_FLASHCARD_DIAGRAMS = new Set<string>([
   'digestive_system',
   'circulatory_system',
   'pathogen_infection',
+  'immune_response',
+  'nervous_system',
+  // Expanded per FULL_REVIEW: hormone_action, carbon_cycle, circuit_diagram, wave_types, em_spectrum, bohr_model, electrolysis_diagram, free_body_diagram
+  'hormone_action',
+  'carbon_cycle',
+  'circuit_diagram',
+  'wave_types',
+  'em_spectrum',
+  'bohr_model',
+  'electrolysis_diagram',
+  'free_body_diagram',
 ]);
 
 export function isCleanFlashcardDiagram(slug: string): boolean {

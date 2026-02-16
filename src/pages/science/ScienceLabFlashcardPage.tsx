@@ -35,6 +35,8 @@ import { QuickCheckInline } from '../../components/science/QuickCheckInline';
 import { useConfirm } from '../../contexts/ConfirmContext';
 import { storage } from '../../utils/storage';
 import { soundSystem } from '../../utils/sounds';
+
+const XP_FLASHCARD_SESSION = 20;
 import { gradeScienceAnswer } from '../../utils/scienceGrading';
 import type {
   ScienceSubject,
@@ -51,6 +53,40 @@ const SWIPE_THRESHOLD = 60;
 const MIN_VIEW_MS = 1500;
 const TILT_MAX = 12;
 const SEE_AGAIN_TOAST_MS = 1200;
+const SESSION_OPTIONS_STORAGE_KEY = 'grade9sprint_science_lab_flashcard_session_options';
+
+function loadSessionOptionsFromStorage(): Partial<SessionOptions> {
+  try {
+    const raw = localStorage.getItem(SESSION_OPTIONS_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    return {
+      shuffle: parsed.shuffle === true,
+      useSpacedRepetition: parsed.useSpacedRepetition !== false,
+      interleaveTopics: parsed.interleaveTopics === true,
+      sessionLimit: typeof parsed.sessionLimit === 'number' ? parsed.sessionLimit : undefined,
+      sessionLimitMinutes: typeof parsed.sessionLimitMinutes === 'number' ? parsed.sessionLimitMinutes : undefined,
+      typeToReveal: parsed.typeToReveal === true,
+    };
+  } catch {
+    return {};
+  }
+}
+
+function saveSessionOptionsToStorage(opts: SessionOptions): void {
+  try {
+    localStorage.setItem(SESSION_OPTIONS_STORAGE_KEY, JSON.stringify({
+      shuffle: opts.shuffle,
+      useSpacedRepetition: opts.useSpacedRepetition,
+      interleaveTopics: opts.interleaveTopics,
+      sessionLimit: opts.sessionLimit,
+      sessionLimitMinutes: opts.sessionLimitMinutes,
+      typeToReveal: opts.typeToReveal,
+    }));
+  } catch {
+    /* ignore */
+  }
+}
 
 type LearnStep =
   | { type: 'flashcard'; flashcard: ScienceFlashcard; topic: string; groupIndex: number }
@@ -91,13 +127,18 @@ export function ScienceLabFlashcardPage() {
   const { confirm } = useConfirm();
   const [sessionOptions, setSessionOptions] = useState<SessionOptions>(() => {
     const params = new URLSearchParams(window.location.search);
+    const stored = loadSessionOptionsFromStorage();
     return {
-      shuffle: params.get('shuffle') === '1',
-      useSpacedRepetition: params.get('spaced') !== '0',
-      sessionLimit: params.has('limit') ? parseInt(params.get('limit') ?? '0', 10) || undefined : undefined,
-      sessionLimitMinutes: params.has('minutes') ? (parseInt(params.get('minutes') ?? '0', 10) || undefined) : undefined,
+      shuffle: params.get('shuffle') === '1' ? true : params.get('shuffle') !== '0' && (stored.shuffle ?? false),
+      useSpacedRepetition: params.get('spaced') === '0' ? false : params.has('spaced') ? params.get('spaced') !== '0' : (stored.useSpacedRepetition ?? true),
+      interleaveTopics: stored.interleaveTopics ?? false,
+      sessionLimit: params.has('limit') ? (parseInt(params.get('limit') ?? '0', 10) || undefined) : (stored.sessionLimit ?? undefined),
+      sessionLimitMinutes: params.has('minutes') ? (parseInt(params.get('minutes') ?? '0', 10) || undefined) : (stored.sessionLimitMinutes ?? undefined),
+      typeToReveal: stored.typeToReveal ?? false,
     };
   });
+  const [elapsedViewMs, setElapsedViewMs] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const answeredQuickCheckIds = useRef<Set<string>>(new Set());
   const quickCheckStepIndexRef = useRef<number>(-1);
   const [notSureQueue, setNotSureQueue] = useState<LearnStep[]>([]);
@@ -131,6 +172,30 @@ export function ScienceLabFlashcardPage() {
 
   const learnSteps = useMemo((): LearnStep[] => {
     const steps: LearnStep[] = [];
+    const firstGroup = groups[0];
+    const isInterleaved = firstGroup?.topic === '_interleaved';
+
+    if (isInterleaved && firstGroup && firstGroup.flashcards.length > 0) {
+      let lastTopic: string | null = null;
+      for (const f of firstGroup.flashcards) {
+        if (lastTopic !== null && f.topic !== lastTopic) {
+          const biggerQuestions = getBiggerTestQuestionsForTopic(normalizedSubject, paperNum, tierValue, lastTopic, 2);
+          if (biggerQuestions.length > 0) {
+            steps.push({ type: 'biggerTest', topic: lastTopic, questions: biggerQuestions, groupIndex: 0 });
+          }
+        }
+        steps.push({ type: 'flashcard', flashcard: f, topic: f.topic, groupIndex: 0 });
+        lastTopic = f.topic;
+      }
+      if (lastTopic !== null) {
+        const biggerQuestions = getBiggerTestQuestionsForTopic(normalizedSubject, paperNum, tierValue, lastTopic, 2);
+        if (biggerQuestions.length > 0) {
+          steps.push({ type: 'biggerTest', topic: lastTopic, questions: biggerQuestions, groupIndex: 0 });
+        }
+      }
+      return steps;
+    }
+
     groups.forEach((g, groupIndex) => {
       g.flashcards.forEach((f) => {
         steps.push({ type: 'flashcard', flashcard: f, topic: g.topic, groupIndex });
@@ -192,9 +257,9 @@ export function ScienceLabFlashcardPage() {
     if (current?.type === 'flashcard' && current.topic && current.topic !== '_interleaved' && stepIndex < learnSteps.length) {
       const nextNormal = learnSteps[stepIndex + 1];
       if (nextNormal?.type === 'biggerTest') {
-        const topicFlashcards = groups
-          .find((g) => g.topic === current.topic)
-          ?.flashcards.map((f) => f.id) ?? [];
+        const topicFlashcards =
+          groups.find((g) => g.topic === current.topic)?.flashcards.map((f) => f.id) ??
+          learnSteps.filter((s) => s.type === 'flashcard' && s.topic === current.topic).map((s) => s.flashcard.id);
         const mastery = storage.calculateTopicFlashcardMastery(
           normalizedSubject,
           paperNum,
@@ -388,14 +453,16 @@ export function ScienceLabFlashcardPage() {
     advanceStep,
   ]);
 
+  const useTypeToReveal = (sessionOptions.typeToReveal ?? false) && currentFlashcard && (currentFlashcard.type === 'concept' || currentFlashcard.type === 'equation');
   const handleFlip = useCallback(() => {
     if (isFlipped) {
       setIsFlipped(false);
     } else if (currentFlashcard) {
       if (Date.now() - viewStartTime < MIN_VIEW_MS) return;
+      if (useTypeToReveal) return; // type-to-reveal: only "Show answer" button flips
       setIsFlipped(true);
     }
-  }, [isFlipped, currentFlashcard, viewStartTime]);
+  }, [isFlipped, currentFlashcard, viewStartTime, useTypeToReveal]);
 
   // Sync phase when stepIndex changes (e.g. from prev/next nav or advanceStep)
   useEffect(() => {
@@ -420,11 +487,61 @@ export function ScienceLabFlashcardPage() {
     }
   }, [currentFlashcard?.id, phase]);
 
-  /** Session start time for time-based limits */
+  /** Persist session options to localStorage when they change */
+  useEffect(() => {
+    saveSessionOptionsToStorage(sessionOptions);
+  }, [sessionOptions]);
+
+  /** Min-view elapsed tick (so we can show "Think…" and progress) */
+  useEffect(() => {
+    if (phase !== 'flashcard' || isFlipped || !currentFlashcard) return;
+    const start = viewStartTime;
+    const tick = () => {
+      const elapsed = Math.min(Date.now() - start, MIN_VIEW_MS);
+      setElapsedViewMs(elapsed);
+    };
+    tick();
+    const id = setInterval(tick, 100);
+    return () => clearInterval(id);
+  }, [phase, isFlipped, currentFlashcard?.id, viewStartTime]);
+
+  /** Award XP and streak once when session completes */
+  const sessionCompleteAwardedRef = useRef(false);
+  useEffect(() => {
+    if (!sessionComplete || sessionCompleteAwardedRef.current) return;
+    sessionCompleteAwardedRef.current = true;
+    storage.addXP(XP_FLASHCARD_SESSION);
+    storage.updateStreak();
+  }, [sessionComplete]);
+
+  /** Time limit: remaining seconds tick and auto-end session when expired */
   const sessionStartTimeRef = useRef<number>(Date.now());
   useEffect(() => {
     sessionStartTimeRef.current = Date.now();
   }, [sessionOptions.shuffle, sessionOptions.useSpacedRepetition, sessionOptions.sessionLimit, sessionOptions.sessionLimitMinutes, sessionOptions.interleaveTopics]);
+
+  useEffect(() => {
+    const mins = sessionOptions.sessionLimitMinutes;
+    if (!mins || sessionComplete) {
+      setRemainingSeconds(null);
+      return;
+    }
+    const tick = () => {
+      const elapsed = (Date.now() - sessionStartTimeRef.current) / 1000;
+      const totalSeconds = mins * 60;
+      const remaining = Math.max(0, Math.ceil(totalSeconds - elapsed));
+      setRemainingSeconds(remaining);
+      if (remaining <= 0) {
+        setSessionComplete(true);
+        setPhase('flashcard');
+        setPendingQuickChecks([]);
+        setQuickCheckIndex(0);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [sessionOptions.sessionLimitMinutes, sessionComplete]);
 
   const applySessionOptionChange = useCallback(
     (updater: (prev: SessionOptions) => SessionOptions) => {
@@ -504,6 +621,7 @@ export function ScienceLabFlashcardPage() {
   // Completion screen – choose redo flashcards or topic quiz next
   if (sessionComplete) {
     const handleRedoFlashcards = () => {
+      sessionCompleteAwardedRef.current = false;
       sessionStartTimeRef.current = Date.now();
       setSessionComplete(false);
       setStepIndex(0);
@@ -747,6 +865,11 @@ export function ScienceLabFlashcardPage() {
               <ChevronLeft size={18} /> Back
             </button>
             <div className="flex items-center gap-3">
+            {remainingSeconds !== null && (
+              <span className="text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }} aria-live="polite">
+                {Math.floor(remainingSeconds / 60)}:{String(remainingSeconds % 60).padStart(2, '0')} left
+              </span>
+            )}
             <span className="text-sm font-medium tabular-nums" style={{ color: 'rgb(var(--text-secondary))' }}>
               {progressLabel || `${currentFlashcardIndex} / ${totalFlashcards}`}
             </span>
@@ -805,6 +928,15 @@ export function ScienceLabFlashcardPage() {
                 Interleave topics
               </label>
             )}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sessionOptions.typeToReveal ?? false}
+                onChange={(e) => setSessionOptions((o) => ({ ...o, typeToReveal: e.target.checked }))}
+                className="rounded"
+              />
+              Type to reveal
+            </label>
             <select
               value={sessionOptions.sessionLimit ?? ''}
               onChange={(e) =>
@@ -860,7 +992,7 @@ export function ScienceLabFlashcardPage() {
             const dy = e.changedTouches[0].clientY - touchStart.current.y;
             touchStart.current = null;
             if (Math.abs(dy) > SWIPE_THRESHOLD && Math.abs(dy) > Math.abs(dx) && dy < 0) {
-              if (!isFlipped && Date.now() - viewStartTime >= MIN_VIEW_MS) setIsFlipped(true);
+              if (!isFlipped && Date.now() - viewStartTime >= MIN_VIEW_MS && !useTypeToReveal) setIsFlipped(true);
               else if (isFlipped) setIsFlipped(false);
             } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
               if (dx > 0 && stepIndex > 0) setStepIndex(stepIndex - 1);
@@ -956,9 +1088,45 @@ export function ScienceLabFlashcardPage() {
                       )}
                     </div>
                   )}
-                  <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
-                    Try to recall first, then tap or Space to reveal
-                  </p>
+                  {/* Min-view feedback: "Think…" + progress; type-to-reveal: "Show answer" button */}
+                  {elapsedViewMs < MIN_VIEW_MS ? (
+                    <div className="mt-6 flex flex-col items-center gap-3">
+                      <p className="text-sm font-medium tracking-wide animate-pulse" style={{ color: 'rgb(var(--text-secondary))' }}>
+                        Think…
+                      </p>
+                      <div className="w-32 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--border))' }} role="progressbar" aria-valuenow={Math.round((elapsedViewMs / MIN_VIEW_MS) * 100)} aria-valuemin={0} aria-valuemax={100}>
+                        <div
+                          className="h-full rounded-full transition-all duration-100"
+                          style={{
+                            width: `${Math.min(100, (elapsedViewMs / MIN_VIEW_MS) * 100)}%`,
+                            background: typeStyle.color,
+                          }}
+                        />
+                      </div>
+                      <p className="text-[10px] font-medium tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
+                        {(MIN_VIEW_MS - elapsedViewMs) / 1000}s to reveal
+                      </p>
+                    </div>
+                  ) : (sessionOptions.typeToReveal ?? false) && (currentFlashcard.type === 'concept' || currentFlashcard.type === 'equation') ? (
+                    <div className="mt-6 flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); e.preventDefault(); setIsFlipped(true); }}
+                        className="px-8 py-3.5 rounded-xl font-semibold text-white transition hover:opacity-95 active:scale-[0.98]"
+                        style={{ background: typeStyle.color }}
+                        aria-label="Show answer"
+                      >
+                        Show answer
+                      </button>
+                      <p className="text-[10px] font-medium tracking-wider uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
+                        When you've recalled, click to reveal
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-[11px] font-medium mt-6 tracking-widest uppercase" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.7 }}>
+                      Try to recall first, then tap or Space to reveal
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -1048,7 +1216,7 @@ export function ScienceLabFlashcardPage() {
                   {/* Rate & continue – fixed to bottom of card back */}
                   <div className="flex-shrink-0 pt-6 mt-4 border-t border-[rgb(var(--border))] flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgb(var(--text-secondary))' }}>Rate & continue</p>
-                    <div className="flex gap-2 sm:gap-3">
+                    <div className="flex gap-2 sm:gap-3" role="group" aria-label="Rate your recall">
                       {([1, 2, 3] as ConfidenceLevel[]).map((level) => (
                         <button
                           key={level}
@@ -1063,6 +1231,7 @@ export function ScienceLabFlashcardPage() {
                             background: level === 3 ? 'linear-gradient(180deg, #059669 0%, #047857 100%)' : level === 2 ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
                             boxShadow: level === 3 ? '0 2px 8px rgba(5, 150, 105, 0.3)' : level === 2 ? '0 2px 8px rgba(217, 119, 6, 0.25)' : '0 2px 8px rgba(220, 38, 38, 0.25)',
                           }}
+                          aria-label={`Rate: ${CONFIDENCE_LABELS[level]}`}
                         >
                           {CONFIDENCE_LABELS[level]}
                         </button>
@@ -1082,7 +1251,7 @@ export function ScienceLabFlashcardPage() {
                     </button>
                     <p className="text-[10px] text-center" style={{ color: 'rgb(var(--text-secondary))', opacity: 0.75 }}>Or press 1, 2, or 3</p>
                     {seeAgainToast && (
-                      <p className="text-xs text-center font-medium mt-2" style={{ color: 'rgb(var(--text))' }}>
+                      <p className="text-xs text-center font-medium mt-2" style={{ color: 'rgb(var(--text))' }} aria-live="polite" role="status">
                         ✓ See again in {seeAgainToast.days} day{seeAgainToast.days !== 1 ? 's' : ''}
                       </p>
                     )}
@@ -1101,6 +1270,7 @@ export function ScienceLabFlashcardPage() {
             disabled={stepIndex === 0}
             className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
+            aria-label="Previous card"
           >
             <ChevronLeft size={24} strokeWidth={2.5} />
           </motion.button>
@@ -1109,6 +1279,7 @@ export function ScienceLabFlashcardPage() {
             onClick={() => setIsFlipped((p) => !p)}
             className="text-[14px] font-semibold px-6 py-3 rounded-xl"
             style={{ color: 'rgb(var(--text-secondary))', background: 'rgb(var(--surface-2))' }}
+            aria-label="Flip card"
           >
             <RotateCcw size={18} strokeWidth={2.5} className="inline mr-2 -mt-0.5" /> Flip
           </motion.button>
@@ -1119,6 +1290,7 @@ export function ScienceLabFlashcardPage() {
             disabled={stepIndex === effectiveSteps.length - 1}
             className="p-4 rounded-xl disabled:opacity-30 min-w-[48px] min-h-[48px] flex items-center justify-center"
             style={{ color: 'rgb(var(--text))' }}
+            aria-label="Next card"
           >
             <ChevronRight size={24} strokeWidth={2.5} />
           </motion.button>

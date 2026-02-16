@@ -39,7 +39,7 @@ function getConceptLabel(concept: { id: string }): string {
 
 /**
  * Harder prompts that omit the concept name (desirable difficulty).
- * Used for ~20% of concept cards when hash % 5 === 0.
+ * Used for ~33% of concept cards when hash % 3 === 0 (per FLASHCARD_FULL_AUDIT_2025_02).
  */
 const CONCEPT_HARDER_PROMPTS: Record<string, string> = {
   'bio-diffusion': 'What process moves particles from an area of high concentration to low concentration?',
@@ -49,21 +49,46 @@ const CONCEPT_HARDER_PROMPTS: Record<string, string> = {
   'bio-photosynthesis': 'What process do plants use to make glucose using light, water and carbon dioxide?',
   'bio-respiration': 'What process releases energy from glucose in cells?',
   'bio-cell-division': 'What process produces genetically identical cells for growth and repair?',
+  'bio-digestive-system': 'Where is bile produced and what is its role in digestion?',
+  'bio-circulatory-system': 'Which blood vessel carries deoxygenated blood from the heart to the lungs?',
+  'bio-pathogens': 'What is the difference between a virus and a bacterium in how they reproduce?',
+  'bio-immune-system': 'Why does a second infection with the same pathogen often cause milder symptoms?',
+  'bio-hormones': 'What type of signal travels in the blood and acts more slowly than a nerve impulse?',
+  'bio-dna-genes': 'What is the relationship between a gene and a protein?',
+  'bio-inheritance': 'If both parents are heterozygous for a recessive allele, what proportion of offspring could show the recessive phenotype?',
+  'bio-evolution': 'What process leads to changes in the proportion of alleles in a population over time?',
+  'bio-ecosystems': 'Why do food chains rarely have more than four or five trophic levels?',
+  'bio-carbon-cycle': 'How does carbon in the atmosphere become part of a plant, then an animal, then return to the atmosphere?',
+  'bio-energy-transfer': 'Why is only about 10% of energy passed to the next trophic level?',
+  'bio-homeostasis': 'What do we call the maintenance of a stable internal environment?',
+  'bio-stem-cells': 'What type of cell can differentiate into many different cell types?',
   'chem-rate-reaction': 'What factors increase the rate of a chemical reaction and why?',
   'chem-bonding': 'Why does sodium chloride conduct when molten but not when solid?',
+  'chem-electrolysis': 'During electrolysis, where do positive ions move and what happens to them?',
+  'chem-reactivity-series': 'Why does zinc displace copper from copper sulfate solution?',
+  'chem-atomic-structure': 'How do you find the number of neutrons in an atom from the periodic table?',
+  'chem-moles': 'How many moles are in 8 g of oxygen gas (O₂)? (Mr = 32)',
+  'chem-acids-bases': 'What are the products when an acid reacts with a base?',
+  'chem-crude-oil': 'In the fractionating column, where do the smallest hydrocarbon molecules condense?',
   'phys-electricity': 'How do resistors in series affect total resistance?',
   'phys-forces': 'What happens to acceleration when mass doubles but force stays constant?',
+  'phys-energy-stores': 'If speed doubles, what happens to kinetic energy and why?',
+  'phys-particle-model': 'Why does a gas fill its container but a solid does not?',
+  'phys-specific-heat-capacity': 'Why does the same heater raise the temperature of water more slowly than the same mass of aluminium?',
+  'phys-waves': 'What is the relationship between wave speed, frequency and wavelength?',
+  'phys-atomic-structure': 'Which type of nuclear radiation is stopped by a sheet of paper?',
+  'phys-magnetism': 'How do you find the direction of the force on a current-carrying wire in a magnetic field?',
 };
 
 /**
  * Get a stable, varied prompt for a concept when no custom flashcardPrompt is set.
- * ~20% of cards use harder prompts (omit topic) for desirable difficulty.
+ * ~33% of cards use harder prompts (omit topic) for desirable difficulty.
  */
 function getConceptPrompt(concept: { id: string; topic: string; coreIdea: string; flashcardPrompt?: string }): string {
   if (concept.flashcardPrompt) return concept.flashcardPrompt;
   const label = getConceptLabel(concept);
   const hash = concept.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const useHarder = hash % 5 === 0 && CONCEPT_HARDER_PROMPTS[concept.id];
+  const useHarder = hash % 3 === 0 && CONCEPT_HARDER_PROMPTS[concept.id];
   if (useHarder) return CONCEPT_HARDER_PROMPTS[concept.id];
   const templates = [
     () => `What is ${label} and how does it work?`,
@@ -374,17 +399,21 @@ function generateEquationFlashcards(
 }
 
 /**
- * Science vocabulary for key term extraction (longer phrases first for specificity)
+ * Science vocabulary for key term extraction (longer phrases first for specificity).
+ * Extended per SCIENCE_LAB_FLASHCARD_FULL_REVIEW.
  */
 const SCIENCE_VOCABULARY = [
   'concentration gradient', 'active transport', 'negative feedback', 'natural selection',
   'activation energy', 'fractional distillation', 'specific heat capacity', 'potential difference',
   'magnetic field', 'life cycle assessment', 'carbon cycle', 'food chain', 'trophic level',
+  'total internal reflection', 'limit of proportionality', 'elastic deformation', 'plastic deformation',
+  'empirical formula', 'molecular formula', 'half equation', 'reversible reaction',
+  'induced p.d.', 'alternating current', 'red shift', 'half-life',
   'diffusion', 'osmosis', 'enzyme', 'substrate', 'active site', 'denatured',
   'photosynthesis', 'respiration', 'glucose', 'ATP', 'homeostasis', 'hormone', 'insulin',
   'DNA', 'gene', 'chromosome', 'allele', 'genotype', 'phenotype', 'evolution', 'variation',
   'ecosystem', 'mole', 'concentration', 'neutralisation', 'reactivity', 'electrolysis',
-  'cathode', 'anode', 'exothermic', 'endothermic', 'crude oil', 'alkane',
+  'cathode', 'anode', 'electrode', 'exothermic', 'endothermic', 'crude oil', 'alkane',
   'greenhouse', 'infrared', 'density', 'wave', 'wavelength', 'frequency',
   'resistance', 'current', 'force', 'acceleration', 'Fleming',
   'turgid', 'plasmolysed', 'carrier protein', 'kinetic energy', 'mitosis', 'meiosis',
@@ -392,6 +421,8 @@ const SCIENCE_VOCABULARY = [
   'aerobic', 'anaerobic', 'lactic acid', 'oxygen debt', 'receptor', 'effector',
   'stimulus', 'reflex', 'CNS', 'neurone', 'gamete', 'homozygous', 'heterozygous',
   'fermentation', 'catalyst', 'emulsify', 'lipase', 'amylase', 'starch',
+  'predator', 'prey', 'decomposer', 'biodiversity', 'quadrat', 'transect', 'equilibrium',
+  'critical angle', 'fission', 'fusion', 'isotope',
   'independent variable', 'dependent variable', 'controlled variable',
 ];
 
@@ -409,8 +440,8 @@ function extractKeyTerms(text: string): string[] {
     }
   }
 
-  // Extract unit-like terms (e.g. "g", "mol", "N", "m/s²")
-  const unitMatch = text.match(/\b(g|kg|mol|N|J|s|m\/s²|°C|V|A|Ω|Hz|m|cm|mm|μm|%|dm³)\b/gi);
+  // Extract unit-like terms (e.g. "g", "mol", "N", "m/s²"). Extended per SCIENCE_LAB_FLASHCARD_FULL_REVIEW (W, kW, Pa, kPa).
+  const unitMatch = text.match(/\b(g|kg|mol|N|J|s|m\/s²|°C|V|A|Ω|Hz|m|cm|mm|μm|%|dm³|W|kW|Pa|kPa)\b/gi);
   if (unitMatch) {
     unitMatch.forEach(u => found.add(u));
   }
@@ -638,6 +669,189 @@ const CONCEPT_APPLICATION_QUESTIONS: Array<{
       'Kinetic energy halves',
     ],
   },
+  // Homeostasis and Response (per SCIENCE_LAB_FLASHCARD_AUDIT)
+  {
+    conceptId: 'bio-homeostasis',
+    question: 'Blood glucose rises after a meal. How does the body respond to return it to normal?',
+    correctAnswer: 'Insulin is released; it triggers cells to take up glucose and liver to store it as glycogen',
+    distractors: [
+      'Glucagon is released to lower glucose',
+      'The pancreas stops producing insulin',
+      'Nothing – glucose returns on its own',
+    ],
+  },
+  {
+    conceptId: 'bio-nervous-system',
+    question: 'You touch a hot surface. In which order do these occur?',
+    correctAnswer: 'Receptor detects heat → sensory neurone → CNS → motor neurone → effector (muscle) contracts',
+    distractors: [
+      'Effector responds first, then receptor detects',
+      'CNS receives signal before receptor detects',
+      'Motor neurone carries signal from receptor directly to effector',
+    ],
+  },
+  // Physics – Waves (per SCIENCE_LAB_FLASHCARD_AUDIT)
+  {
+    conceptId: 'phys-waves',
+    question: 'A wave has frequency 2 Hz and wavelength 3 m. What is its speed?',
+    correctAnswer: '6 m/s – v = f × λ = 2 × 3 = 6',
+    distractors: [
+      '1.5 m/s – v = λ/f',
+      '5 m/s – v = f + λ',
+      'It depends on the wave type',
+    ],
+  },
+  // Per SCIENCE_LAB_FLASHCARD_FULL_REVIEW: high-impact application questions
+  {
+    conceptId: 'bio-hormones',
+    question: 'A person needs a rapid response to remove their hand from a hot object. Why are hormones not suitable for this?',
+    correctAnswer: 'Hormones travel in the blood and act more slowly; nerve impulses are electrical and much faster',
+    distractors: [
+      'Hormones only work on muscles',
+      'Hormones are broken down by heat',
+      'Nerve impulses are chemical and slower than hormones',
+    ],
+  },
+  {
+    conceptId: 'bio-dna-genes',
+    question: 'A gene codes for a protein. What is the correct sequence from gene to characteristic?',
+    correctAnswer: 'Gene (DNA) → protein produced → affects characteristic',
+    distractors: [
+      'Characteristic → protein → gene',
+      'Protein → gene → characteristic',
+      'Gene and protein work independently',
+    ],
+  },
+  {
+    conceptId: 'bio-inheritance',
+    question: 'Both parents are heterozygous (Aa) for a recessive disorder. What proportion of offspring could show the recessive phenotype?',
+    correctAnswer: '25% – one in four can be homozygous recessive (aa)',
+    distractors: [
+      '50% – half will have the disorder',
+      '75% – three in four',
+      '0% – recessive is never expressed when a dominant is present',
+    ],
+  },
+  {
+    conceptId: 'bio-evolution',
+    question: 'A population of bacteria becomes resistant to an antibiotic. Which process explains this?',
+    correctAnswer: 'Natural selection – resistant variants survive and reproduce; alleles for resistance increase',
+    distractors: [
+      'Bacteria chose to become resistant',
+      'The antibiotic caused mutations that made them resistant',
+      'All bacteria evolved equally',
+    ],
+  },
+  {
+    conceptId: 'bio-ecosystems',
+    question: 'Why do food chains rarely have more than four or five trophic levels?',
+    correctAnswer: 'Energy is lost at each level (respiration, heat, waste); not enough energy left for more levels',
+    distractors: [
+      'Predators at the top eat everything',
+      'There are not enough species',
+      'Energy is recycled so it does not run out',
+    ],
+  },
+  {
+    conceptId: 'bio-carbon-cycle',
+    question: 'How does carbon in the atmosphere become part of a plant, then an animal, then return to the atmosphere?',
+    correctAnswer: 'Photosynthesis (CO₂ → plant) → consumption (animal eats plant) → respiration/decomposition (CO₂ released)',
+    distractors: [
+      'Animals absorb CO₂ directly from the air',
+      'Carbon is created in plants and destroyed in animals',
+      'Decomposition happens before consumption',
+    ],
+  },
+  {
+    conceptId: 'bio-energy-transfer',
+    question: 'Why is only about 10% of energy passed to the next trophic level?',
+    correctAnswer: 'Energy is lost in respiration, heat, movement, and waste; not all biomass is consumed',
+    distractors: [
+      'Organisms only eat 10% of their food',
+      '90% is stored in bones',
+      'Energy is destroyed at each level',
+    ],
+  },
+  {
+    conceptId: 'chem-moles',
+    question: 'How many moles are in 8 g of oxygen gas, O₂? (Relative formula mass of O₂ = 32)',
+    correctAnswer: '0.25 mol – moles = mass ÷ Mr = 8 ÷ 32 = 0.25',
+    distractors: [
+      '4 mol – 32 ÷ 8 = 4',
+      '256 mol – 32 × 8',
+      '8 mol – one mole per gram',
+    ],
+  },
+  {
+    conceptId: 'chem-le-chatelier',
+    question: 'A reversible reaction is exothermic in the forward direction. Temperature is increased. What happens to the equilibrium position?',
+    correctAnswer: 'Equilibrium shifts to the left (reverse direction) to absorb the extra heat',
+    distractors: [
+      'Equilibrium shifts to the right – more product',
+      'No change – temperature does not affect equilibrium',
+      'Equilibrium shifts to the side with more moles',
+    ],
+  },
+  {
+    conceptId: 'chem-atomic-structure',
+    question: 'An atom has mass number 23 and atomic number 11. How many neutrons does it have?',
+    correctAnswer: '12 – neutrons = mass number − atomic number = 23 − 11 = 12',
+    distractors: [
+      '11 – same as atomic number',
+      '23 – same as mass number',
+      '34 – 23 + 11',
+    ],
+  },
+  {
+    conceptId: 'chem-acids-bases',
+    question: 'What are the products when an acid reacts with a base?',
+    correctAnswer: 'Salt + water (neutralisation: H⁺ + OH⁻ → H₂O)',
+    distractors: [
+      'Hydrogen gas + salt',
+      'Acid + base (no reaction)',
+      'Carbon dioxide + water only',
+    ],
+  },
+  {
+    conceptId: 'phys-particle-model',
+    question: 'A fixed mass of gas is compressed at constant temperature. What happens to the density and why?',
+    correctAnswer: 'Density increases – same number of particles in a smaller volume',
+    distractors: [
+      'Density decreases – particles get smaller',
+      'Density stays the same – temperature is constant',
+      'Density increases – more particles are created',
+    ],
+  },
+  {
+    conceptId: 'phys-atomic-structure',
+    question: 'Which type of nuclear radiation is stopped by a sheet of paper?',
+    correctAnswer: 'Alpha – it has the largest mass and charge, so it is the least penetrating',
+    distractors: [
+      'Beta – it is the weakest',
+      'Gamma – it is absorbed by paper',
+      'All three are stopped by paper',
+    ],
+  },
+  {
+    conceptId: 'phys-magnetism',
+    question: 'A current-carrying wire is placed in a magnetic field. How do you find the direction of the force on the wire?',
+    correctAnswer: 'Fleming’s left-hand rule – thumb = force, first finger = field, second finger = current',
+    distractors: [
+      'Right-hand rule – same as for conventional current',
+      'The force is always in the direction of the current',
+      'The force is always opposite to the field',
+    ],
+  },
+  {
+    conceptId: 'phys-specific-heat-capacity',
+    question: 'The same heater is used on equal masses of water and aluminium. Why does the water heat up more slowly?',
+    correctAnswer: 'Water has a higher specific heat capacity – it needs more energy to raise its temperature by 1°C',
+    distractors: [
+      'Aluminium conducts heat better',
+      'Water has a lower boiling point',
+      'The heater works less well on water',
+    ],
+  },
 ];
 
 /**
@@ -855,6 +1069,8 @@ export type SessionOptions = {
   useSpacedRepetition?: boolean;
   /** If true (and no topic filter), interleave cards across all topics instead of topic-by-topic. */
   interleaveTopics?: boolean;
+  /** If true, concept/equation cards show "Show answer" button instead of tap-to-reveal (type-to-reveal style). */
+  typeToReveal?: boolean;
   /** Flashcard mastery data (from storage.getFlashcardMastery). Required when useSpacedRepetition is true. */
   mastery?: Record<string, { nextReviewDate?: string }>;
 };

@@ -367,7 +367,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'Offspring inherit alleles from both parents. Dominant alleles are expressed if present; recessive alleles only expressed if homozygous.',
-    flashcardPrompt: 'How do dominant and recessive alleles determine the phenotype of offspring?',
+    flashcardPrompt: 'How do you predict the phenotype ratio when both parents are heterozygous for a characteristic? What do dominant and recessive mean?',
     visualModel: {
       type: 'diagram',
       description: 'Parent genotypes → gametes → offspring genotypes → phenotypes',
@@ -386,7 +386,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Biology',
     topic: 'Inheritance, Variation and Evolution',
     coreIdea: 'Evolution occurs by natural selection: variation exists → environmental pressure → advantageous characteristics survive → reproduce → pass on alleles → population changes.',
-    flashcardPrompt: 'Describe how natural selection leads to evolution in a population.',
+    flashcardPrompt: 'What are the steps of natural selection, and why does evolution happen in populations rather than individuals?',
     visualModel: {
       type: 'flow',
       description: 'Variation → selection pressure → survival of fittest → reproduction → allele frequency changes → evolution',
@@ -696,7 +696,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Chemistry',
     topic: 'Quantitative chemistry',
     coreIdea: 'The mole is the unit for amount of substance. One mole contains 6.02 × 10²³ particles. Mass (g) = Mr × moles.',
-    flashcardPrompt: 'What is a mole and how do you convert between mass and moles?',
+    flashcardPrompt: 'What is the relationship between mass (g), relative formula mass (Mr), and moles? Give the formula.',
     visualModel: { type: 'diagram', description: 'Balance: mass in grams, Mr, and moles linked by formula', diagramId: 'moles_diagram' },
     commonMisconception: 'Mole is a mass or a volume.',
     changeScenarios: [
@@ -891,7 +891,7 @@ export const SCIENCE_CONCEPTS: ScienceConcept[] = [
     subject: 'Physics',
     topic: 'Particle model of matter',
     coreIdea: 'Density = mass ÷ volume. Particles in a gas are far apart and move randomly; pressure is caused by collisions with the walls. Changing state requires energy (latent heat).',
-    flashcardPrompt: 'What causes gas pressure, and what is the formula for density?',
+    flashcardPrompt: 'Why does a gas fill its container? What causes gas pressure? What is density = ?',
     visualModel: { type: 'particle', description: 'Solid: fixed positions. Liquid: touching, sliding. Gas: far apart, random motion', diagramId: 'particle_model' },
     commonMisconception: 'Particles expand when heated.',
     changeScenarios: [

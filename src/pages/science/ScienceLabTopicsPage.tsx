@@ -199,11 +199,7 @@ export function ScienceLabTopicsPage() {
                 }}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <button
-                    type="button"
-                    onClick={() => navigate(`${base}?topic=${encodeURIComponent(topic)}`)}
-                    className="flex-1 min-w-0 text-left"
-                  >
+                  <div className="flex-1 min-w-0">
                     <h3 className="text-base font-bold mb-1" style={{ color: 'rgb(var(--text))' }}>
                       {topic}
                     </h3>
@@ -231,7 +227,7 @@ export function ScienceLabTopicsPage() {
                         style={{ width: `${Math.min(progress.mastery, 100)}%` }}
                       />
                     </div>
-                  </button>
+                  </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       type="button"

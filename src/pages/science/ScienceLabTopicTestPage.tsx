@@ -17,7 +17,12 @@ import { gradeScienceAnswer, gradeMethodMarkAnswer } from '../../utils/scienceGr
 import { marksPercentToGrade } from '../../utils/gradeMapping';
 import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
+import { GradeCelebration } from '../../components/learning/GradeCelebration';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
+
+/** XP for completing a topic test; add a small bonus for higher % */
+const XP_TOPIC_TEST_BASE = 25;
+const XP_TOPIC_TEST_BONUS_MAX = 25;
 
 const COMMAND_WORDS = ['State', 'Describe', 'Explain', 'Evaluate', 'Compare', 'Suggest', 'Calculate'];
 function inferCommandWord(questionText: string): string | null {
@@ -149,6 +154,10 @@ export function ScienceLabTopicTestPage() {
             marksEarnedRef.current,
             totalMarks
           );
+          const percent = totalMarks > 0 ? Math.round((marksEarnedRef.current / totalMarks) * 100) : 0;
+          const xp = XP_TOPIC_TEST_BASE + Math.round((percent / 100) * XP_TOPIC_TEST_BONUS_MAX);
+          storage.addXP(xp);
+          storage.updateStreak();
           setShowSummary(true);
           return 0;
         }
@@ -363,6 +372,10 @@ export function ScienceLabTopicTestPage() {
         marksEarned,
         totalMarks
       );
+      const percent = totalMarks > 0 ? Math.round((marksEarned / totalMarks) * 100) : 0;
+      const xp = XP_TOPIC_TEST_BASE + Math.round((percent / 100) * XP_TOPIC_TEST_BONUS_MAX);
+      storage.addXP(xp);
+      storage.updateStreak();
       setShowSummary(true);
     }
   };
@@ -407,6 +420,12 @@ export function ScienceLabTopicTestPage() {
               transition={{ delay: 0.15 }}
               className="relative"
             >
+              {(grade === 7 || grade === 9) && (
+                <GradeCelebration
+                  variant={grade === 9 ? 'grade9' : 'grade7'}
+                  label={gradeLabel + ' equivalent'}
+                />
+              )}
               <Sparkles size={40} className="mx-auto mb-4" style={{ color: gradeColor }} />
               <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>
                 {topicParam} — Complete

@@ -9,8 +9,9 @@ import {
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight } from 'lucide-react';
+import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight, Target } from 'lucide-react';
 import { StudyPathDashboard } from '../components/learning/StudyPathDashboard';
+import { getScienceLabProgressSummary } from '../utils/scienceLabProgress';
 import { motion } from 'framer-motion';
 import { SkeletonSubjectsPage } from '../components/ui/Skeleton';
 
@@ -99,6 +100,7 @@ export function SubjectsPage() {
 
   const chosenSubjects = findByNames(subjects, CHOSEN_SUBJECT_NAMES);
   const languageSubjects = findByNames(subjects, LANGUAGE_NAMES);
+  const scienceLabProgress = getScienceLabProgressSummary();
 
   return (
     <motion.div
@@ -137,6 +139,41 @@ export function SubjectsPage() {
       <motion.div variants={item}>
         <StudyPathDashboard />
       </motion.div>
+
+      {/* Continue Science Lab — past-paper practice */}
+      {scienceLabProgress.hasProgress && scienceLabProgress.continueHref && (
+        <motion.section variants={item}>
+          <button
+            type="button"
+            onClick={() => navigate(scienceLabProgress.continueHref!)}
+            className="w-full rounded-2xl p-5 sm:p-6 text-left border-2 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            style={{
+              background: 'linear-gradient(135deg, #10B981 0%, #3B82F6 50%, #8B5CF6 100%)',
+              borderColor: 'transparent',
+            }}
+          >
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="p-3 rounded-xl bg-white/20 flex-shrink-0">
+                <Target size={28} className="text-white" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                  Continue Science Lab
+                </h2>
+                <p className="text-sm text-white/90">
+                  {scienceLabProgress.subjects
+                    .map((s) => `${s.subject} ${s.topicTestsCompleted}/${s.topicTestsTotal}${s.fullGcsePassed ? ' ✓' : ''}`)
+                    .join(' · ')}
+                </p>
+              </div>
+            </div>
+            <span className="flex items-center gap-2 font-semibold text-white shrink-0">
+              Continue
+              <ArrowRight size={20} />
+            </span>
+          </button>
+        </motion.section>
+      )}
 
       {/* Top: 3 featured hub cards */}
       <motion.div

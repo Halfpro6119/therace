@@ -150,7 +150,7 @@ export function DiscoverPage() {
           </h1>
         </div>
         <p className="text-lg" style={{ color: 'rgb(var(--text-secondary))' }}>
-          Curated runs and personalized recommendations
+          Past-paper practice and exam-style questions
         </p>
       </motion.div>
 

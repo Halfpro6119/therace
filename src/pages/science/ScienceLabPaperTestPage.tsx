@@ -25,9 +25,12 @@ import { getMethodMarkBreakdown } from '../../config/scienceLabData';
 import { getGcseScopeForSubject } from '../../config/gcseScope';
 import { storage } from '../../utils/storage';
 import { marksPercentToGrade } from '../../utils/gradeMapping';
+import { GradeCelebration } from '../../components/learning/GradeCelebration';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
 const PASS_THRESHOLD = 0.7;
+const XP_PAPER_PASS = 50;
+const XP_PAPER_ATTEMPT = 25;
 const COMMAND_WORDS = ['State', 'Describe', 'Explain', 'Evaluate', 'Compare', 'Suggest', 'Calculate'];
 
 function inferCommandWord(questionText: string): string | null {
@@ -119,6 +122,8 @@ export function ScienceLabPaperTestPage() {
             totalMarks,
             PASS_THRESHOLD
           );
+          storage.addXP(passed ? XP_PAPER_PASS : XP_PAPER_ATTEMPT);
+          storage.updateStreak();
           setShowSummary(true);
           return 0;
         }
@@ -190,7 +195,7 @@ export function ScienceLabPaperTestPage() {
     if (currentIndex < items.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      storage.setPaperTestResult(
+      const passed = storage.setPaperTestResult(
         normalizedSubject,
         testPaperNum,
         tierValue,
@@ -198,6 +203,8 @@ export function ScienceLabPaperTestPage() {
         totalMarks,
         PASS_THRESHOLD
       );
+      storage.addXP(passed ? XP_PAPER_PASS : XP_PAPER_ATTEMPT);
+      storage.updateStreak();
       setShowSummary(true);
     }
   };
@@ -221,6 +228,9 @@ export function ScienceLabPaperTestPage() {
 
     return (
       <div className="max-w-4xl mx-auto space-y-8">
+        {allPassed && (
+          <GradeCelebration variant="grade9ready" label="Subject mastery — all papers passed" />
+        )}
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

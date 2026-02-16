@@ -22,7 +22,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'english',
     title: 'English Campus',
-    subtitle: 'English Language & Literature',
+    subtitle: 'English Language & Literature – exam-style practice',
     subjectNames: ['English Language', 'English Literature'],
     icon: 'BookOpen',
     accentColor: '#0EA5E9',
@@ -31,7 +31,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'maths',
     title: 'Maths Mastery',
-    subtitle: 'Maths, Further Maths & Statistics',
+    subtitle: 'Maths, Further Maths & Statistics – past-paper practice',
     subjectNames: ['Maths', 'Further Maths', 'Statistics'],
     icon: 'Calculator',
     accentColor: '#6366F1',
@@ -40,7 +40,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'science',
     title: 'Science Lab',
-    subtitle: 'Biology, Chemistry, Physics & Combined Science',
+    subtitle: 'Biology, Chemistry, Physics – past-paper tests & revise',
     subjectNames: [
       'Biology',
       'Chemistry',
@@ -54,7 +54,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'business',
     title: 'Business Hub',
-    subtitle: 'AQA GCSE Business 8132 – Concepts, case studies & finance',
+    subtitle: 'AQA GCSE Business 8132 – Concepts, case studies & exam-style questions',
     subjectNames: ['Business Studies'],
     icon: 'Briefcase',
     accentColor: '#F59E0B',

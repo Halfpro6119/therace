@@ -45,6 +45,7 @@ export function AppShell({ children }: AppShellProps) {
             <button
               onClick={() => navigate('/quiz/daily-challenge-1')}
               className="hidden md:flex items-center gap-2 btn-primary text-sm px-4 py-2"
+              title="Past-paper-style questions"
             >
               <Zap size={16} />
               <span>Daily Challenge</span>

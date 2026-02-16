@@ -6,9 +6,11 @@ interface ProfileHeaderCardProps {
   profile: UserProfile;
   streak: StreakState;
   grade9ReadinessPct: number;
+  /** e.g. "Grade 9 Readiness" or "Grade 9 Readiness (quizzes + past papers)" */
+  grade9ReadinessLabel?: string;
 }
 
-export function ProfileHeaderCard({ profile, streak, grade9ReadinessPct }: ProfileHeaderCardProps) {
+export function ProfileHeaderCard({ profile, streak, grade9ReadinessPct, grade9ReadinessLabel = 'Grade 9 Readiness' }: ProfileHeaderCardProps) {
   const xpInLevel = profile.xpTotal % 1000;
   const xpForNextLevel = 1000;
   const progressPct = (xpInLevel / xpForNextLevel) * 100;
@@ -86,7 +88,7 @@ export function ProfileHeaderCard({ profile, streak, grade9ReadinessPct }: Profi
                 <Trophy size={20} className="text-gradient sm:w-6 sm:h-6" />
                 <div>
                   <p className="text-[10px] sm:text-xs font-semibold" style={{ color: 'rgb(var(--text-secondary))' }}>
-                    Grade 9 Readiness
+                    {grade9ReadinessLabel}
                   </p>
                   <p className="text-xl sm:text-2xl md:text-3xl font-black text-gradient">
                     {grade9ReadinessPct}%
