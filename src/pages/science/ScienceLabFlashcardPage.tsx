@@ -1039,14 +1039,13 @@ export function ScienceLabFlashcardPage() {
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={isFlipped ? { type: 'spring', stiffness: 320, damping: 28 } : { duration: 0 }}
             >
-              {/* Front – handcrafted card with clear hierarchy */}
+              {/* Front – handcrafted card with clear hierarchy, design tokens */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   background: 'rgb(var(--surface))',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04)',
                   borderLeft: `6px solid ${typeStyle.color}`,
                 }}
               >
@@ -1069,17 +1068,20 @@ export function ScienceLabFlashcardPage() {
                   {currentFlashcard.front.visual && (
                     <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
                       {isEquationVisual ? (
-                        <p className="text-2xl sm:text-3xl font-mono font-bold py-4 text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
+                        <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
+                          <p className="text-2xl sm:text-3xl font-mono font-bold text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual.description}</p>
+                        </div>
                       ) : currentFlashcard.front.visual.diagramId && isCleanFlashcardDiagram(currentFlashcard.front.visual.diagramId) ? (
-                        <div className="science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0">
+                        <div className="science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
+                          <span className="science-diagram-label" aria-hidden="true">Diagram</span>
                           <FlashcardDiagram slug={currentFlashcard.front.visual.diagramId} description={currentFlashcard.front.visual.description} fitToContainer preferStatic />
                         </div>
                       ) : (
-                        <div className="flex-1 flex items-center justify-center min-h-[200px] px-4">
+                        <div className="science-flashcard-description-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
                           {currentFlashcard.front.visual.description ? (
                             <p
                               className="text-base leading-relaxed text-center max-w-md line-clamp-4 tracking-tight"
-                              style={{ color: 'rgb(var(--text-secondary))' }}
+                              style={{ color: 'rgb(51 65 85)' }}
                             >
                               {currentFlashcard.front.visual.description}
                             </p>
@@ -1130,7 +1132,7 @@ export function ScienceLabFlashcardPage() {
                 </div>
               </div>
 
-              {/* Back – structured answer, key terms, callouts */}
+              {/* Back – structured answer, key terms, callouts; design tokens */}
               <div
                 className="flashcard-face absolute inset-0 rounded-[20px] overflow-hidden flex flex-col"
                 style={{
@@ -1138,7 +1140,6 @@ export function ScienceLabFlashcardPage() {
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                   background: 'rgb(var(--surface))',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04)',
                   borderLeft: `6px solid ${typeStyle.color}`,
                 }}
               >
@@ -1171,7 +1172,7 @@ export function ScienceLabFlashcardPage() {
                       )}
                     </div>
                     {currentFlashcard.back.visual?.diagramId && isCleanFlashcardDiagram(currentFlashcard.back.visual.diagramId) && (
-                      <div className="science-flashcard-diagram-back mt-2 flex justify-center">
+                      <div className="science-flashcard-diagram-back mt-2 flex justify-center" style={{ ['--well-accent' as string]: typeStyle.color }}>
                         <div className="w-full max-w-[200px] min-h-[140px]">
                           <FlashcardDiagram slug={currentFlashcard.back.visual.diagramId} description={currentFlashcard.back.visual.description} fitToContainer preferStatic showDescriptionWithImage={false} />
                         </div>
@@ -1194,19 +1195,19 @@ export function ScienceLabFlashcardPage() {
                       </div>
                     )}
                     {currentFlashcard.back.misconceptionWarning && (
-                      <div className="p-4 rounded-2xl flex items-start gap-3 border border-amber-200/60" style={{ background: 'rgba(251, 191, 36, 0.08)' }} onClick={(e) => e.stopPropagation()}>
-                        <AlertCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                      <div className="science-flashcard-callout-misconception p-4 flex items-start gap-3" onClick={(e) => e.stopPropagation()}>
+                        <AlertCircle size={18} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--warning))' }} />
                         <div>
-                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(180 83 9)' }}>Common mistake</p>
+                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(var(--warning))' }}>Common mistake</p>
                           <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.misconceptionWarning}</p>
                         </div>
                       </div>
                     )}
                     {currentFlashcard.back.example && (
-                      <div className="p-4 rounded-2xl flex items-start gap-3 border border-sky-200/50" style={{ background: 'rgba(14, 165, 233, 0.06)' }} onClick={(e) => e.stopPropagation()}>
-                        <BookOpen size={18} className="text-sky-600 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                      <div className="science-flashcard-callout-example p-4 flex items-start gap-3" onClick={(e) => e.stopPropagation()}>
+                        <BookOpen size={18} className="flex-shrink-0 mt-0.5" strokeWidth={2} style={{ color: 'rgb(var(--accent))' }} />
                         <div>
-                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(2 132 199)' }}>Example</p>
+                          <p className="text-[12px] font-semibold mb-1 uppercase tracking-wide" style={{ color: 'rgb(var(--accent))' }}>Example</p>
                           <p className="text-[13px] leading-[1.55]" style={{ color: 'rgb(var(--text-secondary))' }}>{currentFlashcard.back.example}</p>
                         </div>
                       </div>

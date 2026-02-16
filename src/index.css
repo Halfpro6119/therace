@@ -911,22 +911,23 @@
     opacity: 0.35 !important;
   }
 
-  /* Flashcard diagram caption – textbook-style caption */
+  /* Flashcard diagram caption – matches site typography */
   .flashcard-diagram-caption {
     max-width: 36rem;
     margin-left: auto;
     margin-right: auto;
-    font-size: 12px;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
     line-height: 1.5;
     letter-spacing: 0.02em;
-    color: rgb(100 116 139);
+    color: rgb(var(--text-secondary));
   }
 
-  /* Science Lab flashcard – handcrafted diagram as “printed” illustration */
+  /* Science Lab flashcard diagrams – aligned with site design system */
   .science-flashcard-diagram {
     width: 100%;
     overflow: visible;
-    border-radius: 16px;
+    border-radius: 12px;
   }
 
   .science-flashcard-diagram-front {
@@ -937,6 +938,17 @@
     flex-direction: column;
   }
 
+  /* Optional label above diagram – small, muted, site token */
+  .science-flashcard-diagram-front .science-diagram-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(var(--text-secondary));
+    opacity: 0.85;
+    margin-bottom: 10px;
+  }
+
   .science-flashcard-diagram-front .diagram-renderer {
     margin-bottom: 0;
     width: 100%;
@@ -944,33 +956,35 @@
     min-width: 0;
   }
 
+  /* Outer frame: site tokens – one clear container */
   .science-flashcard-diagram-front .diagram-container {
     width: 100%;
     height: 100%;
     min-height: 260px;
-    padding: 20px;
+    padding: 0;
     background: transparent;
     border: none;
-    border-radius: 16px;
+    border-radius: 12px;
     box-shadow: none;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
-  /* Frame: textbook-style “figure” – warm paper, soft shadow, subtle inner glow */
+  /* Inner “figure” well: single neutral light surface so SVG stays readable; clean edge */
+  /* When parent sets --well-accent, show a subtle left border in card-type color */
   .science-flashcard-diagram-front .diagram-svg-wrapper {
     width: 100%;
     min-height: 240px;
     flex: 1 1 auto;
-    background: linear-gradient(165deg, rgb(253 252 251) 0%, rgb(250 249 247) 50%, rgb(248 247 245) 100%);
-    border-radius: 14px;
-    padding: 28px 24px;
-    border: 1px solid rgb(230 228 224);
-    box-shadow:
-      0 2px 8px rgb(0 0 0 / 0.04),
-      0 0 0 1px rgb(255 255 255 / 0.6) inset,
-      0 1px 2px rgb(0 0 0 / 0.03);
-    overflow: visible;
+    background: rgb(248 250 252);
+    border-radius: 10px;
+    padding: 24px 20px;
+    border: 1px solid rgb(var(--border));
+    border-left-width: 3px;
+    border-left-color: var(--well-accent, rgb(var(--border)));
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -982,46 +996,103 @@
     max-width: 100%;
     object-fit: contain;
     flex-shrink: 0;
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.05));
-  }
-
-  /* Dark mode: keep diagram “figure” as light paper for readability */
-  .dark .science-flashcard-diagram-front .diagram-svg-wrapper {
-    background: linear-gradient(165deg, rgb(252 251 250) 0%, rgb(248 247 245) 100%) !important;
-    border-color: rgb(214 211 209);
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(255 255 255 / 0.4) inset;
+    filter: none;
   }
 
   .science-flashcard-diagram-back {
-    min-height: 200px;
+    min-height: 160px;
     flex: 1;
     width: 100%;
   }
 
   .science-flashcard-diagram-back .diagram-renderer,
-  .science-flashcard-diagram-back .diagram-container,
+  .science-flashcard-diagram-back .diagram-container {
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+  }
+
   .science-flashcard-diagram-back .diagram-svg-wrapper {
     width: 100%;
-    min-height: 200px;
+    min-height: 140px;
     flex: 1;
+    background: rgb(248 250 252);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid rgb(var(--border));
+    border-left-width: 3px;
+    border-left-color: var(--well-accent, rgb(var(--border)));
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .science-flashcard-diagram-back .diagram-svg-wrapper svg {
     width: 100% !important;
     height: 100% !important;
-    min-height: 180px;
+    min-height: 120px;
     max-height: 100%;
     object-fit: contain;
+    filter: none;
   }
 
-  /* Flashcard face – typography and print-like clarity */
+  /* Description-only block: same frame so text and diagram feel like one system */
+  .science-flashcard-description-well {
+    width: 100%;
+    min-height: 200px;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    background: rgb(248 250 252);
+    border-radius: 10px;
+    border: 1px solid rgb(var(--border));
+    border-left-width: 3px;
+    border-left-color: var(--well-accent, rgb(var(--border)));
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Equation block: same well treatment for consistency */
+  .science-flashcard-equation-well {
+    width: 100%;
+    min-height: 80px;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px;
+    background: rgb(var(--surface-2));
+    border-radius: 10px;
+    border: 1px solid rgb(var(--border));
+    border-left-width: 3px;
+    border-left-color: var(--well-accent, rgb(var(--border)));
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Flashcard face – typography and design tokens */
   .flashcard-face {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    box-shadow: var(--shadow-md);
   }
 
   /* Flashcard visual – diagram/equation container */
   .flashcard-visual {
     padding: 0;
+  }
+
+  /* Back-of-card callouts – semantic tokens for consistency */
+  .science-flashcard-callout-misconception {
+    background: rgb(var(--warning) / 0.12);
+    border: 1px solid rgb(var(--warning) / 0.4);
+    border-radius: 12px;
+  }
+
+  .science-flashcard-callout-example {
+    background: rgb(var(--accent) / 0.08);
+    border: 1px solid rgb(var(--accent) / 0.35);
+    border-radius: 12px;
   }
 }
