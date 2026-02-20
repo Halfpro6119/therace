@@ -1,13 +1,15 @@
 /**
  * Lists all content drafts (prompts and diagrams) for admin view.
- * Shows a preview of each change; supports Push live (publish) and Revert to live (delete draft).
+ * Shows drafts (publish or discard) and published change history (revert to previous version).
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, Image, Upload, RotateCcw, Loader2 } from 'lucide-react';
+import { FileText, Image, Upload, RotateCcw, Loader2, History } from 'lucide-react';
 import { useAdminView } from '../../contexts/AdminViewContext';
 import { useConfirm } from '../../contexts/ConfirmContext';
+
+type PublishHistoryEntry = { id: string; entityType: 'prompt' | 'diagram'; entityId: string; publishedAt: string; previewText: string | null };
 
 function formatDraftDate(iso: string): string {
   const d = new Date(iso);
@@ -23,11 +25,23 @@ export function AdminViewDraftsPage() {
   const ctx = useAdminView();
   const { confirm } = useConfirm();
   const [pushing, setPushing] = useState<string | null>(null);
-  const [reverting, setReverting] = useState<string | null>(null);
+  const [revertingDraft, setRevertingDraft] = useState<string | null>(null);
+  const [publishHistory, setPublishHistory] = useState<PublishHistoryEntry[]>([]);
+  const [revertingPublishId, setRevertingPublishId] = useState<string | null>(null);
+
+  const loadHistory = useCallback(async () => {
+    if (!ctx) return;
+    const list = await ctx.getPublishHistory(100);
+    setPublishHistory(list);
+  }, [ctx]);
 
   useEffect(() => {
     ctx?.refreshDraftEntries();
   }, [ctx]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
 
   if (!ctx) {
     return (
@@ -51,26 +65,45 @@ export function AdminViewDraftsPage() {
     try {
       await ctx.pushDraftLive(entityType, entityId);
       await ctx.refreshDraftEntries();
+      await loadHistory();
     } finally {
       setPushing(null);
     }
   };
 
-  const handleRevert = async (entityType: 'prompt' | 'diagram', entityId: string) => {
+  const handleDiscardDraft = async (entityType: 'prompt' | 'diagram', entityId: string) => {
     const ok = await confirm({
-      title: 'Revert to published version?',
+      title: 'Discard this draft?',
       message: 'This will delete the draft. The published version will stay as-is.',
+      confirmLabel: 'Discard draft',
+      cancelLabel: 'Cancel',
+      destructive: true,
+    });
+    if (!ok) return;
+    setRevertingDraft(`${entityType}:${entityId}`);
+    try {
+      await ctx.cancelDraft(entityType, entityId);
+      await ctx.refreshDraftEntries();
+    } finally {
+      setRevertingDraft(null);
+    }
+  };
+
+  const handleRevertPublish = async (historyId: string) => {
+    const ok = await confirm({
+      title: 'Revert this published change?',
+      message: 'The live content will be restored to the version before you published. This cannot be undone.',
       confirmLabel: 'Revert',
       cancelLabel: 'Cancel',
       destructive: true,
     });
     if (!ok) return;
-    setReverting(`${entityType}:${entityId}`);
+    setRevertingPublishId(historyId);
     try {
-      await ctx.cancelDraft(entityType, entityId);
-      await ctx.refreshDraftEntries();
+      await ctx.revertPublish(historyId);
+      await loadHistory();
     } finally {
-      setReverting(null);
+      setRevertingPublishId(null);
     }
   };
 
@@ -97,8 +130,8 @@ export function AdminViewDraftsPage() {
           {entries.map((e) => {
             const key = `${e.entityType}:${e.entityId}`;
             const isPushing = pushing === key;
-            const isReverting = reverting === key;
-            const busy = isPushing || isReverting;
+            const isRevertingDraft = revertingDraft === key;
+            const busy = isPushing || isRevertingDraft;
             const Icon = e.entityType === 'prompt' ? FileText : Image;
             return (
               <li
@@ -132,13 +165,13 @@ export function AdminViewDraftsPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleRevert(e.entityType, e.entityId)}
+                    onClick={() => handleDiscardDraft(e.entityType, e.entityId)}
                     disabled={busy}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 hover:text-red-700 text-sm font-medium disabled:opacity-50"
                     title="Delete draft and keep published version"
                   >
-                    {isReverting ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} />}
-                    Revert to published
+                    {isRevertingDraft ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} />}
+                    Discard draft
                   </button>
                 </div>
               </li>
@@ -146,6 +179,60 @@ export function AdminViewDraftsPage() {
           })}
         </ul>
       )}
+
+      {/* Published change history – revert to previous version */}
+      <section className="mt-12">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+          <History size={20} className="text-amber-500" />
+          Published changes
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+          Changes you have already published. Revert to restore the previous version of the content.
+        </p>
+        {publishHistory.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">No published changes yet. When you publish a draft, it will appear here so you can revert if needed.</p>
+        ) : (
+          <ul className="space-y-3">
+            {publishHistory.map((h) => {
+              const Icon = h.entityType === 'prompt' ? FileText : Image;
+              const busy = revertingPublishId === h.id;
+              return (
+                <li
+                  key={h.id}
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                >
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <Icon size={20} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium text-gray-900 dark:text-white capitalize text-sm">{h.entityType}</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-xs">{formatDraftDate(h.publishedAt)}</span>
+                      </div>
+                      {h.previewText ? (
+                        <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">{h.previewText}</p>
+                      ) : (
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 truncate">{h.entityId}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleRevertPublish(h.id)}
+                      disabled={busy}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 hover:text-red-700 text-sm font-medium disabled:opacity-50"
+                      title="Restore content to the version before this publish"
+                    >
+                      {busy ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} />}
+                      Revert
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

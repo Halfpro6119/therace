@@ -42,6 +42,10 @@ interface AdminViewContextValue {
   /** List all drafts for toolbar/badge. */
   draftEntries: ContentDraftEntry[];
   refreshDraftEntries: () => Promise<void>;
+  /** List recent publish events (for "revert" UI). */
+  getPublishHistory: (limit?: number) => Promise<{ id: string; entityType: ContentDraftEntityType; entityId: string; publishedAt: string; previewText: string | null }[]>;
+  /** Restore live content to the state before a publish; removes the history entry. */
+  revertPublish: (historyId: string) => Promise<void>;
 }
 
 const AdminViewContext = createContext<AdminViewContextValue | null>(null);
@@ -205,6 +209,19 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
     [showToast, refreshDraftEntries]
   );
 
+  const getPublishHistory = useCallback(async (limit = 100) => {
+    const rows = await db.getPublishHistory(limit);
+    return rows.map((r) => ({ id: r.id, entityType: r.entityType, entityId: r.entityId, publishedAt: r.publishedAt, previewText: r.previewText }));
+  }, []);
+
+  const revertPublish = useCallback(
+    async (historyId: string) => {
+      await db.revertPublish(historyId);
+      showToast('success', 'Reverted to previous version');
+    },
+    [showToast]
+  );
+
   useEffect(() => {
     refreshDraftEntries();
   }, [refreshDraftEntries]);
@@ -221,6 +238,8 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
       pushDraftLive,
       draftEntries,
       refreshDraftEntries,
+      getPublishHistory,
+      revertPublish,
     }),
     [
       getEffectivePrompt,
@@ -231,6 +250,8 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
       pushDraftLive,
       draftEntries,
       refreshDraftEntries,
+      getPublishHistory,
+      revertPublish,
     ]
   );
 

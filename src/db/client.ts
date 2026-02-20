@@ -1758,11 +1758,107 @@ export const db = {
     if (error) throw error;
   },
 
+  // ---------------------------------------------------------------------------
+  // Publish history (admin-view: see past publishes and revert)
+  // ---------------------------------------------------------------------------
+  insertPublishHistory: async (
+    entityType: 'prompt' | 'diagram',
+    entityId: string,
+    previousStateJson: Record<string, unknown>,
+    previewText?: string
+  ): Promise<void> => {
+    const { error } = await supabase.from('content_publish_history').insert({
+      entity_type: entityType,
+      entity_id: entityId,
+      previous_state_json: previousStateJson,
+      preview_text: previewText ?? null,
+    });
+    if (error) throw error;
+  },
+
+  getPublishHistory: async (limit = 100): Promise<{ id: string; entityType: 'prompt' | 'diagram'; entityId: string; previousStateJson: Record<string, unknown>; publishedAt: string; previewText: string | null }[]> => {
+    const { data, error } = await supabase
+      .from('content_publish_history')
+      .select('id, entity_type, entity_id, previous_state_json, published_at, preview_text')
+      .order('published_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return (data || []).map((row) => ({
+      id: row.id,
+      entityType: row.entity_type as 'prompt' | 'diagram',
+      entityId: row.entity_id,
+      previousStateJson: row.previous_state_json as Record<string, unknown>,
+      publishedAt: row.published_at,
+      previewText: row.preview_text,
+    }));
+  },
+
+  revertPublish: async (historyId: string): Promise<void> => {
+    const { data: row, error: fetchError } = await supabase
+      .from('content_publish_history')
+      .select('entity_type, entity_id, previous_state_json')
+      .eq('id', historyId)
+      .single();
+
+    if (fetchError || !row) throw new Error('Publish history entry not found');
+    const entityType = row.entity_type as 'prompt' | 'diagram';
+    const entityId = row.entity_id as string;
+    const prev = row.previous_state_json as Record<string, unknown>;
+
+    if (entityType === 'prompt') {
+      const p = prev as Partial<Prompt> & Record<string, unknown>;
+      await db.updatePrompt(entityId, {
+        question: p.question,
+        answers: Array.isArray(p.answers) ? p.answers : [],
+        marks: p.marks,
+        timeAllowanceSec: p.timeAllowanceSec,
+        hint: p.hint,
+        explanation: p.explanation,
+        type: p.type,
+        meta: p.meta,
+        paperId: p.paperId,
+        topicId: p.topicId,
+        calculatorAllowed: p.calculatorAllowed,
+        diagram_metadata: (p as any).diagram_metadata,
+        tier: (p as any).tier,
+      });
+    } else {
+      const d = prev as Record<string, unknown>;
+      const diagramData = {
+        title: d.title ?? '',
+        subject_id: d.subjectId ?? null,
+        diagram_type: d.diagramType ?? 'general',
+        tags: d.tags ?? [],
+        storage_mode: d.storageMode ?? 'vector',
+        canvas_data: d.canvasData ?? { elements: [] },
+        svg_data: d.svgData ?? null,
+        png_url: d.pngUrl ?? null,
+        width: d.width ?? 800,
+        height: d.height ?? 600,
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await supabase.from('diagrams').update(diagramData).eq('id', entityId);
+      if (error) throw error;
+    }
+
+    const { error: deleteError } = await supabase.from('content_publish_history').delete().eq('id', historyId);
+    if (deleteError) throw deleteError;
+  },
+
   pushDraftLive: async (entityType: 'prompt' | 'diagram', entityId: string): Promise<void> => {
     const draft = await db.getDraft(entityType, entityId);
     if (!draft) throw new Error(`No draft found for ${entityType} ${entityId}`);
 
+    let previousState: Record<string, unknown>;
+    let previewText: string;
+
     if (entityType === 'prompt') {
+      const live = await db.getPrompt(entityId);
+      previousState = live ? (live as unknown as Record<string, unknown>) : {};
+      previewText = typeof (draft as any).question === 'string' ? (draft as any).question.slice(0, 100).trim() + ((draft as any).question.length > 100 ? '…' : '') : entityId;
+      await db.insertPublishHistory(entityType, entityId, previousState, previewText);
+
       const p = draft as Partial<Prompt> & Record<string, unknown>;
       await db.updatePrompt(entityId, {
         question: p.question,
@@ -1780,6 +1876,24 @@ export const db = {
         tier: (p as any).tier,
       });
     } else {
+      const { data: diagramRow } = await supabase.from('diagrams').select('*').eq('id', entityId).maybeSingle();
+      previousState = diagramRow
+        ? {
+            title: diagramRow.title,
+            subjectId: diagramRow.subject_id,
+            diagramType: diagramRow.diagram_type,
+            tags: diagramRow.tags ?? [],
+            storageMode: diagramRow.storage_mode,
+            canvasData: diagramRow.canvas_data ?? { elements: [] },
+            svgData: diagramRow.svg_data,
+            pngUrl: diagramRow.png_url,
+            width: diagramRow.width,
+            height: diagramRow.height,
+          }
+        : {};
+      previewText = typeof (draft as any).title === 'string' ? (draft as any).title : entityId;
+      await db.insertPublishHistory(entityType, entityId, previousState, previewText);
+
       const d = draft as Partial<Diagram> & Record<string, unknown>;
       const diagramData = {
         title: d.title ?? '',
