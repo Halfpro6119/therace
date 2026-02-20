@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { SubjectsPage } from './pages/SubjectsPage';
@@ -146,6 +146,11 @@ import { LanguagesHubTranslationPage } from './pages/languages/LanguagesHubTrans
 import { LanguagesHubPlaceholderPage } from './pages/languages/LanguagesHubPlaceholderPage';
 import { LearningSuperpowersPage } from './pages/LearningSuperpowersPage';
 import { AdminLayout } from './admin/AdminLayout';
+import { AdminViewLayout } from './layouts/AdminViewLayout';
+import { AdminViewModeProvider, useAdminViewMode } from './contexts/AdminViewModeContext';
+import { AdminViewProvider } from './contexts/AdminViewContext';
+import { AdminViewToolbar } from './components/AdminViewToolbar';
+import { MainAppRoutes } from './routes/MainAppRoutes';
 
 // Admin routes: lazy-loaded so students who never hit /admin don't download admin bundle
 const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
@@ -196,6 +201,28 @@ function AdminRouteFallback() {
   );
 }
 
+function MainAppCatchAll() {
+  return (
+    <AppShell>
+      <MainAppRoutes />
+    </AppShell>
+  );
+}
+
+/** When admin view mode is on, wrap all routes in AdminViewProvider and show toolbar so context persists across navigation. */
+function MaybeAdminViewWrapper({ children }: { children: ReactNode }) {
+  const mode = useAdminViewMode();
+  if (mode?.isAdminViewMode) {
+    return (
+      <AdminViewProvider>
+        <AdminViewToolbar />
+        {children}
+      </AdminViewProvider>
+    );
+  }
+  return <>{children}</>;
+}
+
 function App() {
   useEffect(() => {
     initializeQuestionRegistry();
@@ -215,6 +242,8 @@ function App() {
         <BrowserRouter>
           <ScrollToTop />
           <CommandPalette />
+          <AdminViewModeProvider>
+            <MaybeAdminViewWrapper>
       <Routes>
         <Route path="/quiz/:quizId" element={<QuizPlayerPage />} />
 
@@ -254,163 +283,12 @@ function App() {
         <Route path="/admin/diagram-templates/:templateId" element={<Suspense fallback={<AdminRouteFallback />}><DiagramTemplateEditor /></Suspense>} />
         <Route path="/admin/diagram-templates/view/:id" element={<Suspense fallback={<AdminRouteFallback />}><DiagramTemplateDetailPage /></Suspense>} />
 
-        <Route
-          path="*"
-          element={
-            <AppShell>
-              <Routes>
-                <Route path="/" element={<SubjectsPage />} />
-                <Route path="/learning-superpowers" element={<LearningSuperpowersPage />} />
-                <Route path="/discover" element={<DiscoverPage />} />
-                <Route path="/playlists/:playlistId" element={<PlaylistDetailPage />} />
-                <Route path="/library" element={<LibraryPage />} />
-                <Route path="/subjects" element={<SubjectsPage />} />
-                <Route path="/subjects/:subjectId" element={<SubjectDetailPageWithTier />} />
-                <Route path="/english-campus" element={<EnglishCampusHomePage />} />
-                <Route path="/english-campus/language" element={<EnglishLanguageDashboard />} />
-                <Route path="/english-campus/language/task/:taskId" element={<EnglishWritingWorkspacePage />} />
-                <Route path="/english-campus/language/result" element={<EnglishLanguageResultPage />} />
-                <Route path="/english-campus/language/drafts" element={<EnglishDraftsPage />} />
-                <Route path="/english-campus/language/draft/:draftId/marking" element={<EnglishDraftMarkingPage />} />
-                <Route path="/english-campus/language/compare" element={<EnglishCompareDraftsPage />} />
-                <Route path="/english-campus/literature" element={<EnglishLiteraturePage />} />
-                <Route path="/english-campus/literature/task/:taskId" element={<EnglishLiteratureWorkspacePage />} />
-                <Route path="/english-campus/literature/task/:taskId/model-drills" element={<EnglishLiteratureModelDrillsPage />} />
-                <Route path="/english-campus/literature/result" element={<EnglishLiteratureResultPage />} />
-                <Route path="/english-campus/literature/drafts" element={<EnglishLiteratureDraftsPage />} />
-                <Route path="/english-campus/literature/poetry" element={<EnglishLiteratureSeenPoetryPage />} />
-                <Route path="/english-campus/literature/unseen" element={<EnglishLiteratureUnseenPage />} />
-                <Route path="/english-campus/literature/texts" element={<EnglishLiteratureTextsPage />} />
-                <Route path="/english-campus/literature/quotation-lab" element={<EnglishQuotationLabPage />} />
-                <Route path="/english-campus/literature/quotation-lab/theme/:themeId" element={<EnglishQuotationLabThemePage />} />
-                <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId" element={<EnglishQuotationLabQuoteLabPage />} />
-                <Route path="/english-campus/literature/quotation-lab/quote-lab/:sourceId/quote/:quoteId" element={<EnglishQuotationLabQuoteDetailPage />} />
-                <Route path="/english-campus/literature/quotation-lab/drills/:sourceId" element={<EnglishQuotationLabDrillsPage />} />
-                <Route path="/english-campus/literature/quotation-lab/micro/:sourceId" element={<EnglishQuotationLabMicroPage />} />
-                <Route path="/english-campus/literature/quotation-lab/progress/:sourceId" element={<EnglishQuotationLabProgressPage />} />
-                <Route path="/english-campus/literature/:section" element={<EnglishLiteraturePlaceholder />} />
-                <Route path="/english-campus/vocab" element={<EnglishVocabLabHomePage />} />
-                <Route path="/english-campus/vocab/sets" element={<EnglishVocabSetsPage />} />
-                <Route path="/english-campus/vocab/set/:setId" element={<EnglishVocabSetDetailPage />} />
-                <Route path="/english-campus/vocab/session" element={<EnglishVocabSessionPage />} />
-                <Route path="/english-campus/vocab/results/:sessionId" element={<EnglishVocabResultsPage />} />
-                <Route path="/english-campus/vocab/heatmap" element={<EnglishVocabHeatmapPage />} />
-                <Route path="/english-campus/vocab/word/:wordId" element={<EnglishVocabWordDetailPage />} />
-                <Route path="/maths-mastery" element={<MathsMasteryHomePage />} />
-                <Route path="/maths-mastery/maths" element={<MathsHubPage />} />
-                <Route path="/maths-mastery/further-maths" element={<FurtherMathsHubPage />} />
-                <Route path="/maths-mastery/statistics" element={<StatisticsHubPage />} />
-                <Route path="/science-lab" element={<ScienceLabSubjectPage />} />
-                <Route path="/science-lab/subjects" element={<Navigate to="/science-lab" replace />} />
-                <Route path="/science-lab/combined-science" element={<ScienceLabCombinedSciencePage />} />
-                <Route path="/science-lab/:subject" element={<ScienceLabSubjectToTopicsRedirect />} />
-                <Route path="/science-lab/:subject/:paper/:tier" element={<ScienceLabModePage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/topics" element={<ScienceLabTopicsPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/topic-test" element={<ScienceLabTopicTestPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/flashcard" element={<ScienceLabFlashcardPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/quick-check" element={<ScienceLabQuickCheckPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/concept" element={<ConceptToTopicTestRedirect />} />
-                <Route path="/science-lab/:subject/:paper/:tier/question" element={<QuestionToTopicTestRedirect />} />
-                <Route path="/science-lab/:subject/:paper/:tier/full-gcse" element={<ScienceLabFullGcsePage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/full-gcse/test/:testPaper" element={<ScienceLabPaperTestPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/methodMark" element={<ScienceLabMethodMarkPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/practical" element={<ScienceLabPracticalLabPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/equation" element={<ScienceLabEquationLabPage />} />
-                <Route path="/science-lab/:subject/:paper/:tier/misconception" element={<ScienceLabMisconceptionLabPage />} />
-                <Route path="/business-hub" element={<BusinessHubHomePage />} />
-                <Route path="/business-hub/unit/:unitId" element={<BusinessHubUnitPage />} />
-                <Route path="/business-hub/unit/:unitId/topics" element={<BusinessHubTopicsPage />} />
-                <Route path="/business-hub/unit/:unitId/concept" element={<BusinessHubConceptLabPage />} />
-                <Route path="/business-hub/unit/:unitId/flashcard" element={<BusinessHubFlashcardPage />} />
-                <Route path="/business-hub/unit/:unitId/quick-check" element={<BusinessHubQuickCheckPage />} />
-                <Route path="/business-hub/unit/:unitId/case-study" element={<BusinessHubCaseStudyPage />} />
-                <Route path="/business-hub/unit/:unitId/calculations" element={<BusinessHubCalculationLabPage />} />
-                <Route path="/business-hub/unit/:unitId/evaluation" element={<BusinessHubEvaluationPage />} />
-                <Route path="/history-hub" element={<HistoryHubHomePage />} />
-                <Route path="/history-hub/option-select" element={<HistoryHubOptionSelectPage />} />
-                <Route path="/history-hub/timeline" element={<HistoryHubTimelinePage />} />
-                <Route path="/history-hub/key-terms" element={<HistoryHubFlashcardPage />} />
-                <Route path="/history-hub/concept-cards" element={<HistoryHubConceptCardsPage />} />
-                <Route path="/history-hub/quick-check" element={<HistoryHubQuickCheckPage />} />
-                <Route path="/history-hub/source-lab" element={<HistoryHubSourceLabPage />} />
-                <Route path="/history-hub/interpretation-lab" element={<HistoryHubInterpretationLabPage />} />
-                <Route path="/history-hub/question-lab" element={<HistoryHubQuestionLabPage />} />
-                <Route path="/history-hub/revision-map" element={<HistoryHubRevisionMapPage />} />
-                <Route path="/history-hub/historic-environment" element={<HistoryHubHistoricEnvironmentPage />} />
-                <Route path="/geography-hub" element={<GeographyHubHomePage />} />
-                <Route path="/geography-hub/option-select" element={<GeographyHubOptionSelectPage />} />
-                <Route path="/geography-hub/concept-lab" element={<GeographyHubConceptLabPage />} />
-                <Route path="/geography-hub/flashcard" element={<GeographyHubFlashcardPage />} />
-                <Route path="/geography-hub/quick-check" element={<GeographyHubQuickCheckPage />} />
-                <Route path="/geography-hub/skills-lab" element={<GeographyHubSkillsLabPage />} />
-                <Route path="/geography-hub/issue-lab" element={<GeographyHubIssueLabPage />} />
-                <Route path="/geography-hub/fieldwork-lab" element={<GeographyHubFieldworkLabPage />} />
-                <Route path="/geography-hub/question-lab" element={<GeographyHubQuestionLabPage />} />
-                <Route path="/geography-hub/revision-map" element={<GeographyHubRevisionMapPage />} />
-                <Route path="/religious-studies-hub" element={<ReligiousStudiesHubHomePage />} />
-                <Route path="/religious-studies-hub/option-select" element={<ReligiousStudiesHubOptionSelectPage />} />
-                <Route path="/religious-studies-hub/belief-lab" element={<ReligiousStudiesHubBeliefLabPage />} />
-                <Route path="/religious-studies-hub/flashcards" element={<ReligiousStudiesHubFlashcardPage />} />
-                <Route path="/religious-studies-hub/contrasting-views" element={<ReligiousStudiesHubContrastingViewsPage />} />
-                <Route path="/religious-studies-hub/quick-check" element={<ReligiousStudiesHubQuickCheckPage />} />
-                <Route path="/religious-studies-hub/short-answer-lab" element={<ReligiousStudiesHubShortAnswerPage />} />
-                <Route path="/religious-studies-hub/extended-writing-lab" element={<ReligiousStudiesHubExtendedWritingPage />} />
-                <Route path="/religious-studies-hub/philosophical-arguments" element={<ReligiousStudiesHubPhilosophicalArgumentsPage />} />
-                <Route path="/religious-studies-hub/textual-studies" element={<ReligiousStudiesHubTextualStudiesPage />} />
-                <Route path="/religious-studies-hub/revision-map" element={<ReligiousStudiesHubRevisionMapPage />} />
-                <Route path="/psychology-hub" element={<PsychologyHubHomePage />} />
-                <Route path="/psychology-hub/option-select" element={<PsychologyHubOptionSelectPage />} />
-                <Route path="/psychology-hub/concept-lab" element={<PsychologyHubConceptLabPage />} />
-                <Route path="/psychology-hub/key-studies" element={<PsychologyHubKeyStudiesPage />} />
-                <Route path="/psychology-hub/quick-check" element={<PsychologyHubQuickCheckPage />} />
-                <Route path="/psychology-hub/study-evaluator" element={<PsychologyHubStudyEvaluatorPage />} />
-                <Route path="/psychology-hub/issues-debates" element={<PsychologyHubIssuesDebatesPage />} />
-                <Route path="/psychology-hub/research-methods" element={<PsychologyHubResearchMethodsPage />} />
-                <Route path="/psychology-hub/question-lab" element={<PsychologyHubQuestionLabPage />} />
-                <Route path="/psychology-hub/revision-map" element={<PsychologyHubRevisionMapPage />} />
-                <Route path="/health-hub" element={<HealthHubHomePage />} />
-                <Route path="/health-hub/award-select" element={<HealthHubAwardSelectPage />} />
-                <Route path="/health-hub/life-stages" element={<HealthHubLifeStagesPage />} />
-                <Route path="/health-hub/care-values" element={<HealthHubCareValuesPage />} />
-                <Route path="/health-hub/revision-map" element={<HealthHubRevisionMapPage />} />
-                <Route path="/health-hub/unit/:unitId" element={<HealthHubUnitPage />} />
-                <Route path="/health-hub/unit/:unitId/concept" element={<HealthHubConceptLabPage />} />
-                <Route path="/health-hub/unit/:unitId/flashcard" element={<HealthHubFlashcardPage />} />
-                <Route path="/health-hub/unit/:unitId/quick-check" element={<HealthHubQuickCheckPage />} />
-                <Route path="/compute-lab" element={<ComputeLabHomePage />} />
-                <Route path="/compute-lab/unit/:unitId" element={<ComputeLabUnitPage />} />
-                <Route path="/compute-lab/unit/:unitId/topics" element={<ComputeLabTopicsPage />} />
-                <Route path="/compute-lab/unit/:unitId/concept" element={<ComputeLabConceptLabPage />} />
-                <Route path="/compute-lab/unit/:unitId/flashcard" element={<ComputeLabFlashcardPage />} />
-                <Route path="/compute-lab/unit/:unitId/quick-check" element={<ComputeLabQuickCheckPage />} />
-                <Route path="/compute-lab/unit/:unitId/algorithm-lab" element={<ComputeLabAlgorithmLabPage />} />
-                <Route path="/compute-lab/unit/:unitId/calculation-lab" element={<ComputeLabCalculationLabPage />} />
-                <Route path="/compute-lab/unit/:unitId/logic-lab" element={<ComputeLabLogicLabPage />} />
-                <Route path="/compute-lab/unit/:unitId/sql-lab" element={<ComputeLabSqlLabPage />} />
-                <Route path="/compute-lab/unit/:unitId/question-lab" element={<ComputeLabQuestionLabPage />} />
-                <Route path="/languages-hub" element={<LanguagesHubHomePage />} />
-                <Route path="/languages-hub/:languageId" element={<LanguagesHubLanguagePage />} />
-                <Route path="/languages-hub/:languageId/vocabulary" element={<LanguagesHubVocabularyPage />} />
-                <Route path="/languages-hub/:languageId/grammar" element={<LanguagesHubGrammarPage />} />
-                <Route path="/languages-hub/:languageId/listening" element={<LanguagesHubListeningPage />} />
-                <Route path="/languages-hub/:languageId/reading" element={<LanguagesHubReadingPage />} />
-                <Route path="/languages-hub/:languageId/writing" element={<LanguagesHubWritingPage />} />
-                <Route path="/languages-hub/:languageId/speaking" element={<LanguagesHubSpeakingPage />} />
-                <Route path="/languages-hub/:languageId/translation" element={<LanguagesHubTranslationPage />} />
-                <Route path="/languages-hub/:languageId/:modeId" element={<LanguagesHubPlaceholderPage />} />
-                <Route path="/health-hub/unit/:unitId/case-study" element={<HealthHubCaseStudyPage />} />
-                <Route path="/health-hub/unit/:unitId/investigation" element={<HealthHubInvestigationPage />} />
-                <Route path="/health-hub/unit/:unitId/question-lab" element={<HealthHubQuestionLabPage />} />
-                <Route path="/results/:attemptId" element={<ResultsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/profile/subjects" element={<SubjectBreakdownHub />} />
-                <Route path="/profile/subjects/:subjectId" element={<SubjectBreakdownDetail />} />
-                <Route path="/leaderboard" element={<LeaderboardPage />} />
-              </Routes>
-            </AppShell>
-          }
-        />
+        <Route path="/admin-view" element={<AdminViewLayout />} />
+
+        <Route path="/*" element={<MainAppCatchAll />} />
       </Routes>
+            </MaybeAdminViewWrapper>
+          </AdminViewModeProvider>
         </BrowserRouter>
         </StudyPathProvider>
       </ConfirmProvider>

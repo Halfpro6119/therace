@@ -1,0 +1,75 @@
+# Documentation Index
+
+All project documentation is organised here. For **what is implemented vs outstanding**, see **[IMPLEMENTATION_VALIDATION.md](IMPLEMENTATION_VALIDATION.md)**.
+
+---
+
+## Folder structure
+
+| Folder | Contents |
+|--------|----------|
+| **[audits/](audits/)** | Audits, reviews, coverage checks, and improvement checklists |
+| **[plans/](plans/)** | Implementation plans, merge plans, feature summaries, and deliverables |
+| **[specs/](specs/)** | Design specs and standards (Science Lab diagrams, Maths diagrams) |
+| **[english/](english/)** | English Campus / Literature specs, guideposts, and LLM prompts |
+| **[guides/](guides/)** | How-to guides (deployment, import, integration, config) |
+| **[reference/](reference/)** | Reference lists (e.g. Maths gold questions, diagram issues) |
+
+---
+
+## Audits (`audits/`)
+
+- **Science Lab:** `SCIENCE_LAB_AUDIT.md`, `SCIENCE_LAB_AQA_STANDARDS_AUDIT.md`, `SCIENCE_LAB_FULL_RUNDOWN_VS_AQA.md`, `SCIENCE_LAB_FLASHCARD_AUDIT.md`, `SCIENCE_LAB_FLASHCARD_FULL_REVIEW.md`, `SCIENCE_LAB_FLASHCARD_CARD_DESIGN_AUDIT.md`, `SCIENCE_LAB_FLASHCARD_AUDIT_IMPROVEMENTS.md`, `SCIENCE_LAB_FLASHCARD_DIAGRAM_AUDIT` (in FLASHCARD_DIAGRAM_AUDIT), `SCIENCE_LAB_FLOW_AUDIT.md`, `SCIENCE_LAB_DIAGRAM_AUDIT.md`, `SCIENCE_LAB_DIAGRAM_DESIGN_AUDIT.md`, `SCIENCE_LAB_CONCEPT_LAB_AUDIT.md`, `SCIENCE_LAB_CONTENT_COVERAGE_AUDIT.md`, `SCIENCE_LAB_PHOTOSYNTHESIS_TEMPERATURE_GRAPH_AUDIT.md`
+- **Flashcards:** `FLASHCARD_FULL_AUDIT.md`, `FLASHCARD_FULL_AUDIT_2025_02.md`, `FLASHCARD_AUDIT_2025_02.md`, `FLASHCARD_DESIGN_AUDIT.md`, `FLASHCARD_DIAGRAM_AUDIT.md`, `FLASHCARD_MODE_AUDIT_AND_IMPROVEMENTS.md`.
+- **Site / content:** `FULL_SITE_AUDIT_PAST_PAPER_SIMPLE_FUN.md`, `FULL_SITE_SIMPLIFICATION_AUDIT.md`, `FULL_CONTENT_AUDIT_2025.md`, `CORE_LOOPS_AUDIT.md`, `TOPIC_TEST_MODE_AUDIT.md`, `METHOD_MARK_TRAINER_AUDIT.md`, `DIAGRAM_DESIGN_AUDIT.md`
+- **Hubs & subjects:** `BUSINESS_HUB_FUNCTIONALITY_AUDIT.md`, `BUSINESS_HUB_DESIGN_AUDIT.md`, `BUSINESS_HUB_AQA_CONTENT_COVERAGE_AUDIT.md`, `HISTORY_HUB_CONTENT_COVERAGE_AUDIT.md`, `ENGLISH_CAMPUS_AUDIT.md`, `ENGLISH_CAMPUS_CONTENT_COVERAGE_AUDIT.md`, `MATHS_MASTERY_AUDIT.md`, `MATHS_MASTERY_CONTENT_COVERAGE_AUDIT.md`, `VOCAB_LAB_AUDIT.md`, `MOBILE_DESIGN_AUDIT.md`
+- **Checklists:** `IMPROVEMENT_SUGGESTIONS.md`, `UNIMPLEMENTED_CHANGES.md`, `VISUAL_IMPROVEMENTS_CHECKLIST.md`
+
+---
+
+## Plans (`plans/`)
+
+- **Science Lab / Flashcards:** `FLASHCARD_DIAGRAMS_PLAN.md`, `MOVING_VISUAL_DIAGRAMS_PLAN.md`, `CONCEPT_LAB_MERGE_PLAN.md`, `LEARN_MODE_MERGE_PLAN.md`
+- **Grade 9 / content:** `FULLY_AUTONOMOUS_GRADE_9_DESIGN_AND_FUNCTIONAL_PLAN.md`, `FULLY_AUTONOMOUS_GRADE_9_CONTENT_PLAN.md`, `FULL_GCSE_TEST_MASTERY_PLAN.md`, `VOCAB_LAB_DELIVERABLES.md`
+- **Subject implementation:** `MFL_FRENCH_SPANISH_IMPLEMENTATION_PLAN.md`, `HEALTH_SOCIAL_CARE_IMPLEMENTATION_PLAN.md`, `GEOGRAPHY_AQA_IMPLEMENTATION_PLAN.md`, `RELIGIOUS_STUDIES_AQA_IMPLEMENTATION_PLAN.md`, `COMPUTER_SCIENCE_AQA_IMPLEMENTATION_PLAN.md`, `PSYCHOLOGY_AQA_IMPLEMENTATION_PLAN.md`, `BUSINESS_STUDIES_IMPLEMENTATION_PLAN.md`, `HISTORY_AQA_IMPLEMENTATION_PLAN.md`, `STUDENT_PROGRESS_AND_ENGAGEMENT_PLAN.md`
+- **Features / summaries:** `PAPERS_FEATURE.md`, `PAPER_ASSIGNMENT_*.md`, `COVERAGE_*.md`, `DELIVERABLES_SUMMARY.md`, `IMPLEMENTATION_SUMMARY.md`, `TASK_COMPLETION_SUMMARY.md`, `COMPLETE_FEATURE_SUMMARY.md`, `ERRORS_AND_FIXES.md`, `QUIZ_SUBMISSION_FIX_PLAN.md`
+
+---
+
+## Specs (`specs/`)
+
+- **Science Lab:** `SCIENCE_LAB_FLASHCARD_DIAGRAM_DESIGN.md` — diagram well, tokens, CLEAN diagrams
+- **Maths:** `MATHS_DIAGRAM_SPECIFICATIONS.md`, `HIGHER_PAPER2_DIAGRAM_SPEC.md`
+
+---
+
+## English (`english/`)
+
+- **Literature / Quotation Lab:** `ENGLISH_LITERATURE_GUIDEPOST.md`, `LITERATURE_GUIDEPOST_*.md`, `QUOTATION_LAB_SPEC.md`, `QUOTATION_LAB_CLEANUP.md`, `LITERATURE_MODEL_DRILL_INTEGRATION_SPEC.md`
+- **Tasks & prompts:** `ENGLISH_TASKS_LACKING_FULL_PACK.md`, `ENGLISH_EXAMINER_PACK_TASKS_1_2.md`, `LLM_PROMPT_LANGUAGE_SECTION_A_PACKS.md`, `ENGLISH_AI_FEEDBACK_PROMPT_GUIDELINES.md`
+
+*(See also root `ENGLISH_CAMPUS_SPEC.md` if present, or in `english/`.)*
+
+---
+
+## Guides (`guides/`)
+
+- **Deployment / config:** `DEPLOYMENT_GUIDE.md`, `DEPLOYMENT_CHECKLIST.md`, `NETLIFY_ENVIRONMENT_SETUP.md`, `PORT_CONFIGURATION.md`, `SUPABASE_URL_FIX.md`
+- **Import / data:** `ADMIN_IMPORT_GUIDE.md`, `README_JSON_IMPORT.md`, `README_TIER_SYSTEM.md`, `MATHS_GOLD_QUESTIONS_IMPORT_GUIDE.md`, `REIMPORT_GOLD_QUESTIONS_GUIDE.md`
+- **Integration:** `INTEGRATION_GUIDE.md`, `INTEGRATION_PATCH.md`
+- **Reference:** `QUESTION_TYPES_GUIDE.md`
+
+---
+
+## Reference (`reference/`)
+
+- **Maths questions:** `MATHS_QUESTIONS_GOLD_LIST.md`, `GOLDEN_MATHS_QUESTION_LIST.md`, `FURTHER_MATHS_QUESTIONS_GOLD_LIST.md`
+- **Maths issues:** `GOLDEN_MATHS_DIAGRAM_LOGIC_ERRORS.md`, `GOLDEN_MATHS_LOGICAL_ISSUES.md`, `GOLDEN_MATHS_DIAGRAM_DISPLAY_ISSUES.md`, `GOLDEN_MATHS_QUESTIONS_MISSING_CONTEXT.md`, `HIGHER_MATHS_NON_FUNCTIONAL_QUESTIONS.md`
+
+---
+
+## Other locations
+
+- **Root:** `README.md` (project overview), `DEVELOPMENT_STATUS.md` (runtime status, TypeScript notes)
+- **`src/`:** `src/PAGE_VARIANTS.md`, `src/admin/questionValidation/README.md`
+- **`public/`:** `public/images/english/README.md`

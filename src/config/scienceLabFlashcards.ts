@@ -134,7 +134,6 @@ function generateConceptFlashcards(
         visual: {
           type: (['flow', 'cell', 'particle', 'energy', 'foodChain'].includes(concept.visualModel.type) ? 'diagram' : concept.visualModel.type) as 'diagram' | 'graph' | 'icon' | 'equation',
           description: concept.visualModel.description,
-          diagramId: concept.visualModel.diagramId,
         },
       },
       back: {
@@ -159,14 +158,12 @@ function generateConceptFlashcards(
           visual: scenario.visual ? {
             type: 'diagram',
             description: scenario.visual.description ?? scenario.explanation,
-            diagramId: scenario.visual.diagramId,
           } : undefined,
         },
         back: {
           explanation: scenario.explanation,
           keyTerms: extractKeyTerms(scenario.explanation),
           misconceptionWarning: concept.commonMisconception,
-          visual: scenario.visual,
         },
         relatedConceptId: concept.id,
       });
@@ -198,10 +195,9 @@ function generateMisconceptionFlashcards(
       type: 'misconception',
       front: {
         prompt: `What is wrong with this idea: "${misconception.misconception}"?`,
-        visual: misconception.diagramId ? {
+        visual: misconception.correctUnderstanding ? {
           type: 'diagram',
           description: misconception.correctUnderstanding,
-          diagramId: misconception.diagramId,
         } : undefined,
       },
       back: {
@@ -209,7 +205,6 @@ function generateMisconceptionFlashcards(
         keyTerms: extractKeyTerms(misconception.correctUnderstanding),
         misconceptionWarning: misconception.misconception,
         example: misconception.example,
-        visual: misconception.diagramId ? { diagramId: misconception.diagramId, description: misconception.correctUnderstanding } : undefined,
       },
     });
   });
@@ -242,13 +237,11 @@ function generatePracticalFlashcards(
         visual: practical.visual ? {
           type: 'diagram',
           description: practical.visual.description ?? practical.purpose,
-          diagramId: practical.visual.diagramId,
         } : undefined,
       },
       back: {
         explanation: practical.purpose,
         keyTerms: extractKeyTerms(practical.purpose).length > 0 ? extractKeyTerms(practical.purpose) : ['purpose', 'investigate', 'determine'],
-        visual: practical.visual,
       },
       relatedPracticalId: practical.id,
     });

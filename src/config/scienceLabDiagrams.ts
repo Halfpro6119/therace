@@ -969,50 +969,84 @@ export const quadrat_sampling: CustomDiagramBlueprint = {
 };
 
 // Chemistry & Physics diagrams
-/** Bohr model */
-export const bohr_model: CustomDiagramBlueprint = {
+/** Element box – compact layout fits flashcard well; all labels inside cell with meanings inline below */
+export const element_box_atomic_mass: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 260, height: 260 },
-  viewBox: '0 0 260 260',
+  size: { width: 260, height: 200 },
+  viewBox: '0 0 260 200',
   layers: [
     {
-      id: 'bohr',
+      id: 'element',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 236, height: 236, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
-        { type: 'circle', cx: 130, cy: 130, r: 75, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
-        { type: 'circle', cx: 130, cy: 130, r: 48, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
-        { type: 'circle', cx: 130, cy: 130, r: 20, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.2)' } },
-        { type: 'circle', cx: 130, cy: 52, r: 8, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
-        { type: 'circle', cx: 190, cy: 130, r: 8, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
-        { type: 'circle', cx: 130, cy: 208, r: 8, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
-        { type: 'circle', cx: 70, cy: 130, r: 8, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
-        { type: 'text', text: 'n=1', at: { x: 130, y: 48 }, style: STYLE.textTiny },
-        { type: 'text', text: 'n=2', at: { x: 130, y: 92 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Nucleus', at: { x: 130, y: 242 }, style: STYLE.textCaption },
+        { type: 'rect', x: 20, y: 16, width: 220, height: 168, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        // Element cell – compact vertical spacing so it fits 200px
+        { type: 'rect', x: 58, y: 36, width: 144, height: 128, rx: 10, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'rgba(124, 58, 237, 0.06)' } },
+        // Atomic number
+        { type: 'text', text: '6', at: { x: 130, y: 56 }, style: { ...STYLE.textCaption, fontSize: 13, fill: LIGHT.text } },
+        { type: 'text', text: 'Atomic number', at: { x: 130, y: 72 }, style: { ...STYLE.textTiny, fontSize: 9, fill: LIGHT.textMuted } },
+        // Symbol and name
+        { type: 'text', text: 'C', at: { x: 130, y: 98 }, style: { ...STYLE.textTitle, fontSize: 32, fill: STYLE.chem.primary } },
+        { type: 'text', text: 'Carbon', at: { x: 130, y: 112 }, style: { ...STYLE.textCaption, fontSize: 10 } },
+        // Mass number
+        { type: 'text', text: '12', at: { x: 130, y: 132 }, style: { ...STYLE.textCaption, fontSize: 13, fill: LIGHT.text } },
+        { type: 'text', text: 'Mass number', at: { x: 130, y: 148 }, style: { ...STYLE.textTiny, fontSize: 9, fill: LIGHT.textMuted } },
+        // Meanings below cell, inside viewBox
+        { type: 'text', text: 'protons', at: { x: 130, y: 172 }, style: { ...STYLE.textTiny, fontSize: 9 } },
+        { type: 'text', text: 'protons + neutrons', at: { x: 130, y: 188 }, style: { ...STYLE.textTiny, fontSize: 9 } },
       ],
     },
   ],
 };
 
-/** Ionic/covalent bonding */
+/** Bohr model – fits flashcard well (260×200): labels left, balanced electrons, Nucleus well above bottom */
+export const bohr_model: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 260, height: 200 },
+  viewBox: '0 0 260 200',
+  layers: [
+    {
+      id: 'bohr',
+      items: [
+        { type: 'rect', x: 12, y: 12, width: 236, height: 176, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        // Electron shells – same stroke weight (scaled to fit 200px height)
+        { type: 'circle', cx: 130, cy: 98, r: 58, style: { stroke: STYLE.chem.primary, strokeWidth: 1.5, fill: 'none' } },
+        { type: 'circle', cx: 130, cy: 98, r: 38, style: { stroke: STYLE.chem.primary, strokeWidth: 1.5, fill: 'none' } },
+        { type: 'circle', cx: 130, cy: 98, r: 13, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.2)' } },
+        // n=1: one electron at top
+        { type: 'circle', cx: 130, cy: 42, r: 6, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
+        // n=2: three electrons at 120° for balanced layout
+        { type: 'circle', cx: 188, cy: 73, r: 6, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
+        { type: 'circle', cx: 72, cy: 73, r: 6, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
+        { type: 'circle', cx: 130, cy: 161, r: 6, style: { stroke: STYLE.chem.primary, fill: STYLE.chem.primaryLight, strokeWidth: 1.5 } },
+        // Shell labels left of orbits
+        { type: 'text', text: 'n=1', at: { x: 60, y: 98 }, style: STYLE.textTiny },
+        { type: 'text', text: 'n=2', at: { x: 36, y: 98 }, style: STYLE.textTiny },
+        { type: 'text', text: 'Nucleus', at: { x: 130, y: 192 }, style: STYLE.textCaption },
+      ],
+    },
+  ],
+};
+
+/** Ionic/covalent bonding – padded frame so labels are not cut off */
 export const ionic_covalent_bonding: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 400, height: 180 },
-  viewBox: '0 0 400 180',
+  size: { width: 400, height: 200 },
+  viewBox: '0 0 400 200',
   layers: [
     {
       id: 'bonding',
       items: [
-        { type: 'rect', x: 28, y: 44, width: 148, height: 80, rx: 10, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.06)' } },
-        { type: 'text', text: 'Na⁺', at: { x: 72, y: 78 }, style: STYLE.textLabel },
-        { type: 'arrow', from: { x: 98, y: 84 }, to: { x: 132, y: 84 }, headSize: 8, style: { stroke: STYLE.chem.primary, strokeWidth: 2.5 } },
-        { type: 'text', text: 'Cl⁻', at: { x: 152, y: 78 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Ionic: electron transfer', at: { x: 102, y: 132 }, style: STYLE.textCaption },
-        { type: 'rect', x: 224, y: 44, width: 148, height: 80, rx: 10, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(5, 150, 105, 0.06)' } },
-        { type: 'circle', cx: 278, cy: 72, r: 20, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
-        { type: 'circle', cx: 318, cy: 72, r: 20, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
-        { type: 'line', from: { x: 294, y: 66 }, to: { x: 302, y: 78 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'text', text: 'Covalent: shared pair', at: { x: 298, y: 132 }, style: STYLE.textCaption },
+        { type: 'rect', x: 16, y: 16, width: 368, height: 168, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 32, y: 48, width: 148, height: 76, rx: 10, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.06)' } },
+        { type: 'text', text: 'Na⁺', at: { x: 76, y: 82 }, style: STYLE.textLabel },
+        { type: 'arrow', from: { x: 102, y: 88 }, to: { x: 136, y: 88 }, headSize: 8, style: { stroke: STYLE.chem.primary, strokeWidth: 2.5 } },
+        { type: 'text', text: 'Cl⁻', at: { x: 156, y: 82 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Ionic: electron transfer', at: { x: 106, y: 142 }, style: STYLE.textCaption },
+        { type: 'rect', x: 220, y: 48, width: 148, height: 76, rx: 10, style: { stroke: STYLE.strokeMuted, strokeWidth: 1.5, fill: 'rgba(5, 150, 105, 0.06)' } },
+        { type: 'circle', cx: 274, cy: 76, r: 18, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
+        { type: 'circle', cx: 314, cy: 76, r: 18, style: { stroke: STYLE.chem.primary, strokeWidth: 2, fill: 'none' } },
+        { type: 'line', from: { x: 290, y: 70 }, to: { x: 298, y: 82 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
+        { type: 'text', text: 'Covalent: shared pair', at: { x: 294, y: 142 }, style: STYLE.textCaption },
       ],
     },
   ],
@@ -1079,47 +1113,49 @@ export const particle_model: CustomDiagramBlueprint = {
   ],
 };
 
-/** Energy profile */
+/** Energy profile – padded so axis labels are not cut off */
 export const energy_profile: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 380, height: 220 },
-  viewBox: '0 0 380 220',
+  size: { width: 380, height: 240 },
+  viewBox: '0 0 380 240',
   layers: [
     {
       id: 'energy',
       items: [
-        { type: 'line', from: { x: 55, y: 170 }, to: { x: 325, y: 170 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'line', from: { x: 55, y: 170 }, to: { x: 55, y: 35 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
-        { type: 'polyline', points: [{ x: 55, y: 125 }, { x: 130, y: 55 }, { x: 215, y: 95 }, { x: 300, y: 45 }], style: { stroke: STYLE.chem.primary, fill: 'none', strokeWidth: 2.5 } },
-        { type: 'text', text: 'Energy', at: { x: 28, y: 102 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
-        { type: 'text', text: 'Progress of reaction', at: { x: 190, y: 198 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Reactants', at: { x: 55, y: 142 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Products', at: { x: 300, y: 58 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Ea', at: { x: 130, y: 88 }, style: { ...STYLE.textCaption, fill: STYLE.chem.primary } },
+        { type: 'rect', x: 16, y: 16, width: 348, height: 208, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'line', from: { x: 60, y: 180 }, to: { x: 320, y: 180 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
+        { type: 'line', from: { x: 60, y: 180 }, to: { x: 60, y: 44 }, style: { stroke: STYLE.stroke, strokeWidth: 2.5 } },
+        { type: 'polyline', points: [{ x: 60, y: 138 }, { x: 135, y: 68 }, { x: 220, y: 108 }, { x: 305, y: 58 }], style: { stroke: STYLE.chem.primary, fill: 'none', strokeWidth: 2.5 } },
+        { type: 'text', text: 'Energy', at: { x: 34, y: 112 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
+        { type: 'text', text: 'Progress of reaction', at: { x: 190, y: 218 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Reactants', at: { x: 60, y: 155 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Products', at: { x: 305, y: 70 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Ea', at: { x: 135, y: 100 }, style: { ...STYLE.textCaption, fill: STYLE.chem.primary } },
       ],
     },
   ],
 };
 
-/** Flame test colours */
+/** Flame test colours – padded so flames and labels are not cut off */
 export const flame_test_colours: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 440, height: 180 },
-  viewBox: '0 0 440 180',
+  size: { width: 440, height: 200 },
+  viewBox: '0 0 440 200',
   layers: [
     {
       id: 'flame',
       items: [
-        { type: 'text', text: 'Li', at: { x: 52, y: 72 }, style: { ...STYLE.textLabel, fill: STYLE.chem.primary } },
-        { type: 'polygon', points: [{ x: 52, y: 152 }, { x: 34, y: 98 }, { x: 70, y: 98 }], style: { stroke: STYLE.semantic.danger, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.4)' } },
-        { type: 'text', text: 'Na', at: { x: 132, y: 72 }, style: STYLE.textLabel },
-        { type: 'polygon', points: [{ x: 132, y: 152 }, { x: 114, y: 98 }, { x: 150, y: 98 }], style: { stroke: STYLE.semantic.warning, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.45)' } },
-        { type: 'text', text: 'K', at: { x: 212, y: 72 }, style: STYLE.textLabel },
-        { type: 'polygon', points: [{ x: 212, y: 152 }, { x: 194, y: 98 }, { x: 230, y: 98 }], style: { stroke: STYLE.chem.primary, strokeWidth: 1.5, fill: STYLE.chem.primaryLight } },
-        { type: 'text', text: 'Ca', at: { x: 292, y: 72 }, style: STYLE.textLabel },
-        { type: 'polygon', points: [{ x: 292, y: 152 }, { x: 274, y: 98 }, { x: 310, y: 98 }], style: { stroke: STYLE.semantic.danger, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.35)' } },
-        { type: 'text', text: 'Cu', at: { x: 368, y: 72 }, style: STYLE.textLabel },
-        { type: 'polygon', points: [{ x: 368, y: 152 }, { x: 350, y: 98 }, { x: 386, y: 98 }], style: { stroke: STYLE.semantic.success, strokeWidth: 1.5, fill: 'rgba(5, 150, 105, 0.35)' } },
+        { type: 'rect', x: 16, y: 16, width: 408, height: 168, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'text', text: 'Li', at: { x: 52, y: 52 }, style: { ...STYLE.textLabel, fill: STYLE.chem.primary } },
+        { type: 'polygon', points: [{ x: 52, y: 162 }, { x: 34, y: 108 }, { x: 70, y: 108 }], style: { stroke: STYLE.semantic.danger, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.4)' } },
+        { type: 'text', text: 'Na', at: { x: 132, y: 52 }, style: STYLE.textLabel },
+        { type: 'polygon', points: [{ x: 132, y: 162 }, { x: 114, y: 108 }, { x: 150, y: 108 }], style: { stroke: STYLE.semantic.warning, strokeWidth: 1.5, fill: 'rgba(217, 119, 6, 0.45)' } },
+        { type: 'text', text: 'K', at: { x: 212, y: 52 }, style: STYLE.textLabel },
+        { type: 'polygon', points: [{ x: 212, y: 162 }, { x: 194, y: 108 }, { x: 230, y: 108 }], style: { stroke: STYLE.chem.primary, strokeWidth: 1.5, fill: STYLE.chem.primaryLight } },
+        { type: 'text', text: 'Ca', at: { x: 292, y: 52 }, style: STYLE.textLabel },
+        { type: 'polygon', points: [{ x: 292, y: 162 }, { x: 274, y: 108 }, { x: 310, y: 108 }], style: { stroke: STYLE.semantic.danger, strokeWidth: 1.5, fill: 'rgba(220, 38, 38, 0.35)' } },
+        { type: 'text', text: 'Cu', at: { x: 368, y: 52 }, style: STYLE.textLabel },
+        { type: 'polygon', points: [{ x: 368, y: 162 }, { x: 350, y: 108 }, { x: 386, y: 108 }], style: { stroke: STYLE.semantic.success, strokeWidth: 1.5, fill: 'rgba(5, 150, 105, 0.35)' } },
       ],
     },
   ],
@@ -1224,103 +1260,108 @@ export const red_shift: CustomDiagramBlueprint = {
   ],
 };
 
-/** Le Chatelier */
+/** Le Chatelier – padded frame */
 export const le_chatelier: CustomDiagramBlueprint = {
-  version: 1,
-  size: { width: 350, height: 160 },
-  viewBox: '0 0 350 160',
-  layers: [
-    {
-      id: 'lechatelier',
-      items: [
-        { type: 'rect', x: 80, y: 35, width: 190, height: 45, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.06)' } },
-        { type: 'text', text: 'A + B ⇌ C + D', at: { x: 175, y: 62 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Disturbance → shift opposes', at: { x: 175, y: 105 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Equilibrium', at: { x: 175, y: 145 }, style: STYLE.textCaption },
-      ],
-    },
-  ],
-};
-
-/** Half equations */
-export const half_equations: CustomDiagramBlueprint = {
-  version: 1,
-  size: { width: 400, height: 140 },
-  viewBox: '0 0 400 140',
-  layers: [
-    {
-      id: 'half',
-      items: [
-        { type: 'rect', x: 50, y: 30, width: 120, height: 45, rx: 4, style: { stroke: STYLE.danger, fill: 'rgba(239,68,68,0.08)' } },
-        { type: 'text', text: 'Anode (+)', at: { x: 110, y: 52 }, style: STYLE.textCaption },
-        { type: 'text', text: '2Cl⁻ → Cl₂ + 2e⁻', at: { x: 110, y: 72 }, style: STYLE.textLabel },
-        { type: 'rect', x: 230, y: 30, width: 120, height: 45, rx: 4, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.08)' } },
-        { type: 'text', text: 'Cathode (−)', at: { x: 290, y: 52 }, style: STYLE.textCaption },
-        { type: 'text', text: '2H⁺ + 2e⁻ → H₂', at: { x: 290, y: 72 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Oxidation', at: { x: 110, y: 105 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Reduction', at: { x: 290, y: 105 }, style: STYLE.textCaption },
-      ],
-    },
-  ],
-};
-
-/** Empirical/molecular formula */
-export const empirical_molecular: CustomDiagramBlueprint = {
-  version: 1,
-  size: { width: 350, height: 160 },
-  viewBox: '0 0 350 160',
-  layers: [
-    {
-      id: 'empirical',
-      items: [
-        { type: 'rect', x: 100, y: 25, width: 150, height: 35, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.06)' } },
-        { type: 'text', text: 'Mass % → moles → ratio', at: { x: 175, y: 47 }, style: STYLE.textCaption },
-        { type: 'arrow', from: { x: 175, y: 65 }, to: { x: 175, y: 85 }, headSize: 6, style: STYLE.arrow },
-        { type: 'rect', x: 120, y: 90, width: 110, height: 35, rx: 4, style: { stroke: STYLE.success, fill: 'rgba(34,197,94,0.08)' } },
-        { type: 'text', text: 'Empirical formula', at: { x: 175, y: 112 }, style: STYLE.textLabel },
-        { type: 'text', text: 'Mr ÷ empirical mass = n → molecular', at: { x: 175, y: 145 }, style: STYLE.textCaption },
-      ],
-    },
-  ],
-};
-
-/** Alkene addition */
-export const alkene_addition: CustomDiagramBlueprint = {
-  version: 1,
-  size: { width: 400, height: 140 },
-  viewBox: '0 0 400 140',
-  layers: [
-    {
-      id: 'alkene',
-      items: [
-        { type: 'line', from: { x: 120, y: 50 }, to: { x: 160, y: 50 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'line', from: { x: 140, y: 35 }, to: { x: 140, y: 65 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'text', text: 'C=C', at: { x: 140, y: 48 }, style: STYLE.textCaption },
-        { type: 'arrow', from: { x: 175, y: 50 }, to: { x: 225, y: 50 }, headSize: 8, style: STYLE.arrow },
-        { type: 'text', text: 'Ethene + Br₂ → dibromoethane', at: { x: 200, y: 80 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Ethene + H₂O → ethanol', at: { x: 200, y: 100 }, style: STYLE.textCaption },
-        { type: 'text', text: 'n ethene → poly(ethene)', at: { x: 200, y: 120 }, style: STYLE.textCaption },
-      ],
-    },
-  ],
-};
-
-/** Bond energy */
-export const bond_energy: CustomDiagramBlueprint = {
   version: 1,
   size: { width: 350, height: 180 },
   viewBox: '0 0 350 180',
   layers: [
     {
+      id: 'lechatelier',
+      items: [
+        { type: 'rect', x: 16, y: 16, width: 318, height: 148, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 80, y: 44, width: 190, height: 44, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.06)' } },
+        { type: 'text', text: 'A + B ⇌ C + D', at: { x: 175, y: 72 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Disturbance → shift opposes', at: { x: 175, y: 118 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Equilibrium', at: { x: 175, y: 158 }, style: STYLE.textCaption },
+      ],
+    },
+  ],
+};
+
+/** Half equations – padded so labels are not cut off */
+export const half_equations: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 400, height: 168 },
+  viewBox: '0 0 400 168',
+  layers: [
+    {
+      id: 'half',
+      items: [
+        { type: 'rect', x: 16, y: 16, width: 368, height: 136, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 50, y: 40, width: 120, height: 44, rx: 4, style: { stroke: STYLE.danger, fill: 'rgba(239,68,68,0.08)' } },
+        { type: 'text', text: 'Anode (+)', at: { x: 110, y: 62 }, style: STYLE.textCaption },
+        { type: 'text', text: '2Cl⁻ → Cl₂ + 2e⁻', at: { x: 110, y: 82 }, style: STYLE.textLabel },
+        { type: 'rect', x: 230, y: 40, width: 120, height: 44, rx: 4, style: { stroke: STYLE.accent, fill: 'rgba(99,102,241,0.08)' } },
+        { type: 'text', text: 'Cathode (−)', at: { x: 290, y: 62 }, style: STYLE.textCaption },
+        { type: 'text', text: '2H⁺ + 2e⁻ → H₂', at: { x: 290, y: 82 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Oxidation', at: { x: 110, y: 132 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Reduction', at: { x: 290, y: 132 }, style: STYLE.textCaption },
+      ],
+    },
+  ],
+};
+
+/** Empirical/molecular formula – padded frame */
+export const empirical_molecular: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 350, height: 180 },
+  viewBox: '0 0 350 180',
+  layers: [
+    {
+      id: 'empirical',
+      items: [
+        { type: 'rect', x: 16, y: 16, width: 318, height: 148, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 100, y: 36, width: 150, height: 34, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(99,102,241,0.06)' } },
+        { type: 'text', text: 'Mass % → moles → ratio', at: { x: 175, y: 58 }, style: STYLE.textCaption },
+        { type: 'arrow', from: { x: 175, y: 76 }, to: { x: 175, y: 96 }, headSize: 6, style: STYLE.arrow },
+        { type: 'rect', x: 120, y: 102, width: 110, height: 34, rx: 4, style: { stroke: STYLE.success, fill: 'rgba(34,197,94,0.08)' } },
+        { type: 'text', text: 'Empirical formula', at: { x: 175, y: 124 }, style: STYLE.textLabel },
+        { type: 'text', text: 'Mr ÷ empirical mass = n → molecular', at: { x: 175, y: 162 }, style: STYLE.textCaption },
+      ],
+    },
+  ],
+};
+
+/** Alkene addition – padded frame */
+export const alkene_addition: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 400, height: 168 },
+  viewBox: '0 0 400 168',
+  layers: [
+    {
+      id: 'alkene',
+      items: [
+        { type: 'rect', x: 16, y: 16, width: 368, height: 136, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'line', from: { x: 120, y: 58 }, to: { x: 160, y: 58 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
+        { type: 'line', from: { x: 140, y: 43 }, to: { x: 140, y: 73 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
+        { type: 'text', text: 'C=C', at: { x: 140, y: 56 }, style: STYLE.textCaption },
+        { type: 'arrow', from: { x: 175, y: 58 }, to: { x: 225, y: 58 }, headSize: 8, style: STYLE.arrow },
+        { type: 'text', text: 'Ethene + Br₂ → dibromoethane', at: { x: 200, y: 92 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Ethene + H₂O → ethanol', at: { x: 200, y: 112 }, style: STYLE.textCaption },
+        { type: 'text', text: 'n ethene → poly(ethene)', at: { x: 200, y: 132 }, style: STYLE.textCaption },
+      ],
+    },
+  ],
+};
+
+/** Bond energy – padded so axis labels are not cut off */
+export const bond_energy: CustomDiagramBlueprint = {
+  version: 1,
+  size: { width: 350, height: 200 },
+  viewBox: '0 0 350 200',
+  layers: [
+    {
       id: 'bond',
       items: [
-        { type: 'line', from: { x: 50, y: 150 }, to: { x: 300, y: 150 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'line', from: { x: 50, y: 150 }, to: { x: 50, y: 30 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
-        { type: 'polyline', points: [{ x: 50, y: 100 }, { x: 120, y: 50 }, { x: 200, y: 80 }], style: { stroke: STYLE.accent, fill: 'none', strokeWidth: 2 } },
-        { type: 'text', text: 'Energy', at: { x: 25, y: 90 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
-        { type: 'text', text: 'Reaction progress', at: { x: 175, y: 172 }, style: STYLE.textCaption },
-        { type: 'text', text: 'ΔH', at: { x: 120, y: 95 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Ea', at: { x: 85, y: 75 }, style: STYLE.textCaption },
+        { type: 'rect', x: 16, y: 16, width: 318, height: 168, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'line', from: { x: 60, y: 160 }, to: { x: 300, y: 160 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
+        { type: 'line', from: { x: 60, y: 160 }, to: { x: 60, y: 44 }, style: { stroke: STYLE.stroke, strokeWidth: 2 } },
+        { type: 'polyline', points: [{ x: 60, y: 112 }, { x: 130, y: 62 }, { x: 210, y: 92 }], style: { stroke: STYLE.accent, fill: 'none', strokeWidth: 2 } },
+        { type: 'text', text: 'Energy', at: { x: 32, y: 102 }, style: { ...STYLE.textCaption, textAnchor: 'middle' } },
+        { type: 'text', text: 'Reaction progress', at: { x: 180, y: 188 }, style: STYLE.textCaption },
+        { type: 'text', text: 'ΔH', at: { x: 130, y: 107 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Ea', at: { x: 92, y: 85 }, style: STYLE.textCaption },
       ],
     },
   ],
@@ -1401,68 +1442,70 @@ export const circuit_diagram: CustomDiagramBlueprint = {
   ],
 };
 
-/** Moles: mass, Mr, moles relationship */
+/** Moles: mass, Mr, moles relationship – padded frame */
 export const moles_diagram: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 300, height: 120 },
-  viewBox: '0 0 300 120',
+  size: { width: 300, height: 140 },
+  viewBox: '0 0 300 140',
   layers: [
     {
       id: 'moles',
       items: [
-        { type: 'text', text: 'Mass (g)', at: { x: 50, y: 60 }, style: STYLE.textLabel },
-        { type: 'arrow', from: { x: 100, y: 60 }, to: { x: 140, y: 60 }, headSize: 6, style: STYLE.arrow },
-        { type: 'text', text: '÷ Mr', at: { x: 115, y: 45 }, style: STYLE.textCaption },
-        { type: 'text', text: 'Moles', at: { x: 160, y: 60 }, style: STYLE.textLabel },
-        { type: 'text', text: '× Mr', at: { x: 215, y: 45 }, style: STYLE.textCaption },
-        { type: 'arrow', from: { x: 220, y: 60 }, to: { x: 260, y: 60 }, headSize: 6, style: STYLE.arrow },
-        { type: 'text', text: 'Mass (g)', at: { x: 265, y: 60 }, style: STYLE.textLabel },
+        { type: 'rect', x: 16, y: 16, width: 268, height: 108, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'text', text: 'Mass (g)', at: { x: 50, y: 72 }, style: STYLE.textLabel },
+        { type: 'arrow', from: { x: 100, y: 72 }, to: { x: 140, y: 72 }, headSize: 6, style: STYLE.arrow },
+        { type: 'text', text: '÷ Mr', at: { x: 115, y: 57 }, style: STYLE.textCaption },
+        { type: 'text', text: 'Moles', at: { x: 160, y: 72 }, style: STYLE.textLabel },
+        { type: 'text', text: '× Mr', at: { x: 215, y: 57 }, style: STYLE.textCaption },
+        { type: 'arrow', from: { x: 220, y: 72 }, to: { x: 260, y: 72 }, headSize: 6, style: STYLE.arrow },
+        { type: 'text', text: 'Mass (g)', at: { x: 265, y: 72 }, style: STYLE.textLabel },
       ],
     },
   ],
 };
 
-/** Electrolysis: cathode and anode */
+/** Electrolysis: cathode and anode – padded so labels are not cut off */
 export const electrolysis_diagram: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 340, height: 180 },
-  viewBox: '0 0 340 180',
+  size: { width: 340, height: 200 },
+  viewBox: '0 0 340 200',
   layers: [
     {
       id: 'electrolysis',
       items: [
-        { type: 'rect', x: 12, y: 12, width: 316, height: 156, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
-        { type: 'rect', x: 28, y: 32, width: 56, height: 112, rx: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2, fill: 'rgba(14, 165, 233, 0.08)' } },
+        { type: 'rect', x: 12, y: 12, width: 316, height: 176, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 28, y: 36, width: 56, height: 108, rx: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2, fill: 'rgba(14, 165, 233, 0.08)' } },
         { type: 'text', text: 'Battery', at: { x: 56, y: 92 }, style: { ...STYLE.textCaption, fill: STYLE.phys.primary } },
-        { type: 'rect', x: 115, y: 24, width: 36, height: 128, rx: 6, style: { stroke: STYLE.phys.secondary, strokeWidth: 2, fill: 'rgba(59, 130, 246, 0.1)' } },
-        { type: 'rect', x: 151, y: 24, width: 36, height: 128, rx: 6, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.1)' } },
-        { type: 'text', text: 'Cathode (−)', at: { x: 133, y: 168 }, style: { ...STYLE.textCaption, fill: STYLE.phys.secondary } },
-        { type: 'text', text: 'Anode (+)', at: { x: 207, y: 168 }, style: { ...STYLE.textCaption, fill: STYLE.danger } },
-        { type: 'arrow', from: { x: 115, y: 72 }, to: { x: 151, y: 72 }, headSize: 8, style: { stroke: STYLE.danger, strokeWidth: 2.5 } },
-        { type: 'text', text: 'Cations →', at: { x: 128, y: 58 }, style: STYLE.textTiny },
-        { type: 'arrow', from: { x: 187, y: 95 }, to: { x: 151, y: 95 }, headSize: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2.5 } },
-        { type: 'text', text: '← Anions', at: { x: 165, y: 108 }, style: STYLE.textTiny },
+        { type: 'rect', x: 115, y: 28, width: 36, height: 120, rx: 6, style: { stroke: STYLE.phys.secondary, strokeWidth: 2, fill: 'rgba(59, 130, 246, 0.1)' } },
+        { type: 'rect', x: 151, y: 28, width: 36, height: 120, rx: 6, style: { stroke: STYLE.danger, strokeWidth: 2, fill: 'rgba(220, 38, 38, 0.1)' } },
+        { type: 'text', text: 'Cathode (−)', at: { x: 133, y: 182 }, style: { ...STYLE.textCaption, fill: STYLE.phys.secondary } },
+        { type: 'text', text: 'Anode (+)', at: { x: 207, y: 182 }, style: { ...STYLE.textCaption, fill: STYLE.danger } },
+        { type: 'arrow', from: { x: 115, y: 76 }, to: { x: 151, y: 76 }, headSize: 8, style: { stroke: STYLE.danger, strokeWidth: 2.5 } },
+        { type: 'text', text: 'Cations →', at: { x: 128, y: 62 }, style: STYLE.textTiny },
+        { type: 'arrow', from: { x: 187, y: 99 }, to: { x: 151, y: 99 }, headSize: 8, style: { stroke: STYLE.phys.primary, strokeWidth: 2.5 } },
+        { type: 'text', text: '← Anions', at: { x: 165, y: 112 }, style: STYLE.textTiny },
       ],
     },
   ],
 };
 
-/** Fractionating column */
+/** Fractionating column – safe bottom padding so "Crude oil" is not cut off */
 export const fractionating_column: CustomDiagramBlueprint = {
   version: 1,
-  size: { width: 280, height: 180 },
-  viewBox: '0 0 280 180',
+  size: { width: 280, height: 200 },
+  viewBox: '0 0 280 200',
   layers: [
     {
       id: 'column',
       items: [
-        { type: 'rect', x: 100, y: 20, width: 80, height: 140, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(200,200,200,0.2)' } },
-        { type: 'text', text: 'Gases', at: { x: 140, y: 45 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Petrol', at: { x: 140, y: 75 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Kerosene', at: { x: 140, y: 105 }, style: STYLE.textTiny },
-        { type: 'text', text: 'Diesel', at: { x: 140, y: 135 }, style: STYLE.textTiny },
-        { type: 'rect', x: 110, y: 165, width: 60, height: 15, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(100,100,100,0.3)' } },
-        { type: 'text', text: 'Crude oil', at: { x: 140, y: 178 }, style: STYLE.textTiny },
+        { type: 'rect', x: 16, y: 16, width: 248, height: 168, rx: 12, style: { stroke: LIGHT.strokeMuted, strokeWidth: 1, fill: LIGHT.bg } },
+        { type: 'rect', x: 100, y: 28, width: 80, height: 128, rx: 4, style: { stroke: STYLE.stroke, fill: 'rgba(200,200,200,0.2)' } },
+        { type: 'text', text: 'Gases', at: { x: 140, y: 52 }, style: STYLE.textTiny },
+        { type: 'text', text: 'Petrol', at: { x: 140, y: 82 }, style: STYLE.textTiny },
+        { type: 'text', text: 'Kerosene', at: { x: 140, y: 112 }, style: STYLE.textTiny },
+        { type: 'text', text: 'Diesel', at: { x: 140, y: 142 }, style: STYLE.textTiny },
+        { type: 'rect', x: 110, y: 162, width: 60, height: 14, rx: 2, style: { stroke: STYLE.stroke, fill: 'rgba(100,100,100,0.3)' } },
+        { type: 'text', text: 'Crude oil', at: { x: 140, y: 180 }, style: STYLE.textTiny },
       ],
     },
   ],

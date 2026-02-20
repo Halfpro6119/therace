@@ -33,6 +33,8 @@ import { questionRegistry } from '../utils/questionRegistry';
 import { QuestionAnswer } from '../types/questionTypes';
 import { Attempt, Quiz, Prompt, DiagramMetadata } from '../types';
 import { submitAnswer, hasMinimalResponse } from '../utils/submitAnswerPipeline';
+import { useAdminView } from '../contexts/AdminViewContext';
+import { AdminPromptEditModal } from '../components/admin-view/AdminPromptEditModal';
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -82,8 +84,10 @@ export function QuizPlayerPage() {
   const skipAutoCheckRef = useRef(false);
   const autoSubmitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { confirm } = useConfirm();
+  const adminView = useAdminView();
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
   const [subjectName, setSubjectName] = useState<string | null>(null);
   const [quizPrompts, setQuizPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
@@ -202,6 +206,10 @@ export function QuizPlayerPage() {
             promptsData = [];
           }
           if (cancelled) return;
+          if (adminView && promptsData.length > 0) {
+            promptsData = await adminView.getEffectivePrompts(promptsData.map((p) => p.id));
+          }
+          if (cancelled) return;
 
           if (isFixItMode) {
             const lastAttempts = storage.getAttemptsByQuizId(quizData.id);
@@ -225,7 +233,7 @@ export function QuizPlayerPage() {
     };
     run();
     return () => { cancelled = true; };
-  }, [quizId, isFixItMode]);
+  }, [quizId, isFixItMode, adminView]);
 
   // Reset solved/answered/marks refs when starting a new quiz run
   useEffect(() => {
@@ -1042,6 +1050,18 @@ export function QuizPlayerPage() {
                   )}
                 </AnimatePresence>
 
+                {/* ADMIN VIEW: Configure question */}
+                {adminView?.isAdminView && currentPrompt && (
+                  <button
+                    type="button"
+                    onClick={() => setEditingPrompt(currentPrompt)}
+                    className="absolute top-4 right-4 p-2 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30"
+                    title="Configure question (admin)"
+                  >
+                    <Settings size={18} />
+                  </button>
+                )}
+
                 {/* QUESTION CONTENT */}
                 <div className="mb-8">
                   {isMathsSubject && (
@@ -1251,6 +1271,37 @@ export function QuizPlayerPage() {
             isOpen={calculatorModalOpen}
             onClose={() => setCalculatorModalOpen(false)}
             inputRef={inputRef}
+          />
+        )}
+
+        {/* ADMIN VIEW: Edit prompt modal */}
+        {editingPrompt && adminView && (
+          <AdminPromptEditModal
+            prompt={editingPrompt}
+            onClose={() => setEditingPrompt(null)}
+            hasExistingDraft={adminView.draftEntries.some(
+              (e) => e.entityType === 'prompt' && e.entityId === editingPrompt.id
+            )}
+            onSaveDraft={async (payload) => {
+              await adminView.saveDraft('prompt', editingPrompt.id, {
+                ...editingPrompt,
+                ...payload,
+              });
+            }}
+            onCancelDraft={async () => {
+              await adminView.cancelDraft('prompt', editingPrompt.id);
+            }}
+            onPushLive={async (payload) => {
+              await adminView.saveDraft('prompt', editingPrompt.id, {
+                ...editingPrompt,
+                ...payload,
+              });
+              await adminView.pushDraftLive('prompt', editingPrompt.id);
+              if (quiz && quizPrompts.length > 0) {
+                const next = await adminView.getEffectivePrompts(quizPrompts.map((p) => p.id));
+                setQuizPrompts(next);
+              }
+            }}
           />
         )}
       </div>

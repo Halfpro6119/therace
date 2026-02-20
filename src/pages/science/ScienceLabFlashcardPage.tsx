@@ -30,8 +30,6 @@ import {
   getDaysUntilNextReview,
   type SessionOptions,
 } from '../../config/scienceLabFlashcards';
-import { FlashcardDiagram } from '../../components/FlashcardDiagram';
-import { isCleanFlashcardDiagram } from '../../config/scienceLabDiagramMap';
 import { QuickCheckInline } from '../../components/science/QuickCheckInline';
 import { useConfirm } from '../../contexts/ConfirmContext';
 import { storage } from '../../utils/storage';
@@ -1129,33 +1127,23 @@ export function ScienceLabFlashcardPage() {
                       {typeStyle.label}
                     </span>
                   </div>
-                  {/* §1.2 Prompt: centered when no diagram/equation; otherwise above visual */}
+                  {/* §1.2 Prompt and optional visual description (text only) */}
                   {(() => {
-                    const hasDiagramOrEquation =
-                      currentFlashcard.front.visual &&
-                      (isEquationVisual ||
-                        (currentFlashcard.front.visual.diagramId && isCleanFlashcardDiagram(currentFlashcard.front.visual.diagramId)));
+                    const hasVisual = currentFlashcard.front.visual?.description;
                     return (
                       <>
-                        <div className={hasDiagramOrEquation ? 'flex-shrink-0' : 'flex-1 flex flex-col justify-center'}>
-                          <h2 className="flashcard-prompt max-w-2xl mx-auto mb-6">
+                        <div className={hasVisual ? 'flex-shrink-0' : 'flex-1 flex flex-col justify-center'}>
+                          <h2 className={`flashcard-prompt max-w-2xl mx-auto ${hasVisual ? 'mb-3' : 'mb-6'}`}>
                             {currentFlashcard.front.prompt}
                           </h2>
                         </div>
-                        {hasDiagramOrEquation && (
-                          <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-[260px]">
-                            {isEquationVisual ? (
-                              <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                                <p className="text-2xl sm:text-3xl font-mono font-bold text-center" style={{ color: typeStyle.color }}>{currentFlashcard.front.visual!.description}</p>
-                              </div>
-                            ) : (
-                              <div
-                                className={`science-flashcard-diagram science-flashcard-diagram-front flex-1 flex flex-col min-h-0 ${currentFlashcard.front.visual!.diagramId === 'enzyme_action' ? 'science-flashcard-diagram-dark-well' : ''}`}
-                                style={{ ['--well-accent' as string]: typeStyle.color }}
-                              >
-                                <FlashcardDiagram slug={currentFlashcard.front.visual!.diagramId!} description={currentFlashcard.front.visual!.description} fitToContainer preferStatic />
-                              </div>
-                            )}
+                        {hasVisual && (
+                          <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-0">
+                            <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0 py-4 px-6 rounded-xl" style={{ ['--well-accent' as string]: typeStyle.color }}>
+                              <p className={`text-center max-w-2xl mx-auto ${isEquationVisual ? 'text-2xl sm:text-3xl font-mono font-bold' : 'flashcard-body'}`} style={{ color: typeStyle.color }}>
+                                {currentFlashcard.front.visual!.description}
+                              </p>
+                            </div>
                           </div>
                         )}
                       </>

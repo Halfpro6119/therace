@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../db/client';
 import { renderDiagram } from '../diagrams/engine';
 import { CustomDiagramEngine } from '../diagrams/engine/customDiagramEngine';
+import { useAdminView } from '../contexts/AdminViewContext';
 import type { DiagramMetadata, DiagramTemplate, Diagram, DiagramOverrides, DiagramSchema } from '../types';
 
 interface DiagramRendererProps {
@@ -19,6 +21,7 @@ const templateCache = new Map<string, DiagramTemplate>();
 const assetCache = new Map<string, Diagram>();
 
 export function DiagramRenderer({ metadata, className = '', showWarnings = false, fitToContainer = false }: DiagramRendererProps) {
+  const adminView = useAdminView();
   const [template, setTemplate] = useState<DiagramTemplate | null>(null);
   const [asset, setAsset] = useState<Diagram | null>(null);
   const [loading, setLoading] = useState(() => !(metadata.mode === 'custom' && metadata.custom));
@@ -28,7 +31,7 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
 
   useEffect(() => {
     loadDiagram();
-  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.custom)]);
+  }, [metadata.mode, metadata.templateId, metadata.diagramId, JSON.stringify(metadata.params), JSON.stringify(metadata.custom), adminView]);
 
   const loadDiagram = async () => {
     setError(null);
@@ -75,7 +78,10 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
         }
         setLoading(false);
       } else if (metadata.mode === 'asset' && metadata.diagramId) {
-        if (assetCache.has(metadata.diagramId)) {
+        if (adminView) {
+          const draftOrLive = await adminView.getEffectiveDiagram(metadata.diagramId);
+          setAsset(draftOrLive);
+        } else if (assetCache.has(metadata.diagramId)) {
           setAsset(assetCache.get(metadata.diagramId)!);
         } else {
           const { data, error: fetchError } = await supabase
@@ -231,7 +237,7 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
           </ul>
         </div>
       )}
-      <div className="diagram-container">
+      <div className="diagram-container relative">
         {fittedSvg && (
           <div
             className="diagram-svg-wrapper"
@@ -240,6 +246,16 @@ export function DiagramRenderer({ metadata, className = '', showWarnings = false
         )}
         {metadata.caption && (
           <p className="diagram-caption">{metadata.caption}</p>
+        )}
+        {adminView?.isAdminView && metadata.mode === 'asset' && metadata.diagramId && (
+          <Link
+            to={`/admin/diagrams/${metadata.diagramId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-2 right-2 px-2 py-1 rounded bg-amber-500/90 text-white text-xs font-medium hover:bg-amber-600"
+          >
+            Edit diagram
+          </Link>
         )}
       </div>
     </div>

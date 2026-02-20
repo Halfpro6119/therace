@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Subject, Unit, Topic, Quiz, Prompt, PromptType, Playlist, PlaylistItem, UserSavedQuiz } from '../types';
+import { Subject, Unit, Topic, Quiz, Prompt, PromptType, Playlist, PlaylistItem, UserSavedQuiz, Diagram } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -1695,4 +1695,109 @@ export const db = {
     if (error) throw error;
   },
 
+  // ---------------------------------------------------------------------------
+  // Content drafts (admin-view: save / cancel / push live)
+  // ---------------------------------------------------------------------------
+  getDraft: async (
+    entityType: 'prompt' | 'diagram',
+    entityId: string
+  ): Promise<Record<string, unknown> | null> => {
+    const { data, error } = await supabase
+      .from('content_drafts')
+      .select('draft_json')
+      .eq('entity_type', entityType)
+      .eq('entity_id', entityId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data?.draft_json ?? null;
+  },
+
+  getDraftsByEntityType: async (entityType: 'prompt' | 'diagram'): Promise<{ entityId: string; draftJson: Record<string, unknown>; updatedAt: string }[]> => {
+    const { data, error } = await supabase
+      .from('content_drafts')
+      .select('entity_id, draft_json, updated_at')
+      .eq('entity_type', entityType)
+      .order('updated_at', { ascending: false });
+
+    if (error) throw error;
+    return (data || []).map((row) => ({
+      entityId: row.entity_id,
+      draftJson: row.draft_json as Record<string, unknown>,
+      updatedAt: row.updated_at,
+    }));
+  },
+
+  saveDraft: async (
+    entityType: 'prompt' | 'diagram',
+    entityId: string,
+    draftJson: Record<string, unknown>
+  ): Promise<void> => {
+    const { error } = await supabase
+      .from('content_drafts')
+      .upsert(
+        {
+          entity_type: entityType,
+          entity_id: entityId,
+          draft_json: draftJson,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'entity_type,entity_id' }
+      );
+
+    if (error) throw error;
+  },
+
+  deleteDraft: async (entityType: 'prompt' | 'diagram', entityId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('content_drafts')
+      .delete()
+      .eq('entity_type', entityType)
+      .eq('entity_id', entityId);
+
+    if (error) throw error;
+  },
+
+  pushDraftLive: async (entityType: 'prompt' | 'diagram', entityId: string): Promise<void> => {
+    const draft = await db.getDraft(entityType, entityId);
+    if (!draft) throw new Error(`No draft found for ${entityType} ${entityId}`);
+
+    if (entityType === 'prompt') {
+      const p = draft as Partial<Prompt> & Record<string, unknown>;
+      await db.updatePrompt(entityId, {
+        question: p.question,
+        answers: p.answers ?? [],
+        marks: p.marks,
+        timeAllowanceSec: p.timeAllowanceSec,
+        hint: p.hint,
+        explanation: p.explanation,
+        type: p.type,
+        meta: p.meta,
+        paperId: p.paperId,
+        topicId: p.topicId,
+        calculatorAllowed: p.calculatorAllowed,
+        diagram_metadata: (p as any).diagram_metadata,
+        tier: (p as any).tier,
+      });
+    } else {
+      const d = draft as Partial<Diagram> & Record<string, unknown>;
+      const diagramData = {
+        title: d.title ?? '',
+        subject_id: d.subjectId ?? null,
+        diagram_type: d.diagramType ?? 'general',
+        tags: d.tags ?? [],
+        storage_mode: d.storageMode ?? 'vector',
+        canvas_data: d.canvasData ?? { elements: [] },
+        svg_data: d.svgData ?? null,
+        png_url: d.pngUrl ?? null,
+        width: d.width ?? 800,
+        height: d.height ?? 600,
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await supabase.from('diagrams').update(diagramData).eq('id', entityId);
+      if (error) throw error;
+    }
+
+    await db.deleteDraft(entityType, entityId);
+  },
 };

@@ -43,6 +43,7 @@ export const CLEAN_FLASHCARD_DIAGRAMS = new Set<string>([
   'wave_types',
   'em_spectrum',
   'bohr_model',
+  'element_box_atomic_mass',
   'electrolysis_diagram',
   'free_body_diagram',
 ]);

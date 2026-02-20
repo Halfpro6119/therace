@@ -22,6 +22,7 @@ export const FLASHCARD_DIAGRAM_SLUGS: readonly string[] = [
   'digestive_system',
   'dna_structure',
   'ecosystem',
+  'element_box_atomic_mass',
   'electrolysis_diagram',
   'electromagnetism',
   'em_spectrum',

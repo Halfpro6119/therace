@@ -194,6 +194,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </button>
 
             <Link
+              to="/admin-view"
+              className="flex items-center justify-center gap-2 mt-2 px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+            >
+              View as user (edit content)
+            </Link>
+            <Link
               to="/"
               className="flex items-center justify-center gap-2 mt-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >

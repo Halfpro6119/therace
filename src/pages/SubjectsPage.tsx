@@ -8,7 +8,8 @@ import {
   CHOSEN_SUBJECT_NAMES,
   LANGUAGE_NAMES,
 } from '../config/subjectGroups';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAdminView } from '../contexts/AdminViewContext';
 import { BookOpen, Calculator, FlaskConical, Briefcase, Landmark, Globe, BookHeart, Heart, Cpu, Brain, Lightbulb, BookMarked, Languages, ArrowRight, Target } from 'lucide-react';
 import { StudyPathDashboard } from '../components/learning/StudyPathDashboard';
 import { getScienceLabProgressSummary } from '../utils/scienceLabProgress';
@@ -51,7 +52,12 @@ const item = {
 
 export function SubjectsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const adminView = useAdminView();
   const masteryStates = storage.getMasteryStates();
+  // #region agent log
+  if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:render',message:'SubjectsPage render',data:{pathname:location.pathname,hasAdminView:!!adminView,basePath:adminView?.basePath},timestamp:Date.now(),hypothesisId:'H_pathname'})}).catch(()=>{});
+  // #endregion
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,6 +107,9 @@ export function SubjectsPage() {
   const chosenSubjects = findByNames(subjects, CHOSEN_SUBJECT_NAMES);
   const languageSubjects = findByNames(subjects, LANGUAGE_NAMES);
   const scienceLabProgress = getScienceLabProgressSummary();
+  // #region agent log
+  if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:mainContent',message:'SubjectsPage main content render',data:{pathname:location.pathname,loading:false,hubsCount:FEATURED_HUBS.length},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+  // #endregion
 
   return (
     <motion.div
@@ -180,8 +189,11 @@ export function SubjectsPage() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         variants={container}
       >
-        {FEATURED_HUBS.map((hub) => {
+        {FEATURED_HUBS.map((hub, idx) => {
           const HubIcon = HUB_ICONS[hub.icon];
+          // #region agent log
+          if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMap',message:'Hub map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+          // #endregion
           return (
             <motion.div
               key={hub.id}

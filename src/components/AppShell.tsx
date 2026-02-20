@@ -7,9 +7,11 @@ import { storage } from '../utils/storage';
 
 interface AppShellProps {
   children: ReactNode;
+  /** When set (e.g. "/admin-view"), nav links and daily challenge use this prefix so we stay in admin view. */
+  basePath?: string;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, basePath = '' }: AppShellProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const streak = storage.getStreak();
@@ -22,9 +24,11 @@ export function AppShell({ children }: AppShellProps) {
     { icon: User, label: 'Profile', path: '/profile' },
   ];
 
+  const toPath = (path: string) => (basePath ? `${basePath}${path === '/' ? '' : path}` : path);
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
+    const full = toPath(path);
+    if (path === '/') return location.pathname === full || location.pathname === full + '/';
+    return location.pathname.startsWith(full);
   };
 
   return (
@@ -43,7 +47,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Daily Challenge - hidden on mobile */}
             <button
-              onClick={() => navigate('/quiz/daily-challenge-1')}
+              onClick={() => navigate(toPath('/quiz/daily-challenge-1'))}
               className="hidden md:flex items-center gap-2 btn-primary text-sm px-4 py-2"
               title="Past-paper-style questions"
             >
@@ -88,7 +92,7 @@ export function AppShell({ children }: AppShellProps) {
             return (
               <motion.button
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigate(toPath(item.path))}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all relative overflow-hidden"
@@ -131,7 +135,7 @@ export function AppShell({ children }: AppShellProps) {
             return (
               <motion.button
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigate(toPath(item.path))}
                 whileTap={{ scale: 0.95 }}
                 className="flex flex-col items-center justify-center gap-0.5 rounded-xl transition-all py-2 min-h-[48px]"
                 style={{
