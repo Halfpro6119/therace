@@ -128,4 +128,8 @@ export function BusinessHubAllUnitsFlashcardPage() {
         onPrev={() => setCurrentIndex((i) => Math.max(0, i - 1))}
         onNext={() => setCurrentIndex((i) => Math.min(terms.length - 1, i + 1))}
         canPrev={currentIndex > 0}
-        canNext={currentInd
+        canNext={currentIndex < terms.length - 1}
+      />
+    </div>
+  );
+}

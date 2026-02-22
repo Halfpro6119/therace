@@ -4,24 +4,25 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle } from 'lucide-react';
 import { getUnitsByPaper, getConceptsForUnits } from '../../config/businessHubData';
 import { ConceptLabSuperpowersSection } from '../../components/learning';
-import type { BusinessUnitId } from '../../types/businessHub';
+import type { BusinessUnitId, BusinessPaper } from '../../types/businessHub';
 import type { BusinessConcept } from '../../types/businessHub';
 import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function BusinessHubAllUnitsConceptLabPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const paper = (searchParams.get('paper') || 'all') as 'all' | '1' | '2';
+  const paperParam = searchParams.get('paper') || 'all';
+  const paper: BusinessPaper | 'all' = paperParam === '1' ? 1 : paperParam === '2' ? 2 : 'all';
   const [selectedConcept, setSelectedConcept] = useState<BusinessConcept | null>(null);
 
-  const units = getUnitsByPaper(paper === '1' ? 1 : paper === '2' ? 2 : 'all');
+  const units = getUnitsByPaper(paper);
   const unitIds = units.map((u) => u.id) as BusinessUnitId[];
   const concepts = getConceptsForUnits(unitIds);
   const currentIndex = selectedConcept ? concepts.findIndex((c) => c.id === selectedConcept.id) : -1;
   const prevConcept = currentIndex > 0 ? concepts[currentIndex - 1] : null;
   const nextConcept = currentIndex >= 0 && currentIndex < concepts.length - 1 ? concepts[currentIndex + 1] : null;
 
-  const handleBack = () => navigate(`/business-hub/all-units/topics${paper !== 'all' ? `?paper=${paper}` : ''}`);
+  const handleBack = () => navigate(paper !== 'all' ? `/business-hub/all-units/topics?paper=${paper}` : '/business-hub/all-units/topics');
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">

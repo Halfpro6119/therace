@@ -4,13 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 import { getUnitsByPaper, getQuickChecksForUnits } from '../../config/businessHubData';
 import { storage } from '../../utils/storage';
-import type { BusinessUnitId } from '../../types/businessHub';
+import type { BusinessUnitId, BusinessPaper } from '../../types/businessHub';
 import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function BusinessHubAllUnitsQuickCheckPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const paper = (searchParams.get('paper') || 'all') as 'all' | '1' | '2';
+  const paperParam = searchParams.get('paper') || 'all';
+  const paper: BusinessPaper | 'all' = paperParam === '1' ? 1 : paperParam === '2' ? 2 : 'all';
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -18,7 +19,7 @@ export function BusinessHubAllUnitsQuickCheckPage() {
   const [correctCount, setCorrectCount] = useState(0);
   const [completed, setCompleted] = useState(false);
 
-  const units = getUnitsByPaper(paper === '1' ? 1 : paper === '2' ? 2 : 'all');
+  const units = getUnitsByPaper(paper);
   const unitIds = units.map((u) => u.id) as BusinessUnitId[];
   const checks = getQuickChecksForUnits(unitIds);
   const current = checks[currentIndex];
@@ -28,7 +29,7 @@ export function BusinessHubAllUnitsQuickCheckPage() {
     setShowFeedback(false);
   }, [currentIndex, current]);
 
-  const handleBack = () => navigate(`/business-hub/all-units/topics${paper !== 'all' ? `?paper=${paper}` : ''}`);
+  const handleBack = () => navigate(paper !== 'all' ? `/business-hub/all-units/topics?paper=${paper}` : '/business-hub/all-units/topics');
 
   const handleSubmit = () => {
     if (!current || selectedAnswer === null) return;
