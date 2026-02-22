@@ -51,8 +51,7 @@ import { FurtherMathsHubPage } from '../pages/maths/FurtherMathsHubPage';
 import { StatisticsHubPage } from '../pages/maths/StatisticsHubPage';
 import { ScienceLabSubjectPage } from '../pages/science/ScienceLabSubjectPage';
 import { ScienceLabCombinedSciencePage } from '../pages/science/ScienceLabCombinedSciencePage';
-import { ScienceLabModePage } from '../pages/science/ScienceLabModePage';
-import { ScienceLabSubjectToTopicsRedirect, QuestionToTopicTestRedirect, ConceptToTopicTestRedirect } from '../pages/science/ScienceLabRedirects';
+import { ScienceLabSubjectToTopicsRedirect, ScienceLabModeToTopicsRedirect, QuestionToTopicTestRedirect, ConceptToTopicTestRedirect } from '../pages/science/ScienceLabRedirects';
 import { ScienceLabMethodMarkPage } from '../pages/science/ScienceLabMethodMarkPage';
 import { ScienceLabPracticalLabPage } from '../pages/science/ScienceLabPracticalLabPage';
 import { ScienceLabEquationLabPage } from '../pages/science/ScienceLabEquationLabPage';
@@ -64,7 +63,7 @@ import { ScienceLabTopicTestPage } from '../pages/science/ScienceLabTopicTestPag
 import { ScienceLabFullGcsePage } from '../pages/science/ScienceLabFullGcsePage';
 import { ScienceLabPaperTestPage } from '../pages/science/ScienceLabPaperTestPage';
 import { BusinessHubHomePage } from '../pages/business/BusinessHubHomePage';
-import { BusinessHubUnitPage } from '../pages/business/BusinessHubUnitPage';
+import { BusinessHubUnitToTopicsRedirect } from '../pages/business/BusinessHubRedirects';
 import { BusinessHubTopicsPage } from '../pages/business/BusinessHubTopicsPage';
 import { BusinessHubConceptLabPage } from '../pages/business/BusinessHubConceptLabPage';
 import { BusinessHubFlashcardPage } from '../pages/business/BusinessHubFlashcardPage';
@@ -72,6 +71,10 @@ import { BusinessHubQuickCheckPage } from '../pages/business/BusinessHubQuickChe
 import { BusinessHubCaseStudyPage } from '../pages/business/BusinessHubCaseStudyPage';
 import { BusinessHubCalculationLabPage } from '../pages/business/BusinessHubCalculationLabPage';
 import { BusinessHubEvaluationPage } from '../pages/business/BusinessHubEvaluationPage';
+import { BusinessHubAllUnitsTopicsPage } from '../pages/business/BusinessHubAllUnitsTopicsPage';
+import { BusinessHubAllUnitsFlashcardPage } from '../pages/business/BusinessHubAllUnitsFlashcardPage';
+import { BusinessHubAllUnitsQuickCheckPage } from '../pages/business/BusinessHubAllUnitsQuickCheckPage';
+import { BusinessHubAllUnitsConceptLabPage } from '../pages/business/BusinessHubAllUnitsConceptLabPage';
 import { HistoryHubHomePage } from '../pages/history/HistoryHubHomePage';
 import { HistoryHubOptionSelectPage } from '../pages/history/HistoryHubOptionSelectPage';
 import { HistoryHubTimelinePage } from '../pages/history/HistoryHubTimelinePage';
@@ -116,7 +119,8 @@ import { PsychologyHubQuestionLabPage } from '../pages/psychology/PsychologyHubQ
 import { PsychologyHubRevisionMapPage } from '../pages/psychology/PsychologyHubRevisionMapPage';
 import { HealthHubHomePage } from '../pages/health/HealthHubHomePage';
 import { HealthHubAwardSelectPage } from '../pages/health/HealthHubAwardSelectPage';
-import { HealthHubUnitPage } from '../pages/health/HealthHubUnitPage';
+import { HealthHubUnitToTopicsRedirect } from '../pages/health/HealthHubRedirects';
+import { HealthHubTopicsPage } from '../pages/health/HealthHubTopicsPage';
 import { HealthHubConceptLabPage } from '../pages/health/HealthHubConceptLabPage';
 import { HealthHubFlashcardPage } from '../pages/health/HealthHubFlashcardPage';
 import { HealthHubLifeStagesPage } from '../pages/health/HealthHubLifeStagesPage';
@@ -127,7 +131,7 @@ import { HealthHubCareValuesPage } from '../pages/health/HealthHubCareValuesPage
 import { HealthHubQuestionLabPage } from '../pages/health/HealthHubQuestionLabPage';
 import { HealthHubRevisionMapPage } from '../pages/health/HealthHubRevisionMapPage';
 import { ComputeLabHomePage } from '../pages/compute/ComputeLabHomePage';
-import { ComputeLabUnitPage } from '../pages/compute/ComputeLabUnitPage';
+import { ComputeLabUnitToTopicsRedirect } from '../pages/compute/ComputeLabRedirects';
 import { ComputeLabTopicsPage } from '../pages/compute/ComputeLabTopicsPage';
 import { ComputeLabConceptLabPage } from '../pages/compute/ComputeLabConceptLabPage';
 import { ComputeLabFlashcardPage } from '../pages/compute/ComputeLabFlashcardPage';
@@ -219,7 +223,7 @@ export function MainAppRoutes({ basePath }: MainAppRoutesProps) {
       <Route path={r('/science-lab/subjects')} element={<Navigate to={p('/science-lab')} replace />} />
       <Route path={r('/science-lab/combined-science')} element={<ScienceLabCombinedSciencePage />} />
       <Route path={r('/science-lab/:subject')} element={<ScienceLabSubjectToTopicsRedirect />} />
-      <Route path={r('/science-lab/:subject/:paper/:tier')} element={<ScienceLabModePage />} />
+      <Route path={r('/science-lab/:subject/:paper/:tier')} element={<ScienceLabModeToTopicsRedirect />} />
       <Route path={r('/science-lab/:subject/:paper/:tier/topics')} element={<ScienceLabTopicsPage />} />
       <Route path={r('/science-lab/:subject/:paper/:tier/topic-test')} element={<ScienceLabTopicTestPage />} />
       <Route path={r('/science-lab/:subject/:paper/:tier/flashcard')} element={<ScienceLabFlashcardPage />} />
@@ -233,7 +237,11 @@ export function MainAppRoutes({ basePath }: MainAppRoutesProps) {
       <Route path={r('/science-lab/:subject/:paper/:tier/equation')} element={<ScienceLabEquationLabPage />} />
       <Route path={r('/science-lab/:subject/:paper/:tier/misconception')} element={<ScienceLabMisconceptionLabPage />} />
       <Route path={r('/business-hub')} element={<BusinessHubHomePage />} />
-      <Route path={r('/business-hub/unit/:unitId')} element={<BusinessHubUnitPage />} />
+      <Route path={r('/business-hub/all-units/topics')} element={<BusinessHubAllUnitsTopicsPage />} />
+      <Route path={r('/business-hub/all-units/flashcard')} element={<BusinessHubAllUnitsFlashcardPage />} />
+      <Route path={r('/business-hub/all-units/quick-check')} element={<BusinessHubAllUnitsQuickCheckPage />} />
+      <Route path={r('/business-hub/all-units/concept')} element={<BusinessHubAllUnitsConceptLabPage />} />
+      <Route path={r('/business-hub/unit/:unitId')} element={<BusinessHubUnitToTopicsRedirect />} />
       <Route path={r('/business-hub/unit/:unitId/topics')} element={<BusinessHubTopicsPage />} />
       <Route path={r('/business-hub/unit/:unitId/concept')} element={<BusinessHubConceptLabPage />} />
       <Route path={r('/business-hub/unit/:unitId/flashcard')} element={<BusinessHubFlashcardPage />} />
@@ -288,12 +296,13 @@ export function MainAppRoutes({ basePath }: MainAppRoutesProps) {
       <Route path={r('/health-hub/life-stages')} element={<HealthHubLifeStagesPage />} />
       <Route path={r('/health-hub/care-values')} element={<HealthHubCareValuesPage />} />
       <Route path={r('/health-hub/revision-map')} element={<HealthHubRevisionMapPage />} />
-      <Route path={r('/health-hub/unit/:unitId')} element={<HealthHubUnitPage />} />
+      <Route path={r('/health-hub/unit/:unitId')} element={<HealthHubUnitToTopicsRedirect />} />
+      <Route path={r('/health-hub/unit/:unitId/topics')} element={<HealthHubTopicsPage />} />
       <Route path={r('/health-hub/unit/:unitId/concept')} element={<HealthHubConceptLabPage />} />
       <Route path={r('/health-hub/unit/:unitId/flashcard')} element={<HealthHubFlashcardPage />} />
       <Route path={r('/health-hub/unit/:unitId/quick-check')} element={<HealthHubQuickCheckPage />} />
       <Route path={r('/compute-lab')} element={<ComputeLabHomePage />} />
-      <Route path={r('/compute-lab/unit/:unitId')} element={<ComputeLabUnitPage />} />
+      <Route path={r('/compute-lab/unit/:unitId')} element={<ComputeLabUnitToTopicsRedirect />} />
       <Route path={r('/compute-lab/unit/:unitId/topics')} element={<ComputeLabTopicsPage />} />
       <Route path={r('/compute-lab/unit/:unitId/concept')} element={<ComputeLabConceptLabPage />} />
       <Route path={r('/compute-lab/unit/:unitId/flashcard')} element={<ComputeLabFlashcardPage />} />

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 
-const ACCENT = '#9333EA';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 /** GCSE 8182: All 8 topics are compulsory. This page confirms and redirects. */
 export function PsychologyHubOptionSelectPage() {
@@ -36,7 +36,7 @@ export function PsychologyHubOptionSelectPage() {
           type="button"
           onClick={() => navigate('/psychology-hub')}
           className="w-full py-3 rounded-xl font-semibold text-white"
-          style={{ background: ACCENT }}
+          style={{ background: LAB_ACCENT }}
         >
           Continue to Psychology Hub
         </button>

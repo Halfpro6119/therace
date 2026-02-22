@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Languages } from 'lucide-react';
 import { LANGUAGES } from '../../config/languagesHubData';
-
-const ACCENT = '#2563EB';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 
 export function LanguagesHubHomePage() {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ export function LanguagesHubHomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
         style={{
-          background: `linear-gradient(135deg, ${ACCENT} 0%, #1D4ED8 50%, #1E40AF 100%)`,
+          background: LAB_HERO_GRADIENT,
           borderColor: 'transparent',
         }}
       >

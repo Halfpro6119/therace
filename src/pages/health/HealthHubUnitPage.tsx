@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Lightbulb, BookOpen, Target, FileText, Search, MessageSquare, PenLine, ChevronRight, Lock, Zap, Calendar } from 'lucide-react';
+import { ChevronLeft, Lightbulb, BookOpen, Target, FileText, Search, MessageSquare, PenLine, ChevronRight, Lock, Zap, Calendar, FileQuestion } from 'lucide-react';
 import { getUnitById } from '../../config/healthHubData';
 import { storage } from '../../utils/storage';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 import type { HealthUnitId } from '../../types/healthHub';
-
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
 
 const LEARN_MODES = [
   { id: 'concept', title: 'Concept Lab', description: 'Core ideas, misconceptions & apply scenarios', icon: Lightbulb, color: '#0EA5E9', order: 1 },
@@ -85,7 +84,7 @@ export function HealthHubUnitPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"
@@ -101,7 +100,7 @@ export function HealthHubUnitPage() {
         </p>
         {recommendedStep && (
           <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10 mb-4">
-            <Zap size={18} className="text-red-200 flex-shrink-0" />
+            <Zap size={18} className="text-white/90 flex-shrink-0" />
             <span className="text-sm text-white">
               <strong>Recommended:</strong> {recommendedStep.label}
               <button type="button" onClick={() => navigate(recommendedStep!.path)} className="ml-2 underline hover:no-underline font-semibold">
@@ -127,9 +126,84 @@ export function HealthHubUnitPage() {
         </div>
       </motion.section>
 
+      {/* Test yourself */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <BookOpen size={20} className="text-red-500" />
+          <FileQuestion size={20} style={{ color: '#8B5CF6' }} />
+          Test yourself
+        </h2>
+        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
+          Past-paper-style assessments. Topic test first, then full unit test.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <motion.button type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            onClick={() => navigate(`/health-hub/unit/${unit.id}/quick-check`)}
+            className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+          >
+            <span className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: '#8B5CF6' }}>1</span>
+            <div>
+              <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Topic test</h3>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Micro-assessments per topic</p>
+            </div>
+            <ChevronRight size={20} className="flex-shrink-0 ml-auto" style={{ color: 'rgb(var(--text-secondary))' }} />
+          </motion.button>
+          <motion.button type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            onClick={() => handleMode('question-lab')}
+            className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+          >
+            <span className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: '#10B981' }}>2</span>
+            <div>
+              <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Full unit test</h3>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Describe, explain, analyse, evaluate</p>
+            </div>
+            <ChevronRight size={20} className="flex-shrink-0 ml-auto" style={{ color: 'rgb(var(--text-secondary))' }} />
+          </motion.button>
+        </div>
+      </section>
+
+      {/* Revise */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+          Revise to improve your score
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <motion.button type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            onClick={() => handleMode('flashcard')}
+            className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#0EA5E920' }}>
+              <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+            </div>
+            <div>
+              <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Flashcards</h3>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Key terms and definitions</p>
+            </div>
+            <ChevronRight size={20} className="flex-shrink-0 ml-auto" style={{ color: 'rgb(var(--text-secondary))' }} />
+          </motion.button>
+          <motion.button type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            onClick={() => handleMode('quick-check')}
+            className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#F59E0B20' }}>
+              <Target size={20} style={{ color: '#F59E0B' }} />
+            </div>
+            <div>
+              <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>Quick check</h3>
+              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>MCQ, T/F, drag order</p>
+            </div>
+            <ChevronRight size={20} className="flex-shrink-0 ml-auto" style={{ color: 'rgb(var(--text-secondary))' }} />
+          </motion.button>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <Lightbulb size={20} style={{ color: LAB_ACCENT }} />
           Learn — Core path
         </h2>
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
@@ -157,7 +231,7 @@ export function HealthHubUnitPage() {
                   <div>
                     <h3 className="text-lg font-bold mb-0.5 flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
                       {mode.title}
-                      {locked && <span className="text-xs font-normal px-2 py-0.5 rounded bg-red-500/20 text-red-700 dark:text-red-400">Locked</span>}
+                      {locked && <span className="text-xs font-normal px-2 py-0.5 rounded" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>Locked</span>}
                     </h3>
                     <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
                       {locked ? lockMessage(mode.id) : mode.description}
@@ -173,7 +247,7 @@ export function HealthHubUnitPage() {
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
-          <Zap size={20} className="text-red-500" />
+          <Zap size={20} style={{ color: LAB_ACCENT }} />
           Practise
         </h2>
         <div className="grid gap-4">

@@ -7,6 +7,15 @@ export function ScienceLabSubjectToTopicsRedirect() {
   return <Navigate to={`/science-lab/${subject}/1/higher/topics`} replace />;
 }
 
+/** Redirect /science-lab/:subject/:paper/:tier to topics — topics is the default lab page */
+export function ScienceLabModeToTopicsRedirect() {
+  const { subject, paper, tier } = useParams<{ subject: string; paper: string; tier: string }>();
+  if (!subject || !paper || !tier) return null;
+  const sub = subject.toLowerCase();
+  if (!['biology', 'chemistry', 'physics'].includes(sub)) return null;
+  return <Navigate to={`/science-lab/${subject}/${paper}/${tier}/topics`} replace />;
+}
+
 /** Redirect legacy /question route to topic-test */
 export function QuestionToTopicTestRedirect() {
   const { subject, paper, tier } = useParams<{ subject: string; paper: string; tier: string }>();

@@ -11,7 +11,7 @@ import {
 } from '../../config/religiousStudiesHubData';
 import type { ReligiousStudiesOptionSelection, ReligionId, ThemeId } from '../../types/religiousStudiesHub';
 
-const ACCENT = '#7C3AED';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 const DEFAULT_SELECTION: ReligiousStudiesOptionSelection = {
   religion1: 'christianity',
@@ -177,7 +177,7 @@ export function ReligiousStudiesHubOptionSelectPage() {
           onClick={handleSave}
           disabled={prohibited}
           className="mt-6 w-full py-3 rounded-xl font-semibold text-white disabled:opacity-50"
-          style={{ background: ACCENT }}
+          style={{ background: LAB_ACCENT }}
         >
           Save and continue
         </button>

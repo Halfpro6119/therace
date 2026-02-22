@@ -11,9 +11,9 @@ import {
   Target,
   Hash,
 } from 'lucide-react';
-import { getEquationsBySubject } from '../../config/scienceLabData';
+import { getEquationsByFilters } from '../../config/scienceLabData';
 import { storage } from '../../utils/storage';
-import type { ScienceSubject } from '../../types/scienceLab';
+import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
 type TabId = 'reference' | 'rearranging' | 'calculate';
 
@@ -83,10 +83,10 @@ export function ScienceLabEquationLabPage() {
 
   const normalizedSubject: ScienceSubject =
     subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const paperNum = paper ? parseInt(paper, 10) as 1 | 2 : 1;
-  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1)) as 'Foundation' | 'Higher' : 'Higher';
+  const paperNum = paper ? (parseInt(paper, 10) as SciencePaper) || 1 : 1;
+  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier) : 'Higher';
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
-  const equations = getEquationsBySubject(normalizedSubject);
+  const equations = getEquationsByFilters(normalizedSubject, paperNum, tierValue);
   const selectedEquation = equations.find((e) => e.id === selectedEquationId);
 
   const handleBack = () => {

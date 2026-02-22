@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getOptionsForSelection, getBeliefConceptsForSelection, getScriptureCardsForSelection, getQuickChecksForSelection } from '../../config/religiousStudiesHubData';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 
-const ACCENT = '#7C3AED';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function ReligiousStudiesHubRevisionMapPage() {
   const navigate = useNavigate();
@@ -22,14 +23,14 @@ export function ReligiousStudiesHubRevisionMapPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <section className="rounded-2xl p-6 border shadow-sm" style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, #5B21B6 100%)`, borderColor: 'transparent' }}>
+      <section className="rounded-2xl p-6 border shadow-sm" style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}>
         <button type="button" onClick={() => navigate('/religious-studies-hub')} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
           <ChevronLeft size={18} /> Back to Religious Studies Hub
         </button>
@@ -46,15 +47,15 @@ export function ReligiousStudiesHubRevisionMapPage() {
       <section className="rounded-2xl p-6 border shadow-sm" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
         <h2 className="text-lg font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Content overview</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg p-4" style={{ background: `${ACCENT}08` }}>
+          <div className="rounded-lg p-4" style={{ background: `${LAB_ACCENT}08` }}>
             <p className="font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>Belief Lab</p>
             <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{concepts.length} concepts</p>
           </div>
-          <div className="rounded-lg p-4" style={{ background: `${ACCENT}08` }}>
+          <div className="rounded-lg p-4" style={{ background: `${LAB_ACCENT}08` }}>
             <p className="font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>Scripture & key terms</p>
             <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{cards.length} flashcards</p>
           </div>
-          <div className="rounded-lg p-4" style={{ background: `${ACCENT}08` }}>
+          <div className="rounded-lg p-4" style={{ background: `${LAB_ACCENT}08` }}>
             <p className="font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>Quick check</p>
             <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{quickChecks.length} items</p>
           </div>
@@ -66,15 +67,15 @@ export function ReligiousStudiesHubRevisionMapPage() {
         <div className="space-y-2">
           <button type="button" onClick={() => navigate('/religious-studies-hub/belief-lab')} className="w-full text-left rounded-lg p-4 border flex items-center justify-between" style={{ borderColor: 'rgb(var(--border))' }}>
             <span style={{ color: 'rgb(var(--text))' }}>Start with Belief Lab</span>
-            <span className="text-sm" style={{ color: ACCENT }}>Go →</span>
+            <span className="text-sm" style={{ color: LAB_ACCENT }}>Go →</span>
           </button>
           <button type="button" onClick={() => navigate('/religious-studies-hub/flashcards')} className="w-full text-left rounded-lg p-4 border flex items-center justify-between" style={{ borderColor: 'rgb(var(--border))' }}>
             <span style={{ color: 'rgb(var(--text))' }}>Practise key terms</span>
-            <span className="text-sm" style={{ color: ACCENT }}>Go →</span>
+            <span className="text-sm" style={{ color: LAB_ACCENT }}>Go →</span>
           </button>
           <button type="button" onClick={() => navigate('/religious-studies-hub/quick-check')} className="w-full text-left rounded-lg p-4 border flex items-center justify-between" style={{ borderColor: 'rgb(var(--border))' }}>
             <span style={{ color: 'rgb(var(--text))' }}>Quick check</span>
-            <span className="text-sm" style={{ color: ACCENT }}>Go →</span>
+            <span className="text-sm" style={{ color: LAB_ACCENT }}>Go →</span>
           </button>
         </div>
       </section>

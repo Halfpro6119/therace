@@ -15,10 +15,21 @@ import {
   Mic,
   Languages,
   Target,
+  FileQuestion,
+  GraduationCap,
 } from 'lucide-react';
 import { LANGUAGES, THEMES } from '../../config/languagesHubData';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 import type { LanguageId } from '../../config/languagesHubData';
 
+const TEST_MODES = [
+  { id: 'reading', title: 'Topic test', description: 'Reading comprehension tasks', icon: FileQuestion, color: '#8B5CF6' },
+  { id: 'writing', title: 'Full exam practice', description: 'Photo, 40-word, 90-word, 150-word', icon: GraduationCap, color: '#10B981' },
+];
+const REVISE_MODES = [
+  { id: 'vocabulary', title: 'Flashcards', description: 'Theme-based words – spell, meaning, use in sentence', icon: BookOpen, color: '#0EA5E9' },
+  { id: 'grammar', title: 'Quick check', description: 'Tenses, agreement, structures', icon: Target, color: '#F59E0B' },
+];
 const MODES = [
   { id: 'vocabulary', title: 'Vocabulary', description: 'Theme-based words – spell, meaning, use in sentence', icon: BookOpen, color: '#2563EB' },
   { id: 'grammar', title: 'Grammar', description: 'Tenses, agreement, structures', icon: FileText, color: '#7C3AED' },
@@ -50,7 +61,7 @@ export function LanguagesHubLanguagePage() {
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
         style={{
-          background: `linear-gradient(135deg, ${language.color} 0%, ${language.color}99 50%, ${language.color}66 100%)`,
+          background: LAB_HERO_GRADIENT,
           borderColor: 'transparent',
         }}
       >
@@ -69,6 +80,70 @@ export function LanguagesHubLanguagePage() {
           {language.spec} – Vocabulary, grammar, themes, exam skills
         </p>
       </motion.section>
+
+      {/* Test yourself */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <FileQuestion size={20} style={{ color: '#8B5CF6' }} />
+          Test yourself
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {TEST_MODES.map((m) => (
+            <motion.button
+              key={m.id}
+              type="button"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => navigate(`/languages-hub/${languageId}/${m.id}`)}
+              className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+              style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                  <m.icon size={20} style={{ color: m.color }} />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                </div>
+              </div>
+              <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+            </motion.button>
+          ))}
+        </div>
+      </section>
+
+      {/* Revise */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+          Revise to improve your score
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {REVISE_MODES.map((m) => (
+            <motion.button
+              key={m.id}
+              type="button"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => navigate(`/languages-hub/${languageId}/${m.id}`)}
+              className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+              style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                  <m.icon size={20} style={{ color: m.color }} />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                </div>
+              </div>
+              <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+            </motion.button>
+          ))}
+        </div>
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>

@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Languages, ArrowRight, ArrowLeft } from 'lucide-react';
 import { LANGUAGES, THEMES } from '../../config/languagesHubData';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 import { getTranslationTasks } from '../../config/mflTranslationData';
 import type { LanguageId } from '../../config/languagesHubData';
 import type { MflTranslationTask } from '../../types/mflLab';
@@ -75,7 +76,7 @@ export function LanguagesHubTranslationPage() {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl p-6 sm:p-8 border shadow-sm"
           style={{
-            background: `linear-gradient(135deg, ${language.color} 0%, ${language.color}99 50%, ${language.color}66 100%)`,
+            background: LAB_HERO_GRADIENT,
             borderColor: 'transparent',
           }}
         >

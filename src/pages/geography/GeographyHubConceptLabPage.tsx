@@ -5,7 +5,7 @@ import { storage } from '../../utils/storage';
 import { getGeographySectionsForSelection, getConceptsForSections } from '../../config/geographyHubData';
 import { ConceptLabSuperpowersSection } from '../../components/learning';
 
-const ACCENT = '#0D9488';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function GeographyHubConceptLabPage() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export function GeographyHubConceptLabPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -56,8 +56,8 @@ export function GeographyHubConceptLabPage() {
           <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>{current.title}</h2>
           <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{current.coreIdea}</p>
           {current.changeScenario && (
-            <div className="rounded-lg p-3" style={{ background: `${ACCENT}15` }}>
-              <p className="text-xs font-medium mb-1" style={{ color: ACCENT }}>Think about it</p>
+            <div className="rounded-lg p-3" style={{ background: `${LAB_ACCENT}15` }}>
+              <p className="text-xs font-medium mb-1" style={{ color: LAB_ACCENT }}>Think about it</p>
               <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{current.changeScenario}</p>
             </div>
           )}

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getHistoryOptionsForSelection, getInterpretationSetsForOption } from '../../config/historyHubData';
 
-const ACCENT = '#B45309';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 function getInterpretationLabDraftKey(optionKey: string, partId: string, setId: string): string {
   return `interpretation-lab:${optionKey}:${partId}:${setId}`;
@@ -120,7 +120,7 @@ export function HistoryHubInterpretationLabPage() {
                     setTimeout(() => setSaveFeedback(false), 2000);
                   }}
                   className="text-sm font-medium"
-                  style={{ color: ACCENT }}
+                  style={{ color: LAB_ACCENT }}
                 >
                   {saveFeedback ? 'Saved!' : 'Save draft'}
                 </button>

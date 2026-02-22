@@ -1,16 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Brain, Lightbulb, BookOpen, Target, Search, Scale, FileQuestion, FlaskConical, Map } from 'lucide-react';
+import { ChevronLeft, Brain, Lightbulb, BookOpen, Target, Search, Scale, FileQuestion, FlaskConical, Map, GraduationCap, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getPsychologyTopicsForSelection } from '../../config/psychologyHubData';
-
-const ACCENT = '#9333EA';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function PsychologyHubHomePage() {
   const navigate = useNavigate();
   const selection = storage.getPsychologyOptionSelection();
   const topics = getPsychologyTopicsForSelection();
 
+  const TEST_MODES = [
+    { id: 'topic-test', title: 'Topic test', description: 'Past-paper-style questions per topic', icon: FileQuestion, path: '/psychology-hub/question-lab', color: '#8B5CF6' },
+    { id: 'full-exam', title: 'Full exam practice', description: 'Short answer & extended writing', icon: GraduationCap, path: '/psychology-hub/question-lab', color: '#10B981' },
+  ];
+  const REVISE_MODES = [
+    { id: 'flashcards', title: 'Flashcards', description: 'Key studies & terminology', icon: BookOpen, path: '/psychology-hub/key-studies', color: '#0EA5E9' },
+    { id: 'quick-check', title: 'Quick check', description: 'Micro-assessments', icon: Target, path: '/psychology-hub/quick-check', color: '#F59E0B' },
+  ];
   const modes = [
     { id: 'concept', title: 'Concept Lab', description: 'Core ideas and key studies', icon: Lightbulb, path: '/psychology-hub/concept-lab' },
     { id: 'key-studies', title: 'Key studies & terms', description: 'Flashcards for researchers and terminology', icon: BookOpen, path: '/psychology-hub/key-studies' },
@@ -29,7 +36,7 @@ export function PsychologyHubHomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
         style={{
-          background: `linear-gradient(135deg, ${ACCENT} 0%, #7C3AED 50%, #6D28D9 100%)`,
+          background: LAB_HERO_GRADIENT,
           borderColor: 'transparent',
         }}
       >
@@ -64,12 +71,66 @@ export function PsychologyHubHomePage() {
             type="button"
             onClick={() => navigate('/psychology-hub/option-select')}
             className="text-sm font-medium"
-            style={{ color: ACCENT }}
+            style={{ color: LAB_ACCENT }}
           >
             View spec details
           </button>
         )}
       </motion.section>
+
+      {/* Test yourself */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <FileQuestion size={20} style={{ color: '#8B5CF6' }} />
+          Test yourself
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {TEST_MODES.map((m, i) => (
+            <motion.button key={m.id} type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+              onClick={() => navigate(m.path)} className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+              style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                  <m.icon size={20} style={{ color: m.color }} />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                </div>
+              </div>
+              <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+            </motion.button>
+          ))}
+        </div>
+      </section>
+
+      {/* Revise */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+          <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+          Revise to improve your score
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {REVISE_MODES.map((m, i) => (
+            <motion.button key={m.id} type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.03 }}
+              onClick={() => navigate(m.path)} className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+              style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                  <m.icon size={20} style={{ color: m.color }} />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                </div>
+              </div>
+              <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+            </motion.button>
+          ))}
+        </div>
+      </section>
 
       <section className="space-y-4">
             <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
@@ -91,8 +152,8 @@ export function PsychologyHubHomePage() {
                   }}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl" style={{ background: `${ACCENT}20` }}>
-                      <mode.icon size={24} style={{ color: ACCENT }} />
+                    <div className="p-3 rounded-xl" style={{ background: `${LAB_ACCENT}20` }}>
+                      <mode.icon size={24} style={{ color: LAB_ACCENT }} />
                     </div>
                     <div>
                       <h3 className="text-base font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>
@@ -103,7 +164,7 @@ export function PsychologyHubHomePage() {
                       </p>
                     </div>
                   </div>
-                  <ChevronLeft size={20} style={{ color: 'rgb(var(--text-secondary))', transform: 'rotate(180deg)' }} />
+                  <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
                 </motion.button>
               ))}
             </div>

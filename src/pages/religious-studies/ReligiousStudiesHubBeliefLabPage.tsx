@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import { storage } from '../../utils/storage';
 import { getBeliefConceptsForSelection } from '../../config/religiousStudiesHubData';
 import { ConceptLabSuperpowersSection } from '../../components/learning';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 
-const ACCENT = '#7C3AED';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function ReligiousStudiesHubBeliefLabPage() {
   const navigate = useNavigate();
@@ -21,14 +22,14 @@ export function ReligiousStudiesHubBeliefLabPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <section className="rounded-2xl p-6 border shadow-sm" style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, #5B21B6 100%)`, borderColor: 'transparent' }}>
+      <section className="rounded-2xl p-6 border shadow-sm" style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}>
         <button type="button" onClick={() => navigate('/religious-studies-hub')} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
           <ChevronLeft size={18} /> Back to Religious Studies Hub
         </button>
@@ -55,13 +56,13 @@ export function ReligiousStudiesHubBeliefLabPage() {
                   <div className="flex-1">
                     <h3 className="text-lg font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>{concept.title}</h3>
                     <p className="text-sm line-clamp-2" style={{ color: 'rgb(var(--text-secondary))' }}>{concept.coreIdea}</p>
-                    <div className="flex items-center gap-2 text-sm mt-2" style={{ color: ACCENT }}>
+                    <div className="flex items-center gap-2 text-sm mt-2" style={{ color: LAB_ACCENT }}>
                       <span>Explore</span>
                       <ArrowRight size={16} />
                     </div>
                   </div>
-                  <div className="p-3 rounded-lg" style={{ background: `${ACCENT}20` }}>
-                    <Lightbulb size={24} style={{ color: ACCENT }} />
+                  <div className="p-3 rounded-lg" style={{ background: `${LAB_ACCENT}20` }}>
+                    <Lightbulb size={24} style={{ color: LAB_ACCENT }} />
                   </div>
                 </div>
               </motion.button>
@@ -78,7 +79,7 @@ export function ReligiousStudiesHubBeliefLabPage() {
           <h2 className="text-xl font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>{selectedConcept.title}</h2>
           <p className="text-base mb-4" style={{ color: 'rgb(var(--text))' }}>{selectedConcept.coreIdea}</p>
           {selectedConcept.commonMisconception && (
-            <div className="rounded-lg p-4 mb-4" style={{ background: `${ACCENT}10`, borderLeft: `4px solid ${ACCENT}` }}>
+            <div className="rounded-lg p-4 mb-4" style={{ background: `${LAB_ACCENT}10`, borderLeft: `4px solid ${LAB_ACCENT}` }}>
               <p className="text-sm font-medium mb-1" style={{ color: 'rgb(var(--text))' }}>Common misconception</p>
               <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{selectedConcept.commonMisconception}</p>
             </div>
@@ -114,7 +115,7 @@ export function ReligiousStudiesHubBeliefLabPage() {
               type="button"
               onClick={() => nextConcept ? setSelectedConcept(nextConcept) : setSelectedConcept(null)}
               className="flex items-center gap-1 px-4 py-2 rounded-lg font-medium text-white"
-              style={{ background: ACCENT }}
+              style={{ background: LAB_ACCENT }}
             >
               {nextConcept ? 'Next' : 'Back to list'}
               <ChevronRight size={18} />

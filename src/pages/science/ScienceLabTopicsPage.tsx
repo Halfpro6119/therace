@@ -1,18 +1,47 @@
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, BookOpen, Layers, FileQuestion, ClipboardList, ArrowRight } from 'lucide-react';
-import { getQuestionsByFilters } from '../../config/scienceLabData';
+import { ChevronLeft, ChevronRight, ChevronDown, BookOpen, Layers, FileQuestion, ClipboardList, Target, FlaskConical, Calculator, AlertTriangle } from 'lucide-react';
 import { getTopicsByPaperAndTier, getDueFlashcardCount } from '../../config/scienceLabFlashcards';
 import { storage } from '../../utils/storage';
 import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
+const WORK_ON_ALL_MODES = [
+  { id: 'flashcard', title: 'Flashcards', description: 'Build recall across all topics', icon: BookOpen, color: '#0EA5E9', path: 'flashcard' },
+  { id: 'quickCheck', title: 'Quick checks', description: 'MCQ, T/F, drag order – fast practice', icon: Target, color: '#F59E0B', path: 'quick-check' },
+  { id: 'methodMark', title: 'Bigger tests (4–6 mark)', description: 'Extended questions with method marks', icon: ClipboardList, color: '#8B5CF6', path: 'methodMark' },
+  { id: 'practical', title: 'Practical Lab', description: 'Required practicals – variables, method', icon: FlaskConical, color: '#10B981', path: 'practical' },
+  { id: 'equation', title: 'Equation Lab', description: 'Equations, units, rearranging', icon: Calculator, color: '#8B5CF6', path: 'equation' },
+  { id: 'misconception', title: 'Misconception Lab', description: 'Identify and correct classic wrong ideas', icon: AlertTriangle, color: '#EF4444', path: 'misconception' },
+] as const;
+
 export function ScienceLabTopicsPage() {
   const navigate = useNavigate();
-  const { subject, paper, tier } = useParams<{ subject: string; paper: string; tier: string }>();
+  const [workOnAllOpen, setWorkOnAllOpen] = useState(false);
+  const workOnAllRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!workOnAllOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (workOnAllRef.current && !workOnAllRef.current.contains(e.target as Node)) {
+        setWorkOnAllOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [workOnAllOpen]);
+  const { subject, paper: paperParam, tier: tierParam } = useParams<{ subject: string; paper: string; tier: string }>();
 
   const subjectId = subject?.toLowerCase() as ScienceSubject | undefined;
-  const paperNum = paper ? parseInt(paper) as SciencePaper : 1;
-  const tierValue = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier : 'Higher';
+  const paperNum = paperParam ? (parseInt(paperParam) as SciencePaper) || 1 : 1;
+  const tierValue = tierParam ? (tierParam.charAt(0).toUpperCase() + tierParam.slice(1) as ScienceTier) : 'Higher';
+
+  const handlePaperChange = (p: SciencePaper) => {
+    navigate(`/science-lab/${subject?.toLowerCase()}/${p}/${tierValue.toLowerCase()}/topics`);
+  };
+  const handleTierChange = (t: ScienceTier) => {
+    navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${t.toLowerCase()}/topics`);
+  };
 
   if (!subjectId || !['biology', 'chemistry', 'physics'].includes(subject.toLowerCase())) {
     return (
@@ -55,63 +84,53 @@ export function ScienceLabTopicsPage() {
       >
         <button
           type="button"
-          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`)}
+          onClick={() => navigate('/science-lab')}
           className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
         >
           <ChevronLeft size={18} />
-          Back to Lab Modes
+          Back to Science Lab
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Map — {subjectTitle}</h1>
-        <p className="text-white/90 text-sm sm:text-base">
-          Aiming for Grade 9. Browse by topic or jump straight into a past-paper-style test. Paper {paperNum} • {tierValue}
+        <p className="text-white/90 text-sm sm:text-base mb-4">
+          Aiming for Grade 9. Browse by topic or jump straight into a past-paper-style test.
         </p>
-      </motion.section>
-
-      {/* Start topic test – direct entry */}
-      {(() => {
-        const questions = getQuestionsByFilters(normalizedSubject, paperNum, tierValue);
-        const topicsWithQuestions = [...new Set(questions.map((q) => q.topic))];
-        // Past-paper first: recommend first topic without completed topic test (no flashcard unlock required)
-        const firstIncomplete = topicsWithQuestions.find((topic) => {
-          const m = storage.getTopicMasteryByKey(normalizedSubject, paperNum, tierValue, topic);
-          return !m?.topicTestCompleted;
-        });
-        const recommendedTopic = firstIncomplete ?? topicsWithQuestions[0];
-        if (topicsWithQuestions.length === 0) return null;
-        return (
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.02 }}
-        >
-          <button
-            type="button"
-            onClick={() => navigate(`${base}/topic-test${recommendedTopic ? `?topic=${encodeURIComponent(recommendedTopic)}` : ''}`)}
-            className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
-            style={{
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
-              borderColor: 'transparent',
-              color: 'white',
-            }}
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-4 rounded-xl bg-white/20">
-                <FileQuestion size={28} className="text-white" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold mb-1">
-                  Start topic test (past-paper style)
-                </h2>
-                <p className="text-sm text-white/90">
-                  {recommendedTopic ? `Get an accurate grade — ${recommendedTopic}` : 'Pick a topic and test'}
-                </p>
-              </div>
+        <div className="flex flex-wrap items-center gap-4" onClick={(e) => e.stopPropagation()}>
+          <div>
+            <label className="block text-xs font-medium text-white/80 mb-1.5">Paper</label>
+            <div className="flex gap-2">
+              {([1, 2] as SciencePaper[]).map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => handlePaperChange(p)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                    paperNum === p ? 'bg-white text-gray-800' : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  Paper {p}
+                </button>
+              ))}
             </div>
-            <ArrowRight size={24} />
-          </button>
-        </motion.section>
-        );
-      })()}
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-white/80 mb-1.5">Tier</label>
+            <div className="flex gap-2">
+              {(['Foundation', 'Higher'] as ScienceTier[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => handleTierChange(t)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                    tierValue === t ? 'bg-white text-gray-800' : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
 
       {/* Full GCSE test – all topics */}
       <motion.section
@@ -145,15 +164,17 @@ export function ScienceLabTopicsPage() {
         </button>
       </motion.section>
 
-      {/* Work on all topics */}
+      {/* Work on all topics – dropdown menu */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
+        className="relative"
       >
+        <div ref={workOnAllRef} className="relative">
         <button
           type="button"
-          onClick={() => navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`)}
+          onClick={() => setWorkOnAllOpen((o) => !o)}
           className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
           style={{
             background: 'rgb(var(--surface))',
@@ -169,12 +190,53 @@ export function ScienceLabTopicsPage() {
                 Work on All Topics
               </h2>
               <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Access all lab modes without filtering by topic
+                Choose a learning mode – flashcards, quick checks, practicals, and more
               </p>
             </div>
           </div>
-          <ChevronRight size={24} style={{ color: 'rgb(var(--text-secondary))' }} />
+          <ChevronDown
+            size={24}
+            className={`flex-shrink-0 transition-transform ${workOnAllOpen ? 'rotate-180' : ''}`}
+            style={{ color: 'rgb(var(--text-secondary))' }}
+          />
         </button>
+        {workOnAllOpen && (
+          <div
+            className="absolute left-0 right-0 top-full mt-1 rounded-xl border shadow-lg overflow-hidden z-10"
+            style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+          >
+            {WORK_ON_ALL_MODES.map((mode) => {
+              const Icon = mode.icon;
+              return (
+                <button
+                  key={mode.id}
+                  type="button"
+                  onClick={() => {
+                    navigate(`${base}/${mode.path}`);
+                    setWorkOnAllOpen(false);
+                  }}
+                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-black/5 dark:hover:bg-white/5 transition"
+                  style={{ color: 'rgb(var(--text))' }}
+                >
+                  <div
+                    className="p-2.5 rounded-lg flex-shrink-0"
+                    style={{ background: `${mode.color}20` }}
+                  >
+                    <Icon size={20} style={{ color: mode.color }} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">{mode.title}</p>
+                    <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
+                      {mode.description}
+                    </p>
+                  </div>
+                  <ChevronRight size={18} className="ml-auto flex-shrink-0 opacity-50" />
+                </button>
+              );
+            })}
+          </div>
+        )}
+        </div>
       </motion.section>
 
       {/* Topic list */}

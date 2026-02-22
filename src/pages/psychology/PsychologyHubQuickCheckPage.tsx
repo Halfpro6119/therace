@@ -4,7 +4,7 @@ import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getPsychologyTopicsForSelection, getQuickChecksForTopic } from '../../config/psychologyHubData';
 
-const ACCENT = '#9333EA';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function PsychologyHubQuickCheckPage() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export function PsychologyHubQuickCheckPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/psychology-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/psychology-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -79,7 +79,7 @@ export function PsychologyHubQuickCheckPage() {
                   type="button"
                   onClick={() => setAnswer(opt)}
                   className={`w-full text-left rounded-lg border px-4 py-2 text-sm transition ${answer === opt ? 'ring-2 ring-purple-500' : ''}`}
-                  style={{ borderColor: answer === opt ? ACCENT : 'rgb(var(--border))', color: 'rgb(var(--text))', ...(answer === opt ? { borderWidth: 2 } : {}) }}
+                  style={{ borderColor: answer === opt ? LAB_ACCENT : 'rgb(var(--border))', color: 'rgb(var(--text))', ...(answer === opt ? { borderWidth: 2 } : {}) }}
                 >
                   {opt}{answer === opt ? ' ✓' : ''}
                 </button>
@@ -95,7 +95,7 @@ export function PsychologyHubQuickCheckPage() {
                 type="button"
                 onClick={() => setAnswer('true')}
                 className={`px-4 py-2 rounded-lg border text-sm transition ${answer === 'true' ? 'ring-2 ring-purple-500' : ''}`}
-                style={{ borderColor: answer === 'true' ? ACCENT : 'rgb(var(--border))', ...(answer === 'true' ? { borderWidth: 2 } : {}) }}
+                style={{ borderColor: answer === 'true' ? LAB_ACCENT : 'rgb(var(--border))', ...(answer === 'true' ? { borderWidth: 2 } : {}) }}
               >
                 True{answer === 'true' ? ' ✓' : ''}
               </button>
@@ -103,17 +103,17 @@ export function PsychologyHubQuickCheckPage() {
                 type="button"
                 onClick={() => setAnswer('false')}
                 className={`px-4 py-2 rounded-lg border text-sm transition ${answer === 'false' ? 'ring-2 ring-purple-500' : ''}`}
-                style={{ borderColor: answer === 'false' ? ACCENT : 'rgb(var(--border))', ...(answer === 'false' ? { borderWidth: 2 } : {}) }}
+                style={{ borderColor: answer === 'false' ? LAB_ACCENT : 'rgb(var(--border))', ...(answer === 'false' ? { borderWidth: 2 } : {}) }}
               >
                 False{answer === 'false' ? ' ✓' : ''}
               </button>
             </div>
           )}
-          {!feedback && <button type="button" onClick={check} className="mt-4 px-4 py-2 rounded-xl font-medium text-white" style={{ background: ACCENT }}>Check</button>}
+          {!feedback && <button type="button" onClick={check} className="mt-4 px-4 py-2 rounded-xl font-medium text-white" style={{ background: LAB_ACCENT }}>Check</button>}
           {feedback && (
             <div className="mt-4">
               <p className={feedback.correct ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}>{feedback.text}</p>
-              <button type="button" onClick={next} className="mt-2 text-sm font-medium" style={{ color: ACCENT }}>Next</button>
+              <button type="button" onClick={next} className="mt-2 text-sm font-medium" style={{ color: LAB_ACCENT }}>Next</button>
             </div>
           )}
         </div>

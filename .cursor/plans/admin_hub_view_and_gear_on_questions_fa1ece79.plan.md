@@ -50,13 +50,18 @@ flowchart LR
   E -->|"Gear on question"| F["AdminPromptEditModal"]
 ```
 
+
+
 ## Files to change
 
-| File | Change |
-|------|--------|
+
+| File                                                         | Change                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [src/routes/MainAppRoutes.tsx](src/routes/MainAppRoutes.tsx) | Remove the `basePath === '/admin-view' && FEATURED_HUBS.map(...)` block that renders `AdminSubjectToolkitPage` for hub paths. Optionally remove the now-unused `AdminSubjectToolkitPage` and `FEATURED_HUBS` imports if nothing else uses them in this file. |
-| [src/pages/QuizPlayerPage.tsx](src/pages/QuizPlayerPage.tsx) | Replace the admin edit button icon from `Edit2` to `Settings` and set `title="Configure question (admin)"` (or similar). |
+| [src/pages/QuizPlayerPage.tsx](src/pages/QuizPlayerPage.tsx) | Replace the admin edit button icon from `Edit2` to `Settings` and set `title="Configure question (admin)"` (or similar).                                                                                                                                     |
+
 
 ## Optional (no requirement)
 
 - **AdminSubjectToolkitPage** can stay in the codebase (e.g. for a future “list all questions” entry from the admin toolbar or a dedicated route like `/admin-view/toolkit/:hubId`). The plan does not require adding or removing that page; only the route override for hub paths is removed so the real hub shows when entering from subjects.
+

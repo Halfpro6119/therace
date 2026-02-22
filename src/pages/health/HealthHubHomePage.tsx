@@ -4,9 +4,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart, Zap } from 'lucide-react';
 import { HEALTH_UNITS, getUnitsByAward } from '../../config/healthHubData';
 import { storage } from '../../utils/storage';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 import type { HealthUnitId } from '../../types/healthHub';
-
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
 
 export function HealthHubHomePage() {
   const navigate = useNavigate();
@@ -26,11 +25,11 @@ export function HealthHubHomePage() {
         return p && (p.flashcardMasteryPercent > 0 || p.quickCheckPassed || p.caseStudyCompleted || p.investigationCompleted);
       });
       if (total > 0 && passed < total) {
-        if (!anyProgress) return { type: 'start' as const, unit, label: `Start with Unit ${unit.id}`, path: `/health-hub/unit/${unit.id}` };
-        return { type: 'continue' as const, unit, label: `Continue Unit ${unit.id}`, path: `/health-hub/unit/${unit.id}` };
+        if (!anyProgress) return { type: 'start' as const, unit, label: `Start with Unit ${unit.id}`, path: `/health-hub/unit/${unit.id}/topics` };
+        return { type: 'continue' as const, unit, label: `Continue Unit ${unit.id}`, path: `/health-hub/unit/${unit.id}/topics` };
       }
     }
-    return { type: 'start' as const, unit: unitsToShow[0], label: 'Start with Unit 1', path: '/health-hub/unit/1' };
+    return { type: 'start' as const, unit: unitsToShow[0], label: 'Start with Unit 1', path: '/health-hub/unit/1/topics' };
   }, [unitsToShow]);
 
   return (
@@ -39,7 +38,7 @@ export function HealthHubHomePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"
@@ -65,7 +64,7 @@ export function HealthHubHomePage() {
         </div>
         {recommended && (
           <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
-            <Zap size={18} className="text-red-200 flex-shrink-0" />
+            <Zap size={18} className="text-white/90 flex-shrink-0" />
             <span className="text-sm text-white">
               <strong>Recommended:</strong> {recommended.label}
               <button
@@ -125,7 +124,7 @@ export function HealthHubHomePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => navigate(`/health-hub/unit/${unit.id}`)}
+              onClick={() => navigate(`/health-hub/unit/${unit.id}/topics`)}
               className="w-full rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
               style={{
                 background: 'rgb(var(--surface))',
@@ -133,8 +132,8 @@ export function HealthHubHomePage() {
               }}
             >
               <div className="flex items-center gap-4">
-                <div className="p-4 rounded-xl bg-red-500/20">
-                  <Heart size={28} className="text-red-600 dark:text-red-400" />
+                <div className="p-4 rounded-xl flex items-center justify-center" style={{ background: `${LAB_ACCENT}20` }}>
+                  <Heart size={28} style={{ color: LAB_ACCENT }} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>

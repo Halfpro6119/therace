@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { GEOGRAPHY_FIELDWORK_TASKS_LIST } from '../../config/geographyHubData';
 
-const ACCENT = '#0D9488';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function GeographyHubFieldworkLabPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function GeographyHubFieldworkLabPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -42,11 +42,11 @@ export function GeographyHubFieldworkLabPage() {
           <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>{current.type === 'unfamiliar' ? 'Unfamiliar context' : 'Your enquiry'}</h2>
           <p className="font-medium" style={{ color: 'rgb(var(--text))' }}>{current.question}</p>
           {current.data && <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{current.data}</p>}
-          <button type="button" onClick={() => setShowMarkScheme((s) => !s)} className="text-sm font-medium" style={{ color: ACCENT }}>
+          <button type="button" onClick={() => setShowMarkScheme((s) => !s)} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>
             {showMarkScheme ? 'Hide' : 'Show'} mark scheme
           </button>
           {showMarkScheme && (
-            <div className="rounded-lg p-3" style={{ background: `${ACCENT}15` }}>
+            <div className="rounded-lg p-3" style={{ background: `${LAB_ACCENT}15` }}>
               <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{current.markScheme}</p>
             </div>
           )}

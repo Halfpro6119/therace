@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getHistoryOptionsForSelection, getSourceSetsForOption } from '../../config/historyHubData';
 
-const ACCENT = '#B45309';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 /** Source Lab applies to wider world depth & thematic options only (Paper 1B, Paper 2A) */
 function getSourceLabOptions(selection: { periodStudy: string; widerWorldDepth: string; thematic: string; britishDepth: string } | null) {
@@ -43,7 +43,7 @@ export function HistoryHubSourceLabPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/history-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/history-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -131,7 +131,7 @@ export function HistoryHubSourceLabPage() {
                   setTimeout(() => setSaveFeedback(false), 2000);
                 }}
                 className="text-sm font-medium"
-                style={{ color: ACCENT }}
+                style={{ color: LAB_ACCENT }}
               >
                 {saveFeedback ? 'Saved!' : 'Save draft'}
               </button>

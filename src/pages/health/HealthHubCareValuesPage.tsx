@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart, CheckCircle2 } from 'lucide-react';
 import { CARE_VALUE_SCENARIOS } from '../../config/healthHubData';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function HealthHubCareValuesPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function HealthHubCareValuesPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"
@@ -58,7 +58,8 @@ export function HealthHubCareValuesPage() {
               <button
                 type="button"
                 onClick={() => setRevealAnswer(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-700 dark:text-red-400 font-medium"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium"
+                style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}
               >
                 <Heart size={18} />
                 Reveal answer

@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getHistoryOptionsForSelection } from '../../config/historyHubData';
 
-const ACCENT = '#B45309';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 export function HistoryHubRevisionMapPage() {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export function HistoryHubRevisionMapPage() {
                       type="button"
                       onClick={() => navigate('/history-hub/timeline', { state: { optionKey: opt.optionKey, partId: part.id } })}
                       className="text-xs font-medium ml-auto"
-                      style={{ color: ACCENT }}
+                      style={{ color: LAB_ACCENT }}
                     >
                       Start
                     </button>

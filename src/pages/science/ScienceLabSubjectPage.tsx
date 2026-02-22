@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, FlaskConical, Atom, Dna, ChevronRight, TestTube2 } from 'lucide-react';
+import { ChevronLeft, FlaskConical, Atom, Dna, ChevronRight } from 'lucide-react';
 import type { ScienceSubject } from '../../types/scienceLab';
 
-const TRIPLE_SUBJECTS: Array<{
+const SUBJECTS: Array<{
   id: ScienceSubject;
   title: string;
   description: string;
@@ -57,16 +57,16 @@ export function ScienceLabSubjectPage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Science Lab</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Aiming for Grade 9. Past-paper-style tests grade you accurately. Flashcards and quizzes help you improve your score.
+          Pick a subject, then choose Paper and tier (Higher or Foundation) to practice. Past-paper-style tests grade you accurately.
         </p>
       </motion.section>
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
-          Triple Science
+          Pick a subject
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TRIPLE_SUBJECTS.map((subject, index) => {
+          {SUBJECTS.map((subject, index) => {
             const Icon = subject.icon;
             return (
               <motion.button
@@ -102,42 +102,6 @@ export function ScienceLabSubjectPage() {
             );
           })}
         </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
-          Combined Science (AQA 8464)
-        </h2>
-        <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-          6 papers: 2 Biology, 2 Chemistry, 2 Physics. Shorter papers, synoptic questions.
-        </p>
-        <motion.button
-          type="button"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          onClick={() => navigate('/science-lab/combined-science')}
-          className="w-full rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
-          style={{
-            background: 'rgb(var(--surface))',
-            borderColor: 'rgb(var(--border))',
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: '#8B5CF620' }}>
-              <TestTube2 size={24} style={{ color: '#8B5CF6' }} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-1" style={{ color: 'rgb(var(--text))' }}>
-                Combined Science
-              </h3>
-              <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Papers 1–6: Bio 1 & 2, Chem 1 & 2, Phys 1 & 2
-              </p>
-            </div>
-          </div>
-          <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
-        </motion.button>
       </section>
     </div>
   );

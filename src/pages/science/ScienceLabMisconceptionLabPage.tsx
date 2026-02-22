@@ -2,9 +2,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, AlertTriangle, CheckCircle, XCircle, Lightbulb } from 'lucide-react';
-import { getMisconceptionsBySubject } from '../../config/scienceLabData';
+import { getMisconceptionsByFilters } from '../../config/scienceLabData';
 import { gradeMisconceptionAnswer } from '../../utils/scienceGrading';
-import type { ScienceSubject } from '../../types/scienceLab';
+import type { ScienceSubject, SciencePaper, ScienceTier } from '../../types/scienceLab';
 
 export function ScienceLabMisconceptionLabPage() {
   const navigate = useNavigate();
@@ -22,11 +22,10 @@ export function ScienceLabMisconceptionLabPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const misconceptions = getMisconceptionsBySubject(normalizedSubject);
+  const paperNum = paper ? (parseInt(paper) as SciencePaper) || 1 : 1;
+  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier) : 'Higher';
+  const misconceptions = getMisconceptionsByFilters(normalizedSubject, paperNum, tierValue);
   const currentMisconception = misconceptions[currentMisconceptionIndex];
-
-  const paperNum = paper ? parseInt(paper) : 1;
-  const tierValue = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : 'Higher';
 
   const handleBack = () => {
     navigate(`/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`);

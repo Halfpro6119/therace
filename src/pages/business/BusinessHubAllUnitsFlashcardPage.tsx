@@ -1,37 +1,31 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getUnitById, getTermsByUnit } from '../../config/businessHubData';
+import { getUnitsByPaper, getTermsForUnits } from '../../config/businessHubData';
 import { storage } from '../../utils/storage';
 import { HubHeroSection } from '../../components/hub/HubHeroSection';
 import { LabFlashcardCard, type LabConfidenceLevel } from '../../components/hub/LabFlashcardCard';
-import type { BusinessUnitId, BusinessConfidenceLevel } from '../../types/businessHub';
+import type { BusinessConfidenceLevel, BusinessUnitId, BusinessPaper } from '../../types/businessHub';
 
-export function BusinessHubFlashcardPage() {
+export function BusinessHubAllUnitsFlashcardPage() {
   const navigate = useNavigate();
-  const { unitId } = useParams<{ unitId: string }>();
+  const [searchParams] = useSearchParams();
+  const paperParam = searchParams.get('paper') || 'all';
+  const paper: BusinessPaper | 'all' = paperParam === '1' ? 1 : paperParam === '2' ? 2 : 'all';
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
 
-  const unit = unitId ? getUnitById(unitId as BusinessUnitId) : undefined;
-  const terms = unit ? getTermsByUnit(unit.id) : [];
+  const units = getUnitsByPaper(paper);
+  const unitIds = units.map((u) => u.id) as BusinessUnitId[];
+  const terms = getTermsForUnits(unitIds);
   const currentTerm = terms[currentIndex];
 
   useEffect(() => {
     if (currentTerm) setIsFlipped(false);
   }, [currentIndex, currentTerm]);
 
-  if (!unit) {
-    return (
-      <div className="max-w-4xl mx-auto p-8">
-        <p style={{ color: 'rgb(var(--text))' }}>Unit not found.</p>
-        <button type="button" onClick={() => navigate('/business-hub')}>Back to Business Hub</button>
-      </div>
-    );
-  }
-
-  const handleBack = () => navigate(`/business-hub/unit/${unit.id}/topics`);
+  const handleBack = () => navigate(paper !== 'all' ? `/business-hub/all-units/topics?paper=${paper}` : '/business-hub/all-units/topics');
 
   const handleConfidence = (level: LabConfidenceLevel) => {
     if (!currentTerm || !isFlipped) return;
@@ -39,14 +33,17 @@ export function BusinessHubFlashcardPage() {
     if (currentIndex < terms.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      const topicIds = [...new Set(terms.map((t) => t.topicId).filter(Boolean))] as string[];
-      topicIds.forEach((topicId) => {
-        const termIdsForTopic = terms.filter((t) => t.topicId === topicId).map((t) => t.id);
-        const pct = storage.calculateBusinessTopicFlashcardMastery(unit.id, topicId, termIdsForTopic);
-        const existing = storage.getBusinessTopicProgressByKey(unit.id, topicId);
+      const seen = new Set<string>();
+      terms.forEach((t) => {
+        const key = `${t.unitId}-${t.topicId}`;
+        if (!t.topicId || seen.has(key)) return;
+        seen.add(key);
+        const termIdsForTopic = terms.filter((x) => x.unitId === t.unitId && x.topicId === t.topicId).map((x) => x.id);
+        const pct = storage.calculateBusinessTopicFlashcardMastery(t.unitId as BusinessUnitId, t.topicId, termIdsForTopic);
+        const existing = storage.getBusinessTopicProgressByKey(t.unitId as BusinessUnitId, t.topicId);
         storage.updateBusinessTopicProgress({
-          unitId: unit.id,
-          topicId,
+          unitId: t.unitId as BusinessUnitId,
+          topicId: t.topicId,
           flashcardMasteryPercent: pct,
           quickCheckPassed: existing?.quickCheckPassed ?? false,
           caseStudyCompleted: existing?.caseStudyCompleted ?? false,
@@ -63,15 +60,15 @@ export function BusinessHubFlashcardPage() {
     return (
       <div className="max-w-4xl mx-auto space-y-8">
         <HubHeroSection
-          backLabel={`Back to Unit ${unit.id}`}
+          backLabel="Back to All Units"
           onBack={handleBack}
           title="Session complete"
-          subtitle={`You've reviewed all ${terms.length} terms. What next?`}
+          subtitle={`You've reviewed all ${terms.length} terms.`}
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               type="button"
-              onClick={() => navigate(`/business-hub/unit/${unit.id}/quick-check`)}
+              onClick={() => navigate(paper !== 'all' ? `/business-hub/all-units/quick-check?paper=${paper}` : '/business-hub/all-units/quick-check')}
               className="flex-1 px-6 py-3 rounded-lg font-semibold text-white bg-white/20 hover:bg-white/30"
             >
               Quick Check →
@@ -81,7 +78,7 @@ export function BusinessHubFlashcardPage() {
               onClick={handleBack}
               className="flex-1 px-6 py-3 rounded-lg font-semibold text-white bg-white/20 hover:bg-white/30"
             >
-              Back to Unit {unit.id}
+              Back to All Units
             </button>
           </div>
         </HubHeroSection>
@@ -92,7 +89,7 @@ export function BusinessHubFlashcardPage() {
   if (!currentTerm) {
     return (
       <div className="max-w-4xl mx-auto p-8">
-        <p style={{ color: 'rgb(var(--text))' }}>No terms for this unit.</p>
+        <p style={{ color: 'rgb(var(--text))' }}>No terms for the selected paper filter.</p>
         <button type="button" onClick={handleBack}>Go Back</button>
       </div>
     );
@@ -103,10 +100,10 @@ export function BusinessHubFlashcardPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <HubHeroSection
-        backLabel={`Back to Unit ${unit.id}`}
+        backLabel="Back to All Units"
         onBack={handleBack}
         title="Glossary / Flashcards"
-        subtitle={`Unit ${unit.id} – ${terms.length} terms`}
+        subtitle={`All units – ${terms.length} terms`}
         progressPercent={progressPct}
       />
 
@@ -131,8 +128,4 @@ export function BusinessHubFlashcardPage() {
         onPrev={() => setCurrentIndex((i) => Math.max(0, i - 1))}
         onNext={() => setCurrentIndex((i) => Math.min(terms.length - 1, i + 1))}
         canPrev={currentIndex > 0}
-        canNext={currentIndex < terms.length - 1}
-      />
-    </div>
-  );
-}
+        canNext={currentInd

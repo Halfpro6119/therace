@@ -1,35 +1,27 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle, ArrowRight } from 'lucide-react';
-import { getUnitById, getConceptsByUnit } from '../../config/businessHubData';
+import { ChevronLeft, ChevronRight, Lightbulb, AlertTriangle } from 'lucide-react';
+import { getUnitsByPaper, getConceptsForUnits } from '../../config/businessHubData';
 import { ConceptLabSuperpowersSection } from '../../components/learning';
 import type { BusinessUnitId } from '../../types/businessHub';
 import type { BusinessConcept } from '../../types/businessHub';
-
 import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
-export function BusinessHubConceptLabPage() {
+export function BusinessHubAllUnitsConceptLabPage() {
   const navigate = useNavigate();
-  const { unitId } = useParams<{ unitId: string }>();
+  const [searchParams] = useSearchParams();
+  const paper = (searchParams.get('paper') || 'all') as 'all' | '1' | '2';
   const [selectedConcept, setSelectedConcept] = useState<BusinessConcept | null>(null);
 
-  const unit = unitId ? getUnitById(unitId as BusinessUnitId) : undefined;
-  const concepts = unit ? getConceptsByUnit(unit.id) : [];
+  const units = getUnitsByPaper(paper === '1' ? 1 : paper === '2' ? 2 : 'all');
+  const unitIds = units.map((u) => u.id) as BusinessUnitId[];
+  const concepts = getConceptsForUnits(unitIds);
   const currentIndex = selectedConcept ? concepts.findIndex((c) => c.id === selectedConcept.id) : -1;
   const prevConcept = currentIndex > 0 ? concepts[currentIndex - 1] : null;
   const nextConcept = currentIndex >= 0 && currentIndex < concepts.length - 1 ? concepts[currentIndex + 1] : null;
 
-  if (!unit) {
-    return (
-      <div className="max-w-4xl mx-auto p-8">
-        <p style={{ color: 'rgb(var(--text))' }}>Unit not found.</p>
-        <button type="button" onClick={() => navigate('/business-hub')} className="mt-4 text-sm font-medium" style={{ color: 'rgb(var(--primary))' }}>
-          Back to Business Hub
-        </button>
-      </div>
-    );
-  }
+  const handleBack = () => navigate(`/business-hub/all-units/topics${paper !== 'all' ? `?paper=${paper}` : ''}`);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -41,15 +33,15 @@ export function BusinessHubConceptLabPage() {
       >
         <button
           type="button"
-          onClick={() => navigate(`/business-hub/unit/${unit.id}/topics`)}
+          onClick={handleBack}
           className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
         >
           <ChevronLeft size={18} />
-          Back to Unit {unit.id}
+          Back to All Units
         </button>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Concept Lab</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Concept Lab — All Units</h1>
         <p className="text-white/90 text-sm sm:text-base">
-          Understanding first – core ideas, misconceptions, &quot;if this changes&quot; scenarios
+          Core ideas, misconceptions, &quot;if this changes&quot; scenarios across every unit
         </p>
       </motion.section>
 
@@ -63,7 +55,7 @@ export function BusinessHubConceptLabPage() {
                 type="button"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.03 }}
                 onClick={() => setSelectedConcept(concept)}
                 className="w-full rounded-xl p-6 text-left border shadow-sm hover:shadow-md transition-all"
                 style={{
@@ -80,8 +72,8 @@ export function BusinessHubConceptLabPage() {
                       {concept.coreIdea}
                     </p>
                     <div className="flex items-center gap-2 text-sm" style={{ color: LAB_ACCENT }}>
-                      <span>Explore concept</span>
-                      <ArrowRight size={16} />
+                      <span>Unit {concept.unitId} · Explore concept</span>
+                      <ChevronRight size={16} />
                     </div>
                   </div>
                   <div className="p-3 rounded-lg" style={{ background: `${LAB_ACCENT}20` }}>
@@ -93,14 +85,14 @@ export function BusinessHubConceptLabPage() {
           </div>
           {concepts.length === 0 && (
             <div className="rounded-xl p-6 border text-center" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
-              <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>No concepts for this unit yet.</p>
+              <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>No concepts for the selected paper filter.</p>
               <button
                 type="button"
-                onClick={() => navigate(`/business-hub/unit/${unit.id}/topics`)}
+                onClick={handleBack}
                 className="text-sm font-medium px-4 py-2 rounded-lg"
                 style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}
               >
-                Back to Unit {unit.id}
+                Back to All Units
               </button>
             </div>
           )}

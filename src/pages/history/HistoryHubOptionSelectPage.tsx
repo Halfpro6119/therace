@@ -10,7 +10,7 @@ import {
 } from '../../config/historyHubData';
 import type { HistoryOptionSelection, PeriodStudyId, WiderWorldDepthId, ThematicStudyId, BritishDepthId } from '../../types/historyHub';
 
-const ACCENT = '#B45309';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 const DEFAULT_SELECTION: HistoryOptionSelection = {
   periodStudy: 'AB',
@@ -119,7 +119,7 @@ export function HistoryHubOptionSelectPage() {
           type="button"
           onClick={handleSave}
           className="mt-6 w-full py-3 rounded-xl font-semibold text-white"
-          style={{ background: ACCENT }}
+          style={{ background: LAB_ACCENT }}
         >
           Save and continue
         </button>

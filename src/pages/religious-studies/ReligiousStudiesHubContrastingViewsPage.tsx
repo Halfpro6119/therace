@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getContrastingViewsForSelection } from '../../config/religiousStudiesHubData';
 
-const ACCENT = '#7C3AED';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function ReligiousStudiesHubContrastingViewsPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function ReligiousStudiesHubContrastingViewsPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -39,7 +39,7 @@ export function ReligiousStudiesHubContrastingViewsPage() {
           <h2 className="text-lg font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>{current.issue}</h2>
           <div className="space-y-4">
             {current.views.map((v, i) => (
-              <div key={i} className="rounded-lg p-4" style={{ background: `${ACCENT}08`, borderLeft: `4px solid ${ACCENT}` }}>
+              <div key={i} className="rounded-lg p-4" style={{ background: `${LAB_ACCENT}08`, borderLeft: `4px solid ${LAB_ACCENT}` }}>
                 <p className="font-medium text-sm mb-1" style={{ color: 'rgb(var(--text))' }}>{v.religion}</p>
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{v.view}</p>
                 {v.scripture && <p className="text-xs mt-1" style={{ color: 'rgb(var(--text-secondary))' }}>Ref: {v.scripture}</p>}
@@ -48,7 +48,7 @@ export function ReligiousStudiesHubContrastingViewsPage() {
           </div>
           {current.modelAnswer && (
             <>
-              <button type="button" onClick={() => setShowModel(!showModel)} className="mt-4 text-sm font-medium" style={{ color: ACCENT }}>{showModel ? 'Hide' : 'Show'} model answer</button>
+              <button type="button" onClick={() => setShowModel(!showModel)} className="mt-4 text-sm font-medium" style={{ color: LAB_ACCENT }}>{showModel ? 'Hide' : 'Show'} model answer</button>
               {showModel && (
                 <div className="mt-4 rounded-lg p-4" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))', border: '1px solid' }}>
                   <p className="text-sm font-medium mb-2" style={{ color: 'rgb(var(--text))' }}>Model answer</p>

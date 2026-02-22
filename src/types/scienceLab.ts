@@ -111,6 +111,8 @@ export interface MethodMarkBreakdown {
 export interface SciencePractical {
   id: string;
   subject: ScienceSubject;
+  /** Topic for paper/tier filtering (e.g. "Cell Biology", "Bioenergetics") */
+  topic?: string;
   title: string;
   purpose: string;
   /** Independent variable */

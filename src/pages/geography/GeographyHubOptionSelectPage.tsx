@@ -4,7 +4,7 @@ import { ChevronLeft } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import type { GeographyOptionSelection, LivingWorldId, PhysicalLandscapeId, ResourceId } from '../../types/geographyHub';
 
-const ACCENT = '#0D9488';
+import { LAB_ACCENT } from '../../config/hubTheme';
 
 const LIVING_WORLD_OPTIONS: { id: LivingWorldId; label: string }[] = [
   { id: 'desert', label: 'Hot deserts' },
@@ -175,7 +175,7 @@ export function GeographyHubOptionSelectPage() {
           type="button"
           onClick={handleSave}
           className="mt-6 w-full py-3 rounded-xl font-semibold text-white"
-          style={{ background: ACCENT }}
+          style={{ background: LAB_ACCENT }}
         >
           Save and continue
         </button>

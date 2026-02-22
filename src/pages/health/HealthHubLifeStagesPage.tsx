@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronDown, ChevronUp, Activity, Brain, Heart, Users } from 'lucide-react';
 import { LIFE_STAGES } from '../../config/healthHubData';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 
 export function HealthHubLifeStagesPage() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function HealthHubLifeStagesPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"

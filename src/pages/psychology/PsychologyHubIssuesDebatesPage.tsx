@@ -5,7 +5,7 @@ import { storage } from '../../utils/storage';
 import { getPsychologyTopicsForSelection } from '../../config/psychologyHubData';
 import { PSYCHOLOGY_ISSUES_DEBATES } from '../../config/psychologyHubData';
 
-const ACCENT = '#9333EA';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function PsychologyHubIssuesDebatesPage() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export function PsychologyHubIssuesDebatesPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/psychology-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/psychology-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -43,11 +43,11 @@ export function PsychologyHubIssuesDebatesPage() {
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>No issues & debates prompts for this topic yet.</p>
       ) : item ? (
         <div className="rounded-2xl border p-6" style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--surface))' }}>
-          <p className="text-xs mb-2" style={{ color: ACCENT }}>{item.issueId.replace(/-/g, ' ')}</p>
+          <p className="text-xs mb-2" style={{ color: LAB_ACCENT }}>{item.issueId.replace(/-/g, ' ')}</p>
           <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>{index + 1} of {items.length}</p>
           <p className="font-medium mb-4" style={{ color: 'rgb(var(--text))' }}>{item.prompt}</p>
           {!showModel ? (
-            <button type="button" onClick={() => setShowModel(true)} className="text-sm font-medium" style={{ color: ACCENT }}>Show model answer</button>
+            <button type="button" onClick={() => setShowModel(true)} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Show model answer</button>
           ) : (
             <div className="rounded-lg p-4 text-sm border" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text-secondary))' }}>
               {item.modelAnswer}

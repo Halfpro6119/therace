@@ -1020,3 +1020,24 @@ export function getEvaluationPromptsByUnit(unitId: BusinessUnitId): EvaluationPr
 export function getEvaluationPromptsByTopic(topicId: string): EvaluationPrompt[] {
   return EVALUATION_PROMPTS.filter(e => e.topicId === topicId);
 }
+
+/** Get units filtered by paper (for "Work on All Units" flow) */
+export function getUnitsByPaper(paper: BusinessPaper | 'all'): BusinessUnit[] {
+  if (paper === 'all') return BUSINESS_UNITS;
+  return BUSINESS_UNITS.filter((u) => (paper === 1 ? u.paper1 : u.paper2));
+}
+
+/** Aggregate terms from given units (for "Work on All Units") */
+export function getTermsForUnits(unitIds: BusinessUnitId[]): BusinessTerm[] {
+  return BUSINESS_TERMS.filter((t) => unitIds.includes(t.unitId as BusinessUnitId));
+}
+
+/** Aggregate quick checks from given units (for "Work on All Units") */
+export function getQuickChecksForUnits(unitIds: BusinessUnitId[]): BusinessQuickCheck[] {
+  return BUSINESS_QUICK_CHECKS.filter((q) => unitIds.includes(q.unitId as BusinessUnitId));
+}
+
+/** Aggregate concepts from given units (for "Work on All Units") */
+export function getConceptsForUnits(unitIds: BusinessUnitId[]): BusinessConcept[] {
+  return BUSINESS_CONCEPTS.filter((c) => unitIds.includes(c.unitId as BusinessUnitId));
+}

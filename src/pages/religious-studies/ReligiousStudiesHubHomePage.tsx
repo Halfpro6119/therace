@@ -1,16 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, BookHeart, Lightbulb, BookOpen, GitCompare, Target, FileText, PenLine, Scale, Map } from 'lucide-react';
+import { ChevronLeft, BookHeart, Lightbulb, BookOpen, GitCompare, Target, FileText, PenLine, Scale, Map, FileQuestion, GraduationCap, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getOptionsForSelection } from '../../config/religiousStudiesHubData';
 
-const ACCENT = '#7C3AED';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function ReligiousStudiesHubHomePage() {
   const navigate = useNavigate();
   const selection = storage.getRSOptionSelection();
   const options = selection ? getOptionsForSelection(selection) : null;
 
+  const TEST_MODES = [
+    { id: 'short-answer', title: 'Topic test', description: '1-, 2-, 4- and 5-mark questions', icon: FileQuestion, path: '/religious-studies-hub/short-answer-lab', color: '#8B5CF6' },
+    { id: 'full-exam', title: 'Full exam practice', description: '12-mark evaluation questions', icon: GraduationCap, path: '/religious-studies-hub/extended-writing-lab', color: '#10B981' },
+  ];
+  const REVISE_MODES = [
+    { id: 'flashcards', title: 'Flashcards', description: 'Scripture & key terms', icon: BookOpen, path: '/religious-studies-hub/flashcards', color: '#0EA5E9' },
+    { id: 'quick-check', title: 'Quick check', description: 'Micro-assessments', icon: Target, path: '/religious-studies-hub/quick-check', color: '#F59E0B' },
+  ];
   const modes = [
     { id: 'belief-lab', title: 'Belief Lab', description: 'Core beliefs and teachings', icon: Lightbulb, path: '/religious-studies-hub/belief-lab' },
     { id: 'flashcards', title: 'Scripture & key terms', description: 'Flashcards for terms and scripture', icon: BookOpen, path: '/religious-studies-hub/flashcards' },
@@ -30,7 +38,7 @@ export function ReligiousStudiesHubHomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
         style={{
-          background: `linear-gradient(135deg, ${ACCENT} 0%, #5B21B6 50%, #4C1D95 100%)`,
+          background: LAB_HERO_GRADIENT,
           borderColor: 'transparent',
         }}
       >
@@ -65,7 +73,7 @@ export function ReligiousStudiesHubHomePage() {
             type="button"
             onClick={() => navigate('/religious-studies-hub/option-select')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white"
-            style={{ background: ACCENT }}
+            style={{ background: LAB_ACCENT }}
           >
             <BookHeart size={18} />
             Select options
@@ -92,11 +100,65 @@ export function ReligiousStudiesHubHomePage() {
               type="button"
               onClick={() => navigate('/religious-studies-hub/option-select')}
               className="mt-3 text-sm font-medium"
-              style={{ color: ACCENT }}
+              style={{ color: LAB_ACCENT }}
             >
               Change options
             </button>
           </motion.section>
+
+          {/* Test yourself */}
+          <section className="space-y-4">
+            <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+              <FileQuestion size={20} style={{ color: '#8B5CF6' }} />
+              Test yourself
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {TEST_MODES.map((m, i) => (
+                <motion.button key={m.id} type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                  onClick={() => navigate(m.path)} className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+                  style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                      <m.icon size={20} style={{ color: m.color }} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+                </motion.button>
+              ))}
+            </div>
+          </section>
+
+          {/* Revise */}
+          <section className="space-y-4">
+            <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
+              <BookOpen size={20} style={{ color: '#0EA5E9' }} />
+              Revise to improve your score
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {REVISE_MODES.map((m, i) => (
+                <motion.button key={m.id} type="button" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.03 }}
+                  onClick={() => navigate(m.path)} className="rounded-2xl p-5 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+                  style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${m.color}20` }}>
+                      <m.icon size={20} style={{ color: m.color }} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>{m.title}</h3>
+                      <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{m.description}</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
+                </motion.button>
+              ))}
+            </div>
+          </section>
 
           <section className="space-y-4">
             <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
@@ -118,8 +180,8 @@ export function ReligiousStudiesHubHomePage() {
                   }}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl" style={{ background: `${ACCENT}20` }}>
-                      <mode.icon size={24} style={{ color: ACCENT }} />
+                    <div className="p-3 rounded-xl" style={{ background: `${LAB_ACCENT}20` }}>
+                      <mode.icon size={24} style={{ color: LAB_ACCENT }} />
                     </div>
                     <div>
                       <h3 className="text-base font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>
@@ -130,7 +192,7 @@ export function ReligiousStudiesHubHomePage() {
                       </p>
                     </div>
                   </div>
-                  <ChevronLeft size={20} style={{ color: 'rgb(var(--text-secondary))', transform: 'rotate(180deg)' }} />
+                  <ChevronRight size={20} style={{ color: 'rgb(var(--text-secondary))' }} />
                 </motion.button>
               ))}
             </div>

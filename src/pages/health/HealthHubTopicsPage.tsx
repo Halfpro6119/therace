@@ -1,6 +1,6 @@
 /**
- * Business Hub Topics Page – Science Lab structure.
- * Hero with filters → Full unit test → Work on All (dropdown) → Browse by Topic.
+ * Health Hub Topics Page – Science Lab structure.
+ * Hero → Full unit test → Work on All (dropdown) → Browse by Topic.
  */
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,40 +15,33 @@ import {
   Lightbulb,
   Target,
   FileText,
-  Calculator,
+  Search,
+  PenLine,
   MessageSquare,
 } from 'lucide-react';
-import { getUnitById, getCalculationsByUnit } from '../../config/businessHubData';
+import { getUnitById } from '../../config/healthHubData';
 import { storage } from '../../utils/storage';
 import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
-import type { BusinessUnitId, BusinessPaper } from '../../types/businessHub';
+import type { HealthUnitId } from '../../types/healthHub';
 
 const WORK_ON_ALL_MODES = [
-  { id: 'concept', title: 'Concept Lab', description: 'Core ideas, misconceptions & change scenarios', icon: Lightbulb, color: '#0EA5E9', path: 'concept' },
+  { id: 'concept', title: 'Concept Lab', description: 'Core ideas, misconceptions & apply scenarios', icon: Lightbulb, color: '#0EA5E9', path: 'concept' },
   { id: 'flashcard', title: 'Glossary / Flashcards', description: 'Learn key terms and definitions', icon: BookOpen, color: '#0EA5E9', path: 'flashcard' },
   { id: 'quick-check', title: 'Quick Check', description: 'Micro-assessments before case studies', icon: Target, color: '#F59E0B', path: 'quick-check' },
-  { id: 'case-study', title: 'Case Study Lab', description: 'Apply knowledge to scenarios & data', icon: FileText, color: '#EC4899', path: 'case-study' },
-  { id: 'calculations', title: 'Calculation Lab', description: 'Revenue, costs, cash flow, margins', icon: Calculator, color: '#8B5CF6', path: 'calculations' },
-  { id: 'evaluation', title: 'Evaluation Builder', description: 'Practise assess & evaluate questions', icon: MessageSquare, color: '#10B981', path: 'evaluation' },
+  { id: 'case-study', title: 'Case Study Lab', description: 'Apply knowledge to scenarios', icon: FileText, color: '#EC4899', path: 'case-study' },
+  { id: 'investigation', title: 'Investigation Lab', description: 'Plan investigations (Unit 2 & 3)', icon: Search, color: '#8B5CF6', units: ['2', '3'] },
+  { id: 'care-values', title: 'Care Values Practice', description: 'Identify and apply care values', icon: MessageSquare, color: '#10B981' },
+  { id: 'question-lab', title: 'Question Lab', description: 'Describe, explain, analyse, evaluate', icon: PenLine, color: '#6366F1', path: 'question-lab' },
 ];
 
-export function BusinessHubTopicsPage() {
+export function HealthHubTopicsPage() {
   const navigate = useNavigate();
   const { unitId } = useParams<{ unitId: string }>();
   const [workOnAllOpen, setWorkOnAllOpen] = useState(false);
   const workOnAllRef = useRef<HTMLDivElement>(null);
-  const [paperFilter, setPaperFilter] = useState<BusinessPaper | 'all'>('all');
 
-  const unit = unitId ? getUnitById(unitId as BusinessUnitId) : undefined;
-  const hasCalculations = unit ? getCalculationsByUnit(unit.id).length > 0 : false;
-  const caseStudyUnlocked = unit ? storage.isBusinessCaseStudyUnlocked(unit.id, unit.topics.map((t) => t.id)) : false;
-  const calculationsUnlocked = unit ? storage.isBusinessCalculationsUnlocked(unit.id, unit.topics.map((t) => t.id)) : false;
-  const allProgress = unit ? storage.getBusinessTopicProgress() : {};
-  const anyCaseStudyDone = unit && unit.topics.some((t) => allProgress[`${unit.id}-${t.id}`]?.caseStudyCompleted);
-  const anyCalcDone = unit && unit.topics.some((t) => allProgress[`${unit.id}-${t.id}`]?.calculationsCompleted);
-  const evaluationUnlocked = unit
-    ? hasCalculations ? anyCalcDone : anyCaseStudyDone
-    : false;
+  const unit = unitId ? getUnitById(unitId as HealthUnitId) : undefined;
+  const caseStudyUnlocked = unit ? storage.isHealthCaseStudyUnlocked(unit.id, unit.topics.map((t) => t.id)) : false;
 
   useEffect(() => {
     if (!workOnAllOpen) return;
@@ -65,34 +58,29 @@ export function BusinessHubTopicsPage() {
     return (
       <div className="max-w-4xl mx-auto p-8">
         <p style={{ color: 'rgb(var(--text))' }}>Unit not found.</p>
-        <button type="button" onClick={() => navigate('/business-hub')} className="mt-4 text-sm font-medium" style={{ color: LAB_ACCENT }}>
-          Back to Business Hub
+        <button type="button" onClick={() => navigate('/health-hub')} className="mt-4 text-sm font-medium" style={{ color: LAB_ACCENT }}>
+          Back to Health Hub
         </button>
       </div>
     );
   }
 
-  const base = `/business-hub/unit/${unit.id}`;
-  const isLocked = (modeId: string) => {
-    if (modeId === 'case-study') return !caseStudyUnlocked;
-    if (modeId === 'calculations') return !calculationsUnlocked;
-    if (modeId === 'evaluation') return !evaluationUnlocked;
-    return false;
+  const base = `/health-hub/unit/${unit.id}`;
+  const isLocked = (modeId: string) => modeId === 'case-study' && !caseStudyUnlocked;
+
+  const handleWorkOnAll = (mode: (typeof WORK_ON_ALL_MODES)[number]) => {
+    if (mode.id === 'care-values') navigate('/health-hub/care-values');
+    else if (mode.path) navigate(`${base}/${mode.path}`);
   };
 
-  const handlePaperChange = (p: BusinessPaper | 'all') => {
-    setPaperFilter(p);
-    if (p !== 'all') {
-      const unitsForPaper = p === 1 ? unit.paper1 : unit.paper2;
-      if (!unitsForPaper) return;
-    }
-  };
-
-  const showPaperFilter = unit.paper1 || unit.paper2;
+  const modesForUnit = WORK_ON_ALL_MODES.filter((m) => {
+    if ('units' in m && m.units) return m.units.includes(unit.id);
+    return m.id !== 'investigation' || ['2', '3'].includes(unit.id);
+  });
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* Hero – like Science Lab Topics */}
+      {/* Hero */}
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,66 +89,20 @@ export function BusinessHubTopicsPage() {
       >
         <button
           type="button"
-          onClick={() => navigate('/business-hub')}
+          onClick={() => navigate('/health-hub')}
           className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4"
         >
           <ChevronLeft size={18} />
-          Back to Business Hub
+          Back to Health Hub
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Topic Map — Unit {unit.id}</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
           {unit.title}. Browse by topic or jump straight into a past-paper-style test.
         </p>
-        {showPaperFilter && (
-          <div className="flex flex-wrap items-center gap-4" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <label className="block text-xs font-medium text-white/80 mb-1.5">Paper</label>
-              <div className="flex gap-2">
-                {unit.paper1 && (
-                  <button
-                    type="button"
-                    onClick={() => handlePaperChange(1)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                      paperFilter === 1 ? 'bg-white text-gray-800' : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    Paper 1
-                  </button>
-                )}
-                {unit.paper2 && (
-                  <button
-                    type="button"
-                    onClick={() => handlePaperChange(2)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                      paperFilter === 2 ? 'bg-white text-gray-800' : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    Paper 2
-                  </button>
-                )}
-                {(unit.paper1 && unit.paper2) && (
-                  <button
-                    type="button"
-                    onClick={() => handlePaperChange('all')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                      paperFilter === 'all' ? 'bg-white text-gray-800' : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    All
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </motion.section>
 
-      {/* Full unit test – first, like Science Lab */}
-      <motion.section
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-      >
+      {/* Full unit test */}
+      <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
         <button
           type="button"
           onClick={() => navigate(`${base}/quick-check`)}
@@ -176,7 +118,7 @@ export function BusinessHubTopicsPage() {
                 Full unit test
               </h2>
               <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                Test all topics – Quick Check, then Case Study & Evaluation
+                Quick Check per topic, then Case Study & Question Lab
               </p>
             </div>
           </div>
@@ -184,13 +126,8 @@ export function BusinessHubTopicsPage() {
         </button>
       </motion.section>
 
-      {/* Work on All Topics – dropdown, like Science Lab */}
-      <motion.section
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="relative"
-      >
+      {/* Work on All Topics – dropdown */}
+      <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
         <div ref={workOnAllRef} className="relative">
           <button
             type="button"
@@ -207,7 +144,7 @@ export function BusinessHubTopicsPage() {
                   Work on All Topics
                 </h2>
                 <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>
-                  Choose a learning mode – concept lab, glossary, quick check, case study, and more
+                  Choose a learning mode – concept, glossary, quick check, case study, and more
                 </p>
               </div>
             </div>
@@ -222,7 +159,7 @@ export function BusinessHubTopicsPage() {
               className="absolute left-0 right-0 top-full mt-1 rounded-xl border shadow-lg overflow-hidden z-10"
               style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
             >
-              {WORK_ON_ALL_MODES.map((mode) => {
+              {modesForUnit.map((mode) => {
                 const Icon = mode.icon;
                 const locked = isLocked(mode.id);
                 return (
@@ -232,7 +169,7 @@ export function BusinessHubTopicsPage() {
                     disabled={locked}
                     onClick={() => {
                       if (!locked) {
-                        navigate(`${base}/${mode.path}`);
+                        handleWorkOnAll(mode);
                         setWorkOnAllOpen(false);
                       }
                     }}
@@ -244,9 +181,7 @@ export function BusinessHubTopicsPage() {
                     </div>
                     <div className="flex-1 text-left">
                       <p className="font-semibold text-sm">{mode.title}{locked ? ' (Locked)' : ''}</p>
-                      <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>
-                        {mode.description}
-                      </p>
+                      <p className="text-xs" style={{ color: 'rgb(var(--text-secondary))' }}>{mode.description}</p>
                     </div>
                     {!locked && <ChevronRight size={18} className="flex-shrink-0 opacity-50" />}
                   </button>
@@ -257,7 +192,7 @@ export function BusinessHubTopicsPage() {
         </div>
       </motion.section>
 
-      {/* Browse by Topic – like Science Lab */}
+      {/* Browse by Topic */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'rgb(var(--text))' }}>
           <BookOpen size={20} style={{ color: '#0EA5E9' }} />
@@ -265,7 +200,7 @@ export function BusinessHubTopicsPage() {
         </h2>
         <div className="space-y-3">
           {unit.topics.map((topic, index) => {
-            const progress = storage.getBusinessTopicProgressByKey(unit.id, topic.id);
+            const progress = storage.getHealthTopicProgressByKey(unit.id, topic.id);
             const flashcardPct = progress?.flashcardMasteryPercent ?? 0;
             const quickCheckPassed = progress?.quickCheckPassed ?? false;
             return (
@@ -301,12 +236,8 @@ export function BusinessHubTopicsPage() {
                     <button
                       type="button"
                       onClick={() => navigate(`${base}/concept`)}
-                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition hover:opacity-90 border"
-                      style={{
-                        background: 'rgb(var(--surface-2))',
-                        borderColor: 'rgb(var(--border))',
-                        color: 'rgb(var(--text))',
-                      }}
+                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition"
+                      style={{ background: 'rgb(var(--surface-2))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}
                     >
                       <Lightbulb size={14} />
                       Learn
@@ -314,7 +245,7 @@ export function BusinessHubTopicsPage() {
                     <button
                       type="button"
                       onClick={() => navigate(`${base}/flashcard`)}
-                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition hover:opacity-90 border"
+                      className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition"
                       style={{
                         background: flashcardPct < 80 ? 'rgba(14, 165, 233, 0.15)' : 'rgb(var(--surface-2))',
                         borderColor: flashcardPct < 80 ? 'rgb(14, 165, 233)' : 'rgb(var(--border))',
@@ -327,7 +258,7 @@ export function BusinessHubTopicsPage() {
                     <button
                       type="button"
                       onClick={() => navigate(`${base}/quick-check`)}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition hover:opacity-90"
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
                       style={{ background: '#8B5CF6', color: 'white' }}
                     >
                       <Target size={16} />

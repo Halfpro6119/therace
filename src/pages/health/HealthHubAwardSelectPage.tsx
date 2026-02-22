@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Heart } from 'lucide-react';
 import { storage } from '../../utils/storage';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function HealthHubAwardSelectPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function HealthHubAwardSelectPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"
@@ -46,7 +46,7 @@ export function HealthHubAwardSelectPage() {
           style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <Heart size={24} className="text-red-500" />
+            <Heart size={24} style={{ color: LAB_ACCENT }} />
             <h3 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
               Single Award
             </h3>
@@ -70,7 +70,7 @@ export function HealthHubAwardSelectPage() {
           style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <Heart size={24} className="text-red-500" />
+            <Heart size={24} style={{ color: LAB_ACCENT }} />
             <h3 className="text-lg font-bold" style={{ color: 'rgb(var(--text))' }}>
               Double Award
             </h3>

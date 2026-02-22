@@ -3520,6 +3520,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-microscopy',
     subject: 'Biology',
+    topic: 'Cell Biology',
     title: 'Use of microscopes to observe cells',
     purpose: 'To observe and draw plant and animal cells using a light microscope, and calculate magnification.',
     independentVariable: 'Type of cell (plant or animal)',
@@ -3593,6 +3594,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-enzyme-activity',
     subject: 'Biology',
+    topic: 'Bioenergetics',
     title: 'Investigating the effect of pH on enzyme activity',
     purpose: 'To determine the effect of pH on the rate of enzyme-catalyzed reaction using amylase and starch.',
     independentVariable: 'pH of solution',
@@ -3678,6 +3680,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-osmosis-potato',
     subject: 'Biology',
+    topic: 'Cell Biology',
     title: 'Investigating osmosis in potato cylinders',
     purpose: 'To determine the effect of sugar solution concentration on the mass of potato tissue.',
     independentVariable: 'Concentration of sugar solution (%)',
@@ -3744,6 +3747,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-reaction-time',
     subject: 'Biology',
+    topic: 'Homeostasis and Response',
     title: 'Investigating human reaction times',
     purpose: 'To measure human reaction time and determine factors that affect it.',
     independentVariable: 'Factor being tested (e.g., caffeine, practice, age)',
@@ -3807,6 +3811,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-plant-responses',
     subject: 'Biology',
+    topic: 'Homeostasis and Response',
     title: 'Investigating the effect of light on plant growth',
     purpose: 'To determine how light direction affects the growth of seedlings (phototropism).',
     independentVariable: 'Direction of light',
@@ -3869,6 +3874,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'bio-field-investigation',
     subject: 'Biology',
+    topic: 'Ecology',
     title: 'Field investigation: measuring the distribution of organisms',
     purpose: 'To investigate how the distribution of a plant species changes across an environmental gradient (e.g., from shade to sunlight).',
     independentVariable: 'Position along transect (distance from starting point)',
@@ -4064,6 +4070,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'chem-rate-temperature',
     subject: 'Chemistry',
+    topic: 'Rate of reaction',
     title: 'Investigating the effect of temperature on rate of reaction',
     purpose: 'To determine how temperature affects the rate of reaction between sodium thiosulfate and hydrochloric acid.',
     independentVariable: 'Temperature (°C)',
@@ -4107,6 +4114,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'chem-titration',
     subject: 'Chemistry',
+    topic: 'Quantitative chemistry',
     title: 'Titration: finding the concentration of a solution',
     purpose: 'To find the volume of acid needed to neutralise a known volume of alkali, then calculate the concentration of the acid.',
     independentVariable: 'Volume of acid added',
@@ -4142,6 +4150,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'chem-electrolysis-prac',
     subject: 'Chemistry',
+    topic: 'Chemical changes',
     title: 'Electrolysis of aqueous solutions',
     purpose: 'To observe the products of electrolysis at the cathode and anode for different solutions (e.g. copper sulfate with copper electrodes).',
     independentVariable: 'Solution or type of electrode',
@@ -4174,6 +4183,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'chem-making-salts',
     subject: 'Chemistry',
+    topic: 'Chemical changes',
     title: 'Making salts from acids and bases (required practical)',
     purpose: 'To prepare a pure, dry sample of a soluble salt from an acid and an insoluble base (e.g. copper sulfate from copper oxide and sulfuric acid).',
     independentVariable: 'Type of acid and base used',
@@ -4223,6 +4233,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'chem-chromatography',
     subject: 'Chemistry',
+    topic: 'Chemical analysis',
     title: 'Paper chromatography (required practical)',
     purpose: 'To use paper chromatography to separate and identify the coloured substances in a mixture (e.g. ink or food colouring).',
     independentVariable: 'Solvent used (e.g. water, ethanol)',
@@ -4319,6 +4330,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-resistance',
     subject: 'Physics',
+    topic: 'Electricity',
     title: 'Investigating resistance of a wire (or resistor)',
     purpose: 'To determine how the resistance of a wire depends on its length (or how resistance of a circuit changes with components).',
     independentVariable: 'Length of wire (or number of resistors)',
@@ -4348,6 +4360,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-density-prac',
     subject: 'Physics',
+    topic: 'Particle model of matter',
     title: 'Determining the density of a regular solid',
     purpose: 'To measure the mass and dimensions of a regular solid and calculate its density.',
     independentVariable: 'Type of solid (or repeat for same solid)',
@@ -4374,6 +4387,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-shc-prac',
     subject: 'Physics',
+    topic: 'Particle model of matter',
     title: 'Determining specific heat capacity of a material',
     purpose: 'To heat a block (or water) with an immersion heater and use E = Pt and E = mcΔT to find specific heat capacity.',
     independentVariable: 'Material (or fixed material)',
@@ -4403,6 +4417,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-waves-prac',
     subject: 'Physics',
+    topic: 'Waves',
     title: 'Investigating waves in a ripple tank or with a string',
     purpose: 'To measure the wavelength and frequency of waves and calculate wave speed (v = fλ).',
     independentVariable: 'Frequency (or depth of water)',
@@ -4429,6 +4444,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-force-acceleration',
     subject: 'Physics',
+    topic: 'Forces',
     title: 'Investigating force and acceleration (F = ma)',
     purpose: 'To determine the relationship between resultant force and acceleration for a fixed mass (or mass and acceleration for fixed force).',
     independentVariable: 'Resultant force (e.g. different masses on string over pulley)',
@@ -4455,6 +4471,7 @@ export const SCIENCE_PRACTICALS: SciencePractical[] = [
   {
     id: 'phys-force-extension',
     subject: 'Physics',
+    topic: 'Forces',
     title: 'Investigating the relationship between force and extension for a spring',
     purpose: 'To determine the relationship between the force applied to a spring and its extension (Hooke\'s law) and find the spring constant. To identify the limit of proportionality.',
     independentVariable: 'Force applied (N)',
@@ -6005,22 +6022,69 @@ export function getQuestionsByFilters(
   });
 }
 
+/** Topics that have questions for the given paper and tier (from questions only) */
+function getTopicsForPaperAndTier(subject: ScienceSubject, paper: SciencePaper, tier: ScienceTier): Set<string> {
+  const questions = getQuestionsByFilters(subject, paper, tier);
+  return new Set(questions.map((q) => q.topic));
+}
+
 /**
- * Get practicals by subject
+ * Get practicals by subject, paper, and tier.
+ * Filters to practicals whose topic is on the selected paper; practicals without topic are included for backward compat.
+ */
+export function getPracticalsByFilters(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier
+): SciencePractical[] {
+  const topics = getTopicsForPaperAndTier(subject, paper, tier);
+  return SCIENCE_PRACTICALS.filter(
+    (p) => p.subject === subject && (!p.topic || topics.has(p.topic))
+  );
+}
+
+/**
+ * Get practicals by subject (legacy; use getPracticalsByFilters for paper/tier filtering)
  */
 export function getPracticalsBySubject(subject: ScienceSubject): SciencePractical[] {
   return SCIENCE_PRACTICALS.filter(p => p.subject === subject);
 }
 
 /**
- * Get equations by subject
+ * Get equations by subject, paper, and tier.
+ * Filters to equations whose topic is on the selected paper.
+ */
+export function getEquationsByFilters(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier
+): ScienceEquation[] {
+  const topics = getTopicsForPaperAndTier(subject, paper, tier);
+  return SCIENCE_EQUATIONS.filter((e) => e.subject === subject && topics.has(e.topic));
+}
+
+/**
+ * Get equations by subject (legacy; use getEquationsByFilters for paper/tier filtering)
  */
 export function getEquationsBySubject(subject: ScienceSubject): ScienceEquation[] {
   return SCIENCE_EQUATIONS.filter(e => e.subject === subject);
 }
 
 /**
- * Get misconceptions by subject
+ * Get misconceptions by subject, paper, and tier.
+ * Filters to misconceptions whose topic is on the selected paper.
+ */
+export function getMisconceptionsByFilters(
+  subject: ScienceSubject,
+  paper: SciencePaper,
+  tier: ScienceTier
+): ScienceMisconception[] {
+  const topics = getTopicsForPaperAndTier(subject, paper, tier);
+  return SCIENCE_MISCONCEPTIONS.filter((m) => m.subject === subject && topics.has(m.topic));
+}
+
+/**
+ * Get misconceptions by subject (legacy; use getMisconceptionsByFilters for paper/tier filtering)
  */
 export function getMisconceptionsBySubject(subject: ScienceSubject): ScienceMisconception[] {
   return SCIENCE_MISCONCEPTIONS.filter(m => m.subject === subject);

@@ -7,7 +7,7 @@ import { storage } from '../../utils/storage';
 import type { BusinessUnitId } from '../../types/businessHub';
 import type { CalculationTask } from '../../types/businessHub';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 /** Primary key to check for each calculation type (one main figure for "your answer"). */
 function getPrimaryExpectedKey(task: CalculationTask): string | null {
@@ -45,7 +45,7 @@ export function BusinessHubCalculationLabPage() {
     );
   }
 
-  const handleBack = () => navigate(`/business-hub/unit/${unit.id}`);
+  const handleBack = () => navigate(`/business-hub/unit/${unit.id}/topics`);
   const handleNext = () => {
     setShowAnswer(false);
     setYourAnswer('');
@@ -70,7 +70,7 @@ export function BusinessHubCalculationLabPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-          style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+          style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
         >
           <button type="button" onClick={handleBack} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
             <ChevronLeft size={18} /> Back to Unit {unit.id}
@@ -81,7 +81,7 @@ export function BusinessHubCalculationLabPage() {
         <div className="rounded-xl p-6 border text-center" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
           <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>No calculation tasks for this unit yet. Try another unit or mode.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => navigate('/business-hub')} className="text-sm font-medium px-4 py-2 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-400">All units</button>
+            <button type="button" onClick={() => navigate('/business-hub')} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>All units</button>
             <button type="button" onClick={handleBack} className="text-sm font-medium px-4 py-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}>Back to Unit {unit.id}</button>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function BusinessHubCalculationLabPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button type="button" onClick={handleBack} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
           <ChevronLeft size={18} /> Back to Unit {unit.id}
@@ -125,7 +125,7 @@ export function BusinessHubCalculationLabPage() {
         <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>Task {taskIndex + 1} of {tasks.length} · {typeLabel[task.type] ?? task.type}</p>
         <p className="text-base" style={{ color: 'rgb(var(--text))' }}>{task.scenario}</p>
         {task.formulaHint && (
-          <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/30">
+          <div className="rounded-lg p-3 border" style={{ background: `${LAB_ACCENT}10`, borderColor: `${LAB_ACCENT}30` }}>
             <p className="text-sm" style={{ color: 'rgb(var(--text-secondary))' }}>{task.formulaHint}</p>
           </div>
         )}
@@ -146,7 +146,8 @@ export function BusinessHubCalculationLabPage() {
                 type="button"
                 onClick={handleCheck}
                 disabled={yourAnswer.trim() === ''}
-                className="px-4 py-2 rounded-lg font-medium bg-amber-500 text-white disabled:opacity-50 text-sm"
+                className="px-4 py-2 rounded-lg font-medium text-white disabled:opacity-50 text-sm"
+                style={{ background: LAB_ACCENT }}
               >
                 Check
               </button>
@@ -165,7 +166,8 @@ export function BusinessHubCalculationLabPage() {
           <button
             type="button"
             onClick={() => setShowAnswer(true)}
-            className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold bg-amber-500 text-white hover:bg-amber-600"
+            className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-white"
+            style={{ background: LAB_ACCENT }}
           >
             <Calculator size={18} /> Show answer & interpretation
           </button>
@@ -200,7 +202,8 @@ export function BusinessHubCalculationLabPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-1 px-6 py-2 rounded-lg font-semibold bg-amber-500 text-white hover:bg-amber-600"
+            className="flex items-center gap-1 px-6 py-2 rounded-lg font-semibold text-white"
+            style={{ background: LAB_ACCENT }}
           >
             {taskIndex < tasks.length - 1 ? 'Next task' : 'Finish → Evaluation'}
             <ChevronRight size={18} />

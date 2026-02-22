@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { getPhilosophicalArgumentsForThemeC } from '../../config/religiousStudiesHubData';
 
-const ACCENT = '#7C3AED';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function ReligiousStudiesHubPhilosophicalArgumentsPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function ReligiousStudiesHubPhilosophicalArgumentsPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -28,7 +28,7 @@ export function ReligiousStudiesHubPhilosophicalArgumentsPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Philosophical arguments are part of Theme C. Add Theme C to your options to access this content.</p>
-        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Change options</button>
+        <button type="button" onClick={() => navigate('/religious-studies-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Change options</button>
       </div>
     );
   }
@@ -47,9 +47,9 @@ export function ReligiousStudiesHubPhilosophicalArgumentsPage() {
           <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>{index + 1} of {arguments_.length}</p>
           <h2 className="text-lg font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>{arg.title}</h2>
           <div className="flex gap-2 mb-4">
-            <button type="button" onClick={() => setTab('description')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'description' ? 'text-white' : ''}`} style={tab === 'description' ? { background: ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Overview</button>
-            <button type="button" onClick={() => setTab('strengths')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'strengths' ? 'text-white' : ''}`} style={tab === 'strengths' ? { background: ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Strengths</button>
-            <button type="button" onClick={() => setTab('weaknesses')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'weaknesses' ? 'text-white' : ''}`} style={tab === 'weaknesses' ? { background: ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Weaknesses</button>
+            <button type="button" onClick={() => setTab('description')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'description' ? 'text-white' : ''}`} style={tab === 'description' ? { background: LAB_ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Overview</button>
+            <button type="button" onClick={() => setTab('strengths')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'strengths' ? 'text-white' : ''}`} style={tab === 'strengths' ? { background: LAB_ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Strengths</button>
+            <button type="button" onClick={() => setTab('weaknesses')} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'weaknesses' ? 'text-white' : ''}`} style={tab === 'weaknesses' ? { background: LAB_ACCENT } : { borderColor: 'rgb(var(--border))', border: '1px solid' }}>Weaknesses</button>
           </div>
           {tab === 'description' && (
             <div>

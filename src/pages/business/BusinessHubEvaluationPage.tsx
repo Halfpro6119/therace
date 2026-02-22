@@ -6,7 +6,7 @@ import { getUnitById, getEvaluationPromptsByUnit } from '../../config/businessHu
 import { storage } from '../../utils/storage';
 import type { BusinessUnitId } from '../../types/businessHub';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)';
+import { LAB_HERO_GRADIENT, LAB_ACCENT } from '../../config/hubTheme';
 
 export function BusinessHubEvaluationPage() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export function BusinessHubEvaluationPage() {
     );
   }
 
-  const handleBack = () => navigate(`/business-hub/unit/${unit.id}`);
+  const handleBack = () => navigate(`/business-hub/unit/${unit.id}/topics`);
   const handleNext = () => {
     setShowModel(false);
     setBenefit('');
@@ -39,7 +39,7 @@ export function BusinessHubEvaluationPage() {
     if (promptIndex < prompts.length - 1) setPromptIndex(promptIndex + 1);
     else {
       storage.markUnitEvaluationCompleted(unit.id, unit.topics.map((t) => t.id));
-      navigate(`/business-hub/unit/${unit.id}`);
+      navigate(`/business-hub/unit/${unit.id}/topics`);
     }
   };
   const handlePrev = () => {
@@ -57,7 +57,7 @@ export function BusinessHubEvaluationPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-          style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+          style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
         >
           <button type="button" onClick={handleBack} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
             <ChevronLeft size={18} /> Back to Unit {unit.id}
@@ -68,7 +68,7 @@ export function BusinessHubEvaluationPage() {
         <div className="rounded-xl p-6 border text-center" style={{ background: 'rgb(var(--surface))', borderColor: 'rgb(var(--border))' }}>
           <p className="text-sm mb-4" style={{ color: 'rgb(var(--text-secondary))' }}>No evaluation prompts for this unit yet. Try another unit or mode.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => navigate('/business-hub')} className="text-sm font-medium px-4 py-2 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-400">All units</button>
+            <button type="button" onClick={() => navigate('/business-hub')} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>All units</button>
             <button type="button" onClick={handleBack} className="text-sm font-medium px-4 py-2 rounded-lg border" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--text))' }}>Back to Unit {unit.id}</button>
           </div>
         </div>
@@ -82,7 +82,7 @@ export function BusinessHubEvaluationPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button type="button" onClick={handleBack} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
           <ChevronLeft size={18} /> Back to Unit {unit.id}
@@ -138,7 +138,8 @@ export function BusinessHubEvaluationPage() {
           <button
             type="button"
             onClick={() => setShowModel(true)}
-            className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold bg-amber-500 text-white hover:bg-amber-600"
+            className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-white"
+            style={{ background: LAB_ACCENT }}
           >
             <MessageSquare size={18} /> Show model answer
           </button>
@@ -182,7 +183,8 @@ export function BusinessHubEvaluationPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-1 px-6 py-2 rounded-lg font-semibold bg-amber-500 text-white hover:bg-amber-600"
+            className="flex items-center gap-1 px-6 py-2 rounded-lg font-semibold text-white"
+            style={{ background: LAB_ACCENT }}
           >
             {promptIndex < prompts.length - 1 ? 'Next prompt' : 'Back to Unit'}
             <ChevronRight size={18} />

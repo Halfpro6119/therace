@@ -899,8 +899,6 @@ export function ScienceLabFlashcardPage() {
   const processSteps = currentFlashcard.back.explanation.includes('→')
     ? currentFlashcard.back.explanation.split('→').map((s) => s.trim()).filter(Boolean)
     : null;
-  const visualType = currentFlashcard.front.visual?.type;
-  const isEquationVisual = visualType === 'equation';
 
   const progressLabel =
     currentStep?.type === 'flashcard'
@@ -1127,28 +1125,12 @@ export function ScienceLabFlashcardPage() {
                       {typeStyle.label}
                     </span>
                   </div>
-                  {/* §1.2 Prompt and optional visual description (text only) */}
-                  {(() => {
-                    const hasVisual = currentFlashcard.front.visual?.description;
-                    return (
-                      <>
-                        <div className={hasVisual ? 'flex-shrink-0' : 'flex-1 flex flex-col justify-center'}>
-                          <h2 className={`flashcard-prompt max-w-2xl mx-auto ${hasVisual ? 'mb-3' : 'mb-6'}`}>
-                            {currentFlashcard.front.prompt}
-                          </h2>
-                        </div>
-                        {hasVisual && (
-                          <div className="flashcard-visual mx-auto w-full max-w-2xl flex-1 flex flex-col min-h-0">
-                            <div className="science-flashcard-equation-well flex-1 flex flex-col min-h-0 py-4 px-6 rounded-xl" style={{ ['--well-accent' as string]: typeStyle.color }}>
-                              <p className={`text-center max-w-2xl mx-auto ${isEquationVisual ? 'text-2xl sm:text-3xl font-mono font-bold' : 'flashcard-body'}`} style={{ color: typeStyle.color }}>
-                                {currentFlashcard.front.visual!.description}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    );
-                  })()}
+                  {/* §1.2 Prompt only – centred in card; no diagrams */}
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <h2 className="flashcard-prompt max-w-2xl mx-auto text-center">
+                      {currentFlashcard.front.prompt}
+                    </h2>
+                  </div>
                   {/* Type-to-reveal: "Show answer" button; otherwise tap/space to flip */}
                   {(sessionOptions.typeToReveal ?? false) && (currentFlashcard.type === 'concept' || currentFlashcard.type === 'equation') ? (
                     <div className="mt-6 flex flex-col items-center gap-2" onClick={(e) => e.stopPropagation()}>

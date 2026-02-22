@@ -4,9 +4,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Cpu, ChevronRight, Zap } from 'lucide-react';
 import { COMPUTE_UNITS } from '../../config/computeLabData';
 import { storage } from '../../utils/storage';
+import { LAB_HERO_GRADIENT, LAB_FILTER_ACTIVE, LAB_ACCENT } from '../../config/hubTheme';
 import type { ComputeUnitId } from '../../types/computeLab';
-
-const HERO_GRADIENT = 'linear-gradient(135deg, #0891B2 0%, #0E7490 50%, #155E75 100%)';
 
 function filterUnitsByPaper(paper: 'all' | 1 | 2) {
   if (paper === 'all') return COMPUTE_UNITS;
@@ -28,11 +27,11 @@ export function ComputeLabHomePage() {
         return p && (p.flashcardMasteryPercent > 0 || p.quickCheckPassed || p.algorithmLabCompleted || p.calculationLabCompleted || p.logicLabCompleted || p.sqlLabCompleted || p.questionLabCompleted);
       });
       if (total > 0 && passed < total) {
-        if (!anyProgress) return { type: 'start' as const, unit, label: `Start with Unit ${unit.id}`, path: `/compute-lab/unit/${unit.id}` };
-        return { type: 'continue' as const, unit, label: `Continue Unit ${unit.id}`, path: `/compute-lab/unit/${unit.id}` };
+        if (!anyProgress) return { type: 'start' as const, unit, label: `Start with Unit ${unit.id}`, path: `/compute-lab/unit/${unit.id}/topics` };
+        return { type: 'continue' as const, unit, label: `Continue Unit ${unit.id}`, path: `/compute-lab/unit/${unit.id}/topics` };
       }
     }
-    return { type: 'start' as const, unit: COMPUTE_UNITS[0], label: 'Start with Unit 3.1', path: '/compute-lab/unit/3.1' };
+    return { type: 'start' as const, unit: COMPUTE_UNITS[0], label: 'Start with Unit 3.1', path: '/compute-lab/unit/3.1/topics' };
   }, []);
 
   return (
@@ -41,7 +40,7 @@ export function ComputeLabHomePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button
           type="button"
@@ -56,7 +55,7 @@ export function ComputeLabHomePage() {
           AQA GCSE Computer Science 8525 – Algorithms, programming, theory & SQL
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
-          <Zap size={18} className="text-cyan-200 flex-shrink-0" />
+          <Zap size={18} className="text-white/90 flex-shrink-0" />
           <span className="text-sm text-white">
             <strong>Recommended:</strong> {recommended.label}
             <button
@@ -84,7 +83,7 @@ export function ComputeLabHomePage() {
                 paperFilter === p ? 'text-white' : 'text-gray-700 dark:text-gray-300'
               }`}
               style={{
-                background: paperFilter === p ? 'linear-gradient(135deg, #0891B2 0%, #0E7490 100%)' : 'rgb(var(--surface-2))',
+                background: paperFilter === p ? LAB_FILTER_ACTIVE : 'rgb(var(--surface-2))',
               }}
             >
               {p === 'all' ? 'All units' : `Paper ${p}`}
@@ -105,7 +104,7 @@ export function ComputeLabHomePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => navigate(`/compute-lab/unit/${unit.id}`)}
+              onClick={() => navigate(`/compute-lab/unit/${unit.id}/topics`)}
               className="w-full rounded-2xl p-6 text-left border shadow-sm hover:shadow-md transition-all flex items-center justify-between"
               style={{
                 background: 'rgb(var(--surface))',
@@ -113,8 +112,8 @@ export function ComputeLabHomePage() {
               }}
             >
               <div className="flex items-center gap-4">
-                <div className="p-4 rounded-xl bg-cyan-500/20">
-                  <Cpu size={28} className="text-cyan-600 dark:text-cyan-400" />
+                <div className="p-4 rounded-xl flex items-center justify-center" style={{ background: `${LAB_ACCENT}20` }}>
+                  <Cpu size={28} style={{ color: LAB_ACCENT }} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-0.5" style={{ color: 'rgb(var(--text))' }}>
@@ -122,9 +121,9 @@ export function ComputeLabHomePage() {
                   </h3>
                   <p className="text-sm flex items-center gap-2" style={{ color: 'rgb(var(--text-secondary))' }}>
                     <span>{unit.topics.length} topics</span>
-                    {unit.paper1 && unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs bg-cyan-500/20 text-cyan-700 dark:text-cyan-400">P1 & P2</span>}
-                    {unit.paper1 && !unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs bg-cyan-500/20 text-cyan-700 dark:text-cyan-400">Paper 1</span>}
-                    {!unit.paper1 && unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs bg-cyan-500/20 text-cyan-700 dark:text-cyan-400">Paper 2</span>}
+                    {unit.paper1 && unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>P1 & P2</span>}
+                    {unit.paper1 && !unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>Paper 1</span>}
+                    {!unit.paper1 && unit.paper2 && <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${LAB_ACCENT}20`, color: LAB_ACCENT }}>Paper 2</span>}
                   </p>
                 </div>
               </div>

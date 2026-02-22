@@ -6,7 +6,7 @@ import { getUnitById, getInvestigationsByUnit } from '../../config/healthHubData
 import { storage } from '../../utils/storage';
 import type { HealthUnitId } from '../../types/healthHub';
 
-const HERO_GRADIENT = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%)';
+import { LAB_HERO_GRADIENT } from '../../config/hubTheme';
 
 export function HealthHubInvestigationPage() {
   const navigate = useNavigate();
@@ -83,7 +83,7 @@ export function HealthHubInvestigationPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-6 sm:p-8 border shadow-sm"
-        style={{ background: HERO_GRADIENT, borderColor: 'transparent' }}
+        style={{ background: LAB_HERO_GRADIENT, borderColor: 'transparent' }}
       >
         <button type="button" onClick={handleBack} className="flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium mb-4">
           <ChevronLeft size={18} />

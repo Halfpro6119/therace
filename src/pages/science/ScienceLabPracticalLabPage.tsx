@@ -2,8 +2,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, FlaskConical, AlertTriangle, Wrench, ClipboardCheck, Sparkles, XCircle, RotateCcw, Award } from 'lucide-react';
-import { getPracticalsBySubject, getPracticalQuizQuestions } from '../../config/scienceLabData';
-import type { ScienceSubject, PracticalQuizQuestion, SciencePractical } from '../../types/scienceLab';
+import { getPracticalsByFilters, getPracticalQuizQuestions } from '../../config/scienceLabData';
+import type { ScienceSubject, SciencePaper, ScienceTier, PracticalQuizQuestion, SciencePractical } from '../../types/scienceLab';
 
 type TabStep = 'overview' | 'setup' | 'method' | 'risks' | 'data' | 'evaluation' | 'test' | 'describe';
 type TestPhase = 'intro' | 'active' | 'results';
@@ -30,10 +30,10 @@ export function ScienceLabPracticalLabPage() {
   }
 
   const normalizedSubject: ScienceSubject = subjectId.charAt(0).toUpperCase() + subjectId.slice(1) as ScienceSubject;
-  const paperNum = paper ? parseInt(paper, 10) as 1 | 2 : 1;
-  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1)) as 'Foundation' | 'Higher' : 'Higher';
+  const paperNum = paper ? (parseInt(paper, 10) as SciencePaper) || 1 : 1;
+  const tierValue = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) as ScienceTier) : 'Higher';
   const base = `/science-lab/${subject?.toLowerCase()}/${paperNum}/${tierValue.toLowerCase()}`;
-  const practicals = getPracticalsBySubject(normalizedSubject);
+  const practicals = getPracticalsByFilters(normalizedSubject, paperNum, tierValue);
   const selectedPractical = practicals.find(p => p.id === selectedPracticalId);
   const quizQuestions = selectedPracticalId ? getPracticalQuizQuestions(selectedPracticalId) : [];
 
@@ -240,8 +240,6 @@ export function ScienceLabPracticalLabPage() {
             onClick={() => {
               setSelectedPracticalId(null);
               setCurrentStep('overview');
-              setQuizIndex(0);
-              setQuizShowFeedback(false);
             }}
             className="flex items-center gap-2 text-sm font-medium"
             style={{ color: 'rgb(var(--text-secondary))' }}

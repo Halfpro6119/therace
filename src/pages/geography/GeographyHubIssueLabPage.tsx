@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { GEOGRAPHY_ISSUE_SCENARIOS_LIST } from '../../config/geographyHubData';
 
-const ACCENT = '#0D9488';
+import { LAB_LAB_ACCENT } from '../../config/hubTheme';
 
 export function GeographyHubIssueLabPage() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export function GeographyHubIssueLabPage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <p className="mb-4" style={{ color: 'rgb(var(--text))' }}>Please select your options first.</p>
-        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: ACCENT }}>Select options</button>
+        <button type="button" onClick={() => navigate('/geography-hub/option-select')} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>Select options</button>
       </div>
     );
   }
@@ -53,11 +53,11 @@ export function GeographyHubIssueLabPage() {
           <div className="border-t pt-4" style={{ borderColor: 'rgb(var(--border))' }}>
             <p className="text-sm mb-2" style={{ color: 'rgb(var(--text-secondary))' }}>Question {questionIndex + 1} of {scenario.questions.length}</p>
             <p className="font-medium mb-3" style={{ color: 'rgb(var(--text))' }}>{question?.question}</p>
-            <button type="button" onClick={() => setShowMarkScheme((s) => !s)} className="text-sm font-medium" style={{ color: ACCENT }}>
+            <button type="button" onClick={() => setShowMarkScheme((s) => !s)} className="text-sm font-medium" style={{ color: LAB_ACCENT }}>
               {showMarkScheme ? 'Hide' : 'Show'} mark scheme
             </button>
             {showMarkScheme && question && (
-              <div className="mt-2 rounded-lg p-3" style={{ background: `${ACCENT}15` }}>
+              <div className="mt-2 rounded-lg p-3" style={{ background: `${LAB_ACCENT}15` }}>
                 <p className="text-sm" style={{ color: 'rgb(var(--text))' }}>{question.markScheme}</p>
               </div>
             )}
