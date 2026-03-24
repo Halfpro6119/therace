@@ -132,7 +132,8 @@ export const TOP_2_SUBJECT_NAMES = ['Maths', 'English Language'];
 export const BIG_3_SUBJECT_NAMES = ['Physics', 'Biology', 'Chemistry'];
 
 /** Priority hubs shown first on home page. */
-export const TOP_2_HUB_IDS = ['maths', 'english'];
+/** English left, Maths right */
+export const TOP_2_HUB_IDS = ['english', 'maths'];
 
 /** "The Big 3" hub section (represented by Science Lab). */
 export const BIG_3_HUB_IDS = ['science'];

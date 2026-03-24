@@ -85,16 +85,24 @@ function HubCard({
   hub,
   navigate,
   variants,
+  layout = 'default',
 }: {
   hub: SubjectHub;
   navigate: ReturnType<typeof useNavigate>;
   variants: typeof item;
+  /** `pair`: two-up row (Top 2); no max-width so columns share space evenly */
+  layout?: 'default' | 'pair';
 }) {
   const HubIcon = HUB_ICONS[hub.icon];
+  const widthClasses =
+    layout === 'pair'
+      ? 'w-full min-w-0'
+      : 'w-full sm:max-w-[min(100%,22rem)]';
+  const padClasses = layout === 'pair' ? 'p-4 sm:p-5' : 'p-5 sm:p-6';
   return (
     <motion.div
       variants={variants}
-      className="w-full sm:max-w-[min(100%,22rem)] rounded-2xl p-5 sm:p-6 transition-all duration-200 hover:shadow-xl hover:-translate-y-1 border-2 group"
+      className={`${widthClasses} ${padClasses} rounded-2xl transition-all duration-200 hover:shadow-xl hover:-translate-y-1 border-2 group`}
       style={{
         background: `linear-gradient(165deg, ${hub.accentColor}12 0%, rgb(var(--surface)) 45%, rgb(var(--surface)) 100%)`,
         borderColor: `${hub.accentColor}35`,
@@ -112,13 +120,13 @@ function HubCard({
           <HubIcon size={28} className="sm:w-8 sm:h-8" style={{ color: hub.accentColor }} />
         </div>
         <h3
-          className="text-lg sm:text-xl font-bold leading-snug mb-2 px-1"
+          className={`font-bold leading-snug mb-2 px-0.5 ${layout === 'pair' ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'}`}
           style={{ color: 'rgb(var(--text))' }}
         >
           {hub.title}
         </h3>
         <p
-          className="text-xs sm:text-sm leading-relaxed line-clamp-3 px-1 max-w-[20rem] mx-auto"
+          className={`text-xs sm:text-sm leading-relaxed line-clamp-3 px-0.5 mx-auto ${layout === 'pair' ? 'max-w-none' : 'max-w-[20rem]'}`}
           style={{ color: 'rgb(var(--text-secondary))' }}
         >
           {hub.subtitle}
@@ -259,11 +267,11 @@ export function SubjectsPage() {
         <motion.section className="max-w-6xl mx-auto w-full" variants={container}>
           <HubSectionTitle icon={BookMarked} title="Top 2" variants={item} />
           <motion.div
-            className="flex flex-wrap justify-center gap-4 sm:gap-6"
+            className="grid grid-cols-2 gap-3 sm:gap-5 max-w-2xl sm:max-w-3xl mx-auto w-full items-stretch"
             variants={container}
           >
             {top2Hubs.map((hub) => (
-              <HubCard key={hub.id} hub={hub} navigate={navigate} variants={item} />
+              <HubCard key={hub.id} hub={hub} navigate={navigate} variants={item} layout="pair" />
             ))}
           </motion.div>
         </motion.section>
