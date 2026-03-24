@@ -54,7 +54,7 @@ export const FEATURED_HUBS: SubjectHub[] = [
   {
     id: 'business',
     title: 'Business Hub',
-    subtitle: 'AQA GCSE Business 8132 – Concepts, case studies & exam-style questions',
+    subtitle: 'OCR GCSE Business Studies – Concepts, case studies & exam-style questions',
     subjectNames: ['Business Studies'],
     icon: 'Briefcase',
     accentColor: '#F59E0B',
@@ -124,6 +124,24 @@ export const FEATURED_HUBS: SubjectHub[] = [
     hubPath: '/languages-hub',
   },
 ];
+
+/** Priority subjects shown first on home page. */
+export const TOP_2_SUBJECT_NAMES = ['Maths', 'English Language'];
+
+/** Science priorities shown after Top 2. */
+export const BIG_3_SUBJECT_NAMES = ['Physics', 'Biology', 'Chemistry'];
+
+/** Priority hubs shown first on home page. */
+export const TOP_2_HUB_IDS = ['maths', 'english'];
+
+/** "The Big 3" hub section (represented by Science Lab). */
+export const BIG_3_HUB_IDS = ['science'];
+
+/** Humanities hubs shown after The Big 3. */
+export const HUMANITIES_HUB_IDS = ['history', 'geography'];
+
+/** Languages hub section shown after Humanities. */
+export const LANGUAGES_HUB_IDS = ['languages'];
 
 /** Order for chosen subjects section. (Geography, Computer Science have dedicated hubs.) */
 export const CHOSEN_SUBJECT_NAMES: string[] = [];

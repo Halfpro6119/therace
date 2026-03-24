@@ -5,8 +5,10 @@ import { storage } from '../utils/storage';
 import { MasteryLevel, Subject, Quiz } from '../types';
 import {
   FEATURED_HUBS,
-  CHOSEN_SUBJECT_NAMES,
-  LANGUAGE_NAMES,
+  BIG_3_HUB_IDS,
+  HUMANITIES_HUB_IDS,
+  LANGUAGES_HUB_IDS,
+  TOP_2_HUB_IDS,
 } from '../config/subjectGroups';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdminView } from '../contexts/AdminViewContext';
@@ -35,6 +37,13 @@ function findByNames(subjects: Subject[], names: string[]): Subject[] {
   return names
     .map((n) => map.get(n.toLowerCase()))
     .filter((s): s is Subject => s != null);
+}
+
+function findHubsByIds(ids: string[]) {
+  const map = new Map(FEATURED_HUBS.map((hub) => [hub.id, hub]));
+  return ids
+    .map((id) => map.get(id))
+    .filter((hub): hub is (typeof FEATURED_HUBS)[number] => hub != null);
 }
 
 const container = {
@@ -104,8 +113,17 @@ export function SubjectsPage() {
     return <SkeletonSubjectsPage />;
   }
 
-  const chosenSubjects = findByNames(subjects, CHOSEN_SUBJECT_NAMES);
-  const languageSubjects = findByNames(subjects, LANGUAGE_NAMES);
+  const top2Hubs = findHubsByIds(TOP_2_HUB_IDS);
+  const big3Hubs = findHubsByIds(BIG_3_HUB_IDS);
+  const humanitiesHubs = findHubsByIds(HUMANITIES_HUB_IDS);
+  const languagesHubs = findHubsByIds(LANGUAGES_HUB_IDS);
+  const usedHubIds = new Set([
+    ...TOP_2_HUB_IDS,
+    ...BIG_3_HUB_IDS,
+    ...HUMANITIES_HUB_IDS,
+    ...LANGUAGES_HUB_IDS,
+  ]);
+  const otherHubs = FEATURED_HUBS.filter((hub) => !usedHubIds.has(hub.id));
   const scienceLabProgress = getScienceLabProgressSummary();
   // #region agent log
   if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:mainContent',message:'SubjectsPage main content render',data:{pathname:location.pathname,loading:false,hubsCount:FEATURED_HUBS.length},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
@@ -184,70 +202,8 @@ export function SubjectsPage() {
         </motion.section>
       )}
 
-      {/* Top: 3 featured hub cards */}
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-        variants={container}
-      >
-        {FEATURED_HUBS.map((hub, idx) => {
-          const HubIcon = HUB_ICONS[hub.icon];
-          // #region agent log
-          if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMap',message:'Hub map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
-          // #endregion
-          return (
-            <motion.div
-              key={hub.id}
-              variants={item}
-              className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
-              style={{
-                background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
-                borderColor: `${hub.accentColor}30`,
-              }}
-            >
-              <div
-                className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
-                style={{ borderBottom: '1px solid rgb(var(--border))' }}
-              >
-                <div
-                  className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
-                  style={{ background: `${hub.accentColor}15` }}
-                >
-                  <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2
-                    className="text-base sm:text-lg font-bold truncate"
-                    style={{ color: 'rgb(var(--text))' }}
-                  >
-                    {hub.title}
-                  </h2>
-                  <p
-                    className="text-xs sm:text-sm truncate"
-                    style={{ color: 'rgb(var(--text-secondary))' }}
-                  >
-                    {hub.subtitle}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate(hub.hubPath)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
-                style={{
-                  background: hub.accentColor,
-                  boxShadow: `0 2px 8px ${hub.accentColor}40`,
-                }}
-              >
-                <span>Enter hub</span>
-                <ArrowRight size={16} />
-              </button>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-
-      {/* Middle: Chosen subjects */}
-      {chosenSubjects.length > 0 && (
+      {/* Hub priority sections */}
+      {top2Hubs.length > 0 && (
         <motion.section variants={container}>
           <motion.div
             className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
@@ -258,18 +214,65 @@ export function SubjectsPage() {
               className="text-lg sm:text-xl font-bold"
               style={{ color: 'rgb(var(--text))' }}
             >
-              Chosen Subjects
+              Top 2
             </h2>
           </motion.div>
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
             variants={container}
           >
-            {chosenSubjects.map((subject) => {
-              const stats = getSubjectStats(subject.id);
+            {top2Hubs.map((hub, idx) => {
+              const HubIcon = HUB_ICONS[hub.icon];
+              // #region agent log
+              if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMapTop2',message:'Top 2 hub map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+              // #endregion
               return (
-                <motion.div key={subject.id} variants={item}>
-                  <SubjectCard subject={subject} {...stats} />
+                <motion.div
+                  key={hub.id}
+                  variants={item}
+                  className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+                  style={{
+                    background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                    borderColor: `${hub.accentColor}30`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <div
+                      className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
+                      style={{ background: `${hub.accentColor}15` }}
+                    >
+                      <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-base sm:text-lg font-bold truncate"
+                        style={{ color: 'rgb(var(--text))' }}
+                      >
+                        {hub.title}
+                      </h3>
+                      <p
+                        className="text-xs sm:text-sm truncate"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(hub.hubPath)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
+                    style={{
+                      background: hub.accentColor,
+                      boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                    }}
+                  >
+                    <span>Enter hub</span>
+                    <ArrowRight size={16} />
+                  </button>
                 </motion.div>
               );
             })}
@@ -277,8 +280,161 @@ export function SubjectsPage() {
         </motion.section>
       )}
 
-      {/* Bottom: Languages */}
-      {languageSubjects.length > 0 && (
+      {big3Hubs.length > 0 && (
+        <motion.section variants={container}>
+          <motion.div
+            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
+            variants={item}
+          >
+            <FlaskConical size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'rgb(var(--accent))' }} />
+            <h2
+              className="text-lg sm:text-xl font-bold"
+              style={{ color: 'rgb(var(--text))' }}
+            >
+              The Big 3
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+            variants={container}
+          >
+            {big3Hubs.map((hub, idx) => {
+              const HubIcon = HUB_ICONS[hub.icon];
+              // #region agent log
+              if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMapBig3',message:'Big 3 hub map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+              // #endregion
+              return (
+                <motion.div
+                  key={hub.id}
+                  variants={item}
+                  className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+                  style={{
+                    background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                    borderColor: `${hub.accentColor}30`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <div
+                      className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
+                      style={{ background: `${hub.accentColor}15` }}
+                    >
+                      <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-base sm:text-lg font-bold truncate"
+                        style={{ color: 'rgb(var(--text))' }}
+                      >
+                        {hub.title}
+                      </h3>
+                      <p
+                        className="text-xs sm:text-sm truncate"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(hub.hubPath)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
+                    style={{
+                      background: hub.accentColor,
+                      boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                    }}
+                  >
+                    <span>Enter hub</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+      )}
+
+      {humanitiesHubs.length > 0 && (
+        <motion.section variants={container}>
+          <motion.div
+            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
+            variants={item}
+          >
+            <Landmark size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'rgb(var(--accent))' }} />
+            <h2
+              className="text-lg sm:text-xl font-bold"
+              style={{ color: 'rgb(var(--text))' }}
+            >
+              Humanities
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+            variants={container}
+          >
+            {humanitiesHubs.map((hub, idx) => {
+              const HubIcon = HUB_ICONS[hub.icon];
+              // #region agent log
+              if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMapHumanities',message:'Humanities hubs map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+              // #endregion
+              return (
+                <motion.div
+                  key={hub.id}
+                  variants={item}
+                  className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+                  style={{
+                    background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                    borderColor: `${hub.accentColor}30`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <div
+                      className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
+                      style={{ background: `${hub.accentColor}15` }}
+                    >
+                      <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-base sm:text-lg font-bold truncate"
+                        style={{ color: 'rgb(var(--text))' }}
+                      >
+                        {hub.title}
+                      </h3>
+                      <p
+                        className="text-xs sm:text-sm truncate"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(hub.hubPath)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
+                    style={{
+                      background: hub.accentColor,
+                      boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                    }}
+                  >
+                    <span>Enter hub</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+      )}
+
+      {languagesHubs.length > 0 && (
         <motion.section variants={container}>
           <motion.div
             className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
@@ -293,14 +449,138 @@ export function SubjectsPage() {
             </h2>
           </motion.div>
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
             variants={container}
           >
-            {languageSubjects.map((subject) => {
-              const stats = getSubjectStats(subject.id);
+            {languagesHubs.map((hub, idx) => {
+              const HubIcon = HUB_ICONS[hub.icon];
+              // #region agent log
+              if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMapLanguages',message:'Languages hubs map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+              // #endregion
               return (
-                <motion.div key={subject.id} variants={item}>
-                  <SubjectCard subject={subject} {...stats} />
+                <motion.div
+                  key={hub.id}
+                  variants={item}
+                  className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+                  style={{
+                    background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                    borderColor: `${hub.accentColor}30`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <div
+                      className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
+                      style={{ background: `${hub.accentColor}15` }}
+                    >
+                      <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-base sm:text-lg font-bold truncate"
+                        style={{ color: 'rgb(var(--text))' }}
+                      >
+                        {hub.title}
+                      </h3>
+                      <p
+                        className="text-xs sm:text-sm truncate"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(hub.hubPath)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
+                    style={{
+                      background: hub.accentColor,
+                      boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                    }}
+                  >
+                    <span>Enter hub</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+      )}
+
+      {otherHubs.length > 0 && (
+        <motion.section variants={container}>
+          <motion.div
+            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
+            variants={item}
+          >
+            <BookOpen size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'rgb(var(--accent))' }} />
+            <h2
+              className="text-lg sm:text-xl font-bold"
+              style={{ color: 'rgb(var(--text))' }}
+            >
+              Other Hubs
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+            variants={container}
+          >
+            {otherHubs.map((hub, idx) => {
+              const HubIcon = HUB_ICONS[hub.icon];
+              // #region agent log
+              if (idx === 0 && typeof fetch !== 'undefined') fetch('http://127.0.0.1:7506/ingest/9f782f9d-eb99-41f5-9f25-693070ac1ca4',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8a1f20'},body:JSON.stringify({sessionId:'8a1f20',location:'SubjectsPage.tsx:hubMapOther',message:'Other hubs map iterating',data:{hubId:hub.id,hasHubIcon:!!HubIcon},timestamp:Date.now(),hypothesisId:'H_hubs'})}).catch(()=>{});
+              // #endregion
+              return (
+                <motion.div
+                  key={hub.id}
+                  variants={item}
+                  className="rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 border-2"
+                  style={{
+                    background: `linear-gradient(180deg, ${hub.accentColor}08 0%, rgb(var(--surface)) 40%)`,
+                    borderColor: `${hub.accentColor}30`,
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-3 mb-3 sm:mb-4 pb-3"
+                    style={{ borderBottom: '1px solid rgb(var(--border))' }}
+                  >
+                    <div
+                      className="p-2 sm:p-2.5 rounded-xl flex-shrink-0"
+                      style={{ background: `${hub.accentColor}15` }}
+                    >
+                      <HubIcon size={22} className="sm:w-6 sm:h-6" style={{ color: hub.accentColor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-base sm:text-lg font-bold truncate"
+                        style={{ color: 'rgb(var(--text))' }}
+                      >
+                        {hub.title}
+                      </h3>
+                      <p
+                        className="text-xs sm:text-sm truncate"
+                        style={{ color: 'rgb(var(--text-secondary))' }}
+                      >
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(hub.hubPath)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-[0.98] min-h-[44px]"
+                    style={{
+                      background: hub.accentColor,
+                      boxShadow: `0 2px 8px ${hub.accentColor}40`,
+                    }}
+                  >
+                    <span>Enter hub</span>
+                    <ArrowRight size={16} />
+                  </button>
                 </motion.div>
               );
             })}

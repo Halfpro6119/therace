@@ -52,7 +52,7 @@ export function BusinessHubHomePage() {
         </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Business Hub</h1>
         <p className="text-white/90 text-sm sm:text-base mb-4">
-          AQA GCSE Business 8132 – Concepts, glossary, quick checks, case studies, calculations & evaluation
+          OCR GCSE Business Studies – Concepts, glossary, quick checks, case studies, calculations & evaluation
         </p>
         <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10">
           <Zap size={18} className="text-white/90 flex-shrink-0" />

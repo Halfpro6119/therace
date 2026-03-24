@@ -1,5 +1,5 @@
 /**
- * Business Hub – AQA GCSE Business 8132
+ * Business Hub – OCR GCSE Business Studies
  * Units 3.1–3.6, concepts, glossary, quick checks, case studies, calculations, evaluation.
  */
 
